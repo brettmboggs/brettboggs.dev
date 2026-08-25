@@ -31,9 +31,29 @@ and never get pages built.
 
 ## Design
 
-Aesthetic direction is decided with Brett before writing design code — he
-explicitly does not want a generic dev portfolio. Current pages are unstyled
-placeholders awaiting that conversation.
+Direction: **"Golden Hour"** (proposed 2026-08-25, awaiting Brett's sign-off) —
+70s California concert-poster warmth run through Apple/Swiss restraint. Brett's
+brief: "a hippie who went to college." Airy, light, professional-but-passion-project.
+
+- **Palette:** oat paper #F4EDDF ground, espresso ink #33291C (never pure
+  white/black), sunflower #D9971E, sienna #B85C38 (links), olive #6F7D4E,
+  faded denim #7A93A7 (rare). Sun-faded earth tones only.
+- **Type (Google Fonts):** Fraunces for display (opsz 144, SOFT ~60, WONK on),
+  Instrument Sans for body, Spline Sans Mono for metadata/labels.
+- **Motifs:** rising sun arches, subtle film grain (~5% SVG noise), wavy rules.
+  One hero element per page.
+- **Motion:** few, slow, warm — long ease-outs (cubic-bezier(0.22,1,0.36,1)),
+  ambient "breathing," ink-fill link underlines. Always respect
+  prefers-reduced-motion.
+- **Never:** tie-dye busyness, pattern-on-pattern, terminal/dev-portfolio
+  aesthetics, skill bars, default-blue links, motion that delays reading.
+
+## Deployment status
+
+Repo: https://github.com/brettmboggs/brettboggs.dev (Brett is sole
+contributor; public forks/PRs possible but no collaborators). Pages enabled
+with workflow builds, custom domain brettboggs.dev set. Namecheap DNS is
+Brett's manual step; HTTPS enforcement flips on after the cert issues.
 
 ## Working style
 
