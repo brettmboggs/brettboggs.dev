@@ -12,8 +12,12 @@ interface FilmOptions {
 
 export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOptions): void {
   const ctx = canvas.getContext('2d')!;
-  const small = window.innerWidth < 768;
-  const dir = small ? '/film/sm/' : '/film/lg/';
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  // pick the frame tier by the display's effective pixel width
+  const effectiveWidth = window.innerWidth * Math.min(devicePixelRatio, 2);
+  const tier = effectiveWidth >= 2000 ? 'xl' : effectiveWidth >= 1000 ? 'lg' : 'sm';
+  const dir = `/film/${tier}/`;
   const frames: (HTMLImageElement | null)[] = new Array(frameCount).fill(null);
   let current = 0;
   let drawn = -1;
@@ -56,6 +60,9 @@ export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOpti
   function resize(): void {
     canvas.width = canvas.clientWidth * Math.min(devicePixelRatio, 2);
     canvas.height = canvas.clientHeight * Math.min(devicePixelRatio, 2);
+    // setting canvas dimensions resets context state
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     drawn = -1;
     draw(current);
   }

@@ -28,7 +28,7 @@ const year = new Date().getFullYear();
   </head>
   <body>
     <header class:list={['site-header', 'wrap', { 'over-film': home }]}>
-      <a class="wordmark" href="/" aria-label="Brett Boggs, home">B<span class="wordmark-b">B</span><span class="wordmark-dot">.</span></a>
+      <a class="wordmark" href="/" aria-label="Brett Boggs, home">B<span class="wordmark-rest" aria-hidden="true">rett</span><span class="wordmark-b">B</span><span class="wordmark-rest" aria-hidden="true">oggs</span><span class="wordmark-dot">.</span></a>
       <nav>
         <a href="/work/">Work</a>
         <a href="/lab/">Lab</a>
@@ -71,6 +71,27 @@ const year = new Date().getFullYear();
   }
   .wordmark-b {
     font-style: italic;
+  }
+  .wordmark-rest {
+    display: inline-block;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+    opacity: 0;
+    transition:
+      max-width 0.55s var(--ease-warm),
+      opacity 0.4s var(--ease-warm);
+  }
+  .wordmark:hover .wordmark-rest,
+  .wordmark:focus-visible .wordmark-rest {
+    max-width: 3.5em;
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wordmark-rest {
+      transition: none;
+    }
   }
   .wordmark-dot {
     color: var(--sunflower);
