@@ -57,6 +57,20 @@ brief: "a hippie who went to college." Airy, light, professional-but-passion-pro
   aesthetics, skill bars, default-blue links, motion that delays reading,
   card grids (Brett flagged them as AI-slop; use editorial index rows).
 
+## Hero direction (reset 2026-08-25, after two rejected attempts)
+
+Brett REJECTED: big bold display of his own name (particle version AND solid
+3D bronze version) — "super cringey" from a visitor's POV. Identity lives in a
+small "BB." monogram in the navbar, nothing bigger.
+
+The bar he set: mercury.com's hero — a pre-rendered cinematic scene (nature,
+desk, laptop) scrubbed by scroll that zooms into the laptop where product
+animations take over. Verified mechanism: start/end poster JPGs + a scroll-
+scrubbed video (`hero-scrub-md.mp4`, byte-range seeks) + follow-on clips.
+"This is the standard or better." Scene concept for Brett's version TBD with
+him before building. Blender (with MCP addon) is available on this machine
+for producing rendered sequences.
+
 ## Voice (Brett flagged violations, take these seriously)
 
 - Stoic, chill, minimal. Few words. The site shows, it does not tell.

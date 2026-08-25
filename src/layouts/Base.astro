@@ -28,7 +28,7 @@ const year = new Date().getFullYear();
   </head>
   <body>
     <header class="site-header wrap">
-      {!home && <a class="wordmark" href="/">Brett Boggs</a>}
+      <a class="wordmark" href="/" aria-label="Brett Boggs, home">B<span class="wordmark-b">B</span><span class="wordmark-dot">.</span></a>
       <nav>
         <a href="/work/">Work</a>
         <a href="/lab/">Lab</a>
@@ -56,10 +56,16 @@ const year = new Date().getFullYear();
   .wordmark {
     font-family: var(--display);
     font-variation-settings: 'opsz' 40, 'SOFT' 60, 'WONK' 1;
-    font-style: italic;
     font-weight: 640;
-    font-size: 1.25rem;
+    font-size: 1.35rem;
+    letter-spacing: -0.04em;
     color: var(--ink);
+  }
+  .wordmark-b {
+    font-style: italic;
+  }
+  .wordmark-dot {
+    color: var(--sunflower);
   }
   nav {
     display: flex;
