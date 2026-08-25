@@ -31,7 +31,7 @@ and never get pages built.
 
 ## Design
 
-Direction: **"Golden Hour"** (proposed 2026-08-25, awaiting Brett's sign-off) —
+Direction: **"Golden Hour"** (approved by Brett 2026-08-25) —
 70s California concert-poster warmth run through Apple/Swiss restraint. Brett's
 brief: "a hippie who went to college." Airy, light, professional-but-passion-project.
 
@@ -40,8 +40,11 @@ brief: "a hippie who went to college." Airy, light, professional-but-passion-pro
   faded denim #7A93A7 (rare). Sun-faded earth tones only.
 - **Type (Google Fonts):** Fraunces for display (opsz 144, SOFT ~60, WONK on),
   Instrument Sans for body, Spline Sans Mono for metadata/labels.
-- **Motifs:** rising sun arches, subtle film grain (~5% SVG noise), wavy rules.
-  One hero element per page.
+- **Motifs:** type-led — NO sun/rainbow/arch iconography (Brett vetoed it).
+  Subtle film grain (~5% SVG noise), 2px espresso rules, bordered cards.
+  One hero element per page, usually a big Fraunces headline.
+- **Implementation:** tokens live in `src/styles/global.css`; fonts are
+  self-hosted via Fontsource packages imported in `src/layouts/Base.astro`.
 - **Motion:** few, slow, warm — long ease-outs (cubic-bezier(0.22,1,0.36,1)),
   ambient "breathing," ink-fill link underlines. Always respect
   prefers-reduced-motion.
