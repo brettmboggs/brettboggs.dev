@@ -2,113 +2,230 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Brett Boggs" description="Builder, co-founder of Datum. Work, experiments, and writing.">
-  <section class="hero">
-    <p class="eyebrow reveal">Brett Boggs &middot; co-founder, Datum</p>
-    <h1 class="reveal" style="--delay: 0.1s">
-      Software with a clear head<br />and a <em>warm</em> hand.
-    </h1>
-    <p class="lede reveal" style="--delay: 0.2s">
-      I build practical things — right now, that's
-      <a href="https://datumci.com">Datum</a>, an AI-native construction
-      management platform. This site is the front porch: finished work,
-      half-finished experiments, and the occasional essay.
-    </p>
+<Base title="Brett Boggs" description="Brett Boggs. Work, experiments, writing." home>
+  <section class="hero full-bleed" id="hero">
+    <div class="hero-inner">
+      <h1 class="name">
+        <span class="line"><span class="line-inner">Brett</span></span>
+        <span class="line"><span class="line-inner"><em>Boggs</em><span class="dot">.</span></span></span>
+      </h1>
+    </div>
+    <span class="scroll-line" aria-hidden="true"></span>
   </section>
 
-  <section class="paths reveal" style="--delay: 0.35s">
-    <a class="path" href="/work/">
-      <h2>Work</h2>
-      <p>Case studies of things I've shipped, and what they taught me.</p>
+  <nav class="index" aria-label="Site sections">
+    <a class="row" href="/work/">
+      <span class="row-title">Work</span>
+      <span class="row-note">case studies</span>
     </a>
-    <a class="path" href="/lab/">
-      <h2>Lab</h2>
-      <p>Experiments — rough, unfinished, and alive on purpose.</p>
+    <a class="row" href="/lab/">
+      <span class="row-title">Lab</span>
+      <span class="row-note">experiments</span>
     </a>
-    <a class="path" href="/writing/">
-      <h2>Writing</h2>
-      <p>Notes on building, mostly learned the hard way.</p>
+    <a class="row" href="/writing/">
+      <span class="row-title">Writing</span>
+      <span class="row-note">notes</span>
     </a>
-  </section>
-
-  <section class="contact reveal" style="--delay: 0.45s">
-    <h2>Say hello</h2>
-    <p>
-      The inbox is open — <a href="mailto:brettmboggs@gmail.com">brettmboggs@gmail.com</a>,
-      or find me on <a href="https://github.com/brettmboggs">GitHub</a>.
-    </p>
-  </section>
+    <a class="row" href="mailto:brettmboggs@gmail.com">
+      <span class="row-title">Contact</span>
+      <span class="row-note">brettmboggs@gmail.com</span>
+    </a>
+  </nav>
 </Base>
 
 <style>
+  .full-bleed {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+  }
+
   .hero {
-    padding: 4.5rem 0 4rem;
+    position: relative;
+    min-height: calc(100svh - 5.25rem);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
   }
-  h1 {
-    font-size: clamp(2.6rem, 7vw, 4.75rem);
-    margin: 0.9rem 0 1.5rem;
+  .hero :global(.hero-canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
   }
-  h1 em {
+  .hero-inner {
+    position: relative;
+    width: 100%;
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  /* when the particle scene owns the hero, the HTML name serves screen readers */
+  .hero.threed .hero-inner {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .name {
+    font-size: clamp(4.25rem, 15vw, 11.5rem);
+    line-height: 0.96;
+    letter-spacing: -0.015em;
+    display: flex;
+    flex-direction: column;
+  }
+  .line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+  }
+  .line-inner {
+    display: inline-block;
+  }
+  .name em {
     font-style: italic;
+    font-variation-settings: 'opsz' 144, 'SOFT' 80, 'WONK' 1;
+  }
+  .dot {
+    display: inline-block;
+    color: var(--sunflower);
+    transform-origin: center 70%;
+  }
+
+  .scroll-line {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    height: 4rem;
+    background: var(--ink);
+    transform-origin: top center;
+  }
+
+  /* pre-animation states for the 2D fallback intro */
+  :global(html.js-motion) .hero:not(.threed) .line-inner {
+    transform: translateY(112%);
+  }
+  :global(html.js-motion) .hero:not(.threed) .dot {
+    transform: scale(0);
+  }
+  :global(html.js-motion) .scroll-line {
+    transform: scaleY(0);
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 2.1rem 0;
+    border-top: 2px solid var(--ink);
+    color: var(--ink);
+    background-image: none;
+  }
+  .row-title {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 90, 'SOFT' 50, 'WONK' 0;
+    font-weight: 600;
+    font-size: clamp(2.3rem, 6vw, 3.9rem);
+    line-height: 1.05;
+    transition: translate 0.45s var(--ease-warm);
+  }
+  .row-note {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    transition: color 0.45s var(--ease-warm);
+    text-align: right;
+  }
+  .row:hover .row-title,
+  .row:focus-visible .row-title {
+    translate: 0.85rem 0;
+  }
+  .row:hover .row-note,
+  .row:focus-visible .row-note {
     color: var(--sienna);
   }
-  .lede {
-    font-size: 1.15rem;
-    color: var(--ink-soft);
-    max-width: 36rem;
-  }
 
-  .paths {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    padding: 2.5rem 0;
-    border-top: 2px solid var(--ink);
-  }
-  .path {
-    display: block;
-    border: 2px solid var(--ink);
-    border-radius: 10px;
-    padding: 1.4rem 1.5rem;
-    color: var(--ink);
-    font-weight: 400;
-    background-image: none;
-    transition: background-color 0.45s var(--ease-warm), translate 0.45s var(--ease-warm);
-  }
-  .path:hover,
-  .path:focus-visible {
-    background-color: var(--paper-deep);
-    translate: 0 -3px;
-  }
-  .path h2 {
-    font-size: 1.45rem;
-    margin-bottom: 0.35rem;
-  }
-  .path p {
-    font-size: 0.92rem;
-    color: var(--ink-soft);
-  }
-
-  .contact {
-    padding: 2.5rem 0 1rem;
-    border-top: 2px solid var(--ink);
-  }
-  .contact h2 {
-    font-size: 1.8rem;
-    margin-bottom: 0.6rem;
-  }
-
-  @media (max-width: 700px) {
-    .paths {
-      grid-template-columns: 1fr;
+  @media (max-width: 640px) {
+    .row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.2rem;
+      padding: 1.6rem 0;
     }
-    .hero {
-      padding-top: 3rem;
+    .row-note {
+      text-align: left;
     }
   }
+
   @media (prefers-reduced-motion: reduce) {
-    .path {
+    .row-title,
+    .row-note {
       transition: none;
     }
   }
 </style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function webglSupported(): boolean {
+    try {
+      const c = document.createElement('canvas');
+      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    } catch {
+      return false;
+    }
+  }
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hero = document.getElementById('hero')!;
+
+  if (!reduced) {
+    document.documentElement.classList.add('js-motion');
+
+    if (webglSupported()) {
+      hero.classList.add('threed');
+      import('../scripts/heroScene').then((m) => m.initHeroScene(hero));
+      gsap.to('.scroll-line', { scaleY: 1, duration: 0.9, ease: 'power2.inOut', delay: 1.4 });
+      gsap.to('.scroll-line', {
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: { trigger: hero, start: 'top top', end: '+=40%', scrub: true },
+      });
+    } else {
+      const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
+      intro
+        .to('.line-inner', { y: 0, yPercent: 0, duration: 1.25, stagger: 0.14 }, 0.15)
+        .to('.dot', { scale: 1, duration: 0.55, ease: 'back.out(2.2)' }, 1.0)
+        .to('.scroll-line', { scaleY: 1, duration: 0.9, ease: 'power2.inOut' }, 1.2);
+
+      gsap.to('.name', {
+        yPercent: -22,
+        opacity: 0.3,
+        ease: 'none',
+        scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
+      });
+    }
+
+    gsap.utils.toArray<HTMLElement>('.row').forEach((row) => {
+      gsap.from(row, {
+        y: 44,
+        opacity: 0,
+        duration: 0.85,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: row, start: 'top 90%' },
+      });
+    });
+  }
+</script>

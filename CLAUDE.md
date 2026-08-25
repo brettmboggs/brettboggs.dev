@@ -45,11 +45,33 @@ brief: "a hippie who went to college." Airy, light, professional-but-passion-pro
   One hero element per page, usually a big Fraunces headline.
 - **Implementation:** tokens live in `src/styles/global.css`; fonts are
   self-hosted via Fontsource packages imported in `src/layouts/Base.astro`.
-- **Motion:** few, slow, warm — long ease-outs (cubic-bezier(0.22,1,0.36,1)),
-  ambient "breathing," ink-fill link underlines. Always respect
-  prefers-reduced-motion.
+- **Motion:** hero and scroll animations are a CORE component of this site,
+  not a garnish. 3D (Three.js particles/WebGL) in the homepage hero: the name
+  forms from particles, breathes, and dissolves into an abstract organic form
+  on scroll. Scope: hero + smaller accents on section pages; NOT a whole-site
+  scroll-jack. GSAP + ScrollTrigger drives scroll. Long warm ease-outs
+  (cubic-bezier(0.22,1,0.36,1)). Simplified particle budgets on mobile.
+  Always respect prefers-reduced-motion (static/2D fallback) and no-WebGL
+  (2D GSAP fallback).
 - **Never:** tie-dye busyness, pattern-on-pattern, terminal/dev-portfolio
-  aesthetics, skill bars, default-blue links, motion that delays reading.
+  aesthetics, skill bars, default-blue links, motion that delays reading,
+  card grids (Brett flagged them as AI-slop; use editorial index rows).
+
+## Voice (Brett flagged violations, take these seriously)
+
+- Stoic, chill, minimal. Few words. The site shows, it does not tell.
+- NO cheesy taglines or metaphors ("front porch," "warm hand" style lines are out).
+- NO em-dashes anywhere in site copy or titles. Use periods, commas, or "·".
+- Do not narrate what Brett is currently building on the homepage; projects
+  live in /work on their own terms.
+- The visitor should feel like they wanted to be here, not like they are
+  doing research.
+
+## Never mention AI
+
+Zero references to AI, Claude, or AI-assisted authorship anywhere: site copy,
+commit messages, README, PR descriptions, repo metadata. Do NOT add
+Co-Authored-By trailers to commits in this repo.
 
 ## Deployment status
 

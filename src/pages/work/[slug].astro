@@ -14,7 +14,7 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
 
-<Base title={`${entry.data.title} — Brett Boggs`} description={entry.data.description}>
+<Base title={`${entry.data.title} · Brett Boggs`} description={entry.data.description}>
   <article>
     <h1>{entry.data.title}</h1>
     <Content />

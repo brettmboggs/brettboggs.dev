@@ -10,9 +10,10 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  home?: boolean;
 }
 
-const { title, description = 'Brett Boggs — builder, co-founder of Datum.' } = Astro.props;
+const { title, description = 'Brett Boggs. Work, experiments, writing.', home = false } = Astro.props;
 const year = new Date().getFullYear();
 ---
 
@@ -27,7 +28,7 @@ const year = new Date().getFullYear();
   </head>
   <body>
     <header class="site-header wrap">
-      <a class="wordmark" href="/">Brett Boggs</a>
+      {!home && <a class="wordmark" href="/">Brett Boggs</a>}
       <nav>
         <a href="/work/">Work</a>
         <a href="/lab/">Lab</a>
@@ -38,7 +39,7 @@ const year = new Date().getFullYear();
       <slot />
     </main>
     <footer class="site-footer wrap">
-      <p>&copy; {year} Brett Boggs &middot; built by hand, hosted for free</p>
+      <p>&copy; {year} Brett Boggs</p>
     </footer>
   </body>
 </html>
@@ -63,6 +64,7 @@ const year = new Date().getFullYear();
   nav {
     display: flex;
     gap: 1.5rem;
+    margin-left: auto;
   }
   nav a {
     color: var(--ink);
