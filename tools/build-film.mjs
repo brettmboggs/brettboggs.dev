@@ -4,14 +4,12 @@ import sharp from 'sharp';
 import { readdirSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-// INTERIM: 1080p masters until the 1440p render lands, then switch
-// SRC to frames2560 and xl to 2560x1440.
-const SRC = 'C:/Users/brett/dev/ridge-film/frames';
+const SRC = 'C:/Users/brett/dev/ridge-film/frames2560';
 const OUT = 'public/film';
 const STEP = 2;
 
 const TIERS = [
-  { name: 'xl', width: 1920, height: 1080, quality: 80 },
+  { name: 'xl', width: 2560, height: 1440, quality: 78 },
   { name: 'lg', width: 1600, height: 900, quality: 76 },
   { name: 'sm', width: 960, height: 540, quality: 70 },
 ];
@@ -31,7 +29,10 @@ for (const f of picked) {
   const src = join(SRC, f);
   const n = String(i).padStart(3, '0');
   for (const t of TIERS) {
-    await sharp(src).resize(t.width, t.height).webp({ quality: t.quality }).toFile(join(OUT, t.name, `${n}.webp`));
+    let img = sharp(src).resize(t.width, t.height);
+    // counteract WebP's smoothing of fine grass/grain detail on the hero tier
+    if (t.name === 'xl') img = img.sharpen({ sigma: 0.7, m1: 0.4, m2: 0.2 });
+    await img.webp({ quality: t.quality }).toFile(join(OUT, t.name, `${n}.webp`));
   }
   i++;
 }
