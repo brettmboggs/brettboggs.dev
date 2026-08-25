@@ -1,0 +1,136 @@
+/* Golden Hour — design tokens and base styles.
+   Direction: 70s poster warmth, Swiss restraint. Type-led — no iconography. */
+
+:root {
+  --paper: #F4EDDF;
+  --paper-deep: #ECE2CC;
+  --ink: #33291C;
+  --ink-soft: #6B5D48;
+  --sunflower: #D9971E;
+  --sienna: #B85C38;
+  --olive: #6F7D4E;
+  --denim: #7A93A7;
+  --rust: #8F3F22;
+
+  --display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
+  --body: 'Instrument Sans Variable', 'Segoe UI', -apple-system, sans-serif;
+  --mono: 'Spline Sans Mono', 'Cascadia Code', Consolas, monospace;
+
+  --ease-warm: cubic-bezier(0.22, 1, 0.36, 1);
+  --measure: 65ch;
+}
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* film grain — printed, not rendered */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index: 50;
+}
+
+h1, h2, h3 {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
+  font-weight: 600;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+h2, h3 {
+  font-variation-settings: 'opsz' 60, 'SOFT' 40, 'WONK' 0;
+}
+
+p {
+  max-width: var(--measure);
+}
+
+a {
+  color: var(--rust);
+  font-weight: 600;
+  text-decoration: none;
+  background-image: linear-gradient(to right, var(--sunflower) 0 100%);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 3px;
+  transition: background-size 0.45s var(--ease-warm);
+}
+
+a:hover,
+a:focus-visible {
+  background-size: 100% 3px;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--sienna);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--sunflower);
+  color: var(--ink);
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rust);
+}
+
+.wrap {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* rising reveal — the one entrance motion, staggered via --delay */
+.reveal {
+  animation: rise 0.9s var(--ease-warm) both;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    animation: none;
+  }
+  a {
+    transition: none;
+  }
+}

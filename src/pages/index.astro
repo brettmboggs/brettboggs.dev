@@ -2,8 +2,113 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Brett Boggs">
-  <h1>Brett Boggs</h1>
-  <p>Placeholder front door — who I am, what I'm building, how to reach me.</p>
-  <p>Design pass pending: aesthetic direction to be decided before any real styling.</p>
+<Base title="Brett Boggs" description="Builder, co-founder of Datum. Work, experiments, and writing.">
+  <section class="hero">
+    <p class="eyebrow reveal">Brett Boggs &middot; co-founder, Datum</p>
+    <h1 class="reveal" style="--delay: 0.1s">
+      Software with a clear head<br />and a <em>warm</em> hand.
+    </h1>
+    <p class="lede reveal" style="--delay: 0.2s">
+      I build practical things — right now, that's
+      <a href="https://datumci.com">Datum</a>, an AI-native construction
+      management platform. This site is the front porch: finished work,
+      half-finished experiments, and the occasional essay.
+    </p>
+  </section>
+
+  <section class="paths reveal" style="--delay: 0.35s">
+    <a class="path" href="/work/">
+      <h2>Work</h2>
+      <p>Case studies of things I've shipped, and what they taught me.</p>
+    </a>
+    <a class="path" href="/lab/">
+      <h2>Lab</h2>
+      <p>Experiments — rough, unfinished, and alive on purpose.</p>
+    </a>
+    <a class="path" href="/writing/">
+      <h2>Writing</h2>
+      <p>Notes on building, mostly learned the hard way.</p>
+    </a>
+  </section>
+
+  <section class="contact reveal" style="--delay: 0.45s">
+    <h2>Say hello</h2>
+    <p>
+      The inbox is open — <a href="mailto:brettmboggs@gmail.com">brettmboggs@gmail.com</a>,
+      or find me on <a href="https://github.com/brettmboggs">GitHub</a>.
+    </p>
+  </section>
 </Base>
+
+<style>
+  .hero {
+    padding: 4.5rem 0 4rem;
+  }
+  h1 {
+    font-size: clamp(2.6rem, 7vw, 4.75rem);
+    margin: 0.9rem 0 1.5rem;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--sienna);
+  }
+  .lede {
+    font-size: 1.15rem;
+    color: var(--ink-soft);
+    max-width: 36rem;
+  }
+
+  .paths {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 2.5rem 0;
+    border-top: 2px solid var(--ink);
+  }
+  .path {
+    display: block;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 1.4rem 1.5rem;
+    color: var(--ink);
+    font-weight: 400;
+    background-image: none;
+    transition: background-color 0.45s var(--ease-warm), translate 0.45s var(--ease-warm);
+  }
+  .path:hover,
+  .path:focus-visible {
+    background-color: var(--paper-deep);
+    translate: 0 -3px;
+  }
+  .path h2 {
+    font-size: 1.45rem;
+    margin-bottom: 0.35rem;
+  }
+  .path p {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+  }
+
+  .contact {
+    padding: 2.5rem 0 1rem;
+    border-top: 2px solid var(--ink);
+  }
+  .contact h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.6rem;
+  }
+
+  @media (max-width: 700px) {
+    .paths {
+      grid-template-columns: 1fr;
+    }
+    .hero {
+      padding-top: 3rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .path {
+      transition: none;
+    }
+  }
+</style>
