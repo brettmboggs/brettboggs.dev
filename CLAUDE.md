@@ -67,9 +67,18 @@ The bar he set: mercury.com's hero — a pre-rendered cinematic scene (nature,
 desk, laptop) scrubbed by scroll that zooms into the laptop where product
 animations take over. Verified mechanism: start/end poster JPGs + a scroll-
 scrubbed video (`hero-scrub-md.mp4`, byte-range seeks) + follow-on clips.
-"This is the standard or better." Scene concept for Brett's version TBD with
-him before building. Blender (with MCP addon) is available on this machine
-for producing rendered sequences.
+"This is the standard or better." Approved concept: **"The Ridge"** — slow
+golden-hour prairie flyover discovering a lone timber-frame structure on the
+ridge, camera glides through the beams, settles on the horizon; content rises
+over the final frame.
+
+Brett's production mandate (2026-08-25): PHOTOREALISTIC or as close as
+possible — "not something a child could make," no "bad cartoon." Take more
+time rather than showing mediocre results. Use free assets (Poly Haven CC0
+HDRIs/textures/models) for quality and speed; $0 budget ($5 absolute max if
+unavoidable). UE5 not needed — Blender Cycles renders the film. Blender with
+MCP addon runs on Brett's machine; long renders go through background
+`blender -b` on the saved .blend, not the live UI.
 
 ## Voice (Brett flagged violations, take these seriously)
 

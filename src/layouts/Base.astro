@@ -27,7 +27,7 @@ const year = new Date().getFullYear();
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
   </head>
   <body>
-    <header class="site-header wrap">
+    <header class:list={['site-header', 'wrap', { 'over-film': home }]}>
       <a class="wordmark" href="/" aria-label="Brett Boggs, home">B<span class="wordmark-b">B</span><span class="wordmark-dot">.</span></a>
       <nav>
         <a href="/work/">Work</a>
@@ -52,6 +52,14 @@ const year = new Date().getFullYear();
     gap: 1rem;
     padding-top: 1.75rem;
     padding-bottom: 1.75rem;
+  }
+  .site-header.over-film {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    translate: -50% 0;
+    width: 100%;
+    z-index: 10;
   }
   .wordmark {
     font-family: var(--display);
