@@ -1,174 +1,111 @@
 import * as THREE from 'three';
+import { FontLoader, type Font } from 'three/examples/jsm/loaders/FontLoader.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import regularData from '../assets/fraunces-600.typeface.json';
+import italicData from '../assets/fraunces-600-italic.typeface.json';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const VERT = /* glsl */ `
-attribute vec3 aGlyph;
-attribute vec4 aSeed;
-attribute float aAccent;
-uniform float uTime;
-uniform float uScroll;
-uniform float uIntro;
-uniform float uGlyphScale;
-uniform float uPixelRatio;
-uniform vec2 uMouse;
-uniform vec3 uInk;
-uniform vec3 uSunflower;
-uniform vec3 uSienna;
-uniform vec3 uOlive;
-varying vec3 vColor;
-varying float vAlpha;
+const BRONZE = new THREE.Color('#45331f');
+const GOLD = new THREE.Color('#D9971E');
+const COPPER = new THREE.Color('#B85C38');
+const OLIVE_METAL = new THREE.Color('#6F7D4E');
+const MOLTEN = new THREE.Color('#8F3F22');
+const PALETTE = [GOLD, COPPER, OLIVE_METAL];
 
-vec3 abstractPos(vec4 s, float t) {
-  float a1 = s.x * 6.2831 + t * 0.11;
-  float a2 = s.y * 6.2831 + t * 0.19;
-  float R = 2.5 + 0.4 * sin(t * 0.21 + s.z * 6.2831);
-  float r = 0.95 + 0.4 * sin(t * 0.27 + s.w * 6.2831);
-  vec3 p = vec3(
-    (R + r * cos(a2)) * cos(a1),
-    (R + r * cos(a2)) * sin(a1) * 0.62,
-    r * sin(a2)
-  );
-  float c = cos(t * 0.08);
-  float si = sin(t * 0.08);
-  p = vec3(p.x, p.y * c - p.z * si, p.y * si + p.z * c);
-  return p;
+interface Letter {
+  mesh: THREE.Mesh<THREE.ExtrudeGeometry, THREE.MeshPhysicalMaterial>;
+  base: THREE.Vector3;
+  baseColor: THREE.Color;
+  morphColor: THREE.Color;
+  seed: number;
+  orbitAngle: number;
+  orbitRadius: number;
+  orbitY: number;
+  spinAxis: THREE.Vector3;
+  spinSpeed: number;
+  stagger: number;
 }
 
-void main() {
-  float t = uTime;
+function buildLine(
+  font: Font,
+  data: { glyphs: Record<string, { ha: number }>; kern?: Record<string, number>; resolution: number },
+  text: string,
+  small: boolean,
+): { group: THREE.Group; letters: Letter[]; width: number } {
+  const SIZE = 1;
+  const scale = SIZE / data.resolution;
+  const group = new THREE.Group();
+  const letters: Letter[] = [];
+  let pen = 0;
 
-  vec3 scatter = normalize(aSeed.xyz - 0.5) * (5.0 + aSeed.w * 7.0);
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (i > 0 && data.kern) pen += (data.kern[text[i - 1] + ch] ?? 0) * scale;
 
-  float ik = clamp((uIntro - aSeed.w * 0.3) / 0.7, 0.0, 1.0);
-  ik = ik * ik * (3.0 - 2.0 * ik);
+    const shapes = font.generateShapes(ch, SIZE);
+    const geo = new THREE.ExtrudeGeometry(shapes, {
+      depth: 0.11,
+      bevelEnabled: true,
+      bevelThickness: 0.016,
+      bevelSize: 0.012,
+      bevelSegments: 3,
+      curveSegments: small ? 7 : 11,
+    });
+    geo.computeBoundingBox();
 
-  vec3 namePos = aGlyph * uGlyphScale;
-  namePos.x += sin(t * 0.7 + aSeed.x * 6.2831) * 0.018;
-  namePos.y += cos(t * 0.6 + aSeed.y * 6.2831) * 0.018;
+    const isDot = ch === '.';
+    const baseColor = isDot ? GOLD.clone() : BRONZE.clone();
+    const morphColor = isDot
+      ? GOLD.clone()
+      : PALETTE[Math.floor(Math.random() * PALETTE.length)].clone();
 
-  vec2 d = namePos.xy - uMouse;
-  float dist = length(d);
-  namePos.xy += normalize(d + 0.0001) * smoothstep(1.1, 0.0, dist) * 0.38;
+    const mat = new THREE.MeshPhysicalMaterial({
+      color: baseColor.clone(),
+      metalness: 1.0,
+      roughness: isDot ? 0.22 : 0.32,
+      clearcoat: 0.35,
+      clearcoatRoughness: 0.25,
+      flatShading: true,
+      transparent: true,
+      opacity: 0,
+    });
+    mat.userData.baseRoughness = mat.roughness;
 
-  vec3 A = mix(scatter, namePos, ik);
-  vec3 B = abstractPos(aSeed, t);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.x = pen;
+    group.add(mesh);
 
-  float sk = clamp((uScroll - aSeed.z * 0.35) / 0.6, 0.0, 1.0);
-  sk = sk * sk * (3.0 - 2.0 * sk);
+    letters.push({
+      mesh,
+      base: new THREE.Vector3(pen, 0, 0),
+      baseColor,
+      morphColor,
+      seed: Math.random(),
+      orbitAngle: Math.random() * Math.PI * 2,
+      orbitRadius: 1.2 + Math.random() * 1.0,
+      orbitY: (Math.random() - 0.5) * 1.8,
+      spinAxis: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize(),
+      spinSpeed: 0.08 + Math.random() * 0.18,
+      stagger: Math.random(),
+    });
 
-  vec3 p = mix(A, B, sk);
-
-  vec4 mv = modelViewMatrix * vec4(p, 1.0);
-  gl_Position = projectionMatrix * mv;
-
-  float size = mix(mix(1.8, 2.4, aSeed.x), 3.3, sk);
-  gl_PointSize = size * uPixelRatio * (10.0 / -mv.z);
-
-  vec3 nameCol = mix(uInk, uSunflower, aAccent);
-  vec3 pal = mix(
-    mix(uSunflower, uSienna, step(0.33, aSeed.y)),
-    uOlive,
-    step(0.66, aSeed.y)
-  );
-  vColor = mix(nameCol, pal, sk);
-  vAlpha = mix(0.35, 0.96, ik) * mix(1.0, 0.88, sk);
-}
-`;
-
-const FRAG = /* glsl */ `
-precision mediump float;
-varying vec3 vColor;
-varying float vAlpha;
-
-void main() {
-  vec2 uv = gl_PointCoord - 0.5;
-  float d = length(uv);
-  float a = smoothstep(0.5, 0.22, d) * vAlpha;
-  if (a < 0.02) discard;
-  gl_FragColor = vec4(vColor, a);
-}
-`;
-
-interface Sampled {
-  glyph: Float32Array;
-  accent: Float32Array;
-}
-
-function sampleName(count: number): Sampled {
-  const W = 1200;
-  const H = 660;
-  const canvas = document.createElement('canvas');
-  canvas.width = W;
-  canvas.height = H;
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
-
-  ctx.textBaseline = 'alphabetic';
-  ctx.fillStyle = '#000';
-  ctx.font = '600 250px "Fraunces Variable", Georgia, serif';
-  ctx.fillText('Brett', 30, 265);
-  ctx.font = 'italic 600 250px "Fraunces Variable", Georgia, serif';
-  ctx.fillText('Boggs', 30, 570);
-  const boggsWidth = ctx.measureText('Boggs').width;
-  ctx.fillStyle = '#f00';
-  ctx.fillText('.', 30 + boggsWidth, 570);
-
-  const data = ctx.getImageData(0, 0, W, H).data;
-  const pts: number[] = [];
-  const accents: number[] = [];
-  for (let y = 0; y < H; y += 2) {
-    for (let x = 0; x < W; x += 2) {
-      const i = (y * W + x) * 4;
-      if (data[i + 3] > 128) {
-        pts.push(x, y);
-        accents.push(data[i] > 128 ? 1 : 0);
-      }
-    }
+    pen += data.glyphs[ch].ha * scale;
   }
 
-  const n = pts.length / 2;
-  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-  for (let i = 0; i < n; i++) {
-    const x = pts[i * 2], y = pts[i * 2 + 1];
-    if (x < minX) minX = x;
-    if (x > maxX) maxX = x;
-    if (y < minY) minY = y;
-    if (y > maxY) maxY = y;
-  }
-  const cx = (minX + maxX) / 2;
-  const cy = (minY + maxY) / 2;
-  const span = maxX - minX; // normalize so the block is 1 unit wide
-
-  const glyph = new Float32Array(count * 3);
-  const accent = new Float32Array(count);
-  for (let i = 0; i < count; i++) {
-    const j = Math.floor(Math.random() * n);
-    glyph[i * 3] = (pts[j * 2] - cx + (Math.random() - 0.5) * 2) / span;
-    glyph[i * 3 + 1] = -(pts[j * 2 + 1] - cy + (Math.random() - 0.5) * 2) / span;
-    glyph[i * 3 + 2] = (Math.random() - 0.5) * 0.012;
-    accent[i] = accents[j];
-  }
-  return { glyph, accent };
+  return { group, letters, width: pen };
 }
 
 export async function initHeroScene(hero: HTMLElement): Promise<void> {
   const coarse = window.matchMedia('(pointer: coarse)').matches;
   const small = window.innerWidth < 768;
-  const COUNT = small ? 9000 : 22000;
 
-  try {
-    await Promise.all([
-      document.fonts.load('600 250px "Fraunces Variable"'),
-      document.fonts.load('italic 600 250px "Fraunces Variable"'),
-    ]);
-  } catch {
-    /* sample with fallback serif if the face is unavailable */
-  }
-
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, small ? 1.5 : 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
   renderer.domElement.className = 'hero-canvas';
   hero.appendChild(renderer.domElement);
 
@@ -176,38 +113,93 @@ export async function initHeroScene(hero: HTMLElement): Promise<void> {
   const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 60);
   camera.position.z = 13;
 
-  const { glyph, accent } = sampleName(COUNT);
-  const seeds = new Float32Array(COUNT * 4);
-  for (let i = 0; i < seeds.length; i++) seeds[i] = Math.random();
+  // studio environment: this is what makes metal read as metal
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environmentIntensity = 0.85;
 
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(COUNT * 3), 3));
-  geo.setAttribute('aGlyph', new THREE.BufferAttribute(glyph, 3));
-  geo.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 4));
-  geo.setAttribute('aAccent', new THREE.BufferAttribute(accent, 1));
-  geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 30);
+  scene.add(new THREE.HemisphereLight(0xf7f0e2, 0x8a6f4d, 0.45));
+  const sun = new THREE.DirectionalLight(0xffe3b0, 1.2);
+  sun.position.set(-4, 6, 8);
+  scene.add(sun);
+  const rim = new THREE.DirectionalLight(0xb85c38, 0.7);
+  rim.position.set(5, -3, -6);
+  scene.add(rim);
 
-  const uniforms = {
-    uTime: { value: 0 },
-    uScroll: { value: 0 },
-    uIntro: { value: 0 },
-    uGlyphScale: { value: 9 },
-    uPixelRatio: { value: renderer.getPixelRatio() },
-    uMouse: { value: new THREE.Vector2(1e5, 1e5) },
-    uInk: { value: new THREE.Color('#33291C') },
-    uSunflower: { value: new THREE.Color('#D9971E') },
-    uSienna: { value: new THREE.Color('#B85C38') },
-    uOlive: { value: new THREE.Color('#6F7D4E') },
-  };
-
-  const mat = new THREE.ShaderMaterial({
-    vertexShader: VERT,
-    fragmentShader: FRAG,
-    uniforms,
+  // soft contact shadow beneath the name
+  const shadowCanvas = document.createElement('canvas');
+  shadowCanvas.width = shadowCanvas.height = 256;
+  const sctx = shadowCanvas.getContext('2d')!;
+  const grad = sctx.createRadialGradient(128, 128, 10, 128, 128, 128);
+  grad.addColorStop(0, 'rgba(51, 41, 28, 0.30)');
+  grad.addColorStop(1, 'rgba(51, 41, 28, 0)');
+  sctx.fillStyle = grad;
+  sctx.fillRect(0, 0, 256, 256);
+  const shadowMat = new THREE.MeshBasicMaterial({
+    map: new THREE.CanvasTexture(shadowCanvas),
     transparent: true,
     depthWrite: false,
+    opacity: 0,
   });
-  scene.add(new THREE.Points(geo, mat));
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(9.5, 2.2), shadowMat);
+  shadow.position.set(0, -2.35, -0.6);
+  scene.add(shadow);
+
+  const loader = new FontLoader();
+  const regular = loader.parse(regularData as never);
+  const italic = loader.parse(italicData as never);
+
+  const root = new THREE.Group();
+  scene.add(root);
+
+  const line1 = buildLine(regular, regularData as never, 'Brett', small);
+  const line2 = buildLine(italic, italicData as never, 'Boggs.', small);
+  const LEADING = 1.05;
+  line1.group.position.y = LEADING / 2 + 0.12;
+  line2.group.position.y = -LEADING / 2 - 0.35;
+  for (const l of line2.letters) l.base.y = line2.group.position.y;
+  for (const l of line1.letters) l.base.y = line1.group.position.y;
+  // reparent letters into root so every letter shares one coordinate space
+  for (const line of [line1, line2]) {
+    for (const l of line.letters) {
+      l.mesh.position.y = l.base.y;
+      root.add(l.mesh);
+    }
+  }
+  const letters = [...line1.letters, ...line2.letters];
+  const blockWidth = Math.max(line1.width, line2.width);
+  for (const l of letters) {
+    l.base.x -= blockWidth / 2;
+    l.mesh.position.x = l.base.x;
+  }
+
+  // shared shader uniforms for the melt displacement
+  const uMorph = { value: 0 };
+  const uTime = { value: 0 };
+  for (const l of letters) {
+    const uSeed = { value: l.seed * 6.2831 };
+    l.mesh.material.onBeforeCompile = (shader) => {
+      shader.uniforms.uMorph = uMorph;
+      shader.uniforms.uTime = uTime;
+      shader.uniforms.uSeed = uSeed;
+      shader.vertexShader = `
+uniform float uMorph;
+uniform float uTime;
+uniform float uSeed;
+${shader.vertexShader}`.replace(
+        '#include <begin_vertex>',
+        `
+vec3 mPos = position;
+float mAmp = uMorph;
+float n1 = sin(mPos.x * 1.4 + uTime * 0.7 + uSeed) * sin(mPos.y * 1.7 + uTime * 0.55 + uSeed * 1.7);
+float n2 = sin(mPos.y * 1.1 + uTime * 0.4 + uSeed * 2.3) * sin(mPos.z * 2.2 + uTime * 0.6);
+mPos += normal * (n1 + n2 * 0.6) * mAmp * 0.3;
+mPos.x += sin(mPos.y * 1.8 + uTime * 0.35 + uSeed) * mAmp * 0.25;
+mPos.y += sin(mPos.x * 1.4 + uTime * 0.3 + uSeed * 3.1) * mAmp * 0.22;
+vec3 transformed = mPos;`,
+      );
+    };
+  }
 
   let worldW = 1;
   let worldH = 1;
@@ -219,28 +211,66 @@ export async function initHeroScene(hero: HTMLElement): Promise<void> {
     camera.updateProjectionMatrix();
     worldH = 2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
     worldW = worldH * camera.aspect;
-    uniforms.uGlyphScale.value = worldW * (small ? 0.92 : 0.8);
+    const fit = Math.min((worldW * (small ? 0.9 : 0.78)) / blockWidth, (worldH * 0.72) / (LEADING + 1.6));
+    root.scale.setScalar(fit);
   }
   resize();
   window.addEventListener('resize', resize);
 
+  // mouse tilt (desktop only)
+  const tilt = new THREE.Vector2();
   if (!coarse) {
-    const target = new THREE.Vector2(1e5, 1e5);
     hero.addEventListener('mousemove', (e) => {
       const r = hero.getBoundingClientRect();
-      target.set(
-        ((e.clientX - r.left) / r.width - 0.5) * worldW,
-        -((e.clientY - r.top) / r.height - 0.5) * worldH,
-      );
+      tilt.set(((e.clientX - r.left) / r.width - 0.5) * 2, ((e.clientY - r.top) / r.height - 0.5) * 2);
     });
-    hero.addEventListener('mouseleave', () => target.set(1e5, 1e5));
-    gsap.ticker.add(() => {
-      uniforms.uMouse.value.lerp(target, 0.08);
-    });
+    hero.addEventListener('mouseleave', () => tilt.set(0, 0));
   }
 
-  gsap.to(uniforms.uIntro, { value: 1, duration: 2.4, ease: 'power2.out', delay: 0.25 });
+  // entrance: letters rise and settle
+  let introDone = false;
+  letters.forEach((l, i) => {
+    const delay = 0.25 + i * 0.055;
+    gsap.fromTo(
+      l.mesh.position,
+      { y: l.base.y - 1.1 },
+      { y: l.base.y, duration: 1.15, ease: 'power4.out', delay },
+    );
+    gsap.fromTo(
+      l.mesh.rotation,
+      { x: -0.55 },
+      { x: 0, duration: 1.15, ease: 'power4.out', delay },
+    );
+    gsap.to(l.mesh.material, {
+      opacity: 1,
+      duration: 0.5,
+      ease: 'power2.out',
+      delay,
+      onComplete: () => {
+        l.mesh.material.transparent = false;
+      },
+    });
+  });
+  const shadowIntro = { value: 0 };
+  gsap.to(shadowIntro, { value: 1, duration: 1.4, ease: 'power2.out', delay: 1.0 });
+  gsap.delayedCall(0.25 + letters.length * 0.055 + 1.2, () => {
+    introDone = true;
+  });
+  function finishIntroEarly() {
+    if (introDone) return;
+    for (const l of letters) {
+      gsap.killTweensOf(l.mesh.position);
+      gsap.killTweensOf(l.mesh.rotation);
+      gsap.killTweensOf(l.mesh.material);
+      l.mesh.material.opacity = 1;
+      l.mesh.material.transparent = false;
+    }
+    shadowIntro.value = 1;
+    introDone = true;
+  }
 
+  // scroll: melt and drift into an abstract orbiting mass
+  const scrollState = { p: 0 };
   ScrollTrigger.create({
     trigger: hero,
     start: 'top top',
@@ -248,7 +278,7 @@ export async function initHeroScene(hero: HTMLElement): Promise<void> {
     pin: true,
     scrub: 0.6,
     onUpdate: (self) => {
-      uniforms.uScroll.value = self.progress;
+      scrollState.p = self.progress;
     },
   });
 
@@ -257,10 +287,60 @@ export async function initHeroScene(hero: HTMLElement): Promise<void> {
     visible = entry.isIntersecting;
   }).observe(hero);
 
+  const ease = (x: number) => x * x * (3 - 2 * x);
   const clock = new THREE.Clock();
+  const tmpColor = new THREE.Color();
+  const tmpQuat = new THREE.Quaternion();
+
   renderer.setAnimationLoop(() => {
     if (!visible || document.hidden) return;
-    uniforms.uTime.value = clock.getElapsedTime();
+    const t = clock.getElapsedTime();
+    uTime.value = t;
+
+    const p = scrollState.p;
+    uMorph.value = ease(Math.min(p * 1.35, 1));
+    if (p > 0.02) finishIntroEarly();
+
+    for (const l of letters) {
+      const k = ease(THREE.MathUtils.clamp((p - l.stagger * 0.25) / 0.7, 0, 1));
+
+      tmpColor.copy(l.baseColor).lerp(l.morphColor, k);
+      l.mesh.material.color.copy(tmpColor);
+      l.mesh.material.emissive.copy(MOLTEN).multiplyScalar(k * 0.28);
+      l.mesh.material.roughness = THREE.MathUtils.lerp(l.mesh.material.userData.baseRoughness ?? 0.32, 0.45, k);
+
+      if (!introDone) continue; // the entrance tweens own the transforms
+
+      if (k === 0) {
+        // idle breathing while the name is intact
+        l.mesh.position.set(l.base.x, l.base.y + Math.sin(t * 0.6 + l.seed * 6.2831) * 0.035, l.base.z);
+        l.mesh.rotation.set(0, Math.sin(t * 0.3 + l.seed * 3) * 0.03, 0);
+      } else {
+        const ang = l.orbitAngle + t * 0.12;
+        const breathe = 1 + Math.sin(t * 0.4 + l.seed * 6.2831) * 0.12;
+        const ax = Math.cos(ang) * l.orbitRadius * breathe;
+        const ay = l.orbitY * breathe + Math.sin(t * 0.5 + l.seed * 9) * 0.15;
+        const az = Math.sin(ang) * l.orbitRadius * breathe * 0.6;
+        l.mesh.position.set(
+          THREE.MathUtils.lerp(l.base.x, ax, k),
+          THREE.MathUtils.lerp(l.base.y, ay, k),
+          THREE.MathUtils.lerp(l.base.z, az, k),
+        );
+        tmpQuat.setFromAxisAngle(l.spinAxis, t * l.spinSpeed * k + k * l.seed * 4);
+        l.mesh.quaternion.copy(tmpQuat);
+      }
+    }
+
+    // mouse tilt + slow ambient sway; key light follows so reflections travel
+    const targetY = tilt.x * 0.14 + Math.sin(t * 0.2) * 0.02;
+    const targetX = -tilt.y * 0.09 + Math.sin(t * 0.17) * 0.015;
+    root.rotation.y += (targetY - root.rotation.y) * 0.06;
+    root.rotation.x += (targetX - root.rotation.x) * 0.06;
+    sun.position.x += (-4 + tilt.x * 5 - sun.position.x) * 0.05;
+    sun.position.y += (6 - tilt.y * 3 - sun.position.y) * 0.05;
+
+    shadowMat.opacity = shadowIntro.value * (1 - ease(Math.min(p * 1.5, 1)));
+
     renderer.render(scene, camera);
   });
 }
