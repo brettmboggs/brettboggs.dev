@@ -5,18 +5,35 @@ import Base from '../../layouts/Base.astro';
 const posts = (await getCollection('writing', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 ---
 
-<Base title="Writing · Brett Boggs">
-  <h1>Writing</h1>
-  <ul>
-    {
-      posts.map((post) => (
-        <li>
-          <a href={`/writing/${post.id}/`}>{post.data.title}</a>
-          <p>{post.data.description}</p>
-        </li>
-      ))
-    }
-  </ul>
+<Base title="Writing · Brett Boggs" description="Occasional notes, written when there's something worth saying.">
+  <header class="page-head">
+    <p class="eyebrow">03</p>
+    <h1>Writing</h1>
+    <p class="lede">Occasional notes, written when there&rsquo;s something worth saying.</p>
+  </header>
+  {
+    posts.length > 0 ? (
+      <ul class="entry-list">
+        {posts.map((post) => (
+          <li>
+            <a class="entry-row" href={`/writing/${post.id}/`}>
+              <span>
+                <span class="entry-title">{post.data.title}</span>
+                <span class="entry-desc">{post.data.description}</span>
+              </span>
+              <time class="entry-meta" datetime={post.data.pubDate.toISOString()}>
+                {fmt(post.data.pubDate)}
+              </time>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty-note">Nothing published yet &mdash; the first note lands soon.</p>
+    )
+  }
 </Base>

@@ -5,18 +5,35 @@ import Base from '../../layouts/Base.astro';
 const entries = (await getCollection('work', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
+
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 ---
 
-<Base title="Work · Brett Boggs">
-  <h1>Work</h1>
-  <ul>
-    {
-      entries.map((entry) => (
-        <li>
-          <a href={`/work/${entry.id}/`}>{entry.data.title}</a>
-          <p>{entry.data.description}</p>
-        </li>
-      ))
-    }
-  </ul>
+<Base title="Work · Brett Boggs" description="Case studies and shipped things.">
+  <header class="page-head">
+    <p class="eyebrow">01</p>
+    <h1>Work</h1>
+    <p class="lede">Case studies &mdash; the problem, the build, and what came of it.</p>
+  </header>
+  {
+    entries.length > 0 ? (
+      <ul class="entry-list">
+        {entries.map((entry) => (
+          <li>
+            <a class="entry-row" href={`/work/${entry.id}/`}>
+              <span>
+                <span class="entry-title">{entry.data.title}</span>
+                <span class="entry-desc">{entry.data.description}</span>
+              </span>
+              <time class="entry-meta" datetime={entry.data.date.toISOString()}>
+                {fmt(entry.data.date)}
+              </time>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty-note">First case study is being written &mdash; Datum is up first.</p>
+    )
+  }
 </Base>

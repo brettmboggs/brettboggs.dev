@@ -1,0 +1,333 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Bespoke project page for Datum.
+// Every <figure data-media-slot> is a swap point: replace the <img>/<video>
+// with a rendered 3D/4D asset later without touching the layout around it.
+---
+
+<Base title="Datum · Brett Boggs" description="One system for running a construction company.">
+  <section class="band datum-hero full-bleed">
+    <div class="band-inner wrap">
+      <img class="datum-mark reveal" src="/datum/datum-mark.svg" alt="" width="76" height="76" style="--delay: 0s" />
+      <h1 class="reveal" style="--delay: 0.1s">Datum</h1>
+      <p class="hero-tag reveal" style="--delay: 0.2s">One system for running a construction&nbsp;company.</p>
+      <p class="hero-meta reveal" style="--delay: 0.3s">Co-founder &middot; product, design &amp; engineering</p>
+    </div>
+  </section>
+
+  <section class="statement rise">
+    <h2>The office and the field, finally in one&nbsp;place.</h2>
+    <p>
+      Construction runs on handoffs, and handoffs are where things get lost. Datum keeps the
+      projects, the people, the equipment, the safety paperwork, and the money in one place, so
+      nothing has to survive being passed between five different tools.
+    </p>
+  </section>
+
+  <figure class="shot full-bleed rise" data-media-slot="pm-hero">
+    <img src="/datum/pm-command-center.png" alt="Datum's project management command center" loading="lazy" />
+    <figcaption>The PM command center &mdash; every project on one screen</figcaption>
+  </figure>
+
+  <section class="duo rise">
+    <div class="duo-copy">
+      <h3>Built for boots on the&nbsp;ground.</h3>
+      <p>
+        The field isn't an afterthought here. Daily reports, hazards, timecards, concrete pours.
+        It all gets captured on site, while it's happening.
+      </p>
+    </div>
+    <figure class="shot" data-media-slot="field">
+      <img src="/datum/field-job-day.png" alt="Datum's field view of a job day" loading="lazy" />
+      <figcaption>The field's job day</figcaption>
+    </figure>
+  </section>
+
+  <section class="duo duo-flip rise">
+    <div class="duo-copy">
+      <h3>Your day, already&nbsp;sorted.</h3>
+      <p>
+        Everyone opens Datum to their own work: what needs action, what's coming up, and
+        what's running late.
+      </p>
+    </div>
+    <figure class="shot" data-media-slot="your-work">
+      <img src="/datum/your-work-home.png" alt="Datum's personal work home screen" loading="lazy" />
+      <figcaption>Your work, in one place</figcaption>
+    </figure>
+  </section>
+
+  <section class="dept rise">
+    <h2>Every department. One&nbsp;Datum.</h2>
+    <div class="dept-grid">
+      <figure class="dept-tile" data-media-slot="estimating">
+        <img src="/datum/estimating-bid-analysis.png" alt="Estimating and bid analysis in Datum" loading="lazy" />
+        <figcaption>Estimating</figcaption>
+      </figure>
+      <figure class="dept-tile" data-media-slot="finance">
+        <img src="/datum/finance-overview.png" alt="Finance overview in Datum" loading="lazy" />
+        <figcaption>Finance</figcaption>
+      </figure>
+      <figure class="dept-tile" data-media-slot="safety">
+        <img src="/datum/safety-dashboard.png" alt="Safety dashboard in Datum" loading="lazy" />
+        <figcaption>Safety</figcaption>
+      </figure>
+      <figure class="dept-tile" data-media-slot="people">
+        <img src="/datum/people-dashboard.png" alt="People dashboard in Datum" loading="lazy" />
+        <figcaption>People</figcaption>
+      </figure>
+      <figure class="dept-tile" data-media-slot="equipment">
+        <img src="/datum/equipment-command-center.png" alt="Equipment command center in Datum" loading="lazy" />
+        <figcaption>Equipment</figcaption>
+      </figure>
+      <figure class="dept-tile" data-media-slot="strategy">
+        <img src="/datum/strategy-hub.png" alt="Strategy hub in Datum" loading="lazy" />
+        <figcaption>Strategy</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="band film-band full-bleed rise">
+    <div class="band-inner wrap">
+      <h2>Refuse the&nbsp;ordinary.</h2>
+      <p class="film-note">The brand film &mdash; 47 seconds.</p>
+      <figure class="film" data-media-slot="brand-film">
+        <video src="/datum/refuse-the-ordinary.mp4" controls preload="metadata" playsinline></video>
+      </figure>
+    </div>
+  </section>
+
+  <section class="statement rise">
+    <h2>Building&nbsp;it.</h2>
+    <p>
+      I co-founded Datum and build the product end to end: design, frontend, backend, and the AI
+      that runs underneath it. A proper write-up on how it's built is coming.
+    </p>
+  </section>
+
+  <div class="page-end rise">
+    <a class="cta" href="https://datumci.com" rel="noopener">See it live &mdash; datumci.com</a>
+    <a class="back-link" href="/work/">&larr; All work</a>
+  </div>
+</Base>
+
+<style>
+  .full-bleed {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+  }
+
+  /* Datum's palette: ink #1E2022, light #F3F1EC — the page's own weather */
+  .band {
+    background: #1e2022;
+    color: #f3f1ec;
+  }
+  .band-inner {
+    padding-top: 5.5rem;
+    padding-bottom: 5.5rem;
+  }
+  .datum-hero {
+    margin-top: 1rem;
+  }
+  .datum-mark {
+    display: block;
+    background: #f3f1ec;
+    border-radius: 18px;
+    margin-bottom: 1.8rem;
+  }
+  .datum-hero h1 {
+    color: #f3f1ec;
+    font-size: clamp(2.8rem, 7vw, 4.8rem);
+  }
+  .hero-tag {
+    margin-top: 1rem;
+    font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+    color: #cfccc2;
+    max-width: 30ch;
+    text-wrap: balance;
+  }
+  .hero-meta {
+    margin-top: 2.4rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8f8c83;
+  }
+
+  .statement {
+    margin-top: 5.5rem;
+  }
+  .statement h2 {
+    font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+    max-width: 22ch;
+  }
+  .statement p {
+    margin-top: 1.2rem;
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+  }
+
+  .shot img,
+  .shot video {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  figcaption {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 0.8rem;
+  }
+  .shot.full-bleed {
+    margin-top: 3.5rem;
+  }
+  .shot.full-bleed figcaption {
+    max-width: 62rem;
+    margin: 0.8rem auto 0;
+    padding: 0 1.5rem;
+  }
+
+  .duo {
+    display: grid;
+    grid-template-columns: minmax(16rem, 2fr) 3fr;
+    gap: 2.5rem;
+    align-items: center;
+    margin-top: 5.5rem;
+  }
+  .duo-flip .duo-copy {
+    order: 2;
+  }
+  .duo h3 {
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+  }
+  .duo-copy p {
+    margin-top: 1rem;
+    color: var(--ink-soft);
+  }
+
+  .dept {
+    margin-top: 5.5rem;
+  }
+  .dept h2 {
+    font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+  }
+  .dept-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem 1.5rem;
+    margin-top: 2.2rem;
+  }
+  .dept-tile {
+    margin: 0;
+  }
+  .dept-tile img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--paper-deep);
+  }
+
+  .film-band {
+    margin-top: 5.5rem;
+  }
+  .film-band h2 {
+    color: #f3f1ec;
+    font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+  }
+  .film-note {
+    margin-top: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8f8c83;
+  }
+  .film {
+    margin-top: 2rem;
+  }
+  .film video {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .page-end {
+    margin-top: 4.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2rem;
+  }
+  .cta {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 40, 'SOFT' 50, 'WONK' 0;
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+  .back-link {
+    margin-top: 0;
+  }
+
+  /* rise-on-enter — sections fade up as they arrive, once */
+  .rise {
+    opacity: 0;
+    translate: 0 28px;
+    transition:
+      opacity 0.85s var(--ease-warm),
+      translate 0.85s var(--ease-warm);
+  }
+  .rise.in {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  @media (max-width: 720px) {
+    .duo {
+      grid-template-columns: 1fr;
+      gap: 1.4rem;
+    }
+    .duo-flip .duo-copy {
+      order: 0;
+    }
+    .dept-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .band-inner {
+      padding-top: 3.5rem;
+      padding-bottom: 3.5rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rise {
+      opacity: 1;
+      translate: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const risers = document.querySelectorAll('.rise');
+  if (reduced || !('IntersectionObserver' in window)) {
+    risers.forEach((el) => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            io.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -48px' },
+    );
+    risers.forEach((el) => io.observe(el));
+  }
+</script>

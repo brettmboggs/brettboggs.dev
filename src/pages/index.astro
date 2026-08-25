@@ -1,5 +1,15 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+
+const work = (await getCollection('work', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const writing = (await getCollection('writing', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const workNote = work[0] ? `latest — ${work[0].data.title}` : 'case studies';
+const writingNote = writing[0] ? `latest — ${writing[0].data.title}` : 'notes';
 ---
 
 <Base title="Brett Boggs" description="Brett Boggs. Work, experiments, writing." home>
@@ -13,24 +23,35 @@ import Base from '../layouts/Base.astro';
     </div>
 
     <div class="portal" id="portal">
-      <nav class="index" aria-label="Site sections">
-        <a class="row" href="/work/">
-          <span class="row-title">Work</span>
-          <span class="row-note">case studies</span>
-        </a>
-        <a class="row" href="/lab/">
-          <span class="row-title">Lab</span>
-          <span class="row-note">experiments</span>
-        </a>
-        <a class="row" href="/writing/">
-          <span class="row-title">Writing</span>
-          <span class="row-note">notes</span>
-        </a>
-        <a class="row" href="mailto:brettmboggs@gmail.com">
-          <span class="row-title">Contact</span>
-          <span class="row-note">brettmboggs@gmail.com</span>
-        </a>
-      </nav>
+      <div class="index-wrap">
+        <header class="arrive index-head">
+          <p class="eyebrow">Contents</p>
+          <p class="index-lede">Everything here is mine, end to end. Start&nbsp;anywhere.</p>
+        </header>
+        <nav class="index" aria-label="Site sections">
+          <a class="row arrive" href="/work/">
+            <span class="row-num">01</span>
+            <span class="row-title">Work</span>
+            <span class="row-note">{workNote}</span>
+          </a>
+          <a class="row arrive" href="/lab/">
+            <span class="row-num">02</span>
+            <span class="row-title">Lab</span>
+            <span class="row-note">experiments</span>
+          </a>
+          <a class="row arrive" href="/writing/">
+            <span class="row-num">03</span>
+            <span class="row-title">Writing</span>
+            <span class="row-note">{writingNote}</span>
+          </a>
+          <a class="row arrive" href="mailto:brettmboggs@gmail.com">
+            <span class="row-num">04</span>
+            <span class="row-title">Contact</span>
+            <span class="row-note">brettmboggs@gmail.com</span>
+          </a>
+        </nav>
+        <p class="arrive index-status">Now &mdash; building Datum</p>
+      </div>
     </div>
 
     <span class="scroll-line" aria-hidden="true"></span>
@@ -86,11 +107,30 @@ import Base from '../layouts/Base.astro';
     display: grid;
     align-content: center;
   }
-  .portal .index {
+  .index-wrap {
     width: 100%;
     max-width: 62rem;
     margin: 0 auto;
     padding: 0 1.5rem;
+  }
+  .index-head {
+    margin-bottom: 2.2rem;
+  }
+  .index-lede {
+    margin-top: 0.7rem;
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 40, 'SOFT' 60, 'WONK' 0;
+    font-weight: 500;
+    font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+    color: var(--ink);
+  }
+  .index-status {
+    margin-top: 1.6rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
   }
   .scroll-line {
     position: absolute;
@@ -103,14 +143,20 @@ import Base from '../layouts/Base.astro';
   }
 
   .row {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 3.2rem 1fr auto;
     align-items: baseline;
     gap: 1rem;
-    padding: 1.7rem 0;
+    padding: 1.55rem 0;
     border-top: 2px solid var(--ink);
     color: var(--ink);
     background-image: none;
+  }
+  .row-num {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
   }
   .row-title {
     font-family: var(--display);
@@ -140,12 +186,12 @@ import Base from '../layouts/Base.astro';
 
   @media (max-width: 640px) {
     .row {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.2rem;
+      grid-template-columns: 2.2rem 1fr;
+      gap: 0.2rem 0.8rem;
       padding: 1.3rem 0;
     }
     .row-note {
+      grid-column: 2;
       text-align: left;
     }
   }
@@ -166,12 +212,12 @@ import Base from '../layouts/Base.astro';
   const poster = film.querySelector<HTMLImageElement>('.film-poster')!;
   const fade = document.getElementById('film-fade')!;
   const portal = document.getElementById('portal')!;
-  const rows = Array.from(portal.querySelectorAll<HTMLElement>('.row'));
+  const rows = Array.from(portal.querySelectorAll<HTMLElement>('.arrive'));
 
   // the reveal window: camera passes through the structure ~84-97% of the scrub
   const REVEAL_START = 0.84;
   const REVEAL_SPAN = 0.05;
-  const ROW_STAGGER = 0.025;
+  const ROW_STAGGER = 0.018;
 
   const scrollLine = film.querySelector<HTMLElement>('.scroll-line')!;
   const heroCopy = document.getElementById('hero-copy')!;

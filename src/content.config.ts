@@ -9,6 +9,9 @@ const work = defineCollection({
     date: z.coerce.date(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    // bespoke entries have a hand-built page at src/pages/work/<id>.astro;
+    // they appear in the index but are excluded from the generic [slug] template
+    bespoke: z.boolean().default(false),
   }),
 });
 
