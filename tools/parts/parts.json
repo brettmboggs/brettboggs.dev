@@ -1,0 +1,20 @@
+[
+  {
+    "out": "C:/Users/brett/dev/brettboggs.dev/public/parts/ridge-airtag.glb",
+    "inputs": ["C:/Users/brett/Downloads/Bambu/Ridge_Airtag_Mod_V5p_Flat_READY_ExtraLoose.stl"]
+  },
+  {
+    "out": "C:/Users/brett/dev/brettboggs.dev/public/parts/sm7b-spacer.glb",
+    "inputs": [
+      "C:/Users/brett/Downloads/Bambu/SM7B_spacer_with_true_3_8_16_internal_and_1_4_pilot_OD22_totalH12p5.stl"
+    ]
+  },
+  {
+    "out": "C:/Users/brett/dev/brettboggs.dev/public/parts/threaded-tube.glb",
+    "inputs": [
+      "C:/Users/brett/Downloads/Bambu/tube_body_threaded.stl",
+      "C:/Users/brett/Downloads/Bambu/cap_with_threads_and_ring.stl"
+    ],
+    "gap_mm": 12
+  }
+]

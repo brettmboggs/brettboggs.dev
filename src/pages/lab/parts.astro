@@ -1,0 +1,94 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Printed parts in an orbit viewer. Models are Brett's STLs converted to GLB
+// by tools/parts/convert.py; drop a new GLB in public/parts and add it here.
+
+const parts = [
+  {
+    file: '/parts/ridge-airtag.glb',
+    title: 'AirTag pocket for a Ridge wallet',
+    meta: 'PLA · ten files of fit before this one',
+  },
+  {
+    file: '/parts/sm7b-spacer.glb',
+    title: 'Shure SM7B mount spacer',
+    meta: '3/8-16 internal thread · 1/4 pilot · OD 22',
+  },
+  {
+    file: '/parts/threaded-tube.glb',
+    title: 'Threaded tube and cap',
+    meta: '60 mm · printed threads',
+  },
+];
+---
+
+<Base title="Parts · Brett Boggs" description="Printed things, designed to fit something.">
+  <header class="page-head">
+    <p class="eyebrow">Lab</p>
+    <h1>Parts</h1>
+    <p class="lede">Printed things, designed to fit something. Drag to turn them.</p>
+  </header>
+
+  {
+    parts.map((part) => (
+      <figure class="part">
+        <canvas class="part-canvas" data-src={part.file} aria-label={`3D model: ${part.title}`} />
+        <figcaption>
+          <span class="part-title">{part.title}</span>
+          <span class="part-meta">{part.meta}</span>
+        </figcaption>
+      </figure>
+    ))
+  }
+
+  <a class="back-link" href="/lab/">&larr; Lab</a>
+</Base>
+
+<style>
+  .part {
+    margin: 3rem 0 0;
+    max-width: 44rem;
+  }
+  .part-canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    touch-action: pan-y;
+    cursor: grab;
+  }
+  .part-canvas:active {
+    cursor: grabbing;
+  }
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.4rem 1.5rem;
+    margin-top: 0.7rem;
+  }
+  .part-title {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 40, 'SOFT' 50, 'WONK' 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  .part-meta {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+</style>
+
+<script>
+  import { mountPartViewer } from '../../scripts/partsViewer';
+
+  for (const canvas of document.querySelectorAll<HTMLCanvasElement>('.part-canvas')) {
+    mountPartViewer(canvas, canvas.dataset.src!);
+  }
+</script>
