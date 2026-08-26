@@ -1,0 +1,97 @@
+---
+// The living field. Full-bleed band: paper sky on top, simulated grass below.
+// The slot renders over the sky, so a page head sits on it seamlessly.
+// Falls back to a deterministic still for reduced motion or no WebGPU.
+
+interface Props {
+  tall?: boolean;
+}
+
+const { tall = false } = Astro.props;
+---
+
+<section class:list={['field-scene', { tall }]}>
+  <canvas class="field-canvas" aria-hidden="true"></canvas>
+  <div class="field-over wrap">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .field-scene {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    height: clamp(420px, 58vh, 620px);
+    background: var(--paper);
+    overflow: clip;
+  }
+  .field-scene.tall {
+    height: clamp(520px, 78vh, 860px);
+  }
+  .field-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0;
+    transition: opacity 1.4s var(--ease-warm);
+  }
+  .field-scene.on .field-canvas {
+    opacity: 1;
+  }
+  /* the still injected on fallback replaces the canvas in place */
+  .field-scene :global(svg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /* both edges feather into the page's paper, the way the ridge-ghost does,
+     so the field has no border, it just begins and ends */
+  .field-canvas,
+  .field-scene :global(svg) {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 12%,
+      #000 68%,
+      rgba(0, 0, 0, 0.5) 86%,
+      transparent 98%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 12%,
+      #000 68%,
+      rgba(0, 0, 0, 0.5) 86%,
+      transparent 98%
+    );
+  }
+  .field-over {
+    position: relative;
+    z-index: 1;
+  }
+</style>
+
+<script>
+  import { mountField, stillField } from '../scripts/field';
+
+  const scene = document.querySelector<HTMLElement>('.field-scene');
+  const canvas = scene?.querySelector<HTMLCanvasElement>('.field-canvas');
+
+  async function start() {
+    if (!scene || !canvas) return;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ok = reduced ? false : await mountField(canvas);
+    if (ok) {
+      scene.classList.add('on');
+    } else {
+      const still = document.createElement('div');
+      still.innerHTML = stillField();
+      canvas.replaceWith(still.firstElementChild!);
+    }
+  }
+  start();
+</script>

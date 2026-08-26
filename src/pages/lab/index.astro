@@ -1,7 +1,20 @@
 ---
 import Base from '../../layouts/Base.astro';
+import FieldScene from '../../components/FieldScene.astro';
 
 const entries = [
+  {
+    href: '/lab/field/',
+    title: 'The Field',
+    desc: 'The grass above. Every blade is a spring on your GPU, and the cursor is weather.',
+    meta: 'Aug 2026',
+  },
+  {
+    href: '/lab/keepsake/',
+    title: 'Keepsake',
+    desc: 'A seeded drawing of a field, different for every visitor. Yours to keep.',
+    meta: 'Aug 2026',
+  },
   {
     href: '/lab/sprout-siege/',
     title: 'Sprout Siege',
@@ -18,11 +31,13 @@ const entries = [
 ---
 
 <Base title="Lab · Brett Boggs" description="Experiments, rough and unfinished.">
-  <header class="page-head">
-    <p class="eyebrow">02</p>
-    <h1>Lab</h1>
-    <p class="lede">Experiments and unfinished things, allowed to be rough.</p>
-  </header>
+  <FieldScene>
+    <header class="page-head">
+      <p class="eyebrow">02</p>
+      <h1>Lab</h1>
+      <p class="lede">Experiments and unfinished things, allowed to be rough.</p>
+    </header>
+  </FieldScene>
   {
     entries.length > 0 ? (
       <ul class="entry-list">

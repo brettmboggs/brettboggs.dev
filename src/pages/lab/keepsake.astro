@@ -1,0 +1,240 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// A seeded drawing of a field. Deterministic: the seed in the URL always
+// draws the same picture, so a keepsake can be kept, shared, and re-drawn.
+---
+
+<Base
+  title="Keepsake · Brett Boggs"
+  description="A seeded drawing, different for every visitor. Yours to keep."
+>
+  <header class="page-head">
+    <p class="eyebrow">Lab</p>
+    <h1>Keepsake</h1>
+    <p class="lede">
+      Every visit draws a different field. The same seed always draws the same field. This one is
+      yours.
+    </p>
+  </header>
+
+  <figure class="keepsake-frame" id="keepsake-frame" aria-label="Your generated field drawing"></figure>
+
+  <div class="keepsake-bar">
+    <p class="keepsake-seed" id="keepsake-seed" aria-live="polite"></p>
+    <div class="keepsake-actions">
+      <button class="keepsake-btn" id="keepsake-again" type="button">Draw another</button>
+      <button class="keepsake-btn" id="keepsake-save" type="button">Keep it · SVG</button>
+    </div>
+  </div>
+
+  <a class="back-link" href="/lab/">&larr; Lab</a>
+</Base>
+
+<style>
+  .keepsake-frame {
+    margin: 3rem auto 0;
+    max-width: 34rem;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    line-height: 0;
+  }
+  .keepsake-frame :global(svg) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .keepsake-bar {
+    max-width: 34rem;
+    margin: 0.9rem auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem 1.5rem;
+  }
+  .keepsake-seed {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .keepsake-actions {
+    display: flex;
+    gap: 1.4rem;
+  }
+  .keepsake-btn {
+    appearance: none;
+    border: none;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+    color: var(--rust);
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    background-image: linear-gradient(to right, var(--sunflower) 0 100%);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 3px;
+    transition: background-size 0.45s var(--ease-warm);
+  }
+  .keepsake-btn:hover,
+  .keepsake-btn:focus-visible {
+    background-size: 100% 3px;
+  }
+  .keepsake-btn:focus-visible {
+    outline: 2px solid var(--sienna);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+</style>
+
+<script>
+  // deterministic PRNG: xmur3 hashes the seed string, mulberry32 streams from it
+  function xmur3(str: string) {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) {
+      h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+      h = (h << 13) | (h >>> 19);
+    }
+    return () => {
+      h = Math.imul(h ^ (h >>> 16), 2246822507);
+      h = Math.imul(h ^ (h >>> 13), 3266489909);
+      return (h ^= h >>> 16) >>> 0;
+    };
+  }
+  function mulberry32(a: number) {
+    return () => {
+      a |= 0;
+      a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  const W = 1200;
+  const H = 1500;
+
+  function draw(seed: string): string {
+    const rand = mulberry32(xmur3(seed)());
+    const between = (a: number, b: number) => a + (b - a) * rand();
+    const pick = <T,>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
+
+    // far to near. denim stays rare, the way the palette rules say it should.
+    const farBands = [
+      ['#C9BFA4', '#BBAE8C', '#C2AA80'],
+      ['#A79A72', '#9C9A6E', '#B08F5C'],
+    ];
+    const midBands = ['#8A8A58', '#6F7D4E', '#B8862E', '#A06B36'];
+    const nearBands = ['#B85C38', '#8F3F22', '#5C4A30', '#4A3A26'];
+    const useDenim = rand() < 0.22;
+
+    const horizon = between(0.34, 0.5) * H;
+    const ridgeCount = 4 + Math.floor(rand() * 3);
+
+    const ridge = (baseY: number, amp: number, wobble: number) => {
+      const pts: [number, number][] = [];
+      const steps = 24;
+      const phase = rand() * Math.PI * 2;
+      const phase2 = rand() * Math.PI * 2;
+      const f1 = between(1.2, 2.6);
+      const f2 = between(3.5, 6.5);
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const y =
+          baseY +
+          Math.sin(t * Math.PI * f1 + phase) * amp +
+          Math.sin(t * Math.PI * f2 + phase2) * amp * wobble;
+        pts.push([t * W, y]);
+      }
+      let d = `M 0 ${H} L ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+      for (let i = 1; i < pts.length; i++) {
+        const [px, py] = pts[i - 1];
+        const [x, y] = pts[i];
+        d += ` C ${(px + (x - px) / 2).toFixed(1)} ${py.toFixed(1)}, ${(px + (x - px) / 2).toFixed(1)} ${y.toFixed(1)}, ${x.toFixed(1)} ${y.toFixed(1)}`;
+      }
+      return d + ` L ${W} ${H} Z`;
+    };
+
+    let shapes = '';
+    let lastBase = horizon;
+    for (let i = 0; i < ridgeCount; i++) {
+      const t = i / (ridgeCount - 1);
+      const baseY = horizon + (H * 0.92 - horizon) * Math.pow(t, 1.35);
+      const amp = between(14, 44) * (0.5 + t);
+      let fill: string;
+      if (i === 0 && useDenim) fill = '#7A93A7';
+      else if (t < 0.34) fill = pick(pick(farBands));
+      else if (t < 0.75) fill = pick(midBands);
+      else fill = pick(nearBands);
+      const opacity = 0.55 + 0.45 * t;
+      shapes += `<path d="${ridge(baseY, amp, between(0.2, 0.55))}" fill="${fill}" fill-opacity="${opacity.toFixed(2)}"/>`;
+      lastBase = baseY;
+    }
+
+    // grasses on the near ground, drawn in ink. the bottom band stays paper,
+    // a print margin the caption sits in.
+    const FOOT = 130;
+    let grass = '';
+    const blades = 40 + Math.floor(rand() * 70);
+    for (let i = 0; i < blades; i++) {
+      const x = rand() * W;
+      const y = between(Math.min(lastBase + 40, H - FOOT - 60), H - FOOT - 16);
+      const h = between(18, 64) * (0.6 + (y / H) * 0.8);
+      const lean = between(-0.35, 0.35) * h;
+      grass += `<path d="M ${x.toFixed(1)} ${y.toFixed(1)} q ${(lean * 0.3).toFixed(1)} ${(-h * 0.6).toFixed(1)} ${lean.toFixed(1)} ${(-h).toFixed(1)}" stroke="#33291C" stroke-opacity="${between(0.35, 0.8).toFixed(2)}" stroke-width="${between(1.4, 3).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
+    }
+
+    const no = String((xmur3(seed)() % 9000) + 1000);
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="A drawing of ridgelines and grasses, seed ${seed}">
+<rect width="${W}" height="${H}" fill="#F4EDDF"/>
+${shapes}
+${grass}
+<rect y="${H - FOOT}" width="${W}" height="${FOOT}" fill="#F4EDDF"/>
+<rect y="${H - FOOT}" width="${W}" height="3" fill="#33291C"/>
+<rect width="${W}" height="${H}" filter="url(#grain)" opacity="0.05"/>
+<filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/></filter>
+<text x="60" y="${H - FOOT / 2 + 9}" font-family="Spline Sans Mono, Consolas, monospace" font-size="26" letter-spacing="4" fill="#6B5D48">FIELD NO. ${no} &#183; SEED ${seed.toUpperCase()} &#183; BRETTBOGGS.DEV</text>
+</svg>`;
+  }
+
+  const frame = document.getElementById('keepsake-frame')!;
+  const seedLine = document.getElementById('keepsake-seed')!;
+
+  function newSeed(): string {
+    const bytes = new Uint8Array(4);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  let seed = new URLSearchParams(location.search).get('s') || '';
+  if (!/^[0-9a-f]{8}$/i.test(seed)) seed = newSeed();
+
+  let svg = '';
+  function render() {
+    svg = draw(seed.toLowerCase());
+    frame.innerHTML = svg;
+    seedLine.textContent = `Seed ${seed.toLowerCase()}`;
+    history.replaceState(null, '', `?s=${seed.toLowerCase()}`);
+  }
+  render();
+
+  document.getElementById('keepsake-again')!.addEventListener('click', () => {
+    seed = newSeed();
+    render();
+  });
+
+  document.getElementById('keepsake-save')!.addEventListener('click', () => {
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `keepsake-${seed.toLowerCase()}.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+</script>

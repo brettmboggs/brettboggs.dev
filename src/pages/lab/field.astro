@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import FieldScene from '../../components/FieldScene.astro';
+---
+
+<Base
+  title="The Field · Brett Boggs"
+  description="A prairie computed live by your GPU. Drag across it."
+>
+  <FieldScene tall>
+    <header class="page-head">
+      <p class="eyebrow">Lab</p>
+      <h1>The Field</h1>
+      <p class="lede">Wind over grass, computed live by your GPU. Drag across it.</p>
+    </header>
+  </FieldScene>
+
+  <div class="colophon">
+    <p>
+      Every blade is its own spring, bent by a wind field that travels across the prairie. A
+      compute shader integrates the whole field each frame; the pointer drags a gust through it.
+      The blade count sizes itself to the device. Without WebGPU, or with reduced motion, the
+      field stands still. The keepsake next door draws this same field, one frame at a time.
+    </p>
+  </div>
+
+  <a class="back-link" href="/lab/">&larr; Lab</a>
+</Base>
