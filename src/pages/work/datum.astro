@@ -148,6 +148,24 @@ import Base from '../../layouts/Base.astro';
           organization, and CI/CD into Azure with health checks and uptime monitoring.
         </p>
       </div>
+      <div class="logs">
+        <p class="logs-head">Decision logs</p>
+        <p class="logs-note">The engineering behind three of those claims: what was chosen, what it cost, what broke.</p>
+        <ul>
+          <li>
+            <a href="/work/tenant-isolation/">Tenant isolation</a>
+            <span>App-layer scoping, an adversarial audit, and the day RLS went under all of it.</span>
+          </li>
+          <li>
+            <a href="/work/session-prompting/">Session prompting</a>
+            <span>An agent that inherits the clearance of the person asking, and never has one of its own.</span>
+          </li>
+          <li>
+            <a href="/work/erp-writeback/">ERP writeback</a>
+            <span>The decision was who owns the money. The queue is just the consequence.</span>
+          </li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -250,6 +268,45 @@ import Base from '../../layouts/Base.astro';
   .build-notes p {
     max-width: none;
     color: #cfccc2;
+  }
+  /* decision logs — a quiet appendix for the reader who got this far */
+  .logs {
+    margin-top: 3rem;
+    padding-top: 1.6rem;
+    border-top: 2px solid rgba(243, 241, 236, 0.22);
+    max-width: 62ch;
+  }
+  .logs-head {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8f8c83;
+  }
+  .logs-note {
+    margin-top: 0.7rem;
+    color: #a9a69c;
+    font-size: 0.95rem;
+  }
+  .logs ul {
+    list-style: none;
+    margin: 1.4rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.1rem;
+  }
+  .logs a {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 40, 'SOFT' 50, 'WONK' 0;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #f3f1ec;
+  }
+  .logs li span {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    color: #a9a69c;
   }
   @media (max-width: 560px) {
     .figures > div {

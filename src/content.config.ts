@@ -17,6 +17,9 @@ const work = defineCollection({
     // bespoke entries have a hand-built page at src/pages/work/<id>.astro;
     // they appear in the index but are excluded from the generic [slug] template
     bespoke: z.boolean().default(false),
+    // unlisted entries render at /work/<id>/ but stay off the /work index;
+    // they are reached only from pages that link them (e.g. Datum's decision logs)
+    unlisted: z.boolean().default(false),
   }),
 });
 
