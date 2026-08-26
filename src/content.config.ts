@@ -20,18 +20,4 @@ const work = defineCollection({
   }),
 });
 
-const writing = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/writing' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    pubDate: z.coerce.date(),
-    tags: z.array(z.string()).default([]),
-    draft: z.boolean().default(false),
-    // grouped entries are collapsed into a single row on /work and listed
-    // on their own index at /work/<group>/
-    group: z.enum(['photography']).optional(),
-  }),
-});
-
-export const collections = { work, writing };
+export const collections = { work };
