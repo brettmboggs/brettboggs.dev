@@ -9,25 +9,32 @@ import Base from '../layouts/Base.astro';
     <p class="lede">Operator turned builder. St.&nbsp;Louis.</p>
   </header>
 
-  <figure class="portrait">
-    <img src="/about/brett.jpg" alt="Brett Boggs" width="880" height="1121" loading="eager" />
-  </figure>
+  <div class="opener">
+    <div class="prose opener-copy">
+      <p>
+        I spent a decade running physical operations before I ever shipped software. Service
+        lane at a Honda dealership. General manager of a car wash, then a group of them, then a
+        district. Operations for a real estate investment company. Years of schedules, payroll,
+        equipment that breaks on the coldest day of the year, and customers standing in front of
+        you expecting an answer.
+      </p>
+      <p>
+        That decade is the point. Most software for real-world businesses is built by people who
+        have never run one, and it shows: tools that demand data entry nobody has time for,
+        reports that answer questions nobody asked, five systems where one should be. I got
+        tired of being the operator those tools were inflicted on, so I became the person who
+        builds them instead.
+      </p>
+    </div>
+    <figure class="portrait">
+      <span class="portrait-plate">
+        <img src="/about/brett.jpg" alt="Brett Boggs" width="880" height="1121" loading="eager" />
+      </span>
+      <figcaption>For once, the wrong side of the camera</figcaption>
+    </figure>
+  </div>
 
   <div class="prose">
-    <p>
-      I spent a decade running physical operations before I ever shipped software. Service
-      lane at a Honda dealership. General manager of a car wash, then a group of them, then a
-      district. Operations for a real estate investment company. Years of schedules, payroll,
-      equipment that breaks on the coldest day of the year, and customers standing in front of
-      you expecting an answer.
-    </p>
-    <p>
-      That decade is the point. Most software for real-world businesses is built by people who
-      have never run one, and it shows: tools that demand data entry nobody has time for,
-      reports that answer questions nobody asked, five systems where one should be. I got
-      tired of being the operator those tools were inflicted on, so I became the person who
-      builds them instead.
-    </p>
     <p>
       Now I co-found and build <a href="/work/datum/">Datum</a>, one system for running a
       construction company. I am the sole engineer: design, frontend, backend, security,
@@ -75,15 +82,63 @@ import Base from '../layouts/Base.astro';
 </Base>
 
 <style>
+  /* magazine-profile opener: copy left, printed plate right */
+  .opener {
+    display: grid;
+    grid-template-columns: minmax(18rem, 3fr) minmax(14rem, 2fr);
+    gap: 2.8rem;
+    align-items: start;
+    margin-top: 2.5rem;
+  }
+  .opener-copy {
+    margin-top: 0;
+  }
+
+  /* the portrait as a plate printed in the site's own ink: a warm sienna
+     duotone that develops to full color under the cursor, like a print coming
+     up in the tray. pure filter chain, so the development animates. */
   .portrait {
-    margin: 2.5rem 0 0;
-    max-width: 19rem;
+    margin: 0;
+  }
+  .portrait-plate {
+    display: block;
+    border: 1px solid var(--paper-deep);
+    overflow: hidden;
   }
   .portrait img {
     display: block;
     width: 100%;
     height: auto;
-    border: 1px solid var(--paper-deep);
+    filter: grayscale(1) sepia(0.55) hue-rotate(-12deg) saturate(1.6) contrast(1.04) brightness(1.03);
+    transition: filter 0.7s var(--ease-warm);
+  }
+  .portrait:hover img,
+  .portrait:focus-within img {
+    filter: none;
+  }
+  .portrait figcaption {
+    margin-top: 0.8rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 720px) {
+    .opener {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .portrait {
+      max-width: 19rem;
+      order: -1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .portrait img {
+      transition: none;
+    }
   }
   .reach {
     margin-top: 4rem;
