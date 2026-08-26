@@ -283,6 +283,12 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
       const e = t * t * (3 - 2 * t);
       row.style.opacity = String(e);
       row.style.transform = `translateY(${(1 - e) * 34}px)`;
+      // opacity hides a link from the eye only: it stays clickable and stays in
+      // the tab order. The index sits across the whole film, so an invisible row
+      // was catching clicks aimed at the scene and taking people to Lab, and
+      // tabbing off the header landed on three things nobody could see.
+      // visibility takes it out of hit testing and the tab order both.
+      row.style.visibility = e > 0 ? 'visible' : 'hidden';
     });
   }
 

@@ -84,9 +84,11 @@ export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOpti
     }
   }
 
-  function load(i: number, onload?: () => void): void {
+  function load(i: number, onload?: () => void, idle = false): void {
     if (frames[i]) return;
     const img = new Image();
+    // backfill runs behind whatever the page still needs
+    if (idle) (img as any).fetchPriority = 'low';
     frames[i] = img;
     const settle = (): void => {
       if (settled[i]) return;
@@ -117,33 +119,62 @@ export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOpti
   }
   window.addEventListener('resize', resize);
 
-  const passes = [8, 4, 2, 1];
-  let pass = 0;
-  function loadPass(): void {
-    if (pass >= passes.length) return;
-    const step = passes[pass];
-    let pending = 0;
-    for (let i = 0; i < frameCount; i += step) {
-      if (!frames[i]) {
-        pending++;
-        load(i, () => {
-          pending--;
-          if (Math.abs(i - current) <= step) draw(current);
-          if (pending === 0) {
-            pass++;
-            loadPass();
-          }
-        });
-      }
-    }
-    if (pending === 0) {
-      pass++;
-      loadPass();
-    }
+  // Refinement used to run to completion the moment the page loaded, so someone
+  // who never scrolled still pulled all 96 frames of their tier. Nothing is
+  // dropped or re-encoded here: the coarse pass lands up front so the scrub is
+  // usable from the first pixel of scroll, the rest is fetched around the
+  // playhead as it actually moves, and the remainder backfills at low priority
+  // once the film is genuinely being watched. Anyone who watches it sees every
+  // frame exactly as before. Anyone who skips it stops paying for the sequence.
+  const COARSE = 8;
+  const WINDOW = 20;
+  const REFINE_STEP = 4;
+  let lastRefined = -Infinity;
+  let backfilling = false;
+
+  function onFrameReady(i: number): void {
+    // a newly arrived neighbour can be a better match than what is on screen
+    if (Math.abs(i - current) <= COARSE) draw(current);
   }
+
+  function loadCoarse(): void {
+    for (let i = 0; i < frameCount; i += COARSE) load(i, () => onFrameReady(i));
+    // the frame the page settles on is never left to a neighbour
+    load(frameCount - 1, () => onFrameReady(frameCount - 1));
+  }
+
+  function refineAround(centre: number): void {
+    if (Math.abs(centre - lastRefined) < REFINE_STEP) return;
+    lastRefined = centre;
+    const lo = Math.max(0, centre - WINDOW);
+    const hi = Math.min(frameCount - 1, centre + WINDOW);
+    for (let i = lo; i <= hi; i++) load(i, () => onFrameReady(i));
+  }
+
+  function backfill(): void {
+    if (backfilling) return;
+    backfilling = true;
+    const idle: (cb: () => void) => void =
+      (window as any).requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 200));
+    let next = 0;
+    const step = (): void => {
+      let budget = 6;
+      while (next < frameCount && budget > 0) {
+        if (!frames[next]) {
+          load(next, ((i: number) => () => onFrameReady(i))(next), true);
+          budget--;
+        }
+        next++;
+      }
+      if (next < frameCount) idle(step);
+    };
+    idle(step);
+  }
+
   load(0, () => {
     resize();
-    loadPass();
+    loadCoarse();
+    refineAround(0);
   });
 
   ScrollTrigger.create({
@@ -155,6 +186,10 @@ export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOpti
     onUpdate: (self) => {
       current = Math.min(frameCount - 1, Math.round(self.progress * (frameCount - 1)));
       if (current !== drawn) draw(current);
+      refineAround(current);
+      // once the film is being watched, quietly fetch the rest so scrubbing
+      // back through it is as smooth as scrubbing forward
+      if (self.progress > 0.01) backfill();
       onProgress?.(self.progress);
     },
   });
