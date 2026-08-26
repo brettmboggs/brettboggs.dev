@@ -1,0 +1,107 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="About · Brett Boggs" description="Operator turned builder. St. Louis.">
+  <header class="page-head">
+    <p class="eyebrow">03</p>
+    <h1>About</h1>
+    <p class="lede">Operator turned builder. St.&nbsp;Louis.</p>
+  </header>
+
+  <div class="prose">
+    <p>
+      I spent a decade running physical operations before I ever shipped software. Service
+      lane at a Honda dealership. General manager of a car wash, then a group of them, then a
+      district. Operations for a real estate investment company. Years of schedules, payroll,
+      equipment that breaks on the coldest day of the year, and customers standing in front of
+      you expecting an answer.
+    </p>
+    <p>
+      That decade is the point. Most software for real-world businesses is built by people who
+      have never run one, and it shows: tools that demand data entry nobody has time for,
+      reports that answer questions nobody asked, five systems where one should be. I got
+      tired of being the operator those tools were inflicted on, so I became the person who
+      builds them instead.
+    </p>
+    <p>
+      Now I co-found and build <a href="/work/datum/">Datum</a>, one system for running a
+      construction company. I am the sole engineer: design, frontend, backend, security,
+      infrastructure, and the AI underneath, end to end. The
+      <a href="/work/datum/">case study</a> has the numbers, and the decision logs under it
+      have the honest version: what was chosen, what it cost, what broke.
+    </p>
+    <p>
+      The same instinct runs through everything here. <a href="/work/apparent-low/">Apparent
+      Low</a> exists because extraction you can't measure is extraction you can't trust. The
+      <a href="/work/photography/">photography</a> is the same discipline pointed at light
+      instead of systems. The <a href="/lab/">Lab</a> is where things get tried before they
+      earn a place.
+    </p>
+    <p>
+      I work best on problems where the software has to survive contact with a real operation:
+      a foreman's morning, a month-end close, a bid due at 10 a.m. If that is the kind of
+      problem you have, I want to hear about it.
+    </p>
+  </div>
+
+  <section class="reach">
+    <p class="reach-head">Reach me</p>
+    <ul>
+      <li>
+        <span class="reach-label">Email</span>
+        <a href="mailto:brettmboggs@gmail.com">brettmboggs@gmail.com</a>
+      </li>
+      <li>
+        <span class="reach-label">LinkedIn</span>
+        <a href="https://www.linkedin.com/in/brettmboggs/" rel="noopener">linkedin.com/in/brettmboggs</a>
+      </li>
+      <li>
+        <span class="reach-label">GitHub</span>
+        <a href="https://github.com/brettmboggs" rel="noopener">github.com/brettmboggs</a>
+      </li>
+      <li>
+        <span class="reach-label">Datum</span>
+        <a href="https://datumci.com" rel="noopener">datumci.com</a>
+      </li>
+    </ul>
+  </section>
+
+  <a class="back-link" href="/">&larr; Home</a>
+</Base>
+
+<style>
+  .reach {
+    margin-top: 4rem;
+    padding-top: 1.6rem;
+    border-top: 2px solid var(--ink);
+    max-width: var(--measure);
+  }
+  .reach-head {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .reach ul {
+    list-style: none;
+    margin: 1.2rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.8rem;
+  }
+  .reach li {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+  }
+  .reach-label {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+</style>
