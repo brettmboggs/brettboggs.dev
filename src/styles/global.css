@@ -249,6 +249,58 @@ a:focus-visible {
   }
 }
 
+/* --- cross-document view transitions — native CSS, zero JS --- */
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.4s;
+  animation-timing-function: var(--ease-warm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
+/* scroll-driven reveal — entry rows rise as they enter the viewport.
+   progressive: browsers without scroll timelines just show the rows. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* longhands only: a minifier that folds these into the extended
+       animation shorthand produces a declaration stable browsers reject */
+    .entry-row {
+      animation-name: rise;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+
+    /* type that settles — page heads ease their Fraunces axes as they leave:
+       optical size falls and softness rises, display type receding into text.
+       scoped to .page-head, which the homepage never uses; the film owns
+       that headline and nothing here may touch it. */
+    .page-head h1 {
+      animation-name: settle-axes;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+  }
+}
+
+@keyframes settle-axes {
+  to {
+    font-variation-settings: 'opsz' 28, 'SOFT' 100, 'WONK' 1;
+  }
+}
+
 /* --- photo sets: proof sheets, not galleries --- */
 
 .bleed {

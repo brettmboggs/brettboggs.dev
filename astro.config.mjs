@@ -4,5 +4,18 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://brettboggs.dev',
-  integrations: [sitemap()],
+  vite: {
+    build: {
+      // lightningcss folds animation-timeline into the extended animation
+      // shorthand, which stable browsers reject; esbuild leaves it alone
+      cssMinify: 'esbuild',
+    },
+  },
+  integrations: [
+    sitemap({
+      // /roadmap/ is a working page for Brett; /offline/ is the service
+      // worker's fallback. Both are noindexed and unlisted.
+      filter: (page) => !page.includes('/roadmap/') && !page.includes('/offline/'),
+    }),
+  ],
 });

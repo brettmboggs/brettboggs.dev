@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Served by the service worker when a page is not cached and there is no
+// connection. Kept out of the sitemap and search results.
+---
+
+<Base title="Offline · Brett Boggs" description="No connection." noindex>
+  <header class="page-head">
+    <p class="eyebrow">No connection</p>
+    <h1>Offline</h1>
+    <p class="lede">
+      This page needs a connection. Anything you have already visited should still open.
+    </p>
+  </header>
+  <a class="back-link" href="/">&larr; Home</a>
+</Base>
