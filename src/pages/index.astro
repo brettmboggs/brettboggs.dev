@@ -68,7 +68,11 @@ const writingNote = writing[0] ? `latest — ${writing[0].data.title}` : 'notes'
   }
   .film {
     position: relative;
-    height: 100svh;
+    /* large viewport, not small: ScrollTrigger freezes the pin at whatever height
+       it measures, so sizing to svh leaves a paper gap the height of the toolbar
+       once iOS collapses it mid-scroll. lvh covers both states; the surplus sits
+       below the fold while the toolbar is up. */
+    height: 100lvh;
     overflow: hidden;
     background: var(--paper);
   }
@@ -137,7 +141,8 @@ const writingNote = writing[0] ? `latest — ${writing[0].data.title}` : 'notes'
   }
   .scroll-line {
     position: absolute;
-    bottom: 0;
+    /* sits on the fold rather than under the toolbar. 0 wherever lvh == svh. */
+    bottom: calc(100lvh - 100svh);
     left: 50%;
     width: 2px;
     height: 4rem;
