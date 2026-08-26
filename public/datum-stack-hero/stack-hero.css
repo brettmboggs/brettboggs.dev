@@ -1,0 +1,13 @@
+/* Datum stack hero */
+.dsh-root { display: block; }
+.dsh-media { display: block; width: 100%; height: auto; }
+.dsh-wrapper { position: relative; }
+.dsh-stage {
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dsh-canvas { display: block; max-width: 100%; }

@@ -26,8 +26,16 @@ import Base from '../../layouts/Base.astro';
   </section>
 
   <figure class="shot full-bleed rise" data-media-slot="pm-hero">
-    <img src="/datum/pm-command-center.png" alt="Datum's project management command center" loading="lazy" />
-    <figcaption>The PM command center. Every project on one screen</figcaption>
+    <link rel="stylesheet" href="/datum-stack-hero/stack-hero.css" />
+    <div
+      data-stack-hero
+      data-frame-path="/datum-stack-hero/frames/"
+      data-frame-count="120"
+      data-scroll-length="3"
+      data-poster="/datum-stack-hero/poster.webp"
+      data-fallback-video="/datum-stack-hero/fallback.mp4"
+    ></div>
+    <script type="module" src="/datum-stack-hero/stack-hero.js" is:inline></script>
   </figure>
 
   <section class="duo rise">
