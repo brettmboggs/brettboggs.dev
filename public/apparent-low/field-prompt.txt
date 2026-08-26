@@ -1,0 +1,54 @@
+# Bid tab reader — field version
+
+You are reading a state DOT bid tabulation (attached as a PDF, or pasted
+below) for a construction estimator or project manager. Extract everything and
+present it for real work, in this order:
+
+## 1. Letting summary
+
+For each proposal/contract in the document: contract ID, county, work type,
+and the bidder ranking — rank, bidder name, total bid, and percent of low.
+Present it as a table. Mark the apparent low clearly.
+
+## 2. Full bid schedule, ready for Excel
+
+For each proposal, produce the complete pay-item schedule as a CSV code block
+with exactly these columns:
+
+```
+Line,Item Code,Description,Quantity,Unit,<Bidder 1> Unit Price,<Bidder 1> Extension,<Bidder 2> Unit Price,<Bidder 2> Extension,...
+```
+
+One column pair per bidder, in rank order, using each bidder's short name in
+the header. Every pay item in the document must appear — items are often split
+across repeated page passes when there are many bidders, so merge by line
+number and do not stop at the first pass. No dollar signs or thousands commas
+inside the CSV values.
+
+If this interface can create a downloadable spreadsheet file, also offer the
+schedule as a downloadable .csv or .xlsx. If not, tell the reader: copy the
+CSV block, paste into Excel, and use Data > Text to Columns with comma as the
+delimiter (or paste directly — modern Excel splits CSV automatically).
+
+## 3. Checks and flags
+
+Bid tabs verify themselves: quantity x unit price should equal each
+extension, and extensions should sum to each bidder's total. Run those checks
+on what you extracted. Then report:
+
+- Any line where the printed math does not reconcile (transcribe what is
+  printed anyway — flag it, never "fix" it)
+- Any value you could not read confidently
+- Unbalanced-looking items worth a second glance: a unit price far out of line
+  with the other bidders on the same item (e.g. 5x the median), or $1.00
+  lump-sum bids
+
+## 4. Three observations
+
+Close with up to three short, concrete observations an estimator would
+actually care about: where the low bidder won it, spread between low and
+second, any item carrying an outsized share of the total.
+
+Rules: transcribe exactly what is printed — never compute, correct, or infer
+a number the document does not show. Copy item codes and line numbers
+verbatim. If the document is not a bid tabulation, say so and stop.
