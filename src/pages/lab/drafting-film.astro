@@ -1,0 +1,699 @@
+---
+// The Drafting Film. Datum's v5 landing intro (datum-core e095f7a, PR #463),
+// ported from React to vanilla and reframed for the lab. It merged to the
+// live landing on a Sunday night in July and was pulled the next day: the
+// landing had a standing rule against literal construction imagery, and a
+// bridge is as literal as it gets. The film itself did nothing wrong.
+import Base from '../../layouts/Base.astro';
+import {
+  BEATS,
+  TURN_BEAT,
+  MARK_TAG,
+  SHEETS,
+  CONFLICTS,
+  CHAPTERS,
+  PATHS,
+  TEXTS,
+  DATUM_LINE_D,
+  DATUM_TICKS_D,
+  DROPLINES,
+  PULSE_D,
+} from '../../scripts/draftingFilmData';
+---
+
+<Base
+  title="The Drafting Film · Lab · Brett Boggs"
+  description="A highway underpass you draft by scrolling. Datum's landing film for one night."
+>
+  <header class="page-head">
+    <p class="eyebrow">Lab · Jul 2026</p>
+    <h1>The Drafting Film</h1>
+    <p class="lede">
+      A highway underpass you draft by scrolling. It ran Datum's landing page for one night.
+    </p>
+  </header>
+
+  <section class="film-bleed">
+    <!-- The film is decorative to a screen reader; the story itself is not. -->
+    <p class="cin5-sr">
+      Scattered data means nobody sees the same picture. Six systems, six logins, six bills. Each
+      one holds a piece and none of them holds the project. Your best people leave and the process
+      leaves with them. The same data gets re-entered at every handoff until nobody knows which
+      number is true. Your tools hold data; none of them think. Datum sets one reference, one
+      living record, that every number, drawing, and dollar measures from.
+    </p>
+
+    <div class="cin5" data-film>
+      <div class="cin5-stage">
+        <svg class="cin5-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+          <g class="cin5-root">
+            {SHEETS.map((s) => (
+              <g class="cin5-frame" data-ax={s.ax} data-ay={s.ay}>
+                <rect x={s.ax - 160} y={s.ay - 100} width="320" height="200" rx="10" />
+                <text class="cin5-t-label" x={s.ax - 146} y={s.ay - 78} text-anchor="start" font-size="13">{s.tag}</text>
+              </g>
+            ))}
+
+            {PATHS.map((p) => (
+              <path
+                class:list={['cin5-el', { 'cin5-detail': p.detail }]}
+                d={p.d}
+                stroke-width={p.w ?? 1.3}
+                stroke-dasharray={p.dash}
+              />
+            ))}
+            {TEXTS.map((t) => (
+              <text
+                class:list={['cin5-tx', { 'cin5-t-num': t.num, 'cin5-detail': t.detail }]}
+                x={t.x}
+                y={t.y}
+                text-anchor={t.anchor ?? 'middle'}
+                font-size={t.size}
+              >{t.s}</text>
+            ))}
+
+            {CONFLICTS.map((c) => (
+              <g class="cin5-conflict">
+                <text class="cin5-t-num" x={c.x} y={c.y} text-anchor="middle" font-size="19">{c.v}</text>
+                <path
+                  d={`M${c.x - 42} ${c.y + 12} L${c.x + 42} ${c.y + 12} M${c.x - 42} ${c.y + 12} l 10 -4 M${c.x - 42} ${c.y + 12} l 10 4 M${c.x + 42} ${c.y + 12} l -10 -4 M${c.x + 42} ${c.y + 12} l -10 4`}
+                  stroke-width="0.9"
+                />
+              </g>
+            ))}
+
+            <path class="cin5-datum cin5-datum-line" d={DATUM_LINE_D} stroke-width="1.7" />
+            <path class="cin5-datum cin5-datum-ticks" d={DATUM_TICKS_D} stroke-width="0.9" />
+            <text class="cin5-t-label cin5-datum-label" x="84" y="848" text-anchor="start" font-size="15">DATUM&nbsp;&nbsp;EL 690.00</text>
+            {DROPLINES.map((d) => (
+              <path class="cin5-drop" d={d} stroke-width="0.9" stroke-dasharray="4 6" />
+            ))}
+
+            <path class="cin5-pulse" d={PULSE_D} stroke-width="5" />
+            <path class="cin5-pulse" d={PULSE_D} stroke-width="2" />
+          </g>
+        </svg>
+
+        <div class="cin5-overlay" aria-hidden="true">
+          {[...BEATS, TURN_BEAT].map((b, i) => (
+            <div class:list={['cin5-beat', { 'cin5-beat--turn': i === BEATS.length }]}>
+              <div class="cin5-kicker">{b.kicker}</div>
+              <div class="cin5-head">
+                {b.head.map((line) => (
+                  <span>{line}</span>
+                ))}
+              </div>
+              {b.sup && <div class="cin5-sup">{b.sup}</div>}
+            </div>
+          ))}
+
+          <div class="cin5-mark">
+            <div class="cin5-mark-word">DATUM</div>
+            <div class="cin5-mark-tag">{MARK_TAG}</div>
+          </div>
+
+          <div class="cin5-hint">
+            <span>Scroll</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </div>
+        </div>
+
+        <!-- Chapter rail: jump anywhere in the film. -->
+        <div class="cin5-rail" role="group" aria-label="Film chapters">
+          {CHAPTERS.map((c) => (
+            <button type="button" class="cin5-rail-stop" aria-label={c.label}>
+              <span class="cin5-rail-tick"></span>
+              <span class="cin5-rail-label">{c.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <button type="button" class="cin5-skip">Skip film</button>
+
+        <!-- Veil blends the last frame back into the page's paper. -->
+        <div class="cin5-veil" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <!-- Reduced motion: the finished drawing as a figure, the story as editorial. -->
+    <div class="cin5-still-seq" aria-hidden="true">
+      <div class="cin5-static-fig">
+        <svg class="cin5-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+          <g>
+            {PATHS.map((p) => (
+              <path
+                class:list={['cin5-fel', { 'cin5-detail': p.detail }]}
+                d={p.d}
+                stroke-width={p.w ?? 1.3}
+                stroke-dasharray={p.dash}
+              />
+            ))}
+            {TEXTS.map((t) => (
+              <text
+                class:list={['cin5-ftx', { 'cin5-t-num': t.num, 'cin5-detail': t.detail }]}
+                x={t.x}
+                y={t.y}
+                text-anchor={t.anchor ?? 'middle'}
+                font-size={t.size}
+              >{t.s}</text>
+            ))}
+            <path class="cin5-fdatum" d={DATUM_LINE_D} stroke-width="1.7" />
+            <path class="cin5-fdatum" d={DATUM_TICKS_D} stroke-width="0.9" />
+            <text class="cin5-t-label cin5-fdatum-label" x="84" y="848" text-anchor="start" font-size="15">DATUM&nbsp;&nbsp;EL 690.00</text>
+            {DROPLINES.map((d) => (
+              <path class="cin5-fdrop" d={d} stroke-width="0.9" stroke-dasharray="4 6" />
+            ))}
+          </g>
+        </svg>
+      </div>
+      {[...BEATS, TURN_BEAT].map((b) => (
+        <section class="cin5-still">
+          <div class="cin5-kicker">{b.kicker}</div>
+          <div class="cin5-head">
+            {b.head.map((line) => (
+              <span>{line}</span>
+            ))}
+          </div>
+          {b.sup && <div class="cin5-sup">{b.sup}</div>}
+        </section>
+      ))}
+      <section class="cin5-still cin5-still--mark">
+        <div class="cin5-mark-word">DATUM</div>
+        <div class="cin5-mark-tag">{MARK_TAG}</div>
+      </section>
+    </div>
+  </section>
+
+  <div class="colophon">
+    <p>
+      This was v5 of the opening film for datumci.com, one night in July. Scroll conducts a
+      highway underpass elevation through five failures: the linework explodes and never
+      composes, regroups into six partial sheets that each hold only their slice, the richest
+      sheet flares warm and walks off the table, the same span stamps four conflicting values,
+      and everything grays into a dead archive. Then a datum line draws across the stage and the
+      whole drawing registers on it, in construction order. It merged on a Sunday night and came
+      out the next day: the landing had a standing rule against literal construction imagery,
+      and the medium that made the film work is the reason it could not stay.
+    </p>
+    <p>
+      SVG linework, spring physics, one requestAnimationFrame loop. No WebGL, no animation
+      library, no raster assets. Scroll is the clock but never the motion: each beat only moves
+      the targets, springs do the rest, so scrubbing either direction always settles. The
+      exploded layout is seeded, identical for every visitor. Reduced motion gets the finished
+      drawing and the story as stills.
+    </p>
+  </div>
+
+  <a class="back-link" href="/lab/">Back to Lab</a>
+</Base>
+
+<script>
+  import { mountDraftingFilm } from '../../scripts/draftingFilm';
+
+  const track = document.querySelector<HTMLElement>('[data-film]');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (track && !reduced) mountDraftingFilm(track);
+</script>
+
+<style>
+  /* full-bleed band for the film */
+  .film-bleed {
+    width: 100vw;
+    margin: 3rem 0 0 calc(50% - 50vw);
+  }
+
+  /* The film's palette, scoped: the site's Golden Hour tokens turned over to
+     a drafting table at night. Paper becomes the ink; the sunflower stays. */
+  .cin5,
+  .cin5-still-seq {
+    --bg-app: #241c10;
+    --text-primary: #f4eddf;
+    --text-secondary: #cbbfa4;
+    --text-muted: #a6997b;
+    --text-faint: #7a6f58;
+    --cta: #d9971e;
+    --glass-bg: rgba(244, 237, 223, 0.07);
+    --border-subtle: rgba(244, 237, 223, 0.2);
+    --border-strong: rgba(244, 237, 223, 0.45);
+    --glass-blur: 10px;
+    --radius-pill: 999px;
+    --ease-out: var(--ease-warm);
+    --font-display: var(--display);
+    --font-body: var(--body);
+    --font-crumb: var(--mono);
+    --tracking-label: 0.16em;
+    --tracking-display: -0.015em;
+    --tracking-body-sm: 0.01em;
+    --text-caption: 0.75rem;
+  }
+
+  .cin5-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── The track and stage ── */
+  .cin5 {
+    position: relative;
+    height: 760vh; /* five beats + an unhurried turn */
+    background: var(--bg-app);
+  }
+  .cin5-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: clip;
+    background: var(--bg-app);
+  }
+  .cin5-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* ── The drawing ── */
+  .cin5-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .cin5-svg :global(*) {
+    vector-effect: non-scaling-stroke;
+  }
+  .cin5-el {
+    fill: none;
+    stroke: var(--text-faint);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    will-change: transform, opacity;
+  }
+  .cin5-tx {
+    font-family: var(--mono);
+    letter-spacing: 0.05em;
+    fill: var(--text-faint);
+    stroke: none;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    will-change: transform, opacity;
+  }
+  .cin5-t-num {
+    font-variant-numeric: tabular-nums;
+  }
+  .cin5-t-label {
+    font-family: var(--font-crumb);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    stroke: none;
+  }
+  .cin5-frame {
+    opacity: 0;
+    color: var(--text-faint);
+  }
+  .cin5-frame rect {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1;
+    stroke-dasharray: 4 7;
+    opacity: 0.55;
+  }
+  .cin5-frame text {
+    fill: currentColor;
+    opacity: 0.9;
+  }
+  .cin5-conflict {
+    opacity: 0;
+    color: var(--text-faint);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .cin5-conflict text {
+    fill: currentColor;
+    font-family: var(--mono);
+  }
+  .cin5-conflict path {
+    fill: none;
+    stroke: currentColor;
+  }
+  .cin5-datum,
+  .cin5-drop,
+  .cin5-pulse {
+    fill: none;
+    stroke-linecap: round;
+    opacity: 0;
+  }
+  .cin5-datum-label {
+    opacity: 0;
+  }
+
+  /* ── Beat typography: top-third editorial block over the drawing ── */
+  .cin5-beat {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    will-change: transform, opacity;
+    padding: 0 24px;
+  }
+  .cin5-beat::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(94vw, 1060px);
+    height: 200%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+      ellipse at center,
+      color-mix(in srgb, var(--bg-app) 78%, transparent) 0%,
+      transparent 70%
+    );
+  }
+  .cin5-kicker,
+  .cin5-head,
+  .cin5-sup {
+    position: relative;
+  }
+  .cin5-kicker {
+    font-family: var(--font-crumb);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+  }
+  .cin5-head {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
+    font-weight: 600;
+    font-size: clamp(30px, 4.6vw, 62px);
+    line-height: 1.08;
+    letter-spacing: var(--tracking-display);
+    color: var(--text-primary);
+    max-width: 90vw;
+    text-wrap: balance;
+  }
+  .cin5-head span {
+    display: block;
+  }
+  .cin5-sup {
+    font-family: var(--font-body);
+    font-size: clamp(14px, 1.4vw, 17px);
+    color: var(--text-secondary);
+    margin-top: 16px;
+    letter-spacing: var(--tracking-body-sm);
+  }
+  .cin5-beat--turn .cin5-head {
+    font-size: clamp(38px, 5.8vw, 80px);
+  }
+  .cin5-beat--turn .cin5-kicker {
+    color: var(--text-secondary);
+  }
+
+  /* ── DATUM title block ── */
+  .cin5-mark {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .cin5-mark::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(96vw, 1200px);
+    height: 52vh;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+      ellipse at center,
+      color-mix(in srgb, var(--bg-app) 82%, transparent) 0%,
+      transparent 68%
+    );
+  }
+  .cin5-mark-word,
+  .cin5-mark-tag {
+    position: relative;
+  }
+  .cin5-mark-word {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: clamp(64px, 12vw, 180px);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    line-height: 1;
+    padding-left: 0.3em; /* optically recenter tracked type */
+    will-change: transform, letter-spacing;
+  }
+  .cin5-mark-tag {
+    font-family: var(--font-crumb);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-top: 24px;
+    opacity: 0;
+  }
+
+  /* ── Chapter rail ── */
+  .cin5-rail {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .cin5-rail-stop {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-direction: row-reverse;
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: var(--text-muted);
+  }
+  .cin5-rail-tick {
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+    background: currentColor;
+    opacity: 0.45;
+    transition:
+      opacity 0.25s var(--ease-out),
+      width 0.25s var(--ease-out);
+  }
+  .cin5-rail-label {
+    font-family: var(--font-crumb);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateX(4px);
+    transition:
+      opacity 0.2s var(--ease-out),
+      transform 0.2s var(--ease-out);
+  }
+  .cin5-rail-stop:hover .cin5-rail-label {
+    opacity: 1;
+    transform: none;
+  }
+  .cin5-rail-stop:hover .cin5-rail-tick {
+    opacity: 0.9;
+  }
+  .cin5-rail-stop--on {
+    color: var(--text-primary);
+  }
+  .cin5-rail-stop--on .cin5-rail-tick {
+    opacity: 1;
+    width: 26px;
+  }
+
+  /* ── Chrome ── */
+  .cin5-hint {
+    position: absolute;
+    bottom: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    color: var(--text-muted);
+    font-family: var(--font-crumb);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+  .cin5-hint svg {
+    animation: cin-hint-bob 2.2s var(--ease-out) infinite;
+  }
+  @keyframes cin-hint-bob {
+    0%,
+    100% {
+      transform: none;
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+  .cin5-skip {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    z-index: 6;
+    background: var(--glass-bg);
+    border: 1px solid var(--border-subtle);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    letter-spacing: var(--tracking-body-sm);
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.5s var(--ease-out),
+      color 0.15s,
+      border-color 0.15s;
+  }
+  .cin5-skip--on {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .cin5-skip:hover {
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+  }
+
+  .cin5-veil {
+    position: absolute;
+    inset: 0;
+    background: var(--paper);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ── Reduced-motion editorial fallback ── */
+  .cin5-still-seq {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cin5 {
+      display: none;
+    }
+    .cin5-still-seq {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 11vh;
+      padding: 10vh 24px;
+      background: var(--bg-app);
+    }
+  }
+  .cin5-still-seq .cin5-svg {
+    position: static;
+  }
+  .cin5-static-fig {
+    width: min(94vw, 1100px);
+  }
+  .cin5-fel {
+    fill: none;
+    stroke: var(--text-primary);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .cin5-ftx {
+    font-family: var(--mono);
+    letter-spacing: 0.05em;
+    fill: var(--text-primary);
+  }
+  .cin5-fdatum {
+    fill: none;
+    stroke: var(--cta);
+    stroke-linecap: round;
+  }
+  .cin5-fdrop {
+    fill: none;
+    stroke: var(--cta);
+    stroke-linecap: round;
+    opacity: 0.6;
+  }
+  .cin5-fdatum-label {
+    fill: var(--cta);
+  }
+  .cin5-still {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 820px;
+  }
+  .cin5-still .cin5-head {
+    font-size: clamp(28px, 4.4vw, 54px);
+  }
+  .cin5-still--mark .cin5-mark-word {
+    font-size: clamp(56px, 11vw, 140px);
+    letter-spacing: 0.14em;
+    padding-left: 0.14em;
+  }
+  .cin5-still--mark .cin5-mark-tag {
+    opacity: 1;
+  }
+
+  @media (max-width: 640px) {
+    .cin5-detail {
+      display: none;
+    }
+    .cin5-head {
+      font-size: clamp(25px, 7.6vw, 40px);
+    }
+    .cin5-beat--turn .cin5-head {
+      font-size: clamp(30px, 9vw, 48px);
+    }
+    .cin5-mark-word {
+      font-size: clamp(52px, 16vw, 96px);
+    }
+    .cin5-rail {
+      display: none;
+    }
+  }
+</style>

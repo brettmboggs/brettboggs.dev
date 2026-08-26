@@ -1,0 +1,403 @@
+---
+// The Bridge. Datum's very first landing intro (datum-core eb8bbde, PR #446,
+// July 2026): a scroll-scrubbed 3D film in which a cable-stayed river
+// crossing surveys, drafts, builds, opens, and lights up with data, then
+// dissolves into dawn. Retired two days later by the landing's rule against
+// literal construction imagery. The film itself did nothing wrong.
+import Base from '../../layouts/Base.astro';
+
+const beats = [
+  { kicker: 'Construction Intelligence', lines: ['Every build starts', 'from a single point.'] },
+  { kicker: 'Plan', lines: ["First, it's lines on paper."] },
+  { kicker: 'Build', lines: ['Then the field makes it real.'] },
+  { kicker: 'Connect', lines: ['Datum keeps every beam, dollar,', 'and decision on one living record.'] },
+  { kicker: 'Datum', lines: ['One company. One record.'], center: true },
+];
+
+const chips = [
+  { id: 'report', label: 'Daily report filed', meta: 'Crew 12 · 5:58 AM' },
+  { id: 'rfi', label: 'RFI #214 answered', meta: 'Ball in court · 2h' },
+  { id: 'pour', label: 'Deck pour scheduled', meta: 'Span B3 · Thursday' },
+  { id: 'payapp', label: 'Pay app #7 approved', meta: '$1.2M released' },
+];
+---
+
+<Base
+  title="The Bridge · Lab · Brett Boggs"
+  description="A cable-stayed bridge that builds itself as you scroll. Datum's first landing film."
+>
+  <header class="page-head">
+    <p class="eyebrow">Lab · Jul 2026</p>
+    <h1>The Bridge</h1>
+    <p class="lede">
+      A river crossing that surveys, drafts, builds, and lights up as you scroll. Datum&rsquo;s
+      first landing film.
+    </p>
+  </header>
+
+  <section class="film-bleed">
+    <p class="cin-sr">
+      A night survey circles a glowing datum monument above a river valley. Blueprint lines draw
+      a cable-stayed bridge in the air. Over a time-lapse day the field makes it real: pylons
+      pour, deck segments hoist from the river, stay cables tension in. At dusk the lamps ignite,
+      traffic crosses, and live project records pulse along the structure. Dawn blooms to white.
+      Every build starts from a single point; Datum keeps every beam, dollar, and decision on one
+      living record.
+    </p>
+
+    <div class="cin" data-film hidden>
+      <div class="cin-stage">
+        <canvas class="cin-canvas" aria-hidden="true"></canvas>
+        <div class="cin-overlay" aria-hidden="true">
+          {beats.map((b) => (
+            <div class:list={['cin-beat', { 'cin-beat--center': b.center }]}>
+              <div class="cin-kicker">{b.kicker}</div>
+              <h2 class="cin-line">
+                {b.lines.map((seg) => (
+                  <span>{seg}<br /></span>
+                ))}
+              </h2>
+            </div>
+          ))}
+          {chips.map((c) => (
+            <div class="cin-chip" data-chip={c.id}>
+              <span class="cin-chip-dot"></span>
+              <div>
+                <div class="cin-chip-label">{c.label}</div>
+                <div class="cin-chip-meta">{c.meta}</div>
+              </div>
+              <span class="cin-chip-stem"></span>
+            </div>
+          ))}
+          <div class="cin-brand">
+            <span class="cin-wordmark">Datum</span>
+          </div>
+          <div class="cin-hint">
+            <span>Scroll</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </div>
+        </div>
+        <button type="button" class="cin-skip">Skip film</button>
+        <div class="cin-veil" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="cin-unsupported" data-film-fallback>
+      <p class="cin-kicker">Construction Intelligence</p>
+      <p class="cin-line">Every build starts<br />from a single point.</p>
+      <p class="cin-unsupported-note">
+        The film needs WebGL2 and motion. This browser gets the title card instead.
+      </p>
+    </div>
+  </section>
+
+  <div class="colophon">
+    <p>
+      This was the very first opening film for datumci.com, v1 of what became a ten-version
+      lineage. A night survey circles a glowing datum monument, blueprint lines draft a
+      cable-stayed crossing in mid-air, and then a time-lapse day builds it for real: pylons
+      slip-form upward, deck segments hoist off the river on lift lines, stay cables tension in,
+      tower cranes work and dissolve. At dusk the lamps ignite and live project records pulse
+      along the structure; dawn blooms to white. It lasted two days on the landing before the
+      standing rule arrived that shaped every version after it: nothing literal, no construction
+      imagery. The drafting film next door died on the same rule a few versions later.
+    </p>
+    <p>
+      Pure three.js, and every mesh and texture is procedural; nothing is downloaded. PBR
+      materials under an image-based environment, an animated sun with soft shadows, planar
+      water reflections, ACES tone mapping, bloom, depth of field, and a film grade of grain,
+      vignette, and chromatic aberration. The whole scene is a deterministic function of scroll
+      progress, so scrolling back up un-builds the bridge. Phones get a lighter tier; browsers
+      without WebGL2, or with reduced motion set, get the title card.
+    </p>
+  </div>
+
+  <a class="back-link" href="/lab/">Back to Lab</a>
+</Base>
+
+<script>
+  import { mountBridgeFilm, hasWebGL2 } from '../../scripts/bridgeFilm';
+
+  const track = document.querySelector<HTMLElement>('[data-film]');
+  const fallback = document.querySelector<HTMLElement>('[data-film-fallback]');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const supported = !reduced && hasWebGL2();
+
+  if (track && supported) {
+    track.hidden = false;
+    if (fallback) fallback.style.display = 'none';
+    mountBridgeFilm(track);
+  }
+</script>
+
+<style>
+  .film-bleed {
+    width: 100vw;
+    margin: 3rem 0 0 calc(50% - 50vw);
+  }
+
+  /* The film's palette, scoped. The render paints its own colors; these
+     tokens style the overlay copy, the chips, and the one brand color the
+     scene reads at runtime (the hologram azure, via --cta on the canvas). */
+  .cin,
+  .cin-unsupported {
+    --bg-app: #070b12;
+    --text-primary: #f2f5f7;
+    --text-secondary: #c3cbd4;
+    --text-muted: #8b95a3;
+    --cta: #0a84ff;
+    --glass-bg: rgba(10, 16, 26, 0.55);
+    --border-subtle: rgba(242, 245, 247, 0.16);
+    --border-strong: rgba(242, 245, 247, 0.4);
+    --glass-blur: 12px;
+    --radius-pill: 999px;
+    --ease-out: var(--ease-warm);
+    --font-display: var(--display);
+    --font-body: var(--body);
+    --font-crumb: var(--mono);
+    --tracking-label: 0.16em;
+    --tracking-display: -0.015em;
+    --tracking-body-sm: 0.01em;
+    --text-caption: 0.75rem;
+  }
+
+  .cin-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .cin {
+    position: relative;
+    height: 500vh; /* ~4 scroll-lengths of film + the release */
+    background: var(--bg-app);
+  }
+  .cin[hidden] {
+    display: none;
+  }
+  .cin-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    background: var(--bg-app);
+  }
+  .cin-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.9s var(--ease-out);
+  }
+  .cin-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .cin-beat {
+    position: absolute;
+    left: clamp(24px, 7vw, 110px);
+    bottom: clamp(72px, 16vh, 160px);
+    max-width: 700px;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .cin-beat--center {
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    max-width: 760px;
+  }
+  .cin-beat--center .cin-line {
+    font-size: clamp(34px, 4.6vw, 62px);
+  }
+  .cin-kicker {
+    font-family: var(--font-crumb);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .cin-line {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
+    font-size: clamp(28px, 3.4vw, 50px);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: var(--tracking-display);
+    color: var(--text-primary);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .cin-chip {
+    position: absolute;
+    transform: translate(-50%, calc(-100% - 26px));
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 10px 14px 11px;
+    border-radius: 14px;
+    background: var(--glass-bg);
+    border: 1px solid var(--border-subtle);
+    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    opacity: 0;
+    visibility: hidden;
+    white-space: nowrap;
+  }
+  .cin-chip-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--cta);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .cin-chip-label {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: var(--tracking-body-sm);
+    color: var(--text-primary);
+  }
+  .cin-chip-meta {
+    font-family: var(--font-crumb);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .cin-chip-stem {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 1px;
+    height: 26px;
+    background: linear-gradient(to bottom, var(--border-strong), transparent);
+  }
+
+  .cin-brand {
+    position: absolute;
+    top: 20px;
+    left: 26px;
+  }
+  .cin-wordmark {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 21px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+
+  .cin-hint {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    color: var(--text-muted);
+    font-family: var(--font-crumb);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+  .cin-hint svg {
+    animation: cin-hint-bob 2.2s var(--ease-out) infinite;
+  }
+  @keyframes cin-hint-bob {
+    0%,
+    100% {
+      transform: none;
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+  .cin-skip {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    z-index: 5;
+    background: var(--glass-bg);
+    border: 1px solid var(--border-subtle);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    letter-spacing: var(--tracking-body-sm);
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+  }
+  .cin-skip:hover {
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+  }
+
+  .cin-veil {
+    position: absolute;
+    inset: 0;
+    background: var(--paper);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Shown until the script confirms WebGL2 + motion; then the film takes over. */
+  .cin-unsupported {
+    background: var(--bg-app);
+    padding: 18vh 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .cin-unsupported .cin-line {
+    font-size: clamp(28px, 4.4vw, 54px);
+  }
+  .cin-unsupported-note {
+    margin-top: 2rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 900px) {
+    .cin-beat {
+      bottom: 96px;
+    }
+    .cin-line {
+      font-size: clamp(26px, 7.4vw, 38px);
+    }
+    .cin-chip {
+      display: none;
+    }
+  }
+</style>
