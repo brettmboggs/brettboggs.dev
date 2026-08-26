@@ -68,7 +68,49 @@ as much as the corpus is hard.
 ## Try it
 
 The repo is public: [github.com/brettmboggs/apparent-low](https://github.com/brettmboggs/apparent-low).
-Corpus documents are public-record Iowa DOT lettings, pinned by SHA-256.
-Extractions run through Claude Code's headless mode on an existing
-subscription: no API key exists in the project, and a clone plus `npm install`
-plus one command reproduces the eval from the committed ground truth.
+Three ways in, and the first two need nothing installed.
+
+**1 · Judge the output (browser only).** The realistic test for anyone who
+knows construction: is the extracted data actually right?
+
+1. Open the source document: the
+   [June 9, 2026 Iowa DOT bid tabulation](https://iowadot.gov/media/14575/download?inline)
+   (a 10-page PDF — one bridge deck joint repair contract, four bidders).
+2. Open what the agent extracted from it:
+   [results/v001/iowa-2026-06-09.json](https://github.com/brettmboggs/apparent-low/blob/main/results/v001/iowa-2026-06-09.json).
+   Every line number, item, quantity, unit price, and extension, as structured
+   data.
+3. Pick a few lines in the PDF and check them against the JSON. Mobilization,
+   traffic control, the $1.00 lump-sum survey bids. If a number is wrong,
+   that's a finding.
+
+**2 · Run the extraction yourself (any Claude subscription, no install).**
+The agent's instructions are a plain text file, so a normal Claude chat can do
+what the harness does:
+
+1. Download a bid tab PDF from
+   [Iowa DOT's bid tabulations page](https://iowadot.gov/consultants-contractors/contracts/historical-completed-lettings/bid-tabulations)
+   — pick a small one.
+2. Open the prompt file
+   [prompts/v001.md](https://github.com/brettmboggs/apparent-low/blob/main/prompts/v001.md)
+   and copy its whole contents (the button with two overlapping squares at the
+   file's top right copies it in one click).
+3. Go to [claude.ai](https://claude.ai), start a new chat, paste the prompt,
+   attach the PDF with the paperclip, and send.
+4. Claude returns the structured data. Then ask it, in plain English, to
+   "show the apparent low bidder's prices as a table" and spot-check that
+   against the PDF.
+
+**3 · Run the full harness (developers).** Requires Node.js and a Claude Code
+subscription — no API key, no marginal cost:
+
+```
+git clone https://github.com/brettmboggs/apparent-low
+cd apparent-low && npm install
+npm test                                      # the scorer proves itself
+npm run extract corpus/text/iowa-2026-06-09.txt v001
+npm run eval v001                             # score against ground truth
+```
+
+Corpus documents are public-record Iowa DOT lettings, pinned by SHA-256 in
+`corpus/manifest.json`.
