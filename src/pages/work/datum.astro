@@ -102,8 +102,53 @@ import Base from '../../layouts/Base.astro';
     <h2>Building&nbsp;it.</h2>
     <p>
       I co-founded Datum and build the product end to end: design, frontend, backend, and the AI
-      that runs underneath it. A proper write-up on how it's built is coming.
+      that runs underneath it.
     </p>
+  </section>
+
+  <section class="band build-band full-bleed rise">
+    <div class="band-inner wrap">
+      <h2>What is&nbsp;shipped.</h2>
+      <p class="build-lede">
+        Sole engineer. Architecture, security, infrastructure and release, all mine.
+      </p>
+      <dl class="figures">
+        <div>
+          <dt>1,447</dt>
+          <dd>API endpoints across 168 backend services</dd>
+        </div>
+        <div>
+          <dt>728</dt>
+          <dd>tables in Azure SQL, behind 403 tracked migrations</dd>
+        </div>
+        <div>
+          <dt>282</dt>
+          <dd>screens and 226 shared components in React</dd>
+        </div>
+        <div>
+          <dt>120</dt>
+          <dd>standard operating procedures, automated end to end</dd>
+        </div>
+      </dl>
+      <div class="build-notes">
+        <p>
+          Tenant isolation is enforced at the query layer rather than trusted to callers, with
+          role based access through Entra ID. The agent layer runs inside that same boundary: a
+          tool registry and persistent memory fenced by SQL guardrails and data policy, so an
+          agent cannot reach across tenants.
+        </p>
+        <p>
+          An ERP adapter framework with a durable writeback queue, normalizing phase codes and
+          cost types, so the platform talks to the accounting systems contractors already run.
+          GDPR deletion and data subject export, which meant resolving one person across three
+          identity systems that had never been connected.
+        </p>
+        <p>
+          A React Native app through TestFlight, an Outlook add-in deployed across the
+          organization, and CI/CD into Azure with health checks and uptime monitoring.
+        </p>
+      </div>
+    </div>
   </section>
 
   <div class="page-end rise">
@@ -154,6 +199,62 @@ import Base from '../../layouts/Base.astro';
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: #8f8c83;
+  }
+
+  .build-band {
+    margin-top: 5.5rem;
+  }
+  .build-band h2 {
+    font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+  }
+  .build-lede {
+    margin-top: 1rem;
+    max-width: 34ch;
+    font-size: 1.1rem;
+    color: #cfccc2;
+  }
+  /* figures as editorial rows, the way the index reads. no tiles. */
+  .figures {
+    margin: 3rem 0 0;
+  }
+  .figures > div {
+    display: grid;
+    grid-template-columns: minmax(6rem, 8rem) 1fr;
+    align-items: baseline;
+    gap: 0.4rem 1.6rem;
+    padding: 1.3rem 0;
+    border-top: 2px solid rgba(243, 241, 236, 0.22);
+  }
+  .figures dt {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 90, 'SOFT' 50, 'WONK' 0;
+    font-weight: 600;
+    font-size: clamp(1.9rem, 4.4vw, 2.9rem);
+    line-height: 1;
+    color: #f3f1ec;
+  }
+  .figures dd {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    letter-spacing: 0.04em;
+    color: #a9a69c;
+  }
+  .build-notes {
+    margin-top: 3rem;
+    display: grid;
+    gap: 1.1rem;
+    max-width: 62ch;
+  }
+  .build-notes p {
+    max-width: none;
+    color: #cfccc2;
+  }
+  @media (max-width: 560px) {
+    .figures > div {
+      grid-template-columns: 1fr;
+    }
   }
 
   .statement {
