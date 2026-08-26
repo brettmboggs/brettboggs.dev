@@ -27,6 +27,7 @@ const year = new Date().getFullYear();
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
   </head>
   <body>
+    {home && <div class="ridge-ghost" id="ridge-ghost" aria-hidden="true"></div>}
     <header class:list={['site-header', 'wrap', { 'over-film': home }]}>
       <a class="wordmark" href="/" aria-label="Brett Boggs, home">B<span class="wordmark-rest" aria-hidden="true">rett</span><span class="wordmark-b">B</span><span class="wordmark-rest" aria-hidden="true">oggs</span><span class="wordmark-dot">.</span></a>
       <nav>
@@ -44,6 +45,29 @@ const year = new Date().getFullYear();
 </html>
 
 <style>
+  /* the film's last frame, left under the rest of the page. z-index -1 sits
+     behind every section but still above the paper that propagates from body,
+     so the footer reads over a ridge the scroll never quite finishes leaving.
+     opacity is driven by the film scrub; it holds wherever the scrub left it. */
+  .ridge-ghost {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    pointer-events: none;
+    background: url('/film/poster-end.webp') center bottom / cover no-repeat;
+    /* no top edge to give it away: the frame dissolves upward into paper and
+       only the ridge and the low glow survive */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.4) 44%, #000 86%);
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.4) 44%, #000 86%);
+  }
+  /* same crop the film falls back to, so a phone gets the ridge framed rather
+     than a 16:9 frame cropped to a sliver */
+  @media (max-width: 500px) and (max-aspect-ratio: 3 / 4) {
+    .ridge-ghost {
+      background-image: url('/film/poster-end-portrait.webp');
+    }
+  }
   .site-header {
     display: flex;
     align-items: baseline;

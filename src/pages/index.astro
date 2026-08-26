@@ -10,12 +10,13 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
 
 <Base title="Brett Boggs" description="Brett Boggs. Work and experiments." home>
   <section class="film full-bleed" id="film">
-    <picture>
-      <source id="poster-alt" media="(max-width: 500px) and (max-aspect-ratio: 3/4)" srcset="/film/poster-portrait.webp" />
-      <img class="film-poster" src="/film/poster.webp" alt="" />
-    </picture>
-    <canvas class="film-canvas" id="film-canvas" aria-hidden="true"></canvas>
-    <div class="film-fade" id="film-fade" aria-hidden="true"></div>
+    <div class="film-stage" id="film-stage">
+      <picture>
+        <source id="poster-alt" media="(max-width: 500px) and (max-aspect-ratio: 3/4)" srcset="/film/poster-portrait.webp" />
+        <img class="film-poster" src="/film/poster.webp" alt="" />
+      </picture>
+      <canvas class="film-canvas" id="film-canvas" aria-hidden="true"></canvas>
+    </div>
 
     <div class="hero-copy" id="hero-copy">
       <h1 class="hero-title">Walk through the&nbsp;work.</h1>
@@ -65,6 +66,16 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
        below the fold while the toolbar is up. */
     height: 100lvh;
     overflow: hidden;
+    /* deliberately transparent: once the stage has faded the fixed ridge under
+       the page shows straight through here, so there is no seam where the
+       section ends */
+  }
+  /* the frame and the paper it sits on, so both can leave together. fading the
+     stage out is the same composite as fading paper in over it, except what is
+     left behind is the ridge rather than a flat block. */
+  .film-stage {
+    position: absolute;
+    inset: 0;
     background: var(--paper);
   }
   .film-poster,
@@ -75,16 +86,11 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     height: 100%;
     object-fit: cover;
   }
-  .film-fade {
-    position: absolute;
-    inset: 0;
-    background: var(--paper);
-    opacity: 0;
-    pointer-events: none;
-  }
   .hero-copy {
     position: absolute;
-    top: 16svh;
+    /* rides just above the horizon (~51% of the frame at every aspect ratio the
+       canvas cover-fits to) instead of stranding itself in open sky */
+    top: 30svh;
     left: 0;
     right: 0;
     display: grid;
@@ -93,11 +99,18 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     padding: 0 1.5rem;
     text-align: center;
     pointer-events: none;
+    /* the scrub writes transform/filter every frame; keep it on its own layer */
+    will-change: transform, opacity, filter;
   }
   .hero-title {
     font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
-    font-size: clamp(2.3rem, 5.8vw, 4.4rem);
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
     color: var(--ink);
+  }
+  @media (max-width: 640px) {
+    .hero-copy {
+      top: 26svh;
+    }
   }
   .portal {
     position: absolute;
@@ -216,7 +229,7 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     posterAlt.srcset = '/film/poster-end-portrait.webp';
     poster.src = '/film/poster-end.webp';
   }
-  const fade = document.getElementById('film-fade')!;
+  const stage = document.getElementById('film-stage')!;
   const portal = document.getElementById('portal')!;
   const rows = Array.from(portal.querySelectorAll<HTMLElement>('.arrive'));
 
@@ -227,13 +240,28 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
 
   const scrollLine = film.querySelector<HTMLElement>('.scroll-line')!;
   const heroCopy = document.getElementById('hero-copy')!;
+  const ghost = document.getElementById('ridge-ghost');
+
+  // how much of the last frame survives under the page once the film settles.
+  // the stage goes to nothing rather than to this, so the remnant is only ever
+  // the one fixed layer — never the stage and the layer at once.
+  const GHOST = 0.15;
+  // the hero exits by being flown past, not by being switched off
+  const HERO_OUT = 0.2;
 
   function applyProgress(p: number): void {
     scrollLine.style.opacity = String(Math.max(0, 1 - p / 0.2));
-    const hero = Math.max(0, 1 - p / 0.14);
-    heroCopy.style.opacity = String(hero);
-    heroCopy.style.translate = `0 ${(1 - hero) * -22}px`;
-    fade.style.opacity = String(Math.min(1, Math.max(0, (p - 0.86) / 0.1)));
+    // camera dollies forward, so the words grow, drift up out of frame and go
+    // soft as they pass the near plane. ease-in holds them legible, then lets go.
+    const out = Math.min(1, p / HERO_OUT);
+    heroCopy.style.opacity = String(1 - out * out);
+    heroCopy.style.transform = `translate3d(0, ${-92 * out * out}px, 0) scale(${1 + 0.34 * out})`;
+    heroCopy.style.filter = `blur(${8 * out * out}px)`;
+    // the scene hands off to the remnant: stage out, fixed ridge in. both are
+    // pure functions of p, so the scrub reverses exactly on the way back up.
+    const settle = Math.min(1, Math.max(0, (p - 0.86) / 0.1));
+    stage.style.opacity = String(1 - settle);
+    if (ghost) ghost.style.opacity = String(settle * GHOST);
     rows.forEach((row, i) => {
       const t = Math.min(1, Math.max(0, (p - (REVEAL_START + i * ROW_STAGGER)) / REVEAL_SPAN));
       const e = t * t * (3 - 2 * t);
@@ -244,7 +272,8 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
 
   if (reduced || saveData) {
     showEndPoster();
-    fade.style.opacity = '0.55';
+    stage.style.opacity = '0.45';
+    if (ghost) ghost.style.opacity = String(GHOST);
     // static end-frame with the nav already visible — the scroll prompt makes no sense here
     heroCopy.style.display = 'none';
   } else {
@@ -261,7 +290,6 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
       ))
       .catch(() => {
         showEndPoster();
-        fade.style.opacity = '0.55';
         applyProgress(1);
       });
 
