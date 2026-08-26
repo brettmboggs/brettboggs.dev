@@ -1,0 +1,75 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Sheet from '../../../components/Sheet.astro';
+
+const drinks = [
+  { src: '/photo/product/d01.webp', alt: 'A Boulevard Single Wide bottle beaded with condensation on black.' },
+  { src: '/photo/product/d02.webp', alt: 'A bottle of Lunazul Blanco tequila lit low against a dark ground.' },
+  { src: '/photo/product/d03.webp', alt: 'A Cutwater lime margarita can, cold and running with water.' },
+  { src: '/photo/product/d04.webp', alt: 'A Goose Island Neon Beer Hug can, bright against black.' },
+  { src: '/photo/product/d05.webp', alt: 'The label of a Drumshanbo Gunpowder Irish Gin bottle.' },
+  { src: '/photo/product/d06.webp', alt: 'A hand tilting a glass beside the Boulevard bottle mid pour.' },
+];
+const goods = [
+  { src: '/photo/product/g01.webp', alt: 'A brass buckled leather dog collar on white seamless.' },
+  { src: '/photo/product/g02.webp', alt: 'The same collar laid over a wool plaid in warm light.' },
+  { src: '/photo/product/g03.webp', alt: 'A mesh strap watch resting on dark leather.' },
+  { src: '/photo/product/g04.webp', alt: 'A clear crystal skull lit from behind.' },
+  { src: '/photo/product/g05.webp', alt: 'A flatlay of a folding knife, pencils and a notebook.' },
+  { src: '/photo/product/g06.webp', alt: 'A slim cannabis package lying on a warm ground.' },
+];
+---
+
+<Base title="Product · Brett Boggs" description="Bottles, cans, and goods on a small table.">
+  <article>
+    <header class="page-head">
+      <p class="eyebrow">Photography · 2021 to 2022</p>
+      <h1>Product</h1>
+      <p class="lede">Bottles, cans, and goods on a small table.</p>
+    </header>
+
+    <figure class="bleed">
+      <img
+        src="/photo/product/hero.webp"
+        alt="A La Colombe draft latte can standing in warm light on wheat."
+        width="2400"
+        height="1600"
+        loading="eager"
+      />
+    </figure>
+
+    <div class="prose">
+      <p>
+        Drinks, mostly. Boulevard, La Colombe, Lunazul, Cutwater, Liquid Death. Goods in between:
+        collars, a watch, whatever was on the desk that week.
+      </p>
+      <p>One light, a small table, and a lot of moving things an inch at a time.</p>
+    </div>
+
+    <figure class="select">
+      <img
+        src="/photo/product/sel1.webp"
+        alt="A stack of Liquid Death mountain water cans."
+        width="1600"
+        height="1067"
+        loading="lazy"
+      />
+    </figure>
+
+    <Sheet label="Drinks" frames={drinks} />
+
+    <figure class="select">
+      <img
+        src="/photo/product/sel2.webp"
+        alt="A clear ice press on a bright yellow seamless ground."
+        width="1600"
+        height="1067"
+        loading="lazy"
+      />
+    </figure>
+
+    <Sheet label="Goods" frames={goods} />
+
+    <a class="back-link" href="/work/photography/">All photography</a>
+  </article>
+</Base>

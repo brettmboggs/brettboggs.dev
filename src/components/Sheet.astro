@@ -1,0 +1,21 @@
+---
+interface Props {
+  label: string;
+  frames: { src: string; alt: string }[];
+}
+const { label, frames } = Astro.props;
+---
+
+<section class="sheet-block">
+  <p class="sheet-label">{label}</p>
+  <div class="sheet">
+    {
+      frames.map((f, i) => (
+        <figure>
+          <img src={f.src} alt={f.alt} width="900" height="600" loading="lazy" />
+          <figcaption>{String(i + 1).padStart(2, '0')}</figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</section>

@@ -1,0 +1,96 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Sheet from '../../../components/Sheet.astro';
+
+const stoneSugar = [
+  { src: '/photo/stone-sugar/f01.webp', alt: 'The Big Top marquee for Circus Flora against a bright sky.' },
+  { src: '/photo/stone-sugar/f02.webp', alt: 'A club stage washed in blue and green beams over a silhouetted crowd.' },
+  { src: '/photo/stone-sugar/f03.webp', alt: 'A quonset stage lit deep pink at night, a fire performer out front.' },
+  { src: '/photo/stone-sugar/f04.webp', alt: 'A guitarist under teal light, head down over the neck.' },
+  { src: '/photo/stone-sugar/f05.webp', alt: 'A guitarist lit hard teal and green, mid phrase.' },
+  { src: '/photo/stone-sugar/f06.webp', alt: 'Two players in warm smoke, one in a cowboy hat.' },
+  { src: '/photo/stone-sugar/f07.webp', alt: 'A bassist in a tie dye shirt under red stage light.' },
+  { src: '/photo/stone-sugar/f08.webp', alt: 'An outdoor stage set under a steel bridge in daylight.' },
+  { src: '/photo/stone-sugar/f09.webp', alt: 'A fire dancer working in front of a festival banner.' },
+];
+const sawhorse = [
+  { src: '/photo/stone-sugar/s01.webp', alt: 'A large analogue mixing console raking away in shallow focus.' },
+  { src: '/photo/stone-sugar/s02.webp', alt: 'A red condenser microphone in a shock mount, warm light behind.' },
+  { src: '/photo/stone-sugar/s03.webp', alt: 'Warm light across the strings and frame of an open piano.' },
+];
+const solis = [
+  { src: '/photo/solis/a01.webp', alt: 'A fiddle player lit from behind on a dark stage.' },
+  { src: '/photo/solis/a02.webp', alt: 'A guitarist under deep purple light.' },
+  { src: '/photo/solis/a03.webp', alt: 'A player in a gold brocade jacket bent over the strings.' },
+  { src: '/photo/solis/a04.webp', alt: 'A drummer seen through blue smoke and cymbals.' },
+  { src: '/photo/solis/a05.webp', alt: 'A drummer singing under a green and blue wash.' },
+  { src: '/photo/solis/a06.webp', alt: 'The band smeared into green light on a long exposure.' },
+];
+const wildfire = [
+  { src: '/photo/wildfire/w01.webp', alt: 'A singer and a fiddle player sharing the front of the stage.' },
+  { src: '/photo/wildfire/w02.webp', alt: 'A guitarist and a singer working one microphone together.' },
+  { src: '/photo/wildfire/w03.webp', alt: 'The full band across a lit outdoor stage.' },
+];
+---
+
+<Base
+  title="Live Music · Brett Boggs"
+  description="Bands on festival stages, in bar rooms, and one afternoon in a studio."
+>
+  <article>
+    <header class="page-head">
+      <p class="eyebrow">Photography · 2021 to 2023</p>
+      <h1>Live Music</h1>
+      <p class="lede">Bands on festival stages, in bar rooms, and one afternoon in a studio.</p>
+    </header>
+
+    <figure class="bleed">
+      <img
+        src="/photo/stone-sugar/hero.webp"
+        alt="Stone Sugar standing in a field by the water, black and white."
+        width="2400"
+        height="1600"
+        loading="eager"
+      />
+    </figure>
+
+    <div class="prose">
+      <p>
+        Two years with Stone Sugar, plus nights with Solis Armada and Wildfire. Festivals, bar
+        stages, and the occasional open field.
+      </p>
+      <p>
+        Almost all of it is available light, which on a stage means whatever the wash happens to be
+        doing that second. You learn the rig, then you wait.
+      </p>
+    </div>
+
+    <figure class="select">
+      <img
+        src="/photo/stone-sugar/lights.webp"
+        alt="A drummer silhouetted against red and green light bars."
+        width="1920"
+        height="1280"
+        loading="lazy"
+      />
+    </figure>
+
+    <Sheet label="Stone Sugar · 2021 to 2022" frames={stoneSugar} />
+
+    <figure class="select">
+      <img
+        src="/photo/stone-sugar/case.webp"
+        alt="A sticker covered hard case propped against an amplifier."
+        width="1920"
+        height="1280"
+        loading="lazy"
+      />
+    </figure>
+
+    <Sheet label="Sawhorse Studio · May 2022" frames={sawhorse} />
+    <Sheet label="Solis Armada · 2022 to 2023" frames={solis} />
+    <Sheet label="Wildfire · Aug 2021" frames={wildfire} />
+
+    <a class="back-link" href="/work/photography/">All photography</a>
+  </article>
+</Base>
