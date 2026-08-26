@@ -9,6 +9,10 @@ import Base from '../layouts/Base.astro';
     <p class="lede">Operator turned builder. St.&nbsp;Louis.</p>
   </header>
 
+  <figure class="portrait">
+    <img src="/about/brett.jpg" alt="Brett Boggs" width="880" height="1121" loading="eager" />
+  </figure>
+
   <div class="prose">
     <p>
       I spent a decade running physical operations before I ever shipped software. Service
@@ -71,6 +75,16 @@ import Base from '../layouts/Base.astro';
 </Base>
 
 <style>
+  .portrait {
+    margin: 2.5rem 0 0;
+    max-width: 19rem;
+  }
+  .portrait img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--paper-deep);
+  }
   .reach {
     margin-top: 4rem;
     padding-top: 1.6rem;
