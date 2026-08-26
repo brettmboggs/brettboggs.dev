@@ -14,7 +14,10 @@ const writingNote = writing[0] ? `latest — ${writing[0].data.title}` : 'notes'
 
 <Base title="Brett Boggs" description="Brett Boggs. Work, experiments, writing." home>
   <section class="film full-bleed" id="film">
-    <img class="film-poster" src="/film/poster.webp" alt="" />
+    <picture>
+      <source id="poster-alt" media="(max-width: 500px) and (max-aspect-ratio: 3/4)" srcset="/film/poster-portrait.webp" />
+      <img class="film-poster" src="/film/poster.webp" alt="" />
+    </picture>
     <canvas class="film-canvas" id="film-canvas" aria-hidden="true"></canvas>
     <div class="film-fade" id="film-fade" aria-hidden="true"></div>
 
@@ -210,6 +213,13 @@ const writingNote = writing[0] ? `latest — ${writing[0].data.title}` : 'notes'
   const saveData = (navigator as any).connection?.saveData === true;
   const film = document.getElementById('film')!;
   const poster = film.querySelector<HTMLImageElement>('.film-poster')!;
+  const posterAlt = document.getElementById('poster-alt') as HTMLSourceElement;
+
+  // the <source> wins over img.src, so the end frame has to replace both
+  function showEndPoster(): void {
+    posterAlt.srcset = '/film/poster-end-portrait.webp';
+    poster.src = '/film/poster-end.webp';
+  }
   const fade = document.getElementById('film-fade')!;
   const portal = document.getElementById('portal')!;
   const rows = Array.from(portal.querySelectorAll<HTMLElement>('.arrive'));
@@ -237,7 +247,7 @@ const writingNote = writing[0] ? `latest — ${writing[0].data.title}` : 'notes'
   }
 
   if (reduced || saveData) {
-    poster.src = '/film/poster-end.webp';
+    showEndPoster();
     fade.style.opacity = '0.55';
     // static end-frame with the nav already visible — the scroll prompt makes no sense here
     heroCopy.style.display = 'none';
@@ -254,7 +264,7 @@ const writingNote = writing[0] ? `latest — ${writing[0].data.title}` : 'notes'
         }),
       ))
       .catch(() => {
-        poster.src = '/film/poster-end.webp';
+        showEndPoster();
         fade.style.opacity = '0.55';
         applyProgress(1);
       });

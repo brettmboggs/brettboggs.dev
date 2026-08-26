@@ -2,6 +2,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+// iOS collapses its toolbar mid-scroll and fires resize; without this the pin jumps
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 interface FilmOptions {
   canvas: HTMLCanvasElement;
@@ -10,15 +12,36 @@ interface FilmOptions {
   onProgress?: (p: number) => void;
 }
 
+// source dimensions per tier, cheapest first. `portrait` is a centre crop of the
+// master rather than a scaled-down copy, so a phone fills its screen from real
+// pixels instead of stretching a 16:9 frame past 3x.
+const TIERS = [
+  { name: 'sm', w: 960, h: 540 },
+  { name: 'portrait', w: 664, h: 1440 },
+  { name: 'lg', w: 1600, h: 900 },
+  { name: 'xl', w: 2560, h: 1440 },
+];
+// above this the frame is being stretched enough to read as mush
+const MAX_UPSCALE = 1.4;
+
+// cheapest tier that still covers the canvas without visible stretching. the
+// canvas is cover-fit, so on a tall screen it is the height that sets the scale.
+function pickTier(cw: number, ch: number): string {
+  const conn = (navigator as any).connection;
+  // a narrow pipe would rather be soft than stall
+  if (conn && /(^|-)2g$/.test(conn.effectiveType ?? '')) return 'sm';
+  for (const t of TIERS) {
+    if (Math.max(cw / t.w, ch / t.h) <= MAX_UPSCALE) return t.name;
+  }
+  return TIERS[TIERS.length - 1].name;
+}
+
 export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOptions): void {
-  const ctx = canvas.getContext('2d')!;
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
-  // pick the frame tier by the display's effective pixel width
-  const effectiveWidth = window.innerWidth * Math.min(devicePixelRatio, 2);
-  const tier = effectiveWidth >= 2000 ? 'xl' : effectiveWidth >= 1000 ? 'lg' : 'sm';
-  const dir = `/film/${tier}/`;
+  const ctx = canvas.getContext('2d', { alpha: false })!;
+  const dpr = Math.min(devicePixelRatio, 2);
+  const dir = `/film/${pickTier(canvas.clientWidth * dpr, canvas.clientHeight * dpr)}/`;
   const frames: (HTMLImageElement | null)[] = new Array(frameCount).fill(null);
+  const ready: boolean[] = new Array(frameCount).fill(false);
   let current = 0;
   let drawn = -1;
 
@@ -27,12 +50,10 @@ export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOpti
   }
 
   function nearestLoaded(i: number): HTMLImageElement | null {
-    if (frames[i]?.complete) return frames[i];
+    if (ready[i]) return frames[i];
     for (let d = 1; d < frameCount; d++) {
-      const a = frames[i - d];
-      if (i - d >= 0 && a?.complete) return a;
-      const b = frames[i + d];
-      if (i + d < frameCount && b?.complete) return b;
+      if (i - d >= 0 && ready[i - d]) return frames[i - d];
+      if (i + d < frameCount && ready[i + d]) return frames[i + d];
     }
     return null;
   }
@@ -52,14 +73,27 @@ export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOpti
   function load(i: number, onload?: () => void): void {
     if (frames[i]) return;
     const img = new Image();
-    img.src = url(i);
-    if (onload) img.onload = onload;
     frames[i] = img;
+    const settle = (): void => {
+      if (ready[i]) return;
+      ready[i] = true;
+      onload?.();
+    };
+    img.onload = settle;
+    img.onerror = settle;
+    img.src = url(i);
+    // pre-warm off the scroll path — a first drawImage on an undecoded frame stalls the main
+    // thread. best effort only: decode() never settles in a tab that isn't compositing.
+    img.decode().then(settle, () => {});
   }
 
   function resize(): void {
-    canvas.width = canvas.clientWidth * Math.min(devicePixelRatio, 2);
-    canvas.height = canvas.clientHeight * Math.min(devicePixelRatio, 2);
+    const w = Math.round(canvas.clientWidth * dpr);
+    const h = Math.round(canvas.clientHeight * dpr);
+    // assigning width/height always clears the canvas, so only do it when it actually changed
+    if (canvas.width === w && canvas.height === h) return;
+    canvas.width = w;
+    canvas.height = h;
     // setting canvas dimensions resets context state
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
