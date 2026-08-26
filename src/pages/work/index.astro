@@ -2,19 +2,54 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 
-// a spanning entry sorts by when it finished, not when it started
-const ended = (e: { data: { date: Date; dateEnd?: Date } }) => e.data.dateEnd ?? e.data.date;
-const entries = (await getCollection('work', ({ data }) => !data.draft)).sort(
-  (a, b) => ended(b).valueOf() - ended(a).valueOf(),
-);
-
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+// a spanning entry shows the years it ran rather than a single day
 function when(date: Date, dateEnd?: Date): string {
   if (!dateEnd) return fmt(date);
   const a = date.getFullYear();
   const b = dateEnd.getFullYear();
   return a === b ? String(a) : `${a} to ${b}`;
 }
+
+const ended = (e: { data: { date: Date; dateEnd?: Date } }) => e.data.dateEnd ?? e.data.date;
+const all = await getCollection('work', ({ data }) => !data.draft);
+const photo = all.filter((e) => e.data.group === 'photography');
+
+interface Row {
+  href: string;
+  title: string;
+  desc: string;
+  when: string;
+  datetime: string;
+  sort: number;
+}
+
+const rows: Row[] = all
+  .filter((e) => !e.data.group)
+  .map((e) => ({
+    href: `/work/${e.id}/`,
+    title: e.data.title,
+    desc: e.data.description,
+    when: when(e.data.date, e.data.dateEnd),
+    datetime: e.data.date.toISOString(),
+    sort: ended(e).valueOf(),
+  }));
+
+// the photo sets collapse into a single row rather than crowding out everything else
+if (photo.length) {
+  const opened = photo.reduce((a, b) => (a.data.date < b.data.date ? a : b)).data.date;
+  const closed = photo.map(ended).reduce((a, b) => (a > b ? a : b));
+  rows.push({
+    href: '/work/photography/',
+    title: 'Photography',
+    desc: `Sets shot on location. ${photo.map((e) => e.data.title).join(', ')}.`,
+    when: when(opened, closed),
+    datetime: opened.toISOString(),
+    sort: closed.valueOf(),
+  });
+}
+
+rows.sort((a, b) => b.sort - a.sort);
 ---
 
 <Base title="Work · Brett Boggs" description="Case studies and shipped things.">
@@ -24,17 +59,17 @@ function when(date: Date, dateEnd?: Date): string {
     <p class="lede">Case studies. The problem, the build, and what came of it.</p>
   </header>
   {
-    entries.length > 0 ? (
+    rows.length > 0 ? (
       <ul class="entry-list">
-        {entries.map((entry) => (
+        {rows.map((row) => (
           <li>
-            <a class="entry-row" href={`/work/${entry.id}/`}>
+            <a class="entry-row" href={row.href}>
               <span>
-                <span class="entry-title">{entry.data.title}</span>
-                <span class="entry-desc">{entry.data.description}</span>
+                <span class="entry-title">{row.title}</span>
+                <span class="entry-desc">{row.desc}</span>
               </span>
-              <time class="entry-meta" datetime={entry.data.date.toISOString()}>
-                {when(entry.data.date, entry.data.dateEnd)}
+              <time class="entry-meta" datetime={row.datetime}>
+                {row.when}
               </time>
             </a>
           </li>

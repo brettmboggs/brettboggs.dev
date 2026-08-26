@@ -1,0 +1,31 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection(
+    'work',
+    ({ data }) => !data.draft && !data.bespoke && data.group === 'photography',
+  );
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+const when = entry.data.dateEnd
+  ? `${entry.data.date.getFullYear()} to ${entry.data.dateEnd.getFullYear()}`
+  : fmt(entry.data.date);
+---
+
+<Base title={`${entry.data.title} · Brett Boggs`} description={entry.data.description}>
+  <article>
+    <header class="page-head">
+      <p class="eyebrow">Photography · {when}</p>
+      <h1>{entry.data.title}</h1>
+      <p class="lede">{entry.data.description}</p>
+    </header>
+    <div class="prose"><Content /></div>
+    <a class="back-link" href="/work/photography/">All photography</a>
+  </article>
+</Base>

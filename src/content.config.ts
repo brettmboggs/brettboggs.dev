@@ -11,6 +11,9 @@ const work = defineCollection({
     dateEnd: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    // grouped entries are collapsed into a single row on /work and listed
+    // on their own index at /work/<group>/
+    group: z.enum(['photography']).optional(),
     // bespoke entries have a hand-built page at src/pages/work/<id>.astro;
     // they appear in the index but are excluded from the generic [slug] template
     bespoke: z.boolean().default(false),
@@ -25,6 +28,9 @@ const writing = defineCollection({
     pubDate: z.coerce.date(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    // grouped entries are collapsed into a single row on /work and listed
+    // on their own index at /work/<group>/
+    group: z.enum(['photography']).optional(),
   }),
 });
 

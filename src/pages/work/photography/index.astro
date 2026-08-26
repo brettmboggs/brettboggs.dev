@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+
+const ended = (e: { data: { date: Date; dateEnd?: Date } }) => e.data.dateEnd ?? e.data.date;
+const entries = (
+  await getCollection('work', ({ data }) => !data.draft && data.group === 'photography')
+).sort((a, b) => ended(b).valueOf() - ended(a).valueOf());
+
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+function when(date: Date, dateEnd?: Date): string {
+  if (!dateEnd) return fmt(date);
+  const a = date.getFullYear();
+  const b = dateEnd.getFullYear();
+  return a === b ? String(a) : `${a} to ${b}`;
+}
+---
+
+<Base title="Photography · Brett Boggs" description="Sets shot on location.">
+  <header class="page-head">
+    <p class="eyebrow">Work · Photography</p>
+    <h1>Photography</h1>
+    <p class="lede">Sets shot on location, mostly in whatever light was already there.</p>
+  </header>
+  <ul class="entry-list">
+    {
+      entries.map((entry) => (
+        <li>
+          <a class="entry-row" href={`/work/photography/${entry.id}/`}>
+            <span>
+              <span class="entry-title">{entry.data.title}</span>
+              <span class="entry-desc">{entry.data.description}</span>
+            </span>
+            <time class="entry-meta" datetime={entry.data.date.toISOString()}>
+              {when(entry.data.date, entry.data.dateEnd)}
+            </time>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <a class="back-link" href="/work/">All work</a>
+</Base>
