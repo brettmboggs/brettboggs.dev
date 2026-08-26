@@ -11,10 +11,57 @@ interface Props {
   title: string;
   description?: string;
   home?: boolean;
+  /** page-specific social card, resolved against the site root */
+  ogImage?: string;
+  /** marks the page as an article and stamps its dates */
+  article?: { published: Date; modified?: Date };
 }
 
-const { title, description = 'Brett Boggs. Work and experiments.', home = false } = Astro.props;
+const {
+  title,
+  description = 'Brett Boggs. Work and experiments.',
+  home = false,
+  ogImage = '/og.png',
+  article,
+} = Astro.props;
+
 const year = new Date().getFullYear();
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const social = new URL(ogImage, Astro.site);
+
+// Only the homepage carries the identity graph. Repeating it on every page
+// hands crawlers duplicate entities to reconcile, which weakens rather than
+// reinforces the one they should be reading.
+const schema = home
+  ? {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Person',
+          '@id': 'https://brettboggs.dev/#brett',
+          name: 'Brett Boggs',
+          url: 'https://brettboggs.dev',
+          email: 'brettmboggs@gmail.com',
+          image: 'https://brettboggs.dev/og.png',
+          affiliation: {
+            '@type': 'Organization',
+            name: 'Datum',
+            url: 'https://datumci.com',
+          },
+          sameAs: ['https://github.com/brettmboggs'],
+        },
+        {
+          '@type': 'WebSite',
+          '@id': 'https://brettboggs.dev/#site',
+          url: 'https://brettboggs.dev',
+          name: 'Brett Boggs',
+          description: 'Brett Boggs. Work and experiments.',
+          publisher: { '@id': 'https://brettboggs.dev/#brett' },
+          inLanguage: 'en',
+        },
+      ],
+    }
+  : null;
 ---
 
 <!doctype html>
@@ -24,7 +71,39 @@ const year = new Date().getFullYear();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta name="author" content="Brett Boggs" />
+    <link rel="canonical" href={canonical} />
+
+    <!-- ico first for browsers that only read ico, svg for everything current -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#F4EDDF" />
+    <meta name="apple-mobile-web-app-title" content="Brett Boggs" />
+
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:site_name" content="Brett Boggs" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={social} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Brett Boggs. Work and experiments." />
+    {article && <meta property="article:published_time" content={article.published.toISOString()} />}
+    {article?.modified && (
+      <meta property="article:modified_time" content={article.modified.toISOString()} />
+    )}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={social} />
+
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
   </head>
   <body>
     {home && <div class="ridge-ghost" id="ridge-ghost" aria-hidden="true"></div>}
@@ -55,7 +134,14 @@ const year = new Date().getFullYear();
     z-index: -1;
     opacity: 0;
     pointer-events: none;
-    background: url('/film/poster-end.webp') center bottom / cover no-repeat;
+    background: center bottom / cover no-repeat;
+    /* jpeg first so a browser without webp still gets the ridge; the image-set
+       overrides it wherever webp is understood */
+    background-image: url('/film/poster-end.jpg');
+    background-image: image-set(
+      url('/film/poster-end.webp') type('image/webp'),
+      url('/film/poster-end.jpg') type('image/jpeg')
+    );
     /* no top edge to give it away: the frame dissolves upward into paper and
        only the ridge and the low glow survive */
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.4) 44%, #000 86%);
@@ -65,7 +151,11 @@ const year = new Date().getFullYear();
      than a 16:9 frame cropped to a sliver */
   @media (max-width: 500px) and (max-aspect-ratio: 3 / 4) {
     .ridge-ghost {
-      background-image: url('/film/poster-end-portrait.webp');
+      background-image: url('/film/poster-end-portrait.jpg');
+      background-image: image-set(
+        url('/film/poster-end-portrait.webp') type('image/webp'),
+        url('/film/poster-end-portrait.jpg') type('image/jpeg')
+      );
     }
   }
   .site-header {
@@ -80,7 +170,7 @@ const year = new Date().getFullYear();
     position: absolute;
     top: 0;
     left: 50%;
-    translate: -50% 0;
+    transform: translateX(-50%);
     width: 100%;
     z-index: 10;
   }

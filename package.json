@@ -10,6 +10,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/fraunces": "^5.3.0",
     "@fontsource-variable/instrument-sans": "^5.3.0",
     "@fontsource/spline-sans-mono": "^5.3.0",
@@ -21,6 +22,9 @@
     "@fontsource/fraunces": "^5.3.0",
     "@types/three": "^0.185.4",
     "opentype.js": "^2.0.0",
+    "sharp": "^0.35.3"
+  },
+  "overrides": {
     "sharp": "^0.35.3"
   }
 }

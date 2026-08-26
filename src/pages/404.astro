@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Not found · Brett Boggs" description="That page is not here.">
+  <header class="page-head">
+    <p class="eyebrow">404</p>
+    <h1>Not here.</h1>
+    <p class="lede">That page moved or never existed.</p>
+  </header>
+  <nav class="entry-list" aria-label="Site sections">
+    <a class="entry-row" href="/">
+      <span class="entry-title">Home</span>
+      <span class="entry-meta">Start over</span>
+    </a>
+    <a class="entry-row" href="/work/">
+      <span class="entry-title">Work</span>
+      <span class="entry-meta">Case studies</span>
+    </a>
+    <a class="entry-row" href="/lab/">
+      <span class="entry-title">Lab</span>
+      <span class="entry-meta">Experiments</span>
+    </a>
+  </nav>
+</Base>
+
+<style>
+  .entry-list {
+    display: block;
+  }
+</style>

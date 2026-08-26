@@ -12,8 +12,10 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
   <section class="film full-bleed" id="film">
     <div class="film-stage" id="film-stage">
       <picture>
-        <source id="poster-alt" media="(max-width: 500px) and (max-aspect-ratio: 3/4)" srcset="/film/poster-portrait.webp" />
-        <img class="film-poster" src="/film/poster.webp" alt="" />
+        <source id="poster-alt" media="(max-width: 500px) and (max-aspect-ratio: 3/4)" type="image/webp" srcset="/film/poster-portrait.webp" />
+        <source id="poster-alt-jpg" media="(max-width: 500px) and (max-aspect-ratio: 3/4)" srcset="/film/poster-portrait.jpg" />
+        <source id="poster-wide" type="image/webp" srcset="/film/poster.webp" />
+        <img class="film-poster" src="/film/poster.jpg" alt="" />
       </picture>
       <canvas class="film-canvas" id="film-canvas" aria-hidden="true"></canvas>
     </div>
@@ -64,6 +66,7 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
        it measures, so sizing to svh leaves a paper gap the height of the toolbar
        once iOS collapses it mid-scroll. lvh covers both states; the surplus sits
        below the fold while the toolbar is up. */
+    height: 100vh;
     height: 100lvh;
     overflow: hidden;
     /* deliberately transparent: once the stage has faded the fixed ridge under
@@ -86,10 +89,16 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     height: 100%;
     object-fit: cover;
   }
+  /* an alpha:false canvas is opaque black before anything is drawn into it, so
+     it stays hidden until a frame really lands and the poster holds the frame */
+  .film-canvas {
+    opacity: 0;
+  }
   .hero-copy {
     position: absolute;
     /* rides just above the horizon (~51% of the frame at every aspect ratio the
        canvas cover-fits to) instead of stranding itself in open sky */
+    top: 30vh;
     top: 30svh;
     left: 0;
     right: 0;
@@ -109,6 +118,7 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
   }
   @media (max-width: 640px) {
     .hero-copy {
+      top: 26vh;
       top: 26svh;
     }
   }
@@ -146,6 +156,7 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
   .scroll-line {
     position: absolute;
     /* sits on the fold rather than under the toolbar. 0 wherever lvh == svh. */
+    bottom: 0;
     bottom: calc(100lvh - 100svh);
     left: 50%;
     width: 2px;
@@ -176,7 +187,7 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     font-weight: 600;
     font-size: clamp(2rem, 5.2vw, 3.4rem);
     line-height: 1.05;
-    transition: translate 0.45s var(--ease-warm);
+    transition: transform 0.45s var(--ease-warm);
   }
   .row-note {
     font-family: var(--mono);
@@ -189,7 +200,7 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
   }
   .row:hover .row-title,
   .row:focus-visible .row-title {
-    translate: 0.85rem 0;
+    transform: translateX(0.85rem);
   }
   .row:hover .row-note,
   .row:focus-visible .row-note {
@@ -224,10 +235,15 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
   const poster = film.querySelector<HTMLImageElement>('.film-poster')!;
   const posterAlt = document.getElementById('poster-alt') as HTMLSourceElement;
 
-  // the <source> wins over img.src, so the end frame has to replace both
+  const posterAltJpg = document.getElementById('poster-alt-jpg') as HTMLSourceElement;
+  const posterWide = document.getElementById('poster-wide') as HTMLSourceElement;
+
+  // every <source> outranks img.src, so the end frame has to replace all of them
   function showEndPoster(): void {
     posterAlt.srcset = '/film/poster-end-portrait.webp';
-    poster.src = '/film/poster-end.webp';
+    posterAltJpg.srcset = '/film/poster-end-portrait.jpg';
+    posterWide.srcset = '/film/poster-end.webp';
+    poster.src = '/film/poster-end.jpg';
   }
   const stage = document.getElementById('film-stage')!;
   const portal = document.getElementById('portal')!;
@@ -266,7 +282,7 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
       const t = Math.min(1, Math.max(0, (p - (REVEAL_START + i * ROW_STAGGER)) / REVEAL_SPAN));
       const e = t * t * (3 - 2 * t);
       row.style.opacity = String(e);
-      row.style.translate = `0 ${(1 - e) * 34}px`;
+      row.style.transform = `translateY(${(1 - e) * 34}px)`;
     });
   }
 

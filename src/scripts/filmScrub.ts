@@ -41,26 +41,35 @@ export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOpti
   const dpr = Math.min(devicePixelRatio, 2);
   const dir = `/film/${pickTier(canvas.clientWidth * dpr, canvas.clientHeight * dpr)}/`;
   const frames: (HTMLImageElement | null)[] = new Array(frameCount).fill(null);
-  const ready: boolean[] = new Array(frameCount).fill(false);
+  // `settled` means the request finished either way; `usable` means it finished
+  // with pixels. Collapsing the two is what turned a failed load into a black
+  // screen: an alpha:false canvas starts opaque black, so the moment it was
+  // sized it covered the poster, and a browser that cannot decode webp fails
+  // every frame. The canvas now stays hidden until a frame actually paints.
+  const settled: boolean[] = new Array(frameCount).fill(false);
+  const usable: boolean[] = new Array(frameCount).fill(false);
   let current = 0;
   let drawn = -1;
+  let painted = false;
 
   function url(i: number): string {
     return `${dir}${String(i).padStart(3, '0')}.webp`;
   }
 
   function nearestLoaded(i: number): HTMLImageElement | null {
-    if (ready[i]) return frames[i];
+    if (usable[i]) return frames[i];
     for (let d = 1; d < frameCount; d++) {
-      if (i - d >= 0 && ready[i - d]) return frames[i - d];
-      if (i + d < frameCount && ready[i + d]) return frames[i + d];
+      if (i - d >= 0 && usable[i - d]) return frames[i - d];
+      if (i + d < frameCount && usable[i + d]) return frames[i + d];
     }
     return null;
   }
 
   function draw(i: number): void {
     const img = nearestLoaded(i);
-    if (!img) return;
+    // naturalWidth is 0 on a broken image, which would scale the frame by
+    // Infinity and throw inside drawImage
+    if (!img || !img.naturalWidth) return;
     const cw = canvas.width;
     const ch = canvas.height;
     const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
@@ -68,6 +77,11 @@ export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOpti
     const h = img.naturalHeight * s;
     ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
     drawn = i;
+    // first real frame: hand over from the poster. Same image, so no seam.
+    if (!painted) {
+      painted = true;
+      canvas.style.opacity = '1';
+    }
   }
 
   function load(i: number, onload?: () => void): void {
@@ -75,8 +89,9 @@ export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOpti
     const img = new Image();
     frames[i] = img;
     const settle = (): void => {
-      if (ready[i]) return;
-      ready[i] = true;
+      if (settled[i]) return;
+      settled[i] = true;
+      usable[i] = img.naturalWidth > 0;
       onload?.();
     };
     img.onload = settle;
