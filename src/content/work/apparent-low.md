@@ -112,5 +112,13 @@ npm run extract corpus/text/iowa-2026-06-09.txt v001
 npm run eval v001                             # score against ground truth
 ```
 
-Corpus documents are public-record Iowa DOT lettings, pinned by SHA-256 in
-`corpus/manifest.json`.
+## A note on scope
+
+Nothing in the agent is state-specific — the schema, the scoring, and the
+prompt all speak generic DOT — and handling every state's format is the point
+of using a model instead of a hard-coded parser. The corpus opens with Iowa
+for one reason: Iowa DOT publishes bid tabulations as public PDFs with no
+login, while many states (Missouri included) gate theirs behind Bid Express or
+a plans-room registration until award. The corpus grows a state at a time,
+pinned by SHA-256 in `corpus/manifest.json`, and every added state is a test
+the agent either passes or fails in public.
