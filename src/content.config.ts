@@ -7,6 +7,8 @@ const work = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
+    // ongoing bodies of work carry a span instead of a single day
+    dateEnd: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
     // bespoke entries have a hand-built page at src/pages/work/<id>.astro;

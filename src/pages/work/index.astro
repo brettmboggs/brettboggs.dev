@@ -2,11 +2,19 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 
+// a spanning entry sorts by when it finished, not when it started
+const ended = (e: { data: { date: Date; dateEnd?: Date } }) => e.data.dateEnd ?? e.data.date;
 const entries = (await getCollection('work', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+  (a, b) => ended(b).valueOf() - ended(a).valueOf(),
 );
 
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+function when(date: Date, dateEnd?: Date): string {
+  if (!dateEnd) return fmt(date);
+  const a = date.getFullYear();
+  const b = dateEnd.getFullYear();
+  return a === b ? String(a) : `${a} to ${b}`;
+}
 ---
 
 <Base title="Work · Brett Boggs" description="Case studies and shipped things.">
@@ -26,7 +34,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: '
                 <span class="entry-desc">{entry.data.description}</span>
               </span>
               <time class="entry-meta" datetime={entry.data.date.toISOString()}>
-                {fmt(entry.data.date)}
+                {when(entry.data.date, entry.data.dateEnd)}
               </time>
             </a>
           </li>
