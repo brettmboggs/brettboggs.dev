@@ -84,20 +84,6 @@ download but the bid tab itself. Five minutes, start to spreadsheet:
 If a number comes back wrong against the PDF, that is exactly the feedback
 this project runs on — [say so here](https://github.com/brettmboggs/apparent-low/issues).
 
-## Check its work
-
-The realistic test for anyone who knows construction: is the extracted data
-actually right?
-
-1. Open a source document: the
-   [June 9, 2026 Iowa DOT bid tabulation](https://iowadot.gov/media/14575/download?inline)
-   (a 10-page PDF — one bridge deck joint repair contract, four bidders).
-2. Open what the agent extracted from it:
-   [results/v001/iowa-2026-06-09.json](https://github.com/brettmboggs/apparent-low/blob/main/results/v001/iowa-2026-06-09.json).
-3. Pick lines in the PDF and check them against the data. Mobilization,
-   traffic control, the $1.00 lump-sum survey bids. A wrong number is a
-   finding.
-
 ## For developers
 
 The repo is public: [github.com/brettmboggs/apparent-low](https://github.com/brettmboggs/apparent-low).
@@ -112,13 +98,19 @@ npm run extract corpus/text/iowa-2026-06-09.txt v001
 npm run eval v001                             # score against ground truth
 ```
 
-## A note on scope
+## The test corpus
 
-Nothing in the agent is state-specific — the schema, the scoring, and the
-prompt all speak generic DOT — and handling every state's format is the point
-of using a model instead of a hard-coded parser. The corpus opens with Iowa
-for one reason: Iowa DOT publishes bid tabulations as public PDFs with no
-login, while many states (Missouri included) gate theirs behind Bid Express or
-a plans-room registration until award. The corpus grows a state at a time,
-pinned by SHA-256 in `corpus/manifest.json`, and every added state is a test
-the agent either passes or fails in public.
+Nothing in the tool is state-specific — the schema, the scoring, and the
+prompt all speak generic DOT, and handling every state's format is the point
+of using a model instead of a hard-coded parser. Accuracy claims, though, need
+documents that can be published and re-checked by anyone. Iowa DOT is one of
+the few agencies that posts bid tabulations with no login, so the public test
+corpus starts there: the
+[June 9, 2026 letting](https://iowadot.gov/media/14575/download?inline)
+against
+[what the agent extracted](https://github.com/brettmboggs/apparent-low/blob/main/results/v001/iowa-2026-06-09.json),
+checkable line by line. Most states, Missouri included, gate their tabs behind
+Bid Express or a plans-room registration until award — those documents run
+through the tool the same way, they just can't be redistributed as test data
+until sourced properly. The corpus grows a state at a time, pinned by SHA-256,
+and every added state is a test the agent passes or fails in public.
