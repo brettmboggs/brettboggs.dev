@@ -94,27 +94,22 @@ import Base from '../layouts/Base.astro';
     margin-top: 0;
   }
 
-  /* the portrait as a plate printed in the site's own ink: a warm sienna
-     duotone that develops to full color under the cursor, like a print coming
-     up in the tray. pure filter chain, so the development animates. */
+  /* the portrait in real color, mounted like a print: a warm mat cut from
+     the site's own paper, flat, no shadows, the same rule-and-mono language
+     as every figure on the site. */
   .portrait {
     margin: 0;
   }
   .portrait-plate {
     display: block;
-    border: 1px solid var(--paper-deep);
-    overflow: hidden;
+    padding: 0.7rem;
+    background: var(--paper-deep);
+    border-top: 2px solid var(--ink);
   }
   .portrait img {
     display: block;
     width: 100%;
     height: auto;
-    filter: grayscale(1) sepia(0.55) hue-rotate(-12deg) saturate(1.6) contrast(1.04) brightness(1.03);
-    transition: filter 0.7s var(--ease-warm);
-  }
-  .portrait:hover img,
-  .portrait:focus-within img {
-    filter: none;
   }
   .portrait figcaption {
     margin-top: 0.8rem;
