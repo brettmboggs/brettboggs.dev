@@ -109,8 +109,8 @@ corpus starts there: the
 [June 9, 2026 letting](https://iowadot.gov/media/14575/download?inline)
 against
 [what the agent extracted](https://github.com/brettmboggs/apparent-low/blob/main/results/v001/iowa-2026-06-09.json),
-checkable line by line. Most states, Missouri included, gate their tabs behind
-Bid Express or a plans-room registration until award — those documents run
-through the tool the same way, they just can't be redistributed as test data
-until sourced properly. The corpus grows a state at a time, pinned by SHA-256,
-and every added state is a test the agent passes or fails in public.
+checkable line by line. Most states gate their tabs behind Bid Express or a
+plans-room registration until award — those documents run through the tool
+the same way, they just can't be redistributed as test data until sourced
+properly. The corpus grows a state at a time, pinned by SHA-256, and every
+added state is a test the agent passes or fails in public.
