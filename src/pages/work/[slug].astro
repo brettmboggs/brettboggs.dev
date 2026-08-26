@@ -18,7 +18,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', year: 'n
 <Base title={`${entry.data.title} · Brett Boggs`} description={entry.data.description}>
   <article>
     <header class="page-head">
-      <p class="eyebrow">Work &mdash; {fmt(entry.data.date)}</p>
+      <p class="eyebrow">Work · {fmt(entry.data.date)}</p>
       <h1>{entry.data.title}</h1>
       <p class="lede">{entry.data.description}</p>
     </header>

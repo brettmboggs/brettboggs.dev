@@ -1,5 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro';
+
+const entries = [
+  {
+    href: '/lab/ridge/',
+    title: 'The Ridge',
+    desc: 'A golden hour flyover, rendered in Blender and scrubbed by scroll. It runs the front page.',
+    meta: 'Aug 2026',
+  },
+];
 ---
 
 <Base title="Lab · Brett Boggs" description="Experiments, rough and unfinished.">
@@ -8,5 +17,23 @@ import Base from '../../layouts/Base.astro';
     <h1>Lab</h1>
     <p class="lede">Experiments and unfinished things, allowed to be rough.</p>
   </header>
-  <p class="empty-note">Nothing on the bench yet.</p>
+  {
+    entries.length > 0 ? (
+      <ul class="entry-list">
+        {entries.map((entry) => (
+          <li>
+            <a class="entry-row" href={entry.href}>
+              <span>
+                <span class="entry-title">{entry.title}</span>
+                <span class="entry-desc">{entry.desc}</span>
+              </span>
+              <span class="entry-meta">{entry.meta}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty-note">Nothing on the bench yet.</p>
+    )
+  }
 </Base>

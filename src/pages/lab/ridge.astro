@@ -1,0 +1,73 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="The Ridge · Lab · Brett Boggs"
+  description="A golden hour flyover, rendered in Blender and scrubbed by scroll."
+>
+  <article>
+    <header class="page-head">
+      <p class="eyebrow">Lab · Aug 2026</p>
+      <h1>The Ridge</h1>
+      <p class="lede">The flyover on the front page. Built in Blender, scrubbed by scroll.</p>
+    </header>
+
+    <figure class="shot">
+      <img src="/lab/ridge/still.webp" alt="A timber frame standing alone on a grass ridge at golden hour." width="1600" height="900" loading="eager" />
+    </figure>
+
+    <div class="prose">
+      <h2>Build</h2>
+      <p>
+        192 frames of Cycles at 2560 by 1440. Terrain, grass and timber from Poly Haven CC0 sets,
+        lit by a single golden hour HDRI. The camera holds one fixed aim point, so the structure
+        sits in the centre of frame for the whole flight.
+      </p>
+
+      <h2>Frames, not video</h2>
+      <p>
+        Safari will not scrub video smoothly, so the browser gets a WebP sequence on a canvas
+        instead. 96 frames, loaded in four passes, every eighth first, so the shot can be scrubbed
+        before it finishes arriving. Each frame is decoded ahead of the scroll position, because a
+        first draw on an undecoded frame stalls the main thread.
+      </p>
+
+      <h2>Phones</h2>
+      <p>
+        Cover filling a 16:9 frame on a 9:19.5 screen scales to the height. That stretched a quarter
+        of the frame by 3.45x, which looked like mush on any handset. The fixed aim point turned out
+        to be the way out: with the subject always centred, a vertical crop of the master keeps the
+        entire shot. Phones get their own tier, cut 664 by 1440 straight out of the 1440p render. It
+        covers at 1.30x.
+      </p>
+    </div>
+
+    <figure class="shot">
+      <img src="/lab/ridge/framing.webp" alt="The 16:9 master frame with the narrower vertical phone crop marked on it." width="1600" height="900" loading="lazy" />
+      <figcaption>The phone tier is a crop of the master, not a resize.</figcaption>
+    </figure>
+
+    <a class="back-link" href="/lab/">Back to Lab</a>
+  </article>
+</Base>
+
+<style>
+  .shot {
+    margin: 3rem 0 0;
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--ink);
+  }
+  .shot figcaption {
+    margin-top: 0.7rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+</style>

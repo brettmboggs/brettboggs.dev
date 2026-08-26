@@ -5,14 +5,10 @@ import Base from '../layouts/Base.astro';
 const work = (await getCollection('work', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
-const writing = (await getCollection('writing', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
-const workNote = work[0] ? `latest — ${work[0].data.title}` : 'case studies';
-const writingNote = writing[0] ? `latest — ${writing[0].data.title}` : 'notes';
+const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
 ---
 
-<Base title="Brett Boggs" description="Brett Boggs. Work, experiments, writing." home>
+<Base title="Brett Boggs" description="Brett Boggs. Work and experiments." home>
   <section class="film full-bleed" id="film">
     <picture>
       <source id="poster-alt" media="(max-width: 500px) and (max-aspect-ratio: 3/4)" srcset="/film/poster-portrait.webp" />
@@ -42,18 +38,13 @@ const writingNote = writing[0] ? `latest — ${writing[0].data.title}` : 'notes'
             <span class="row-title">Lab</span>
             <span class="row-note">experiments</span>
           </a>
-          <a class="row arrive" href="/writing/">
-            <span class="row-num">03</span>
-            <span class="row-title">Writing</span>
-            <span class="row-note">{writingNote}</span>
-          </a>
           <a class="row arrive" href="mailto:brettmboggs@gmail.com">
-            <span class="row-num">04</span>
+            <span class="row-num">03</span>
             <span class="row-title">Contact</span>
             <span class="row-note">brettmboggs@gmail.com</span>
           </a>
         </nav>
-        <p class="arrive index-status">Now &mdash; building Datum</p>
+        <p class="arrive index-status">Now · building Datum</p>
       </div>
     </div>
 
