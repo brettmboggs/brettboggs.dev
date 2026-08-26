@@ -2,7 +2,7 @@
    stale; hashed assets are cached forever; everything else is
    stale-while-revalidate. Bump VERSION to drop every cache. */
 
-const VERSION = 'v1';
+const VERSION = 'v2';
 const RUNTIME = `runtime-${VERSION}`;
 const OFFLINE_URL = '/offline/';
 
@@ -10,11 +10,30 @@ const OFFLINE_URL = '/offline/';
    the HTTP cache instead of doubling them into cache storage */
 const SKIP = /^\/film\/(lg|sm|xl|portrait)\//;
 
+/* every page worth reading in a basement with no signal, plus the posters
+   the homepage falls back to. the frame sequences stay online-only. */
+const CORE = [
+  OFFLINE_URL,
+  '/',
+  '/work/',
+  '/work/datum/',
+  '/work/photography/',
+  '/lab/',
+  '/lab/keepsake/',
+  '/lab/field/',
+  '/film/poster.webp',
+  '/film/poster-end.webp',
+  '/film/poster-portrait.webp',
+  '/film/poster-end-portrait.webp',
+  '/site.webmanifest',
+  '/favicon.svg',
+];
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(RUNTIME)
-      .then((cache) => cache.addAll([OFFLINE_URL]))
+      .then((cache) => cache.addAll(CORE))
       .then(() => self.skipWaiting()),
   );
 });

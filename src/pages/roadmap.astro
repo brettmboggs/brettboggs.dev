@@ -11,20 +11,20 @@ const items: { n: string; title: string; status: Status; note: string; href?: st
     n: '01',
     title: 'Machine-readable layer',
     status: 'partial',
-    note: 'llms.txt, resume.json, and structured data are live. The MCP endpoint needs a host that answers POST; static Pages cannot.',
+    note: 'llms.txt, resume.json, and structured data are live. The MCP server is written and waiting in tools/mcp; deploying it is a ten minute job with a free Cloudflare account, steps in its README.',
     href: '/llms.txt',
   },
   {
     n: '02',
     title: 'Playable product slices',
     status: 'planned',
-    note: 'A seeded Datum demo tenant in a sandboxed frame, and the garden game as a playable build. One hour a quarter keeps the demo data honest.',
+    note: 'A seeded Datum demo tenant in a sandboxed frame, and the garden game as a playable build. The game core is pure Swift and can compile to the web; its repo lives on the Mac. One hour a quarter keeps the demo data honest.',
   },
   {
     n: '03',
     title: 'Case studies as decision logs',
     status: 'partial',
-    note: 'Chose X over Y, cost Z, what broke. A template sits drafted in /work; it needs the real stories before it goes live.',
+    note: 'Chose X over Y, cost Z, what broke. All three sit drafted in /work: tenant isolation, session prompting, ERP writeback. They need the real stories before they go live.',
   },
   {
     n: '04',
@@ -60,8 +60,8 @@ const items: { n: string; title: string; status: Status; note: string; href?: st
   {
     n: '09',
     title: 'Offline-first install',
-    status: 'partial',
-    note: 'Installable, with a service worker that keeps visited pages available offline and never serves a stale deploy. The film stays online only.',
+    status: 'live',
+    note: 'Installable, and every core page is cached at install, so the site reads in a basement with no signal. Deploys are never served stale. The film stays online only.',
   },
   {
     n: '10',
