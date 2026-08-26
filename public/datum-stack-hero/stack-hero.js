@@ -79,6 +79,7 @@ export function mountStackHero(container, options = {}) {
   let current = -1;
   let pending = -1;
   let destroyed = false;
+  let srcW = 0;
 
   function load(i) {
     if (i < 0 || i >= o.frameCount || frames[i]) return;
@@ -86,7 +87,10 @@ export function mountStackHero(container, options = {}) {
     img.decoding = "async";
     img.src = frameUrl(o, i);
     frames[i] = img;
-    img.onload = () => { if (i === pending) draw(i); };
+    img.onload = () => {
+      if (!srcW) { srcW = img.naturalWidth; sizeCanvas(); }
+      if (i === pending) draw(i);
+    };
   }
 
   // Preload outward from a frame so the nearest frames are ready first.
@@ -101,10 +105,18 @@ export function mountStackHero(container, options = {}) {
     const w = stage.clientWidth;
     const h = Math.round(w / o.aspect);
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
+    // Never allocate more backing pixels than the source frames have. Drawing
+    // 1:1 (or downscaling) keeps frames sharp; upscaling in canvas makes them
+    // pixely. If the display area exceeds the source, the browser scales the
+    // canvas element itself, which looks better than a resampled draw.
+    let bw = Math.round(w * dpr);
+    if (srcW) bw = Math.min(bw, srcW);
+    canvas.width = bw;
+    canvas.height = Math.round(bw / o.aspect);
     canvas.style.width = w + "px";
     canvas.style.height = h + "px";
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
     current = -1;
     draw(pending < 0 ? 0 : pending);
   }
