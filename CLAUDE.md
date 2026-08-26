@@ -80,6 +80,21 @@ unavoidable). UE5 not needed — Blender Cycles renders the film. Blender with
 MCP addon runs on Brett's machine; long renders go through background
 `blender -b` on the saved .blend, not the live UI.
 
+## Feature roadmap (approved 2026-08-26)
+
+Ten features Brett approved live in ROADMAP.md and render at /roadmap/
+(noindexed, unlisted, filtered from the sitemap). Keep ROADMAP.md and
+src/pages/roadmap.astro in sync whenever a feature ships or stalls. The
+machine-readable layer (public/llms.txt, public/resume.json, homepage JSON-LD)
+must stay curated and factual: only claims that already appear on the site.
+Update llms.txt and resume.json when /work content changes.
+
+Gotcha: scroll-driven animations (animation-timeline/animation-range) must be
+written as LONGHANDS, and astro.config pins cssMinify: 'esbuild'. lightningcss
+folds them into the extended `animation:` shorthand, which stable browsers
+reject, silently killing the animation. Verify computed animationName in the
+browser after touching these rules.
+
 ## Voice (Brett flagged violations, take these seriously)
 
 - Stoic, chill, minimal. Few words. The site shows, it does not tell.

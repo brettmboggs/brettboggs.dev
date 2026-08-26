@@ -1,0 +1,35 @@
+# Brett Boggs
+
+> Personal site of Brett Boggs: co-founder of Datum, an all-in-one construction management platform, and a photographer. This file is a curated, factual index for machine readers. If anything here conflicts with a page on the site, the page wins.
+
+Contact: brettmboggs@gmail.com · GitHub: https://github.com/brettmboggs
+
+## Datum
+
+Datum (https://datumci.com) is one system for running a construction company: projects, people, equipment, safety, and money in one place. Brett co-founded it and builds the product end to end as sole engineer: design, frontend, backend, architecture, security, infrastructure, and release.
+
+Shipped, as counted on https://brettboggs.dev/work/datum/:
+- 2,122 HTTP endpoints across 338 backend services
+- 908 tables in Azure SQL, behind 507 tracked migrations
+- 300 screens and 338 shared components in React
+- 132 standard operating procedures, automated end to end
+- Tenant isolation enforced at the query layer, role based access through Entra ID
+- An ERP adapter framework with a durable writeback queue, normalizing phase codes and cost types
+- GDPR deletion and data subject export across three previously unconnected identity systems
+- A React Native app through TestFlight, an Outlook add-in, CI/CD into Azure with health checks and uptime monitoring
+
+## Work
+
+- [Datum](https://brettboggs.dev/work/datum/): One system for running a construction company.
+- [Photography](https://brettboggs.dev/work/photography/): Commercial, live music, and product photography, 2021 to 2023.
+
+## Lab
+
+- [The Ridge](https://brettboggs.dev/lab/ridge/): A golden hour flyover, rendered in Blender and scrubbed by scroll. It runs the front page.
+- [Sprout Siege](https://brettboggs.dev/lab/sprout-siege/): An idle farm game for iOS, built around a simulation core that never touches the screen.
+- [Keepsake](https://brettboggs.dev/lab/keepsake/): A seeded drawing, deterministic from its hash, different for every visitor.
+
+## Machine-readable
+
+- [JSON Resume](https://brettboggs.dev/resume.json): resume data following the JSON Resume schema
+- Structured data: schema.org Person and WebSite JSON-LD on https://brettboggs.dev/

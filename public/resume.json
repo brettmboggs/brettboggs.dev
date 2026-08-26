@@ -1,0 +1,73 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/master/schema.json",
+  "basics": {
+    "name": "Brett Boggs",
+    "label": "Co-founder, Datum",
+    "email": "brettmboggs@gmail.com",
+    "url": "https://brettboggs.dev",
+    "summary": "Co-founder of Datum, an all-in-one construction management platform. Builds the product end to end as sole engineer: design, frontend, backend, architecture, security, infrastructure, and release.",
+    "profiles": [
+      {
+        "network": "GitHub",
+        "username": "brettmboggs",
+        "url": "https://github.com/brettmboggs"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Datum",
+      "position": "Co-founder · product, design & engineering",
+      "url": "https://datumci.com",
+      "summary": "One system for running a construction company: projects, people, equipment, safety, and money in one place. Sole engineer; architecture, security, infrastructure and release.",
+      "highlights": [
+        "2,122 HTTP endpoints across 338 backend services",
+        "908 tables in Azure SQL, behind 507 tracked migrations",
+        "300 screens and 338 shared components in React",
+        "132 standard operating procedures, automated end to end",
+        "Tenant isolation enforced at the query layer, role based access through Entra ID",
+        "ERP adapter framework with a durable writeback queue, normalizing phase codes and cost types",
+        "GDPR deletion and data subject export across three previously unconnected identity systems",
+        "React Native app through TestFlight, an Outlook add-in, CI/CD into Azure with health checks and uptime monitoring"
+      ]
+    },
+    {
+      "name": "Freelance photography",
+      "position": "Photographer",
+      "startDate": "2021-07",
+      "endDate": "2023-05",
+      "summary": "Commercial, live music, and product photography.",
+      "url": "https://brettboggs.dev/work/photography/"
+    }
+  ],
+  "projects": [
+    {
+      "name": "brettboggs.dev",
+      "description": "This site. Astro, static, hand-built design system, a Blender-rendered scroll film on the front page.",
+      "url": "https://brettboggs.dev"
+    },
+    {
+      "name": "Sprout Siege",
+      "description": "An idle farm game for iOS, built around a simulation core that never touches the screen.",
+      "url": "https://brettboggs.dev/lab/sprout-siege/"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Frontend",
+      "keywords": ["React", "React Native", "TypeScript", "Astro", "CSS"]
+    },
+    {
+      "name": "Backend",
+      "keywords": ["Azure", "Azure SQL", "Entra ID", "CI/CD", "Multi-tenant architecture"]
+    },
+    {
+      "name": "Elsewhere",
+      "keywords": ["Photography", "Blender"]
+    }
+  ],
+  "meta": {
+    "canonical": "https://brettboggs.dev/resume.json",
+    "lastModified": "2026-08-26"
+  }
+}

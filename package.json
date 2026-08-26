@@ -14,7 +14,7 @@
     "@fontsource-variable/fraunces": "^5.3.0",
     "@fontsource-variable/instrument-sans": "^5.3.0",
     "@fontsource/spline-sans-mono": "^5.3.0",
-    "astro": "^5.13.0",
+    "astro": "^7.2.7",
     "gsap": "^3.15.0",
     "three": "^0.185.1"
   },

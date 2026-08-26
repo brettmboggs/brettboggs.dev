@@ -1,0 +1,203 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Working page for Brett. Noindexed, unlisted, filtered from the sitemap.
+// Canonical status lives in ROADMAP.md at the repo root; keep the two in sync.
+
+type Status = 'live' | 'partial' | 'planned';
+
+const items: { n: string; title: string; status: Status; note: string; href?: string }[] = [
+  {
+    n: '01',
+    title: 'Machine-readable layer',
+    status: 'partial',
+    note: 'llms.txt, resume.json, and structured data are live. The MCP endpoint needs a host that answers POST; static Pages cannot.',
+    href: '/llms.txt',
+  },
+  {
+    n: '02',
+    title: 'Playable product slices',
+    status: 'planned',
+    note: 'A seeded Datum demo tenant in a sandboxed frame, and the garden game as a playable build. One hour a quarter keeps the demo data honest.',
+  },
+  {
+    n: '03',
+    title: 'Case studies as decision logs',
+    status: 'partial',
+    note: 'Chose X over Y, cost Z, what broke. A template sits drafted in /work; it needs the real stories before it goes live.',
+  },
+  {
+    n: '04',
+    title: 'View transitions, scroll-driven motion',
+    status: 'live',
+    note: 'Cross-document view transitions and scroll-driven reveals, native CSS, zero JS.',
+  },
+  {
+    n: '05',
+    title: 'WebGPU hero moment',
+    status: 'live',
+    note: 'The Field: the Lab hero, a prairie simulated by compute shader. Feature-detected, still image on reduced motion or no WebGPU. The homepage film is untouched.',
+    href: '/lab/field/',
+  },
+  {
+    n: '06',
+    title: 'Typography as the art direction',
+    status: 'live',
+    note: 'Fraunces carries the site, and page heads now settle their axes as they scroll away. The homepage headline is exempt; the film owns it.',
+  },
+  {
+    n: '07',
+    title: 'Live proof-of-work feed',
+    status: 'partial',
+    note: 'Running below, fetched live so it cannot go stale. Public placement waits on a decision about which sources count.',
+  },
+  {
+    n: '08',
+    title: 'Embedded 3D part viewer',
+    status: 'planned',
+    note: 'Needs GLB exports of designed parts, then a viewer page.',
+  },
+  {
+    n: '09',
+    title: 'Offline-first install',
+    status: 'partial',
+    note: 'Installable, with a service worker that keeps visited pages available offline and never serves a stale deploy. The film stays online only.',
+  },
+  {
+    n: '10',
+    title: 'Visitor keepsake',
+    status: 'live',
+    note: 'A seeded drawing, deterministic from its hash, shareable and downloadable.',
+    href: '/lab/keepsake/',
+  },
+];
+
+const label: Record<Status, string> = { live: 'Live', partial: 'Partial', planned: 'Planned' };
+---
+
+<Base title="Roadmap · Brett Boggs" description="What is shipped and what is next." noindex>
+  <header class="page-head">
+    <p class="eyebrow">Working page</p>
+    <h1>Roadmap</h1>
+    <p class="lede">Ten things this site owes itself. Unlisted, for keeping honest.</p>
+  </header>
+  <ul class="entry-list">
+    {
+      items.map((item) => (
+        <li>
+          <div class="entry-row road-row">
+            <span>
+              <span class="entry-title road-title">
+                {item.href ? <a class="road-link" href={item.href}>{item.title}</a> : item.title}
+              </span>
+              <span class="entry-desc">{item.note}</span>
+            </span>
+            <span class="entry-meta">
+              {item.n} · <span class={`tag tag-${item.status}`}>{label[item.status]}</span>
+            </span>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+
+  <section class="proof colophon">
+    <p class="proof-label">Proof of work · live from the site repo</p>
+    <ul class="proof-list" id="proof-list">
+      <li>Fetching&hellip;</li>
+    </ul>
+  </section>
+</Base>
+
+<script>
+  // fetched at view time from the public GitHub API, so it can never go stale.
+  // if the API is unreachable or rate limited, the section quietly says so.
+  const list = document.getElementById('proof-list')!;
+  const repo = 'brettmboggs/brettboggs.dev';
+
+  async function load() {
+    try {
+      const [runsRes, commitsRes] = await Promise.all([
+        fetch(`https://api.github.com/repos/${repo}/actions/runs?per_page=1`),
+        fetch(`https://api.github.com/repos/${repo}/commits?per_page=5`),
+      ]);
+      if (!runsRes.ok || !commitsRes.ok) throw new Error('api');
+      const runs = await runsRes.json();
+      const commits = await commitsRes.json();
+
+      const rows: string[] = [];
+      const run = runs.workflow_runs?.[0];
+      if (run) {
+        const when = new Date(run.updated_at).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        });
+        const state = run.conclusion ?? run.status;
+        rows.push(`deploy · ${state} · ${when}`);
+      }
+      for (const c of commits) {
+        const when = new Date(c.commit.author.date).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        });
+        const msg = c.commit.message.split('\n')[0];
+        rows.push(`${when} · ${msg}`);
+      }
+      list.innerHTML = '';
+      for (const row of rows) {
+        const li = document.createElement('li');
+        li.textContent = row;
+        list.append(li);
+      }
+    } catch {
+      list.innerHTML = '<li>The feed is resting. It fetches live, so nothing here is ever stale.</li>';
+    }
+  }
+  load();
+</script>
+
+<style>
+  .proof-label {
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+  .proof-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+  }
+  .proof-list li {
+    padding: 0.3rem 0;
+  }
+</style>
+
+<style>
+  .road-row {
+    cursor: default;
+  }
+  .road-title {
+    transition: none;
+  }
+  .road-row:hover .road-title {
+    transform: none;
+  }
+  .road-link {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .tag {
+    font-weight: 500;
+    letter-spacing: 0.12em;
+  }
+  .tag-live {
+    color: var(--olive);
+  }
+  .tag-partial {
+    color: var(--sunflower);
+  }
+  .tag-planned {
+    color: var(--ink-soft);
+    opacity: 0.75;
+  }
+</style>
