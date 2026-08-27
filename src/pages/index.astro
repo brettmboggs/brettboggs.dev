@@ -401,6 +401,13 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
         if (l.marker) l.marker.style.opacity = String(tm);
         const ts = clamp01((p - at - 0.008) / 0.026);
         l.base.style.strokeDashoffset = String(l.len * (1 - ts));
+        // the hover highlight is event-driven, but a flag can vanish under a
+        // still cursor while scrubbing back, and its pointerleave never
+        // fires. the scrub is the authority: no fully drawn stem, no highlight.
+        if (ts < 1) {
+          gsap.killTweensOf(l.hot);
+          l.hot.style.strokeDashoffset = String(l.len);
+        }
       }
       const tf = smooth(clamp01((p - at - 0.022) / 0.026));
       const el = annos[i];
