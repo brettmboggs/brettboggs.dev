@@ -1,6 +1,5 @@
 ---
 import Base from '../../layouts/Base.astro';
-import FieldScene from '../../components/FieldScene.astro';
 
 const entries = [
   {
@@ -43,13 +42,11 @@ const entries = [
 ---
 
 <Base title="Lab · Brett Boggs" description="Experiments, rough and unfinished." scene="lab">
-  <FieldScene>
-    <header class="page-head">
-      <p class="eyebrow">02</p>
-      <h1>Lab</h1>
-      <p class="lede">Experiments and unfinished things, allowed to be rough.</p>
-    </header>
-  </FieldScene>
+  <header class="page-head">
+    <p class="eyebrow">02</p>
+    <h1>Lab</h1>
+    <p class="lede">Experiments and unfinished things, allowed to be rough.</p>
+  </header>
   {
     entries.length > 0 ? (
       <ul class="entry-list">
