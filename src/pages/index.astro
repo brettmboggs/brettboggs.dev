@@ -18,38 +18,50 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
         <img class="film-poster" src="/film/poster.jpg" alt="" />
       </picture>
       <canvas class="film-canvas" id="film-canvas" aria-hidden="true"></canvas>
+      <!-- the 2x landing frame, laid over the canvas only for the dive -->
+      <div class="zoom-img" id="zoom-img" aria-hidden="true"></div>
     </div>
 
     <div class="hero-copy" id="hero-copy">
       <h1 class="hero-title">Walk through the&nbsp;work.</h1>
     </div>
 
-    <div class="portal" id="portal">
-      <div class="index-wrap">
-        <header class="arrive index-head">
-          <p class="eyebrow">Contents</p>
-          <p class="index-lede">Everything here is mine, end to end. Start&nbsp;anywhere.</p>
-        </header>
-        <nav class="index" aria-label="Site sections">
-          <a class="row arrive" href="/work/">
-            <span class="row-num">01</span>
-            <span class="row-title">Work</span>
-            <span class="row-note">{workNote}</span>
-          </a>
-          <a class="row arrive" href="/lab/">
-            <span class="row-num">02</span>
-            <span class="row-title">Lab</span>
-            <span class="row-note">experiments</span>
-          </a>
-          <a class="row arrive" href="/about/">
-            <span class="row-num">03</span>
-            <span class="row-title">About</span>
-            <span class="row-note">who is behind it &middot; contact</span>
-          </a>
-        </nav>
-        <p class="arrive index-status">Now · building Datum</p>
-      </div>
+    <!-- the station: the film's final movement plants a benchmark on the
+         ridge and flies a flag for each destination -->
+    <div class="bench" id="bench" aria-hidden="true">
+      <svg class="bench-mark" id="bench-mark" viewBox="0 0 56 56" fill="none">
+        <circle cx="28" cy="28" r="16" stroke="currentColor" stroke-width="1.75" />
+        <g class="bench-ticks" stroke="currentColor" stroke-width="1.5">
+          <line x1="28" y1="4" x2="28" y2="11" />
+          <line x1="28" y1="45" x2="28" y2="52" />
+          <line x1="4" y1="28" x2="11" y2="28" />
+          <line x1="45" y1="28" x2="52" y2="28" />
+          <line x1="11.03" y1="11.03" x2="15.98" y2="15.98" />
+          <line x1="40.02" y1="40.02" x2="44.97" y2="44.97" />
+          <line x1="44.97" y1="11.03" x2="40.02" y2="15.98" />
+          <line x1="15.98" y1="40.02" x2="11.03" y2="44.97" />
+        </g>
+        <circle cx="28" cy="28" r="3.25" fill="var(--sunflower)" />
+      </svg>
     </div>
+    <svg class="leaders" id="leaders" aria-hidden="true"></svg>
+    <nav class="plate" id="plate" aria-label="Site sections">
+      <a class="anno" id="anno-work" href="/work/" data-scene="work">
+        <span class="anno-num">01</span>
+        <span class="anno-title">Work</span>
+        <span class="anno-note">{workNote}</span>
+      </a>
+      <a class="anno" id="anno-lab" href="/lab/" data-scene="lab">
+        <span class="anno-num">02</span>
+        <span class="anno-title">Lab</span>
+        <span class="anno-note">experiments</span>
+      </a>
+      <a class="anno" id="anno-about" href="/about/" data-scene="about">
+        <span class="anno-num">03</span>
+        <span class="anno-title">About</span>
+        <span class="anno-note">who is behind it</span>
+      </a>
+    </nav>
 
     <span class="scroll-line" aria-hidden="true"></span>
   </section>
@@ -69,13 +81,7 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     height: 100vh;
     height: 100lvh;
     overflow: hidden;
-    /* deliberately transparent: once the stage has faded the fixed ridge under
-       the page shows straight through here, so there is no seam where the
-       section ends */
   }
-  /* the frame and the paper it sits on, so both can leave together. fading the
-     stage out is the same composite as fading paper in over it, except what is
-     left behind is the ridge rather than a flat block. */
   .film-stage {
     position: absolute;
     inset: 0;
@@ -93,6 +99,20 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
      it stays hidden until a frame really lands and the poster holds the frame */
   .film-canvas {
     opacity: 0;
+  }
+  /* sized and placed by script to the cover-fit of the landing frame; opacity
+     flips on only for the dive, over the canvas showing the same frame */
+  .zoom-img {
+    position: absolute;
+    transform-origin: 0 0;
+    opacity: 0;
+    background: center / 100% 100% no-repeat;
+    background-image: url('/film/poster-end.jpg');
+    background-image: image-set(
+      url('/film/poster-end-2x.webp') type('image/webp'),
+      url('/film/poster-end.jpg') type('image/jpeg')
+    );
+    will-change: transform;
   }
   .hero-copy {
     position: absolute;
@@ -122,37 +142,78 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
       top: 26svh;
     }
   }
-  .portal {
+
+  /* --- the station --- */
+  .bench {
     position: absolute;
-    inset: 0;
-    display: grid;
-    align-content: center;
-  }
-  .index-wrap {
-    width: 100%;
-    max-width: 62rem;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  }
-  .index-head {
-    margin-bottom: 2.2rem;
-  }
-  .index-lede {
-    margin-top: 0.7rem;
-    font-family: var(--display);
-    font-variation-settings: 'opsz' 40, 'SOFT' 60, 'WONK' 0;
-    font-weight: 500;
-    font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
     color: var(--ink);
   }
-  .index-status {
-    margin-top: 1.6rem;
+  .bench-mark {
+    position: absolute;
+    left: -28px;
+    top: -28px;
+    width: 56px;
+    height: 56px;
+    overflow: visible;
+    opacity: 0;
+  }
+  .leaders {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .anno {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: grid;
+    justify-items: start;
+    gap: 0.1rem;
+    opacity: 0;
+    visibility: hidden;
+    color: var(--ink);
+    background-image: none;
+    font-weight: 400;
+  }
+  .anno-num {
     font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
     color: var(--ink-soft);
   }
+  .anno-title {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 90, 'SOFT' 50, 'WONK' 0;
+    font-weight: 600;
+    font-size: clamp(2.1rem, 4.6vw, 3.3rem);
+    line-height: 1;
+    transition: transform 0.45s var(--ease-warm), font-variation-settings 0.45s var(--ease-warm);
+  }
+  .anno-note {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    transition: color 0.45s var(--ease-warm);
+  }
+  .anno:hover .anno-title,
+  .anno:focus-visible .anno-title {
+    transform: translateX(0.5rem);
+    font-variation-settings: 'opsz' 90, 'SOFT' 50, 'WONK' 1;
+  }
+  .anno:hover .anno-note,
+  .anno:focus-visible .anno-note {
+    color: var(--sienna);
+  }
+
   .scroll-line {
     position: absolute;
     /* sits on the fold rather than under the toolbar. 0 wherever lvh == svh. */
@@ -165,62 +226,16 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     transform-origin: top center;
   }
 
-  .row {
-    display: grid;
-    grid-template-columns: 3.2rem 1fr auto;
-    align-items: baseline;
-    gap: 1rem;
-    padding: 1.55rem 0;
-    border-top: 2px solid var(--ink);
-    color: var(--ink);
-    background-image: none;
-  }
-  .row-num {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    color: var(--ink-soft);
-  }
-  .row-title {
-    font-family: var(--display);
-    font-variation-settings: 'opsz' 90, 'SOFT' 50, 'WONK' 0;
-    font-weight: 600;
-    font-size: clamp(2rem, 5.2vw, 3.4rem);
-    line-height: 1.05;
-    transition: transform 0.45s var(--ease-warm);
-  }
-  .row-note {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    transition: color 0.45s var(--ease-warm);
-    text-align: right;
-  }
-  .row:hover .row-title,
-  .row:focus-visible .row-title {
-    transform: translateX(0.85rem);
-  }
-  .row:hover .row-note,
-  .row:focus-visible .row-note {
-    color: var(--sienna);
+  /* narrow screens: the flags stack into the sky, script skips the furniture */
+  @media (max-width: 640px) {
+    #anno-work  { left: 12vw !important; top: 16vh !important; }
+    #anno-lab   { left: 12vw !important; top: 30vh !important; }
+    #anno-about { left: 12vw !important; top: 44vh !important; }
   }
 
-  @media (max-width: 640px) {
-    .row {
-      grid-template-columns: 2.2rem 1fr;
-      gap: 0.2rem 0.8rem;
-      padding: 1.3rem 0;
-    }
-    .row-note {
-      grid-column: 2;
-      text-align: left;
-    }
-  }
   @media (prefers-reduced-motion: reduce) {
-    .row-title,
-    .row-note {
+    .anno-title,
+    .anno-note {
       transition: none;
     }
   }
@@ -228,15 +243,39 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
 
 <script>
   import { gsap } from 'gsap';
+  import {
+    CREST,
+    ORDER,
+    SCENES,
+    coverFit,
+    zoomTransform,
+    type SceneKey,
+  } from '../scripts/station';
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const saveData = (navigator as any).connection?.saveData === true;
+  const mobile = window.matchMedia('(max-width: 640px)');
+  const portraitQuery = window.matchMedia('(max-width: 500px) and (max-aspect-ratio: 3/4)');
+  // the portrait film tier is its own crop; the benchmark's home on it was
+  // measured against that poster directly
+  const CREST_P = { x: 300, y: 1215 };
+  const IMG_P = { w: 664, h: 1440 };
+
   const film = document.getElementById('film')!;
   const poster = film.querySelector<HTMLImageElement>('.film-poster')!;
   const posterAlt = document.getElementById('poster-alt') as HTMLSourceElement;
-
   const posterAltJpg = document.getElementById('poster-alt-jpg') as HTMLSourceElement;
   const posterWide = document.getElementById('poster-wide') as HTMLSourceElement;
+  const stage = document.getElementById('film-stage')!;
+  const zoomImg = document.getElementById('zoom-img')!;
+  const bench = document.getElementById('bench')!;
+  const benchMark = document.getElementById('bench-mark')!;
+  const svg = document.getElementById('leaders') as unknown as SVGSVGElement;
+  const scrollLine = film.querySelector<HTMLElement>('.scroll-line')!;
+  const heroCopy = document.getElementById('hero-copy')!;
+  const ghost = document.getElementById('ridge-ghost');
+  const footer = document.getElementById('site-footer')!;
+  const annos = ORDER.map((k) => document.getElementById(`anno-${k}`)! as HTMLAnchorElement);
 
   // every <source> outranks img.src, so the end frame has to replace all of them
   function showEndPoster(): void {
@@ -245,27 +284,136 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     posterWide.srcset = '/film/poster-end.webp';
     poster.src = '/film/poster-end.jpg';
   }
-  const stage = document.getElementById('film-stage')!;
-  const portal = document.getElementById('portal')!;
-  const rows = Array.from(portal.querySelectorAll<HTMLElement>('.arrive'));
 
-  // the reveal window: camera passes through the structure ~84-97% of the scrub
-  const REVEAL_START = 0.84;
-  const REVEAL_SPAN = 0.05;
-  const ROW_STAGGER = 0.018;
-
-  const scrollLine = film.querySelector<HTMLElement>('.scroll-line')!;
-  const heroCopy = document.getElementById('hero-copy')!;
-  const ghost = document.getElementById('ridge-ghost');
-
-  // how much of the last frame survives under the page once the film settles.
-  // the stage goes to nothing rather than to this, so the remnant is only ever
-  // the one fixed layer — never the stage and the layer at once.
+  // how much of the last frame survives under the footer once the film has
+  // scrolled away; the stage itself stays opaque so the station keeps its sky
   const GHOST = 0.15;
   // the hero exits by being flown past, not by being switched off
   const HERO_OUT = 0.2;
+  // the station assembles through the film's final movement
+  const BUILD_START = 0.855;
+  const STEP = 0.028;
+
+  // --- station layout: same geometry as the destination pages ---
+  const NS = 'http://www.w3.org/2000/svg';
+  interface Leader {
+    base: SVGPathElement;
+    hot: SVGPathElement;
+    marker: SVGGElement | null;
+    ring: SVGCircleElement | null;
+    len: number;
+  }
+  const leaders: Leader[] = [];
+  let lastP = 0;
+
+  function layoutPlate(): void {
+    svg.innerHTML = '';
+    leaders.length = 0;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    if (portraitQuery.matches) {
+      // benchmark on the portrait poster's crest; flags stack via CSS.
+      // centred fit, same as the poster's object-fit: cover.
+      const s = Math.max(vw / IMG_P.w, vh / IMG_P.h);
+      const x = (vw - IMG_P.w * s) / 2 + CREST_P.x * s;
+      const y = (vh - IMG_P.h * s) / 2 + CREST_P.y * s;
+      bench.style.transform = `translate(${x}px, ${y}px)`;
+      return;
+    }
+    const fit = coverFit(vw, vh);
+    const cp = { x: fit.x + CREST.x * fit.s, y: fit.y + CREST.y * fit.s };
+    bench.style.transform = `translate(${cp.x}px, ${cp.y}px)`;
+    if (mobile.matches) return;
+
+    ORDER.forEach((key, i) => {
+      const sc = SCENES[key];
+      const el = annos[i];
+      const mp = { x: fit.x + sc.marker.x * fit.s, y: fit.y + sc.marker.y * fit.s };
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      const left = Math.min(Math.max(mp.x - 6, 16), vw - w - 16);
+      const top = sc.dir === 'up' ? mp.y - sc.stem - h : mp.y + sc.stem;
+      el.style.left = `${left}px`;
+      el.style.top = `${top}px`;
+
+      const r = sc.r + 2;
+      const ruleY = sc.dir === 'up' ? top + h + 7 : top - 7;
+      const stemStart = sc.dir === 'up' ? mp.y - r : mp.y + r;
+      const x1 = Math.min(left - 10, mp.x);
+      const x2 = Math.max(left + w + 6, mp.x);
+      const d = `M ${mp.x} ${stemStart} L ${mp.x} ${ruleY} M ${x1} ${ruleY} L ${x2} ${ruleY}`;
+
+      const base = document.createElementNS(NS, 'path');
+      base.setAttribute('d', d);
+      base.setAttribute('stroke', 'var(--ink)');
+      base.setAttribute('stroke-width', '1.5');
+      base.setAttribute('fill', 'none');
+      const hot = document.createElementNS(NS, 'path');
+      hot.setAttribute('d', d);
+      hot.setAttribute('stroke', 'var(--sunflower)');
+      hot.setAttribute('stroke-width', '2.5');
+      hot.setAttribute('fill', 'none');
+      svg.append(base, hot);
+
+      let marker: SVGGElement | null = null;
+      let ring: SVGCircleElement | null = null;
+      if (!sc.big) {
+        marker = document.createElementNS(NS, 'g');
+        marker.setAttribute('transform', `translate(${mp.x} ${mp.y})`);
+        ring = document.createElementNS(NS, 'circle');
+        ring.setAttribute('r', String(sc.r));
+        ring.setAttribute('stroke', 'var(--ink)');
+        ring.setAttribute('stroke-width', '1.5');
+        ring.setAttribute('fill', 'none');
+        marker.append(ring);
+        if (sc.dot) {
+          const dot = document.createElementNS(NS, 'circle');
+          dot.setAttribute('r', '2.5');
+          dot.setAttribute('fill', 'var(--sunflower)');
+          marker.append(dot);
+        }
+        marker.style.opacity = '0';
+        svg.append(marker);
+      }
+      const len = base.getTotalLength();
+      base.style.strokeDasharray = String(len);
+      base.style.strokeDashoffset = String(len);
+      hot.style.strokeDasharray = String(len);
+      hot.style.strokeDashoffset = String(len);
+      leaders.push({ base, hot, marker, ring, len });
+    });
+  }
+
+  const clamp01 = (t: number): number => Math.min(1, Math.max(0, t));
+  const smooth = (t: number): number => t * t * (3 - 2 * t);
+
+  // pure function of scrub progress: the station assembles on the way down
+  // and disassembles identically on the way back up
+  function assemble(p: number): void {
+    const tb = smooth(clamp01((p - BUILD_START) / 0.03));
+    benchMark.style.opacity = String(tb);
+    benchMark.style.transform = `scale(${0.4 + 0.6 * tb})`;
+    ORDER.forEach((key, i) => {
+      const at = BUILD_START + 0.012 + i * STEP;
+      const l = leaders[i];
+      if (l) {
+        const tm = smooth(clamp01((p - at) / 0.02));
+        if (l.marker) l.marker.style.opacity = String(tm);
+        const ts = clamp01((p - at - 0.008) / 0.026);
+        l.base.style.strokeDashoffset = String(l.len * (1 - ts));
+      }
+      const tf = smooth(clamp01((p - at - 0.022) / 0.026));
+      const el = annos[i];
+      el.style.opacity = String(tf);
+      el.style.translate = `0 ${(1 - tf) * (SCENES[key].dir === 'up' ? 12 : -12)}px`;
+      // opacity hides a link from the eye only: it stays clickable and in the
+      // tab order. visibility takes it out of hit testing and tabbing both.
+      el.style.visibility = tf > 0 ? 'visible' : 'hidden';
+    });
+  }
 
   function applyProgress(p: number): void {
+    lastP = p;
     scrollLine.style.opacity = String(Math.max(0, 1 - p / 0.2));
     // camera dollies forward, so the words grow, drift up out of frame and go
     // soft as they pass the near plane. ease-in holds them legible, then lets go.
@@ -273,34 +421,153 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     heroCopy.style.opacity = String(1 - out * out);
     heroCopy.style.transform = `translate3d(0, ${-92 * out * out}px, 0) scale(${1 + 0.34 * out})`;
     heroCopy.style.filter = `blur(${8 * out * out}px)`;
-    // the scene hands off to the remnant: stage out, fixed ridge in. both are
-    // pure functions of p, so the scrub reverses exactly on the way back up.
-    const settle = Math.min(1, Math.max(0, (p - 0.86) / 0.1));
-    stage.style.opacity = String(1 - settle);
-    if (ghost) ghost.style.opacity = String(settle * GHOST);
-    rows.forEach((row, i) => {
-      const t = Math.min(1, Math.max(0, (p - (REVEAL_START + i * ROW_STAGGER)) / REVEAL_SPAN));
-      const e = t * t * (3 - 2 * t);
-      row.style.opacity = String(e);
-      row.style.transform = `translateY(${(1 - e) * 34}px)`;
-      // opacity hides a link from the eye only: it stays clickable and stays in
-      // the tab order. The index sits across the whole film, so an invisible row
-      // was catching clicks aimed at the scene and taking people to Lab, and
-      // tabbing off the header landed on three things nobody could see.
-      // visibility takes it out of hit testing and the tab order both.
-      row.style.visibility = e > 0 ? 'visible' : 'hidden';
+    // the stage stays opaque: the station lives on the full frame. the fixed
+    // ghost only matters once the film has scrolled away, under the footer.
+    if (ghost) ghost.style.opacity = String(p > 0.9 ? GHOST : 0);
+    // the floating footer surfaces with the station's last flags
+    footer.style.opacity = String(smooth(clamp01((p - 0.96) / 0.03)));
+    assemble(p);
+  }
+
+  // --- the dive: the 2x frame overlays the canvas and flies into the scene ---
+  let zooming = false;
+
+  function layoutZoomImg(): void {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const fit = coverFit(vw, vh);
+    zoomImg.style.width = `${2560 * fit.s}px`;
+    zoomImg.style.height = `${1440 * fit.s}px`;
+    zoomImg.style.left = `${fit.x}px`;
+    zoomImg.style.top = `${fit.y}px`;
+  }
+
+  function clearZoomArtifacts(): void {
+    zooming = false;
+    gsap.set(zoomImg, { clearProps: 'transform,opacity' });
+    gsap.set([svg, bench, '.plate', '.site-header'], { clearProps: 'opacity' });
+    gsap.set('.anno', { clearProps: 'transform,scale' });
+  }
+
+  function zoomTo(scene: SceneKey, href: string): void {
+    if (zooming) return;
+    zooming = true;
+    sessionStorage.setItem('stationReturn', scene);
+    layoutZoomImg();
+    const { dx, dy, k } = zoomTransform(scene, window.innerWidth, window.innerHeight);
+    const el = annos[ORDER.indexOf(scene)];
+    const others = annos.filter((a) => a !== el);
+    const tl = gsap.timeline({ onComplete: () => (window.location.href = href) });
+    tl.set(zoomImg, { opacity: 1 }, 0);
+    tl.to(el, { scale: 1.45, opacity: 0, transformOrigin: 'left bottom', duration: 0.42, ease: 'power2.in' }, 0);
+    tl.to([...others, svg, bench, '.site-header'], { opacity: 0, duration: 0.24, ease: 'power1.out' }, 0);
+    tl.to(zoomImg, { x: dx, y: dy, scale: k, duration: 0.78, ease: 'power3.inOut' }, 0);
+  }
+
+  // returning from a scene page happens in two beats: land already zoomed
+  // into that scene (seamless with the page we left), then once the film rig
+  // exists, jump to the scrub's end and pull the camera back out
+  function returnPrep(scene: SceneKey): void {
+    zooming = true;
+    showEndPoster();
+    layoutZoomImg();
+    const { dx, dy, k } = zoomTransform(scene, window.innerWidth, window.innerHeight);
+    gsap.set(zoomImg, { opacity: 1, x: dx, y: dy, scale: k });
+    heroCopy.style.opacity = '0';
+    scrollLine.style.opacity = '0';
+  }
+
+  function returnPlay(): void {
+    window.scrollTo({ top: Math.round(window.innerHeight * 2.8), behavior: 'instant' });
+    applyProgress(1);
+    gsap.to(zoomImg, {
+      x: 0,
+      y: 0,
+      scale: 1,
+      duration: 0.68,
+      ease: 'power3.inOut',
+      onComplete: () => {
+        zooming = false;
+        gsap.to(zoomImg, { opacity: 0, duration: 0.3 });
+      },
     });
   }
 
+  annos.forEach((el) => {
+    el.addEventListener('click', (e: MouseEvent) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      if (reduced || mobile.matches || portraitQuery.matches) return;
+      e.preventDefault();
+      zoomTo(el.dataset.scene as SceneKey, el.href);
+    });
+  });
+
+  // hover: the hot line draws along the stem, the marker answers
+  annos.forEach((el, i) => {
+    const on = (): void => {
+      if (zooming || !leaders[i]) return;
+      gsap.to(leaders[i].hot, { strokeDashoffset: 0, duration: 0.4, ease: 'power2.out' });
+      if (leaders[i].ring) {
+        const r0 = SCENES[ORDER[i]].r;
+        gsap.to(leaders[i].ring, { attr: { r: r0 + 3 }, duration: 0.3, yoyo: true, repeat: 1, ease: 'power1.inOut' });
+      } else {
+        gsap.to('.bench-ticks', {
+          rotation: 10,
+          transformOrigin: '50% 50%',
+          duration: 0.7,
+          ease: 'elastic.out(1, 0.55)',
+        });
+      }
+    };
+    const off = (): void => {
+      if (zooming || !leaders[i]) return;
+      gsap.to(leaders[i].hot, { strokeDashoffset: leaders[i].len, duration: 0.35, ease: 'power2.in' });
+    };
+    el.addEventListener('pointerenter', on);
+    el.addEventListener('pointerleave', off);
+    el.addEventListener('focus', on);
+    el.addEventListener('blur', off);
+  });
+
+  // restored from the back/forward cache mid-zoom: pull the camera home
+  window.addEventListener('pageshow', (e: PageTransitionEvent) => {
+    if (!e.persisted || !zooming) return;
+    sessionStorage.removeItem('stationReturn');
+    gsap.killTweensOf([zoomImg, svg, bench, '.plate', '.site-header', '.anno']);
+    clearZoomArtifacts();
+    assemble(lastP);
+  });
+
+  let resizeRaf = 0;
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(() => {
+      layoutPlate();
+      if (!zooming) assemble(lastP);
+    });
+  });
+
+  layoutPlate();
+
   if (reduced || saveData) {
     showEndPoster();
-    stage.style.opacity = '0.45';
     if (ghost) ghost.style.opacity = String(GHOST);
-    // static end-frame with the nav already visible — the scroll prompt makes no sense here
+    // static end-frame with the station already assembled; no scroll prompt
     heroCopy.style.display = 'none';
+    scrollLine.style.display = 'none';
+    footer.style.opacity = '1';
+    assemble(1);
   } else {
-    applyProgress(0);
-    fetch('/film/manifest.json')
+    // coming back from a scene page: the pin spans 280%, so the settled frame
+    // lives at 2.8vh of scroll. prep before the film loads so there is no
+    // flash of the flight's first frame.
+    const back = sessionStorage.getItem('stationReturn') as SceneKey | null;
+    sessionStorage.removeItem('stationReturn');
+    const returning = !!back && back! in SCENES && !mobile.matches && !portraitQuery.matches;
+    if (returning) returnPrep(back as SceneKey);
+    else applyProgress(0);
+
+    const filmReady = fetch('/film/manifest.json')
       .then((r) => r.json())
       .then(({ count }) => import('../scripts/filmScrub').then((m) =>
         m.initFilm({
@@ -315,14 +582,18 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
         applyProgress(1);
       });
 
-    gsap.set('.scroll-line', { scaleY: 0 });
-    gsap.to('.scroll-line', { scaleY: 1, duration: 0.9, ease: 'power2.inOut', delay: 1.0 });
-    gsap.from('.hero-title', {
-      opacity: 0,
-      y: 16,
-      duration: 0.9,
-      ease: 'power2.out',
-      delay: 0.4,
-    });
+    if (returning) {
+      filmReady.then(() => returnPlay());
+    } else {
+      gsap.set('.scroll-line', { scaleY: 0 });
+      gsap.to('.scroll-line', { scaleY: 1, duration: 0.9, ease: 'power2.inOut', delay: 1.0 });
+      gsap.from('.hero-title', {
+        opacity: 0,
+        y: 16,
+        duration: 0.9,
+        ease: 'power2.out',
+        delay: 0.4,
+      });
+    }
   }
 </script>
