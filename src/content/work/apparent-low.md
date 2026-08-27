@@ -3,7 +3,7 @@ title: 'Apparent Low'
 description: 'An extraction agent and eval harness for state DOT bid tabulations.'
 date: 2026-08-26
 tags: ['ai engineering', 'construction']
-draft: false
+draft: true
 ---
 
 When a state DOT opens bids, the results publish as a bid tabulation: every
