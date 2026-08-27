@@ -22,6 +22,9 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
       <div class="zoom-img" id="zoom-img" aria-hidden="true"></div>
     </div>
 
+    <!-- distant birds cross the settled sky; they never fly during the scrub -->
+    <canvas class="birds" id="birds" aria-hidden="true"></canvas>
+
     <div class="hero-copy" id="hero-copy">
       <h1 class="hero-title">Walk through the&nbsp;work.</h1>
     </div>
@@ -113,6 +116,15 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
       url('/film/poster-end.jpg') type('image/jpeg')
     );
     will-change: transform;
+  }
+  .birds {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-warm);
   }
   .hero-copy {
     position: absolute;
@@ -251,6 +263,7 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     zoomTransform,
     type SceneKey,
   } from '../scripts/station';
+  import { initBirds } from '../scripts/birds';
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const saveData = (navigator as any).connection?.saveData === true;
@@ -275,6 +288,10 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
   const heroCopy = document.getElementById('hero-copy')!;
   const ghost = document.getElementById('ridge-ghost');
   const footer = document.getElementById('site-footer')!;
+  const birds =
+    !reduced && !saveData
+      ? initBirds(document.getElementById('birds') as HTMLCanvasElement)
+      : null;
   const annos = ORDER.map((k) => document.getElementById(`anno-${k}`)! as HTMLAnchorElement);
 
   // every <source> outranks img.src, so the end frame has to replace all of them
@@ -433,6 +450,8 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     if (ghost) ghost.style.opacity = String(p > 0.9 ? GHOST : 0);
     // the floating footer surfaces with the station's last flags
     footer.style.opacity = String(smooth(clamp01((p - 0.96) / 0.03)));
+    // the sky only comes alive once the camera has stopped moving
+    birds?.setActive(p > 0.985 && !zooming);
     assemble(p);
   }
 
@@ -459,6 +478,7 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
   function zoomTo(scene: SceneKey, href: string): void {
     if (zooming) return;
     zooming = true;
+    birds?.setActive(false);
     sessionStorage.setItem('stationReturn', scene);
     layoutZoomImg();
     const { dx, dy, k } = zoomTransform(scene, window.innerWidth, window.innerHeight);
