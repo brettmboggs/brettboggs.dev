@@ -32,37 +32,11 @@ const stages = data.stages.map((s, i) => ({
   ...s,
   alt: `The moon at ${s.time}, ${phase(i, data.stages.length)}.`,
 }));
-
-// ---- the light curve, drawn from the measured points ----
-const W = 960;
-const H = 340;
-const PAD = { l: 58, r: 22, t: 22, b: 74 };
-const FLOOR = -8.6;
-const px = (t: number) => PAD.l + (t / data.spanSec) * (W - PAD.l - PAD.r);
-const py = (s: number) => PAD.t + (s / FLOOR) * (H - PAD.t - PAD.b);
-
-const dots = data.curve.map((c) => ({ x: px(c.t), y: py(c.stops), ...c }));
-const path = dots.map((d, i) => `${i === 0 ? 'M' : 'L'}${d.x.toFixed(1)} ${d.y.toFixed(1)}`).join(' ');
-const rug = data.log.map((l) => px(l.t));
-const gridStops = [0, -2, -4, -6, -8];
-const hourMarks = [0, 900, 1800, 2700, 3600, 4500, 5400].filter((t) => t <= data.spanSec);
-const clock = (t: number) => {
-  const [h, m, s] = data.start.split(':').map(Number);
-  const total = h * 3600 + m * 60 + s + t;
-  return `${String(Math.floor(total / 3600) % 24).padStart(2, '0')}:${String(
-    Math.floor(total / 60) % 60,
-  ).padStart(2, '0')}`;
-};
-// the aircraft crossed at 22:42:06
-const planeT = 22 * 3600 + 42 * 60 + 6 - (21 * 3600 + 39 * 60 + 59);
-
-const fmtIso = (r: number[]) => (r[0] === r[1] ? `${r[0]}` : `${r[0]} to ${r[1]}`);
-const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
 ---
 
 <Base
   title="The Copper Hour · Brett Boggs"
-  description="A lunar eclipse in 194 raw frames: the arc, the ring, and an airliner that crossed the moon at 22:42:06."
+  description="The moon going into the earth's shadow on 27 August 2026, and two aeroplanes that crossed it."
   ogImage="/photo/eclipse/plane-transit-760.webp"
   article={{ published: new Date('2026-08-27') }}
 >
@@ -71,9 +45,7 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
       <p class="eyebrow">Photography · 27 August 2026</p>
       <h1>The Copper Hour</h1>
       <p class="lede">
-        Ninety one minutes of standing in the yard while the earth's shadow went across the moon.
-        One hundred and ninety four raw frames, three and a half seconds of open shutter, and an
-        airliner that picked the wrong second to be somewhere else.
+        The moon going into the earth's shadow, and two aeroplanes that crossed it on the way.
       </p>
     </header>
 
@@ -83,8 +55,8 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
       data-full={`${A}/plane-transit-1536.webp`}
       data-w="1536"
       data-h="1536"
-      data-title="Airliner across the sunlit limb"
-      data-meta="22:42:06 · one frame for the aircraft, eight stacked for the moon"
+      data-title="22:42:06"
+      data-meta="An airliner across the bright edge"
       tabindex="0"
       role="button"
       aria-label="Open the airliner transit at full size"
@@ -102,43 +74,13 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
       />
       <figcaption>
         <span class="cap-time">22:42:06</span>
-        <span>An aeroplane, going about its evening, in front of the only lit part of the moon.</span>
+        <span>
+          An airliner crossing the bright edge. The wings and tail come through as a black outline
+          against the last of the direct sun, and its navigation lights sit just above, red on one
+          side and white on the other.
+        </span>
       </figcaption>
     </figure>
-
-    <div class="prose">
-      <p>
-        The camera went up at 21:39 with the moon still whole and white, and came down at 23:10 with
-        it the colour of a penny left on a radiator. In between, the interesting problem is not the
-        moon. It is that the moon stops being one subject and becomes two, sitting in the same
-        circle: a sliver of full daylight on one edge, and a disc lit only by every sunrise and
-        sunset on earth at once, bent through the atmosphere and thrown out here. Those two things
-        are several hundred times apart in brightness. No single frame holds both.
-      </p>
-      <p>
-        So there is no single frame. Everything below is built out of the raw files, decoded to
-        linear sixteen bit with the camera white balance and no auto brightness, so the stacking and
-        merging happens in real light units rather than in something a slider already lied about.
-      </p>
-    </div>
-
-    <section class="numbers" aria-label="The night in numbers">
-      <ol>
-        <li><b>{data.frames}</b><span>raw frames</span></li>
-        <li><b>{data.spanText}</b><span>{data.start} to {data.end}</span></li>
-        <li><b>{data.openSec} s</b><span>shutter actually open</span></li>
-        <li><b>{data.dutyPct}%</b><span>of the night, collecting</span></li>
-        <li><b>{data.burstCount}</b><span>bursts, {data.bracketed} of them bracketed</span></li>
-        <li><b>{data.drop}</b><span>stops the moon fell</span></li>
-        <li><b>{data.evRange}</b><span>stops between settings</span></li>
-        <li><b>{data.gb} GB</b><span>on the card</span></li>
-      </ol>
-      <p class="numbers-note">
-        {data.body}, {data.lens}, in 1.6&#215; crop. ISO {data.isoMin} to {data.isoMax} across{' '}
-        {data.isoCount} values, shutter {data.shutMin} to {data.shutMax} across {data.shutCount}.
-        The gaps between frames are irregular enough that none of this was on an intervalometer.
-      </p>
-    </section>
 
     <section class="band night-bleed arc-band" aria-labelledby="arc-h">
       <div class="band-head wrap">
@@ -151,7 +93,7 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
           data-label-true={`19,610 px JPEG, ${origTrue}`}
         >
           <button type="button" data-arc="even" class="is-on">Evened out</button>
-          <button type="button" data-arc="true">True brightness</button>
+          <button type="button" data-arc="true">As it looked</button>
         </div>
       </div>
 
@@ -162,8 +104,8 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
         data-full={`${A}/arc-even-6000.webp`}
         data-w="6000"
         data-h="983"
-        data-title="Twenty one stages, evened out"
-        data-meta="21:40 to 23:10 · drag to pan, scroll or pinch to zoom"
+        data-title="The arc, evened out"
+        data-meta="21:40 to 23:10"
         data-orig={`${A}/arc-even-full.jpg`}
         data-orig-label={`19,610 px JPEG, ${origEven}`}
         tabindex="0"
@@ -186,17 +128,14 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
         <figcaption class="wrap arc-cap">
           <span class="cap-time">21:40 to 23:10</span>
           <span class="arc-caption-even">
-            Twenty one stages, each one lifted so its own detail reads. This is how eclipse
-            composites are usually published, and it is a small, honest lie: it shows you the shape
-            of the shadow, not the amount of light.
-          </span>
-          <span class="arc-foot">
-            Each moon here is about 700 pixels across. The contact sheet below holds every stage
-            at 984, so that is the place to go looking at one of them closely.
+            Twenty one moons in a row, left to right. It starts full and white, the shadow comes in
+            from the lower left, and by the right hand end the disc is copper with only a thin
+            bright edge left along the top. Drag it sideways.
           </span>
           <span class="arc-caption-true" hidden>
-            The same twenty one stages with the brightness left alone. The last ones really are that
-            dark. Drag it sideways. The whole strip is nineteen thousand pixels long.
+            The same twenty one moons with the brightness left where it was. The white moon at the
+            start is the brightest thing in the row by a long way, and the copper ones at the end
+            really are that dark.
           </span>
         </figcaption>
       </figure>
@@ -208,66 +147,43 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
         <p class="band-hint">Every stage on its own. Click any of them.</p>
       </div>
       <div class="wrap">
-      <ol class="sheet">
-        {
-          stages.map((s, i) => (
-            <li>
-              <figure
-                class="moon"
-                data-plate
-                data-full={`${A}/stage/${s.slug}-1360.webp`}
-                data-w="1360"
-                data-h="1360"
-                data-title={`Stage ${i + 1} of 21, ${s.time}`}
-                data-meta={
-                  s.levels > 1
-                    ? `${s.levels} exposure levels merged across ${s.stops} stop${s.stops === 1 ? '' : 's'}`
-                    : 'one exposure level, nothing to recover the bright limb from'
-                }
-                tabindex="0"
-                role="button"
-                aria-label={`Open the ${s.time} stage at full size`}
-              >
-                <img
-                  src={`${A}/stage/${s.slug}-560.webp`}
-                  srcset={`${A}/stage/${s.slug}-560.webp 560w, ${A}/stage/${s.slug}-1360.webp 1360w`}
-                  sizes="(min-width: 900px) 11rem, 45vw"
-                  alt={s.alt}
-                  width="560"
-                  height="560"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <figcaption>
-                  <b>{s.time}</b>
-                  <span>{s.levels > 1 ? `${s.levels} lvl · ${s.stops} st` : '1 lvl'}</span>
-                  <span class="moon-n">{String(i + 1).padStart(2, '0')} / 21</span>
-                </figcaption>
-              </figure>
-            </li>
-          ))
-        }
-      </ol>
-      <p class="sheet-note">
-        <b>lvl</b> is how many separate exposure levels were merged into that stage, and <b>st</b> is
-        how many stops they spanned. Where it says one level, the sunlit limb is genuinely blown out.
-        There was no shorter frame to recover it from, because nobody was thinking about brackets at
-        that moment.
-      </p>
+        <ol class="sheet">
+          {
+            stages.map((s, i) => (
+              <li>
+                <figure
+                  class="moon"
+                  data-plate
+                  data-full={`${A}/stage/${s.slug}-1360.webp`}
+                  data-w="1360"
+                  data-h="1360"
+                  data-title={s.time}
+                  data-meta={`Stage ${i + 1} of 21`}
+                  tabindex="0"
+                  role="button"
+                  aria-label={`Open the ${s.time} stage at full size`}
+                >
+                  <img
+                    src={`${A}/stage/${s.slug}-560.webp`}
+                    srcset={`${A}/stage/${s.slug}-560.webp 560w, ${A}/stage/${s.slug}-1360.webp 1360w`}
+                    sizes="(min-width: 900px) 11rem, 45vw"
+                    alt={s.alt}
+                    width="560"
+                    height="560"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>
+                    <b>{s.time}</b>
+                    <span class="moon-n">{String(i + 1).padStart(2, '0')} / 21</span>
+                  </figcaption>
+                </figure>
+              </li>
+            ))
+          }
+        </ol>
       </div>
     </section>
-
-    <div class="prose">
-      <h2>The ring</h2>
-      <p>
-        At 22:44 the bracketing was working properly for once: sixteen frames across eight exposure
-        levels, {' '}
-        <b>6.3 stops</b> from end to end. Merged in scene radiance units, the short frames give back
-        the daylight edge and the long ones give back the copper. Then the tone map touches
-        luminance only and leaves the colour ratios where they were, which is the whole reason it
-        stays copper instead of going grey.
-      </p>
-    </div>
 
     <figure
       class="plate"
@@ -275,8 +191,8 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
       data-full={`${A}/ring-2040.webp`}
       data-w="2040"
       data-h="2040"
-      data-title="The ring, 22:44"
-      data-meta="16 frames, 8 exposure levels, 6.3 stops"
+      data-title="22:44"
+      data-meta="The bright rim and the shadowed disc"
       tabindex="0"
       role="button"
       aria-label="Open the eclipse ring at full size"
@@ -293,26 +209,12 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
       />
       <figcaption>
         <span class="cap-time">22:44</span>
-        <span>Daylight and earthshadow in the same circle, which no single exposure can do.</span>
+        <span>
+          A white and gold rim along the top right edge, and the rest of the moon a dim copper. The
+          dark maria still show through the shadowed part.
+        </span>
       </figcaption>
     </figure>
-
-    <div class="prose">
-      <h2>The aeroplanes</h2>
-      <p>
-        Two aircraft went through the frame during the deep phase. The first, at 22:36, passed above
-        and to the left and only ever put its navigation lights in shot. The second, at 22:42:06,
-        went straight across the lit edge and left a silhouette: wing, tail, the lot, in one frame at
-        ISO 20000. Exactly one frame out of one hundred and ninety four has it.
-      </p>
-      <p>
-        That frame is noisy the way ISO 20000 is noisy, so the moon underneath it is a median stack
-        of eight frames from around it, and the aircraft is kept pixel for pixel from the one
-        frame that has it. Nothing was drawn in. The plates below are the other way round: one clean
-        moon, and the aircraft's lights from every frame of the pass laid over it, so you can see the
-        track it took.
-      </p>
-    </div>
 
     <div class="pair">
       <figure
@@ -321,8 +223,8 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
         data-full={`${A}/plane-track-a-3200.webp`}
         data-w="3200"
         data-h="3200"
-        data-title="The second pass, 22:42"
-        data-meta="Navigation lights from 8 frames over one moon"
+        data-title="22:42"
+        data-meta="The pass that went across"
         tabindex="0"
         role="button"
         aria-label="Open the 22:42 aircraft track at full size"
@@ -339,7 +241,10 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
         />
         <figcaption>
           <span class="cap-time">22:42</span>
-          <span>The pass that produced the silhouette, drawn out across eight frames.</span>
+          <span>
+            The same aircraft as the first picture, with its lights laid out across the whole pass.
+            It comes in from the lower left and goes straight over the top of the moon.
+          </span>
         </figcaption>
       </figure>
 
@@ -349,8 +254,8 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
         data-full={`${A}/plane-track-b-3200.webp`}
         data-w="3200"
         data-h="3200"
-        data-title="The first pass, 22:36"
-        data-meta="Shot at 142 mm, six frames in three seconds"
+        data-title="22:36"
+        data-meta="The pass that missed"
         tabindex="0"
         role="button"
         aria-label="Open the 22:36 aircraft track at full size"
@@ -367,172 +272,15 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
         />
         <figcaption>
           <span class="cap-time">22:36</span>
-          <span>The earlier one, which missed. Six frames, three seconds, 142 mm.</span>
+          <span>
+            An earlier one, six minutes before, that went over the top left and never touched the
+            moon. Its lights arc away to the upper right.
+          </span>
         </figcaption>
       </figure>
     </div>
 
-    <section class="curve-block" aria-labelledby="curve-h">
-      <div class="prose">
-        <h2 id="curve-h">How much light was left</h2>
-        <p>
-          This one is not a picture, it is a measurement. Every raw file was re-read, the black level
-          taken off, and the light inside a fixed circle around the moon added up and divided by the
-          exposure it was made with. What comes out is the moon's actual brightness, in stops,
-          against itself at the start of the night.
-        </p>
-      </div>
-
-      <figure class="chart">
-        <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="curve-desc">
-          <title id="curve-desc">
-            The moon's measured brightness falling {data.drop} stops between {data.curveFrom} and{' '}
-            {data.curveTo}.
-          </title>
-          {
-            gridStops.map((s) => (
-              <g>
-                <line
-                  x1={PAD.l}
-                  x2={W - PAD.r}
-                  y1={py(s)}
-                  y2={py(s)}
-                  class={s === 0 ? 'axis' : 'grid'}
-                />
-                <text x={PAD.l - 10} y={py(s) + 4} class="tick" text-anchor="end">
-                  {s === 0 ? '0' : s}
-                </text>
-              </g>
-            ))
-          }
-          {
-            hourMarks.map((t) => (
-              <text x={px(t)} y={H - PAD.b + 20} class="tick" text-anchor="middle">
-                {clock(t)}
-              </text>
-            ))
-          }
-          <line x1={PAD.l} x2={PAD.l} y1={PAD.t} y2={H - PAD.b} class="axis" />
-          <line x1={PAD.l} x2={W - PAD.r} y1={H - PAD.b} y2={H - PAD.b} class="grid" />
-
-          <line x1={px(planeT)} x2={px(planeT)} y1={PAD.t} y2={H - PAD.b} class="mark" />
-          <text x={px(planeT) + 7} y={PAD.t + 14} class="mark-label">22:42 aeroplane</text>
-
-          <path d={path} class="line" />
-          {dots.map((d) => <circle cx={d.x} cy={d.y} r="3.4" class="dot" />)}
-
-          <g class="rug">
-            {rug.map((x) => <line x1={x} x2={x} y1={H - PAD.b + 34} y2={H - PAD.b + 46} />)}
-          </g>
-          <text x={PAD.l} y={H - PAD.b + 66} class="tick rug-label">
-            one tick per frame kept, {data.used} of them
-          </text>
-        </svg>
-        <figcaption>
-          {data.curvePoints} frames out of {data.used} could be measured this way. Down{' '}
-          {data.drop} stops between {data.curveFrom} and {data.curveTo}, which is a factor of about{' '}
-          {data.dropFactor}.
-        </figcaption>
-      </figure>
-
-      <div class="prose">
-        <p>
-          The dots thin out towards the end on purpose. A frame only counts if nothing inside the
-          circle is clipped, and once the shadow is most of the way across, the exposures that make
-          the copper readable also blow the surviving sliver of daylight. Those frames read too
-          bright to trust, so they are not plotted. The four that survive at 23:04 are there because
-          one bracket that minute was set deliberately dark.
-        </p>
-        <p>
-          Which is also the answer to a question the pictures do not settle: the moon never went all
-          the way in while the camera was running. There is still a rind of direct sun along the top
-          edge of the last frame at 23:10:52, and the curve is still going down when the shooting
-          stops.
-        </p>
-      </div>
-    </section>
-
-    <section class="log-block" aria-labelledby="log-h">
-      <div class="prose">
-        <h2 id="log-h">The shot log</h2>
-        <p>
-          Thirty three bursts, straight out of the file metadata, with nothing reconstructed. You can
-          watch the panic set in: f/8 and ISO 400 for the first half hour, then the apertures open,
-          the ISO climbs by a factor of sixty four, and the brackets get wider every time the shadow
-          takes another bite.
-        </p>
-        <table>
-          <thead>
-            <tr>
-              <th>Burst</th>
-              <th>Frames</th>
-              <th>Levels</th>
-              <th>Range</th>
-              <th>ISO</th>
-              <th>Shutter</th>
-              <th>Aperture</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              data.bursts.map((b) => (
-                <tr class={b.stops >= 3 ? 'is-wide' : undefined}>
-                  <td>{b.start}</td>
-                  <td>{b.n}</td>
-                  <td>{b.levels}</td>
-                  <td>{b.stops > 0 ? `${b.stops} st` : ''}</td>
-                  <td>{fmtIso(b.iso)}</td>
-                  <td>{fmtShut(b.shutter)}</td>
-                  <td>{b.ap.map((a) => `f/${a}`).join(' ')}</td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <div class="prose">
-      <h2>How the stages were built</h2>
-      <ol class="method">
-        <li>
-          <b>Decode.</b> Every file to linear sixteen bit with LibRaw, camera white balance, no auto
-          brightness, so the numbers are still light.
-        </li>
-        <li>
-          <b>Align on the limb.</b> A circle fitted to the sunlit edge with a Hough transform at
-          fixed radius. This is the step that matters. A brightness centroid sits on the limb in a
-          short exposure and near the middle of the disc in a long one, up to ninety pixels apart,
-          which is what produced doubled terminators on the first few attempts.
-        </li>
-        <li><b>Stack.</b> Frames of equal exposure, median, outliers thrown out.</li>
-        <li>
-          <b>Merge.</b> The exposure levels combined in radiance units, weighted against clipped
-          pixels and against the noise floor, with a mask so that pixels vacated by the alignment
-          shift are never merged in.
-        </li>
-        <li>
-          <b>Tone map luminance only.</b> The colour ratios are left alone. That is the whole reason
-          it stays copper.
-        </li>
-      </ol>
-
-      <h2>What is not true here</h2>
-      <p>
-        The real optical resolution is about 266 pixels across the moon: 200 mm on a 1.6&#215; crop
-        is not a telescope. Frames were stacked and then enlarged three to six times. Stacking
-        genuinely takes noise out and recovers a little sub pixel detail, but past roughly two times,
-        what you are looking at is good interpolation and not new information. Nothing here was
-        generated, invented, or filled in.
-      </p>
-      <p>
-        Five of the 194 frames are set aside and not used anywhere above: one light painting
-        experiment, three wide frames of the sky at 70 mm, and one that is simply out of focus. The
-        twenty five second exposures all belong to that group, which is why the shot log tops out at
-        one eighth of a second. There is also a twenty three second video clip from the same night,
-        and it is a disappointment: handheld drift, no aircraft, nothing the stills do not do better.
-      </p>
-    </div>
+    <p class="credit">Canon EOS R6, RF 70-200mm f/2.8. 27 August 2026.</p>
 
     <a class="back-link" href="/work/photography/">All photography</a>
   </article>
@@ -546,7 +294,7 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
   // the arc has two cuts of the same picture: evened out, and left alone
   const arcPlate = document.getElementById('arc-plate');
   const arcImg = document.getElementById('arc-img') as HTMLImageElement | null;
-  const toggle = document.querySelector('.arc-toggle');
+  const toggle = document.querySelector('.arc-toggle') as HTMLElement | null;
 
   if (arcPlate && arcImg && toggle) {
     const copy = {
@@ -564,8 +312,7 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
       arcPlate.dataset.orig = `/photo/eclipse/arc-${key}-full.jpg`;
       arcPlate.dataset.origLabel =
         (key === 'true' ? toggle.dataset.labelTrue : toggle.dataset.labelEven) ?? '';
-      arcPlate.dataset.title =
-        key === 'true' ? 'Twenty one stages, true brightness' : 'Twenty one stages, evened out';
+      arcPlate.dataset.title = key === 'true' ? 'The arc, as it looked' : 'The arc, evened out';
       copy.even.hidden = key === 'true';
       copy.true.hidden = key !== 'true';
     });
@@ -763,9 +510,7 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
   }
   .plate figcaption,
   .band-hint,
-  .sheet-note,
-  .numbers-note,
-  .chart figcaption {
+  .credit {
     font-family: var(--mono);
     font-size: 0.78rem;
     line-height: 1.55;
@@ -802,45 +547,6 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
   }
   .hero-plate .cap-time {
     color: var(--sunflower);
-  }
-
-  /* --- numbers --- */
-  .numbers {
-    margin-top: 3.5rem;
-    border-top: 2px solid var(--ink);
-    padding-top: 1.6rem;
-  }
-  .numbers ol {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
-    gap: 1.6rem 1.4rem;
-  }
-  .numbers li {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-  .numbers b {
-    font-family: var(--display);
-    font-variation-settings: 'opsz' 90, 'SOFT' 50, 'WONK' 0;
-    font-weight: 600;
-    font-size: clamp(1.7rem, 3.6vw, 2.3rem);
-    line-height: 1;
-    color: var(--rust);
-  }
-  .numbers span {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    color: var(--ink-soft);
-    text-wrap: balance;
-  }
-  .numbers-note {
-    margin-top: 1.8rem;
-    max-width: 62ch;
   }
 
   /* --- bands --- */
@@ -928,9 +634,6 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
   .arc .cap-time {
     color: var(--sunflower);
   }
-  .arc-foot {
-    color: #8d7a5e !important;
-  }
 
   /* --- contact sheet --- */
   .sheet {
@@ -965,11 +668,12 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
     border-color: rgba(244, 237, 223, 0.4);
   }
   .moon figcaption {
-    display: grid;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.6rem;
     margin-top: 0.45rem;
     font-family: var(--mono);
     font-size: 0.68rem;
-    line-height: 1.35;
     letter-spacing: 0.06em;
     white-space: nowrap;
     color: #8d7a5e;
@@ -982,15 +686,6 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
   .moon-n {
     color: #5f523f;
   }
-  .sheet-note {
-    margin-top: 2.2rem;
-    max-width: 64ch;
-    color: #b09a78;
-  }
-  .sheet-note b {
-    color: #f4eddf;
-    font-weight: 500;
-  }
 
   /* --- pair --- */
   .pair {
@@ -1002,88 +697,10 @@ const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
     margin-top: 2rem;
   }
 
-  /* --- the chart --- */
-  .curve-block {
-    margin-top: 1rem;
-  }
-  .chart {
-    margin: 2rem 0 0;
-    border: 2px solid var(--ink);
-    padding: 1.2rem 1rem 0.9rem;
-    background: var(--paper-deep);
-  }
-  .chart svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-  }
-  .chart figcaption {
-    margin-top: 0.9rem;
-    max-width: 62ch;
-  }
-  .grid {
-    stroke: rgba(51, 41, 28, 0.16);
-    stroke-width: 1;
-  }
-  .axis {
-    stroke: var(--ink);
-    stroke-width: 1.6;
-  }
-  .tick {
-    font-family: var(--mono);
-    font-size: 12px;
-    fill: var(--ink-soft);
-  }
-  .line {
-    fill: none;
-    stroke: var(--sienna);
-    stroke-width: 1.6;
-    stroke-linejoin: round;
-    opacity: 0.55;
-  }
-  .dot {
-    fill: var(--rust);
-  }
-  .mark {
-    stroke: var(--sunflower);
-    stroke-width: 1.4;
-    stroke-dasharray: 4 4;
-  }
-  .mark-label {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    fill: var(--sunflower);
-  }
-  .rug line {
-    stroke: var(--olive);
-    stroke-width: 1;
-    opacity: 0.75;
-  }
-  .rug-label {
-    font-size: 11px;
-    letter-spacing: 0.06em;
-  }
-
-  /* --- log --- */
-  .log-block {
-    margin-top: 1rem;
-  }
-  .log-block tbody tr.is-wide td:first-child {
-    color: var(--rust);
-    font-weight: 500;
-  }
-
-  .method {
-    padding-left: 1.2rem;
-    max-width: var(--measure);
-  }
-  .method li + li {
-    margin-top: 0.7em;
-  }
-  .method b {
-    font-weight: 600;
+  .credit {
+    margin-top: 3rem;
+    padding-top: 1.2rem;
+    border-top: 2px solid var(--ink);
   }
 
   @media (min-width: 760px) {
