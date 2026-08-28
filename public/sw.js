@@ -6,9 +6,10 @@ const VERSION = 'v2';
 const RUNTIME = `runtime-${VERSION}`;
 const OFFLINE_URL = '/offline/';
 
-/* the film's frame sequences are big and only useful online; leave them to
-   the HTTP cache instead of doubling them into cache storage */
-const SKIP = /^\/film\/(lg|sm|xl|portrait)\//;
+/* the film's frame sequences, the 3D models and the mesh decoder are big and
+   only useful online; leave them to the HTTP cache instead of doubling them
+   into cache storage */
+const SKIP = /^\/film\/(lg|sm|xl|portrait)\/|\.glb$|^\/draco\//;
 
 /* every page worth reading in a basement with no signal, plus the posters
    the homepage falls back to. the frame sequences stay online-only. */

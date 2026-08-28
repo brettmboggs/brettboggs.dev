@@ -1,0 +1,416 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const systems = [
+  { key: '', label: 'All' },
+  { key: 'steel', label: 'Steel' },
+  { key: 'concrete', label: 'Concrete' },
+  { key: 'panel', label: 'MSE panels' },
+  { key: 'ballast', label: 'Ballast' },
+  { key: 'rail', label: 'Rail' },
+  { key: 'tie', label: 'Ties' },
+];
+
+const progression = [
+  {
+    src: '/lab/trra/prog-clay.webp',
+    alt: 'The same wide frame with untextured grey and green geometry.',
+    step: '01',
+    note: 'Geometry only. Ground cover, roads and buildings pulled from the map, still flat colour.',
+  },
+  {
+    src: '/lab/trra/prog-ortho.webp',
+    alt: 'The same frame with aerial photography draped over a single continuous terrain.',
+    step: '02',
+    note: 'One continuous terrain, public domain USGS aerial draped on it by world position.',
+  },
+  {
+    src: '/lab/trra/prog-final.webp',
+    alt: 'The same frame with vegetation, warm morning light and finished materials.',
+    step: '03',
+    note: 'Real vegetation, building facades, mid morning sun at 40 degrees.',
+  },
+];
+---
+
+<Base
+  title="The MacArthur · Lab · Brett Boggs"
+  description="A rail bridge approach in St. Louis, rebuilt to scale from public data so a job could be shown instead of described."
+  ogImage="/lab/trra/hero-1200.webp"
+>
+  <article>
+    <header class="page-head">
+      <p class="eyebrow">Lab · Aug 2026</p>
+      <h1>The MacArthur</h1>
+      <p class="lede">
+        A retaining wall and bridge approach on the Terminal Railroad's MacArthur crossing, built to
+        scale inside a copy of the site.
+      </p>
+    </header>
+
+    <figure class="shot">
+      <img
+        src="/lab/trra/hero.webp"
+        alt="Aerial view of the MacArthur Bridge crossing the Mississippi into downtown St. Louis, with the retaining wall and rail approach in the foreground."
+        width="2000"
+        height="1125"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <figcaption>Looking north west across the Mississippi. Downtown and the Arch sit where they sit.</figcaption>
+    </figure>
+
+    <div class="prose">
+      <p>
+        My brother had a job to price. Plans describe what gets built. They are not much use for
+        showing someone what it is. So the site got rebuilt: the river, the floodplain, the bridge,
+        the yard, downtown, all of it to scale, with the job standing in the middle of it.
+      </p>
+      <p>
+        Nothing here is invented. Alignments, roads, buildings and tree cover come from OpenStreetMap,
+        the ground photography from the USGS National Map, which is public domain. Where the drawings
+        and the map disagreed, the drawings won and the difference got written down.
+      </p>
+    </div>
+
+    <section class="viewer" aria-label="Interactive model">
+      <div class="viewer-head">
+        <h2>The model</h2>
+        <p class="viewer-hint"><span class="hint-pointer">Drag to orbit. Scroll to zoom.</span><span class="hint-touch">Two fingers to orbit.</span></p>
+      </div>
+
+      <div class="stage">
+        <canvas id="trra-canvas"></canvas>
+        <p class="stage-note" id="trra-status">Loading</p>
+      </div>
+
+      <div class="controls">
+        <div class="control-group" role="group" aria-label="Extent">
+          <span class="control-label">Extent</span>
+          <div class="control-row" id="trra-extent">
+            <button type="button" data-url="/lab/trra/job.glb" class="is-on">Job scope</button>
+            <button type="button" data-url="/lab/trra/network.glb">Full network</button>
+          </div>
+        </div>
+        <div class="control-group" role="group" aria-label="System">
+          <span class="control-label">System</span>
+          <div class="control-row" id="trra-systems">
+            {
+              systems.map((s) => (
+                <button type="button" data-system={s.key} class={s.key === '' ? 'is-on' : ''}>
+                  {s.label}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <p class="viewer-caption">
+        Six meshes, one per material system, exported from the same file the renders come out of and
+        compressed to under a megabyte. Isolating a system is the question anyone actually asks in
+        front of a render.
+      </p>
+    </section>
+
+    <div class="prose">
+      <h2>The wall</h2>
+      <p>
+        3,380 precast panels at five feet square, 19 mm joints, set 55 mm proud in running bond.
+        Courses are level on one datum across every face. Grade trims the bottom of the stack and the
+        coping closes the top, which is how the real thing goes up and the only way the joint lines
+        stay straight in a render.
+      </p>
+    </div>
+
+    <figure class="shot">
+      <img
+        src="/lab/trra/wall.webp"
+        alt="Close view of the mechanically stabilised earth wall with the truss bridge behind it."
+        width="1800"
+        height="1013"
+        loading="lazy"
+      />
+      <figcaption>The wall, from the angle it will be looked at.</figcaption>
+    </figure>
+
+    <div class="prose">
+      <h2>Track that would actually run</h2>
+      <p>
+        Every approach is one continuous swept mesh along a faired alignment, so stepping is
+        impossible by construction. The joints were checked with numbers rather than eyes. Worst gap
+        across the whole build is 5.27 mm, and the railhead never steps more than a tenth of a
+        millimetre. Grades stay under two percent and the tightest curve is 151 m.
+      </p>
+
+      <table>
+        <thead>
+          <tr><th>Run</th><th>Length</th><th>Tightest R</th><th>Max grade</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Wye, Illinois</td><td>1,250 m</td><td>280 m</td><td>1.90%</td></tr>
+          <tr><td>Main east</td><td>1,274 m</td><td>straight</td><td>0.97%</td></tr>
+          <tr><td>West approach</td><td>997 m</td><td>151 m</td><td>1.50%</td></tr>
+          <tr><td>Missouri branch</td><td>800 m</td><td>502 m</td><td>1.80%</td></tr>
+          <tr><td>Illinois highway</td><td>1,633 m</td><td>297 m</td><td>0.66%</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Three passes at the same frame</h2>
+      <p>
+        Ground was the whole problem. Procedural tiles cannot hold up at 800 m because a three metre
+        tile is a few pixels. Real aerial photography on real terrain is what makes it read.
+      </p>
+    </div>
+
+    <ol class="progression">
+      {
+        progression.map((p) => (
+          <li>
+            <img src={p.src} alt={p.alt} width="1200" height="675" loading="lazy" />
+            <div class="progression-note">
+              <span class="progression-step">{p.step}</span>
+              <span>{p.note}</span>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <figure class="shot">
+      <img
+        src="/lab/trra/yard.webp"
+        alt="Low aerial over the floodplain showing the trestle, trees and aerial photography on the ground."
+        width="1400"
+        height="788"
+        loading="lazy"
+      />
+      <figcaption>Floodplain and trestle. Trees sit only inside real wood polygons, cleared off every road and track.</figcaption>
+    </figure>
+
+    <div class="prose">
+      <h2>What is in the scene</h2>
+      <table>
+        <tbody>
+          <tr><td>Trees and scrub</td><td>12,185, scattered inside 194 ha of mapped wood</td></tr>
+          <tr><td>Buildings</td><td>2,629 footprints at surveyed height, tallest 192 m</td></tr>
+          <tr><td>Roads</td><td>1,609 polylines by class, plus 44 floodplain tracks</td></tr>
+          <tr><td>Terrain</td><td>One heightfield, 12 m grid, 131k vertices</td></tr>
+          <tr><td>Aerial</td><td>0.61 m per pixel over 5 km, 0.31 m over the job</td></tr>
+          <tr><td>Arch</td><td>The published weighted catenary. 630.0 ft, checked</td></tr>
+          <tr><td>Render</td><td>Cycles on GPU, 400 adaptive samples, 2560 by 1440</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Still open</h2>
+      <p>
+        The wye bents are concrete columns where the original are braced lattice towers, so the styles
+        clash at that joint. Guardrails match the envelope of the original, not its post and rail
+        detail. The west approach is a clean arc that departs on the right tangent and lands on the
+        right point, but wanders up to 40 m off the traced line in between. None of it is job scope.
+        All of it is written down.
+      </p>
+    </div>
+
+    <a class="back-link" href="/lab/">Back to Lab</a>
+  </article>
+</Base>
+
+<script>
+  import { mountTrraViewer } from '../../scripts/trraViewer';
+
+  const canvas = document.getElementById('trra-canvas') as HTMLCanvasElement | null;
+  const status = document.getElementById('trra-status');
+  if (canvas) {
+    const viewer = mountTrraViewer(canvas, '/lab/trra/job.glb', (text) => {
+      if (status) status.textContent = text;
+    });
+
+    if (viewer) {
+      const arm = (id: string, run: (btn: HTMLButtonElement) => void) => {
+        const host = document.getElementById(id);
+        host?.addEventListener('click', (event) => {
+          const btn = (event.target as HTMLElement).closest('button');
+          if (!btn || !host.contains(btn)) return;
+          host.querySelectorAll('button').forEach((b) => b.classList.toggle('is-on', b === btn));
+          run(btn as HTMLButtonElement);
+        });
+      };
+
+      arm('trra-systems', (btn) => viewer.isolate(btn.dataset.system ?? ''));
+      arm('trra-extent', (btn) => {
+        const url = btn.dataset.url;
+        if (url) viewer.setModel(url);
+      });
+    }
+  }
+</script>
+
+<style>
+  .shot {
+    margin: 3rem 0 0;
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--ink);
+  }
+  .shot figcaption,
+  .stage-note,
+  .control-label,
+  .progression-note {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+  .shot figcaption {
+    margin-top: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .viewer {
+    margin-top: 4rem;
+  }
+  .viewer-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 0.6rem;
+  }
+  .viewer-head h2 {
+    margin: 0;
+  }
+  .hint-touch {
+    display: none;
+  }
+  @media (hover: none) and (pointer: coarse) {
+    .hint-pointer {
+      display: none;
+    }
+    .hint-touch {
+      display: inline;
+    }
+  }
+  .viewer-hint {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .stage {
+    position: relative;
+    margin-top: 1.2rem;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+  }
+  .stage canvas {
+    display: block;
+    width: 100%;
+    height: clamp(300px, 56vw, 620px);
+    /* one finger keeps scrolling the page; two fingers drive the model */
+    touch-action: pan-y;
+  }
+  .stage-note {
+    position: absolute;
+    left: 0.9rem;
+    bottom: 0.7rem;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.6rem 2.4rem;
+    margin-top: 1.1rem;
+  }
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .control-label {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.7rem;
+  }
+  .control-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .control-row button {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    background: transparent;
+    border: 2px solid rgba(51, 41, 28, 0.28);
+    border-radius: 0;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    transition:
+      border-color 0.25s var(--ease-warm),
+      background 0.25s var(--ease-warm);
+  }
+  .control-row button:hover {
+    border-color: var(--ink);
+  }
+  .control-row button.is-on {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .viewer-caption {
+    margin-top: 1.4rem;
+    max-width: var(--measure);
+  }
+
+  .progression {
+    list-style: none;
+    margin: 2.4rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 2rem;
+  }
+  .progression img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--ink);
+  }
+  .progression-note {
+    display: flex;
+    gap: 0.9rem;
+    margin-top: 0.7rem;
+    align-items: baseline;
+  }
+  .progression-step {
+    color: var(--sienna);
+    font-weight: 500;
+  }
+
+  @media (min-width: 900px) {
+    .progression {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+    }
+    .progression-note {
+      display: block;
+    }
+    .progression-step {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+  }
+</style>

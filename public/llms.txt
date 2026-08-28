@@ -25,6 +25,7 @@ Shipped, as counted on https://brettboggs.dev/work/datum/:
 
 ## Lab
 
+- [The MacArthur](https://brettboggs.dev/lab/trra/): A rail bridge approach in St. Louis, rebuilt to scale from OpenStreetMap and USGS public domain data, with an interactive model of the job.
 - [The Ridge](https://brettboggs.dev/lab/ridge/): A golden hour flyover, rendered in Blender and scrubbed by scroll. It runs the front page.
 - [Sprout Siege](https://brettboggs.dev/lab/sprout-siege/): An idle farm game for iOS, built around a simulation core that never touches the screen.
 - [Keepsake](https://brettboggs.dev/lab/keepsake/): A seeded drawing, deterministic from its hash, different for every visitor.
