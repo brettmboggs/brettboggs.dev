@@ -1,0 +1,1104 @@
+---
+import { statSync } from 'node:fs';
+import Base from '../../../layouts/Base.astro';
+import data from '../../../data/eclipse.json';
+
+const A = '/photo/eclipse';
+
+// the arc originals are a download, not a view, so say what the click costs
+const weigh = (p: string) => {
+  try {
+    return `${(statSync(`public${p}`).size / 1e6).toFixed(1)} MB`;
+  } catch {
+    return '';
+  }
+};
+const origEven = weigh(`${A}/arc-even-full.jpg`);
+const origTrue = weigh(`${A}/arc-true-full.jpg`);
+
+// how the shadow reads at each stage, so the alt text says something true
+const phase = (i: number, n: number) =>
+  i === 0
+    ? 'full and white, before the shadow'
+    : i < n * 0.3
+      ? 'a bite taken out of one limb'
+      : i < n * 0.55
+        ? 'the shadow across half the disc'
+        : i < n * 0.8
+          ? 'most of the disc copper, a bright rind left'
+          : 'nearly all copper, a thin sunlit edge at the top';
+
+const stages = data.stages.map((s, i) => ({
+  ...s,
+  alt: `The moon at ${s.time}, ${phase(i, data.stages.length)}.`,
+}));
+
+// ---- the light curve, drawn from the measured points ----
+const W = 960;
+const H = 340;
+const PAD = { l: 58, r: 22, t: 22, b: 74 };
+const FLOOR = -8.6;
+const px = (t: number) => PAD.l + (t / data.spanSec) * (W - PAD.l - PAD.r);
+const py = (s: number) => PAD.t + (s / FLOOR) * (H - PAD.t - PAD.b);
+
+const dots = data.curve.map((c) => ({ x: px(c.t), y: py(c.stops), ...c }));
+const path = dots.map((d, i) => `${i === 0 ? 'M' : 'L'}${d.x.toFixed(1)} ${d.y.toFixed(1)}`).join(' ');
+const rug = data.log.map((l) => px(l.t));
+const gridStops = [0, -2, -4, -6, -8];
+const hourMarks = [0, 900, 1800, 2700, 3600, 4500, 5400].filter((t) => t <= data.spanSec);
+const clock = (t: number) => {
+  const [h, m, s] = data.start.split(':').map(Number);
+  const total = h * 3600 + m * 60 + s + t;
+  return `${String(Math.floor(total / 3600) % 24).padStart(2, '0')}:${String(
+    Math.floor(total / 60) % 60,
+  ).padStart(2, '0')}`;
+};
+// the aircraft crossed at 22:42:06
+const planeT = 22 * 3600 + 42 * 60 + 6 - (21 * 3600 + 39 * 60 + 59);
+
+const fmtIso = (r: number[]) => (r[0] === r[1] ? `${r[0]}` : `${r[0]} to ${r[1]}`);
+const fmtShut = (r: string[]) => (r[0] === r[1] ? r[0] : `${r[0]} to ${r[1]}`);
+---
+
+<Base
+  title="The Copper Hour · Brett Boggs"
+  description="A lunar eclipse in 194 raw frames: the arc, the ring, and an airliner that crossed the moon at 22:42:06."
+  ogImage="/photo/eclipse/plane-transit-760.webp"
+  article={{ published: new Date('2026-08-27') }}
+>
+  <article>
+    <header class="page-head">
+      <p class="eyebrow">Photography · 27 August 2026</p>
+      <h1>The Copper Hour</h1>
+      <p class="lede">
+        Ninety one minutes of standing in the yard while the earth's shadow went across the moon.
+        One hundred and ninety four raw frames, three and a half seconds of open shutter, and an
+        airliner that picked the wrong second to be somewhere else.
+      </p>
+    </header>
+
+    <figure
+      class="plate night-bleed hero-plate"
+      data-plate
+      data-full={`${A}/plane-transit-1536.webp`}
+      data-w="1536"
+      data-h="1536"
+      data-title="Airliner across the sunlit limb"
+      data-meta="22:42:06 · one frame for the aircraft, eight stacked for the moon"
+      tabindex="0"
+      role="button"
+      aria-label="Open the airliner transit at full size"
+    >
+      <img
+        src={`${A}/plane-transit-760.webp`}
+        srcset={`${A}/plane-transit-760.webp 760w, ${A}/plane-transit-1536.webp 1536w`}
+        sizes="(min-width: 52rem) 46rem, 100vw"
+        alt="An airliner in silhouette against the bright edge of a partly eclipsed copper moon, its navigation lights showing as red and white dashes above."
+        width="1536"
+        height="1536"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <figcaption>
+        <span class="cap-time">22:42:06</span>
+        <span>An aeroplane, going about its evening, in front of the only lit part of the moon.</span>
+      </figcaption>
+    </figure>
+
+    <div class="prose">
+      <p>
+        The camera went up at 21:39 with the moon still whole and white, and came down at 23:10 with
+        it the colour of a penny left on a radiator. In between, the interesting problem is not the
+        moon. It is that the moon stops being one subject and becomes two, sitting in the same
+        circle: a sliver of full daylight on one edge, and a disc lit only by every sunrise and
+        sunset on earth at once, bent through the atmosphere and thrown out here. Those two things
+        are several hundred times apart in brightness. No single frame holds both.
+      </p>
+      <p>
+        So there is no single frame. Everything below is built out of the raw files, decoded to
+        linear sixteen bit with the camera white balance and no auto brightness, so the stacking and
+        merging happens in real light units rather than in something a slider already lied about.
+      </p>
+    </div>
+
+    <section class="numbers" aria-label="The night in numbers">
+      <ol>
+        <li><b>{data.frames}</b><span>raw frames</span></li>
+        <li><b>{data.spanText}</b><span>{data.start} to {data.end}</span></li>
+        <li><b>{data.openSec} s</b><span>shutter actually open</span></li>
+        <li><b>{data.dutyPct}%</b><span>of the night, collecting</span></li>
+        <li><b>{data.burstCount}</b><span>bursts, {data.bracketed} of them bracketed</span></li>
+        <li><b>{data.drop}</b><span>stops the moon fell</span></li>
+        <li><b>{data.evRange}</b><span>stops between settings</span></li>
+        <li><b>{data.gb} GB</b><span>on the card</span></li>
+      </ol>
+      <p class="numbers-note">
+        {data.body}, {data.lens}, in 1.6&#215; crop. ISO {data.isoMin} to {data.isoMax} across{' '}
+        {data.isoCount} values, shutter {data.shutMin} to {data.shutMax} across {data.shutCount}.
+        The gaps between frames are irregular enough that none of this was on an intervalometer.
+      </p>
+    </section>
+
+    <section class="band night-bleed arc-band" aria-labelledby="arc-h">
+      <div class="band-head wrap">
+        <h2 id="arc-h">The arc</h2>
+        <div
+          class="arc-toggle"
+          role="group"
+          aria-label="Arc brightness"
+          data-label-even={`19,610 px JPEG, ${origEven}`}
+          data-label-true={`19,610 px JPEG, ${origTrue}`}
+        >
+          <button type="button" data-arc="even" class="is-on">Evened out</button>
+          <button type="button" data-arc="true">True brightness</button>
+        </div>
+      </div>
+
+      <figure
+        class="arc"
+        id="arc-plate"
+        data-plate
+        data-full={`${A}/arc-even-6000.webp`}
+        data-w="6000"
+        data-h="983"
+        data-title="Twenty one stages, evened out"
+        data-meta="21:40 to 23:10 · drag to pan, scroll or pinch to zoom"
+        data-orig={`${A}/arc-even-full.jpg`}
+        data-orig-label={`19,610 px JPEG, ${origEven}`}
+        tabindex="0"
+        role="button"
+        aria-label="Open the progression arc at full size"
+      >
+        <div class="arc-scroll">
+          <img
+            id="arc-img"
+            src={`${A}/arc-even-2400.webp`}
+            srcset={`${A}/arc-even-1200.webp 1200w, ${A}/arc-even-2400.webp 2400w, ${A}/arc-even-6000.webp 6000w`}
+            sizes="2320px"
+            alt="Twenty one moons in a shallow arc, running from a full white moon on the left through a shadow crossing the disc to a deep copper moon on the right."
+            width="6000"
+            height="983"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <figcaption class="wrap arc-cap">
+          <span class="cap-time">21:40 to 23:10</span>
+          <span class="arc-caption-even">
+            Twenty one stages, each one lifted so its own detail reads. This is how eclipse
+            composites are usually published, and it is a small, honest lie: it shows you the shape
+            of the shadow, not the amount of light.
+          </span>
+          <span class="arc-foot">
+            Each moon here is about 700 pixels across. The contact sheet below holds every stage
+            at 984, so that is the place to go looking at one of them closely.
+          </span>
+          <span class="arc-caption-true" hidden>
+            The same twenty one stages with the brightness left alone. The last ones really are that
+            dark. Drag it sideways. The whole strip is nineteen thousand pixels long.
+          </span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="band night-bleed sheet-band" aria-labelledby="sheet-h">
+      <div class="band-head wrap">
+        <h2 id="sheet-h">Twenty one moons</h2>
+        <p class="band-hint">Every stage on its own. Click any of them.</p>
+      </div>
+      <div class="wrap">
+      <ol class="sheet">
+        {
+          stages.map((s, i) => (
+            <li>
+              <figure
+                class="moon"
+                data-plate
+                data-full={`${A}/stage/${s.slug}-1360.webp`}
+                data-w="1360"
+                data-h="1360"
+                data-title={`Stage ${i + 1} of 21, ${s.time}`}
+                data-meta={
+                  s.levels > 1
+                    ? `${s.levels} exposure levels merged across ${s.stops} stop${s.stops === 1 ? '' : 's'}`
+                    : 'one exposure level, nothing to recover the bright limb from'
+                }
+                tabindex="0"
+                role="button"
+                aria-label={`Open the ${s.time} stage at full size`}
+              >
+                <img
+                  src={`${A}/stage/${s.slug}-560.webp`}
+                  srcset={`${A}/stage/${s.slug}-560.webp 560w, ${A}/stage/${s.slug}-1360.webp 1360w`}
+                  sizes="(min-width: 900px) 11rem, 45vw"
+                  alt={s.alt}
+                  width="560"
+                  height="560"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <figcaption>
+                  <b>{s.time}</b>
+                  <span>{s.levels > 1 ? `${s.levels} lvl · ${s.stops} st` : '1 lvl'}</span>
+                  <span class="moon-n">{String(i + 1).padStart(2, '0')} / 21</span>
+                </figcaption>
+              </figure>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="sheet-note">
+        <b>lvl</b> is how many separate exposure levels were merged into that stage, and <b>st</b> is
+        how many stops they spanned. Where it says one level, the sunlit limb is genuinely blown out.
+        There was no shorter frame to recover it from, because nobody was thinking about brackets at
+        that moment.
+      </p>
+      </div>
+    </section>
+
+    <div class="prose">
+      <h2>The ring</h2>
+      <p>
+        At 22:44 the bracketing was working properly for once: sixteen frames across eight exposure
+        levels, {' '}
+        <b>6.3 stops</b> from end to end. Merged in scene radiance units, the short frames give back
+        the daylight edge and the long ones give back the copper. Then the tone map touches
+        luminance only and leaves the colour ratios where they were, which is the whole reason it
+        stays copper instead of going grey.
+      </p>
+    </div>
+
+    <figure
+      class="plate"
+      data-plate
+      data-full={`${A}/ring-2040.webp`}
+      data-w="2040"
+      data-h="2040"
+      data-title="The ring, 22:44"
+      data-meta="16 frames, 8 exposure levels, 6.3 stops"
+      tabindex="0"
+      role="button"
+      aria-label="Open the eclipse ring at full size"
+    >
+      <img
+        src={`${A}/ring-1020.webp`}
+        srcset={`${A}/ring-1020.webp 1020w, ${A}/ring-2040.webp 2040w`}
+        sizes="(min-width: 52rem) 48rem, 100vw"
+        alt="The partly eclipsed moon with a brilliant white and gold rim along the upper right edge and the rest of the disc a dim copper, with maria visible through the shadow."
+        width="2040"
+        height="2040"
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption>
+        <span class="cap-time">22:44</span>
+        <span>Daylight and earthshadow in the same circle, which no single exposure can do.</span>
+      </figcaption>
+    </figure>
+
+    <div class="prose">
+      <h2>The aeroplanes</h2>
+      <p>
+        Two aircraft went through the frame during the deep phase. The first, at 22:36, passed above
+        and to the left and only ever put its navigation lights in shot. The second, at 22:42:06,
+        went straight across the lit edge and left a silhouette: wing, tail, the lot, in one frame at
+        ISO 20000. Exactly one frame out of one hundred and ninety four has it.
+      </p>
+      <p>
+        That frame is noisy the way ISO 20000 is noisy, so the moon underneath it is a median stack
+        of eight frames from around it, and the aircraft is kept pixel for pixel from the one
+        frame that has it. Nothing was drawn in. The plates below are the other way round: one clean
+        moon, and the aircraft's lights from every frame of the pass laid over it, so you can see the
+        track it took.
+      </p>
+    </div>
+
+    <div class="pair">
+      <figure
+        class="plate"
+        data-plate
+        data-full={`${A}/plane-track-a-3200.webp`}
+        data-w="3200"
+        data-h="3200"
+        data-title="The second pass, 22:42"
+        data-meta="Navigation lights from 8 frames over one moon"
+        tabindex="0"
+        role="button"
+        aria-label="Open the 22:42 aircraft track at full size"
+      >
+        <img
+          src={`${A}/plane-track-a-1200.webp`}
+          srcset={`${A}/plane-track-a-1200.webp 1200w, ${A}/plane-track-a-2400.webp 2400w`}
+          sizes="(min-width: 760px) 24rem, 100vw"
+          alt="A copper eclipsed moon with a diagonal trail of red and white aircraft navigation lights running up across it from lower left to upper right."
+          width="1200"
+          height="1200"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>
+          <span class="cap-time">22:42</span>
+          <span>The pass that produced the silhouette, drawn out across eight frames.</span>
+        </figcaption>
+      </figure>
+
+      <figure
+        class="plate"
+        data-plate
+        data-full={`${A}/plane-track-b-3200.webp`}
+        data-w="3200"
+        data-h="3200"
+        data-title="The first pass, 22:36"
+        data-meta="Shot at 142 mm, six frames in three seconds"
+        tabindex="0"
+        role="button"
+        aria-label="Open the 22:36 aircraft track at full size"
+      >
+        <img
+          src={`${A}/plane-track-b-1200.webp`}
+          srcset={`${A}/plane-track-b-1200.webp 1200w, ${A}/plane-track-b-2400.webp 2400w`}
+          sizes="(min-width: 760px) 24rem, 100vw"
+          alt="The same eclipsed moon lower in the frame, with a line of coloured navigation lights arcing above and to the left of it."
+          width="1200"
+          height="1200"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>
+          <span class="cap-time">22:36</span>
+          <span>The earlier one, which missed. Six frames, three seconds, 142 mm.</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <section class="curve-block" aria-labelledby="curve-h">
+      <div class="prose">
+        <h2 id="curve-h">How much light was left</h2>
+        <p>
+          This one is not a picture, it is a measurement. Every raw file was re-read, the black level
+          taken off, and the light inside a fixed circle around the moon added up and divided by the
+          exposure it was made with. What comes out is the moon's actual brightness, in stops,
+          against itself at the start of the night.
+        </p>
+      </div>
+
+      <figure class="chart">
+        <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="curve-desc">
+          <title id="curve-desc">
+            The moon's measured brightness falling {data.drop} stops between {data.curveFrom} and{' '}
+            {data.curveTo}.
+          </title>
+          {
+            gridStops.map((s) => (
+              <g>
+                <line
+                  x1={PAD.l}
+                  x2={W - PAD.r}
+                  y1={py(s)}
+                  y2={py(s)}
+                  class={s === 0 ? 'axis' : 'grid'}
+                />
+                <text x={PAD.l - 10} y={py(s) + 4} class="tick" text-anchor="end">
+                  {s === 0 ? '0' : s}
+                </text>
+              </g>
+            ))
+          }
+          {
+            hourMarks.map((t) => (
+              <text x={px(t)} y={H - PAD.b + 20} class="tick" text-anchor="middle">
+                {clock(t)}
+              </text>
+            ))
+          }
+          <line x1={PAD.l} x2={PAD.l} y1={PAD.t} y2={H - PAD.b} class="axis" />
+          <line x1={PAD.l} x2={W - PAD.r} y1={H - PAD.b} y2={H - PAD.b} class="grid" />
+
+          <line x1={px(planeT)} x2={px(planeT)} y1={PAD.t} y2={H - PAD.b} class="mark" />
+          <text x={px(planeT) + 7} y={PAD.t + 14} class="mark-label">22:42 aeroplane</text>
+
+          <path d={path} class="line" />
+          {dots.map((d) => <circle cx={d.x} cy={d.y} r="3.4" class="dot" />)}
+
+          <g class="rug">
+            {rug.map((x) => <line x1={x} x2={x} y1={H - PAD.b + 34} y2={H - PAD.b + 46} />)}
+          </g>
+          <text x={PAD.l} y={H - PAD.b + 66} class="tick rug-label">
+            one tick per frame kept, {data.used} of them
+          </text>
+        </svg>
+        <figcaption>
+          {data.curvePoints} frames out of {data.used} could be measured this way. Down{' '}
+          {data.drop} stops between {data.curveFrom} and {data.curveTo}, which is a factor of about{' '}
+          {data.dropFactor}.
+        </figcaption>
+      </figure>
+
+      <div class="prose">
+        <p>
+          The dots thin out towards the end on purpose. A frame only counts if nothing inside the
+          circle is clipped, and once the shadow is most of the way across, the exposures that make
+          the copper readable also blow the surviving sliver of daylight. Those frames read too
+          bright to trust, so they are not plotted. The four that survive at 23:04 are there because
+          one bracket that minute was set deliberately dark.
+        </p>
+        <p>
+          Which is also the answer to a question the pictures do not settle: the moon never went all
+          the way in while the camera was running. There is still a rind of direct sun along the top
+          edge of the last frame at 23:10:52, and the curve is still going down when the shooting
+          stops.
+        </p>
+      </div>
+    </section>
+
+    <section class="log-block" aria-labelledby="log-h">
+      <div class="prose">
+        <h2 id="log-h">The shot log</h2>
+        <p>
+          Thirty three bursts, straight out of the file metadata, with nothing reconstructed. You can
+          watch the panic set in: f/8 and ISO 400 for the first half hour, then the apertures open,
+          the ISO climbs by a factor of sixty four, and the brackets get wider every time the shadow
+          takes another bite.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Burst</th>
+              <th>Frames</th>
+              <th>Levels</th>
+              <th>Range</th>
+              <th>ISO</th>
+              <th>Shutter</th>
+              <th>Aperture</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              data.bursts.map((b) => (
+                <tr class={b.stops >= 3 ? 'is-wide' : undefined}>
+                  <td>{b.start}</td>
+                  <td>{b.n}</td>
+                  <td>{b.levels}</td>
+                  <td>{b.stops > 0 ? `${b.stops} st` : ''}</td>
+                  <td>{fmtIso(b.iso)}</td>
+                  <td>{fmtShut(b.shutter)}</td>
+                  <td>{b.ap.map((a) => `f/${a}`).join(' ')}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="prose">
+      <h2>How the stages were built</h2>
+      <ol class="method">
+        <li>
+          <b>Decode.</b> Every file to linear sixteen bit with LibRaw, camera white balance, no auto
+          brightness, so the numbers are still light.
+        </li>
+        <li>
+          <b>Align on the limb.</b> A circle fitted to the sunlit edge with a Hough transform at
+          fixed radius. This is the step that matters. A brightness centroid sits on the limb in a
+          short exposure and near the middle of the disc in a long one, up to ninety pixels apart,
+          which is what produced doubled terminators on the first few attempts.
+        </li>
+        <li><b>Stack.</b> Frames of equal exposure, median, outliers thrown out.</li>
+        <li>
+          <b>Merge.</b> The exposure levels combined in radiance units, weighted against clipped
+          pixels and against the noise floor, with a mask so that pixels vacated by the alignment
+          shift are never merged in.
+        </li>
+        <li>
+          <b>Tone map luminance only.</b> The colour ratios are left alone. That is the whole reason
+          it stays copper.
+        </li>
+      </ol>
+
+      <h2>What is not true here</h2>
+      <p>
+        The real optical resolution is about 266 pixels across the moon: 200 mm on a 1.6&#215; crop
+        is not a telescope. Frames were stacked and then enlarged three to six times. Stacking
+        genuinely takes noise out and recovers a little sub pixel detail, but past roughly two times,
+        what you are looking at is good interpolation and not new information. Nothing here was
+        generated, invented, or filled in.
+      </p>
+      <p>
+        Five of the 194 frames are set aside and not used anywhere above: one light painting
+        experiment, three wide frames of the sky at 70 mm, and one that is simply out of focus. The
+        twenty five second exposures all belong to that group, which is why the shot log tops out at
+        one eighth of a second. There is also a twenty three second video clip from the same night,
+        and it is a disappointment: handheld drift, no aircraft, nothing the stills do not do better.
+      </p>
+    </div>
+
+    <a class="back-link" href="/work/photography/">All photography</a>
+  </article>
+</Base>
+
+<script>
+  import { mountEclipseGallery } from '../../../scripts/eclipseGallery';
+
+  mountEclipseGallery();
+
+  // the arc has two cuts of the same picture: evened out, and left alone
+  const arcPlate = document.getElementById('arc-plate');
+  const arcImg = document.getElementById('arc-img') as HTMLImageElement | null;
+  const toggle = document.querySelector('.arc-toggle');
+
+  if (arcPlate && arcImg && toggle) {
+    const copy = {
+      even: document.querySelector('.arc-caption-even') as HTMLElement,
+      true: document.querySelector('.arc-caption-true') as HTMLElement,
+    };
+    toggle.addEventListener('click', (event) => {
+      const btn = (event.target as HTMLElement).closest('button');
+      if (!btn) return;
+      const key = btn.dataset.arc === 'true' ? 'true' : 'even';
+      toggle.querySelectorAll('button').forEach((b) => b.classList.toggle('is-on', b === btn));
+      arcImg.srcset = `/photo/eclipse/arc-${key}-1200.webp 1200w, /photo/eclipse/arc-${key}-2400.webp 2400w, /photo/eclipse/arc-${key}-6000.webp 6000w`;
+      arcImg.src = `/photo/eclipse/arc-${key}-2400.webp`;
+      arcPlate.dataset.full = `/photo/eclipse/arc-${key}-6000.webp`;
+      arcPlate.dataset.orig = `/photo/eclipse/arc-${key}-full.jpg`;
+      arcPlate.dataset.origLabel =
+        (key === 'true' ? toggle.dataset.labelTrue : toggle.dataset.labelEven) ?? '';
+      arcPlate.dataset.title =
+        key === 'true' ? 'Twenty one stages, true brightness' : 'Twenty one stages, evened out';
+      copy.even.hidden = key === 'true';
+      copy.true.hidden = key !== 'true';
+    });
+  }
+</script>
+
+<style is:global>
+  /* the viewer lives on the body, so its rules cannot be scoped to the page */
+  html.ec-locked,
+  html.ec-locked body {
+    overflow: hidden;
+  }
+
+  .ec-viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: #0b0805;
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-warm);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+  /* [hidden] has to beat the display above, or the shell sits over the page */
+  .ec-viewer[hidden] {
+    display: none;
+  }
+  .ec-viewer.is-on {
+    opacity: 1;
+  }
+  .ec-stage {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    touch-action: none;
+    cursor: zoom-in;
+  }
+  .ec-stage.is-zoomed {
+    cursor: grab;
+  }
+  .ec-stage.is-zoomed:active {
+    cursor: grabbing;
+  }
+  .ec-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: 0 0;
+    max-width: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .ec-bar {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1.1rem;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(11, 8, 5, 0.85), rgba(11, 8, 5, 0));
+  }
+  .ec-bar-bottom {
+    align-self: end;
+    background: linear-gradient(to top, rgba(11, 8, 5, 0.85), rgba(11, 8, 5, 0));
+  }
+  .ec-bar > * {
+    pointer-events: auto;
+  }
+  .ec-label {
+    margin: 0;
+    max-width: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 0.9rem;
+  }
+  .ec-title {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 60, 'SOFT' 40, 'WONK' 0;
+    font-size: 1.15rem;
+    color: #f4eddf;
+  }
+  .ec-meta,
+  .ec-hint {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.09em;
+    color: #b09a78;
+    margin: 0;
+  }
+  .ec-tools {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+  .ec-btn {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: #f4eddf;
+    background: rgba(244, 237, 223, 0.06);
+    border: 1px solid rgba(244, 237, 223, 0.28);
+    border-radius: 0;
+    padding: 0.34rem 0.72rem;
+    min-width: 2.4rem;
+    cursor: pointer;
+    background-image: none;
+    font-weight: 400;
+    transition:
+      background 0.25s var(--ease-warm),
+      border-color 0.25s var(--ease-warm);
+  }
+  .ec-btn:hover,
+  .ec-btn:focus-visible {
+    background: rgba(244, 237, 223, 0.16);
+    border-color: #f4eddf;
+  }
+  .ec-zoom {
+    min-width: 4rem;
+  }
+  .ec-loading {
+    position: absolute;
+    left: 50%;
+    bottom: 4.6rem;
+    transform: translateX(-50%);
+    margin: 0;
+    z-index: 3;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #b09a78;
+    pointer-events: none;
+  }
+
+  @media (max-width: 620px) {
+    /* tools on their own row, title underneath and clipped rather than stacked letter by letter */
+    .ec-bar-top {
+      flex-direction: column-reverse;
+      align-items: stretch;
+      gap: 0.55rem;
+      padding: 0.7rem 0.8rem;
+    }
+    .ec-tools {
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+    .ec-label {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ec-title {
+      font-size: 0.95rem;
+    }
+    .ec-meta {
+      display: none;
+    }
+    .ec-btn {
+      padding: 0.3rem 0.6rem;
+      min-width: 2.1rem;
+    }
+  }
+</style>
+
+<style>
+  /* --- night ground: the photographs bring their own weather --- */
+  .night-bleed {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    background: #100c08;
+    color: #f4eddf;
+  }
+
+  .plate {
+    margin: 3rem 0 0;
+    cursor: zoom-in;
+  }
+  .plate:focus-visible {
+    outline: 2px solid var(--sunflower);
+    outline-offset: 4px;
+  }
+  .plate img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #100c08;
+  }
+  .plate:not(.night-bleed) img {
+    border: 2px solid var(--ink);
+  }
+  .plate figcaption,
+  .band-hint,
+  .sheet-note,
+  .numbers-note,
+  .chart figcaption {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    line-height: 1.55;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+  }
+  .plate figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1rem;
+    margin-top: 0.7rem;
+    max-width: 58ch;
+  }
+  .cap-time {
+    color: var(--sienna);
+    letter-spacing: 0.14em;
+    flex-shrink: 0;
+  }
+
+  .hero-plate {
+    margin-top: 2.6rem;
+    padding: 0 0 1.4rem;
+  }
+  .hero-plate img {
+    /* the plate is square, so capping the width caps the height with it */
+    max-width: min(46rem, 74vh);
+    margin: 0 auto;
+  }
+  .hero-plate figcaption {
+    max-width: 46rem;
+    margin: 1rem auto 0;
+    padding: 0 1.5rem;
+    color: #b09a78;
+  }
+  .hero-plate .cap-time {
+    color: var(--sunflower);
+  }
+
+  /* --- numbers --- */
+  .numbers {
+    margin-top: 3.5rem;
+    border-top: 2px solid var(--ink);
+    padding-top: 1.6rem;
+  }
+  .numbers ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+    gap: 1.6rem 1.4rem;
+  }
+  .numbers li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .numbers b {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 90, 'SOFT' 50, 'WONK' 0;
+    font-weight: 600;
+    font-size: clamp(1.7rem, 3.6vw, 2.3rem);
+    line-height: 1;
+    color: var(--rust);
+  }
+  .numbers span {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    text-wrap: balance;
+  }
+  .numbers-note {
+    margin-top: 1.8rem;
+    max-width: 62ch;
+  }
+
+  /* --- bands --- */
+  .band {
+    margin-top: 4.5rem;
+    padding: 3.2rem 0 3.4rem;
+  }
+  .band-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.8rem 1.5rem;
+    padding-bottom: 1.2rem;
+  }
+  .band-head h2 {
+    margin: 0;
+    color: #f4eddf;
+  }
+  .band-hint {
+    margin: 0;
+    color: #b09a78;
+  }
+
+  /* --- the arc --- */
+  .arc-toggle {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .arc-toggle button {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.05em;
+    color: #f4eddf;
+    background: transparent;
+    border: 1px solid rgba(244, 237, 223, 0.3);
+    border-radius: 0;
+    padding: 0.32rem 0.7rem;
+    cursor: pointer;
+    transition:
+      background 0.25s var(--ease-warm),
+      border-color 0.25s var(--ease-warm);
+  }
+  .arc-toggle button:hover {
+    border-color: #f4eddf;
+  }
+  .arc-toggle button.is-on {
+    background: var(--sunflower);
+    border-color: var(--sunflower);
+    color: #100c08;
+  }
+
+  .arc {
+    margin: 0;
+    cursor: zoom-in;
+  }
+  .arc:focus-visible {
+    outline: 2px solid var(--sunflower);
+    outline-offset: -2px;
+  }
+  .arc-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(244, 237, 223, 0.3) transparent;
+  }
+  .arc-scroll img {
+    display: block;
+    height: clamp(190px, 34vw, 380px);
+    width: auto;
+    max-width: none;
+  }
+  .arc-cap {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 1.2rem;
+  }
+  .arc-cap span {
+    max-width: 64ch;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: #b09a78;
+  }
+  .arc .cap-time {
+    color: var(--sunflower);
+  }
+  .arc-foot {
+    color: #8d7a5e !important;
+  }
+
+  /* --- contact sheet --- */
+  .sheet {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    gap: 1.1rem 0.9rem;
+  }
+  .moon {
+    margin: 0;
+    cursor: zoom-in;
+    transition: transform 0.4s var(--ease-warm);
+  }
+  .moon:hover,
+  .moon:focus-visible {
+    transform: translateY(-4px);
+    outline: none;
+  }
+  .moon:focus-visible img {
+    outline: 2px solid var(--sunflower);
+    outline-offset: 2px;
+  }
+  .moon img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid rgba(244, 237, 223, 0.14);
+  }
+  .moon:hover img {
+    border-color: rgba(244, 237, 223, 0.4);
+  }
+  .moon figcaption {
+    display: grid;
+    margin-top: 0.45rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    line-height: 1.35;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    color: #8d7a5e;
+  }
+  .moon figcaption b {
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--sunflower);
+  }
+  .moon-n {
+    color: #5f523f;
+  }
+  .sheet-note {
+    margin-top: 2.2rem;
+    max-width: 64ch;
+    color: #b09a78;
+  }
+  .sheet-note b {
+    color: #f4eddf;
+    font-weight: 500;
+  }
+
+  /* --- pair --- */
+  .pair {
+    display: grid;
+    gap: 2rem;
+    margin-top: 1rem;
+  }
+  .pair .plate {
+    margin-top: 2rem;
+  }
+
+  /* --- the chart --- */
+  .curve-block {
+    margin-top: 1rem;
+  }
+  .chart {
+    margin: 2rem 0 0;
+    border: 2px solid var(--ink);
+    padding: 1.2rem 1rem 0.9rem;
+    background: var(--paper-deep);
+  }
+  .chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .chart figcaption {
+    margin-top: 0.9rem;
+    max-width: 62ch;
+  }
+  .grid {
+    stroke: rgba(51, 41, 28, 0.16);
+    stroke-width: 1;
+  }
+  .axis {
+    stroke: var(--ink);
+    stroke-width: 1.6;
+  }
+  .tick {
+    font-family: var(--mono);
+    font-size: 12px;
+    fill: var(--ink-soft);
+  }
+  .line {
+    fill: none;
+    stroke: var(--sienna);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+    opacity: 0.55;
+  }
+  .dot {
+    fill: var(--rust);
+  }
+  .mark {
+    stroke: var(--sunflower);
+    stroke-width: 1.4;
+    stroke-dasharray: 4 4;
+  }
+  .mark-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    fill: var(--sunflower);
+  }
+  .rug line {
+    stroke: var(--olive);
+    stroke-width: 1;
+    opacity: 0.75;
+  }
+  .rug-label {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+
+  /* --- log --- */
+  .log-block {
+    margin-top: 1rem;
+  }
+  .log-block tbody tr.is-wide td:first-child {
+    color: var(--rust);
+    font-weight: 500;
+  }
+
+  .method {
+    padding-left: 1.2rem;
+    max-width: var(--measure);
+  }
+  .method li + li {
+    margin-top: 0.7em;
+  }
+  .method b {
+    font-weight: 600;
+  }
+
+  @media (min-width: 760px) {
+    .pair {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4rem;
+    }
+    .pair .plate figcaption {
+      max-width: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .moon {
+      transition: none;
+    }
+  }
+</style>
