@@ -1,0 +1,9 @@
+/* The page holds still for the length of a run, so space drives the bird and
+   the browser does not also scroll with it. Scoped to the 404 page, but it has
+   to sit outside the component style block because it targets the root. */
+
+html.glide-locked,
+html.glide-locked body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}

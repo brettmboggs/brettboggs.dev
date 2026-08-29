@@ -2,12 +2,49 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Not found · Brett Boggs" description="That page is not here.">
-  <header class="page-head">
-    <p class="eyebrow">404</p>
-    <h1>Not here.</h1>
-    <p class="lede">That page moved or never existed.</p>
-  </header>
+<Base title="Not found · Brett Boggs" description="That page is not here." puck={false}>
+  <div class="glide" data-glide>
+    <canvas
+      class="glide-canvas"
+      data-glide-canvas
+      tabindex="-1"
+      role="img"
+      aria-label="A bird gliding over prairie hills at golden hour."></canvas>
+
+    <div class="glide-hud" data-glide-hud hidden>
+      <p class="glide-dist"><span data-glide-dist>0</span> m</p>
+      <p class="glide-best">Best <span data-glide-best>0</span> m</p>
+    </div>
+
+    <p class="glide-stage" data-glide-stage aria-hidden="true"></p>
+    <p class="glide-hint" data-glide-hint hidden>Hold to climb. Let go to fall.</p>
+
+    <div class="glide-card" data-glide-intro>
+      <p class="eyebrow">404</p>
+      <h1>Nothing here.</h1>
+      <p>
+        This page moved, or it never existed. The records disagree, and the person responsible
+        is me.
+      </p>
+      <p class="glide-offer">Sorry about the walk. Here is a bird, by way of apology.</p>
+      <div class="glide-actions">
+        <button type="button" class="glide-button" data-glide-play>Fly it</button>
+        <a href="/">Take me home</a>
+      </div>
+    </div>
+
+    <div class="glide-card glide-card--over" data-glide-over hidden aria-live="polite">
+      <p class="eyebrow">Down</p>
+      <p class="glide-score" data-glide-over-dist>0 m</p>
+      <p class="glide-sub">Best <span data-glide-over-best>0 m</span></p>
+      <p class="glide-note" data-glide-over-note></p>
+      <div class="glide-actions">
+        <button type="button" class="glide-button" data-glide-again>Again</button>
+        <a href="/">Take me home</a>
+      </div>
+    </div>
+  </div>
+
   <nav class="entry-list" aria-label="Site sections">
     <a class="entry-row" href="/">
       <span class="entry-title">Home</span>
@@ -24,8 +61,267 @@ import Base from '../layouts/Base.astro';
   </nav>
 </Base>
 
+<script>
+  import '../styles/glide-lock.css';
+  import { mountGlide } from '../scripts/glide';
+
+  const root = document.querySelector<HTMLElement>('[data-glide]');
+  if (root) {
+    try {
+      mountGlide(root);
+    } catch {
+      // no canvas, no game. The card and the section list still read fine.
+      root.querySelector<HTMLElement>('[data-glide-play]')?.setAttribute('hidden', '');
+      root.classList.add('is-flat');
+    }
+  }
+</script>
+
 <style>
+  /* full bleed: the page is the field, the message sits on it */
+  .glide {
+    position: relative;
+    width: 100vw;
+    margin: 1.5rem 0 0 calc(50% - 50vw);
+    height: clamp(25rem, 66vh, 38rem);
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    overflow: hidden;
+    --glide-hud: var(--ink);
+  }
+
+  .glide-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--paper-deep);
+  }
+  .glide-canvas:focus-visible {
+    outline: none;
+  }
+  .glide-canvas.is-live {
+    cursor: crosshair;
+  }
+  .glide.is-live {
+    touch-action: none;
+  }
+  .glide.is-flat .glide-canvas {
+    display: none;
+  }
+
+  /* the card is solid paper so the copy reads at noon and at dusk alike */
+  .glide-card {
+    position: absolute;
+    left: max(1.5rem, calc(50vw - 31rem));
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 27rem;
+    padding: 1.5rem 1.6rem 1.4rem;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+  }
+  .glide-card h1 {
+    margin: 0.35rem 0 0.6rem;
+    font-size: clamp(2.4rem, 6vw, 3.4rem);
+  }
+  .glide-card p {
+    max-width: none;
+  }
+  .glide-offer {
+    margin-top: 0.8rem;
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 40, 'SOFT' 60, 'WONK' 1;
+    font-style: italic;
+    font-size: 1.15rem;
+    line-height: 1.35;
+    color: var(--rust);
+  }
+
+  .glide-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 1.35rem;
+  }
+  .glide-actions a {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .glide-button {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--ink);
+    border: 2px solid var(--ink);
+    padding: 0.6rem 1.4rem;
+    cursor: pointer;
+    transition:
+      background-color 0.45s var(--ease-warm),
+      color 0.45s var(--ease-warm);
+  }
+  .glide-button:hover,
+  .glide-button:focus-visible {
+    background: var(--sunflower);
+    color: var(--ink);
+  }
+  .glide-button:focus-visible {
+    outline: 2px solid var(--sienna);
+    outline-offset: 3px;
+  }
+
+  .glide-card--over {
+    text-align: left;
+  }
+  .glide-score {
+    margin-top: 0.3rem;
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
+    font-weight: 600;
+    font-size: clamp(2.6rem, 7vw, 3.6rem);
+    line-height: 1;
+  }
+  .glide-sub,
+  .glide-note {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+  .glide-sub {
+    margin-top: 0.5rem;
+  }
+  .glide-note:not(:empty) {
+    margin-top: 0.35rem;
+    color: var(--rust);
+  }
+
+  /* readouts sit on the sky, so their colour is driven by the light */
+  .glide-hud {
+    position: absolute;
+    top: 1rem;
+    left: max(1.5rem, calc(50vw - 31rem));
+    color: var(--glide-hud);
+    font-family: var(--mono);
+    pointer-events: none;
+    transition: color 0.6s linear;
+  }
+  .glide-dist {
+    font-size: 1.4rem;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+  .glide-best {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+  /* the name of the stretch you just entered, shown once and gone */
+  .glide-stage {
+    position: absolute;
+    left: 50%;
+    top: 38%;
+    transform: translateX(-50%);
+    margin: 0;
+    color: var(--glide-hud);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .glide-stage.is-on {
+    animation: glide-call 2.6s var(--ease-warm) forwards;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .glide-stage.is-on {
+      animation: glide-call-still 2.6s steps(1, end) forwards;
+    }
+  }
+  @keyframes glide-call-still {
+    0%,
+    92% {
+      opacity: 0.85;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes glide-call {
+    0% {
+      opacity: 0;
+      letter-spacing: 0.18em;
+    }
+    18% {
+      opacity: 0.85;
+    }
+    70% {
+      opacity: 0.85;
+    }
+    100% {
+      opacity: 0;
+      letter-spacing: 0.34em;
+    }
+  }
+
+  .glide-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 1.1rem;
+    transform: translateX(-50%);
+    margin: 0;
+    color: var(--glide-hud);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    pointer-events: none;
+    transition: color 0.6s linear;
+  }
+
   .entry-list {
     display: block;
+    margin-top: 2.5rem;
+  }
+
+  @media (max-width: 46rem) {
+    .glide {
+      height: clamp(26rem, 64vh, 34rem);
+    }
+    /* sit the card at the top so the ridge and the bird still show under it,
+       otherwise the apology promises a bird nobody can see */
+    .glide-card {
+      left: 0.9rem;
+      right: 0.9rem;
+      top: 0.9rem;
+      max-width: none;
+      transform: none;
+      padding: 1.1rem 1.1rem 1rem;
+    }
+    .glide-card h1 {
+      font-size: 2.05rem;
+      margin-bottom: 0.45rem;
+    }
+    .glide-card p {
+      font-size: 1rem;
+    }
+    .glide-offer {
+      margin-top: 0.6rem;
+      font-size: 1.05rem;
+    }
+    .glide-actions {
+      margin-top: 1rem;
+    }
+    .glide-hud {
+      left: 1rem;
+    }
   }
 </style>
