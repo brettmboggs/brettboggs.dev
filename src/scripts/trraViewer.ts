@@ -13,9 +13,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const PAPER = 0xf4eddf;
 const INK = 0x33291c;
+/** the world carries its own sky; paper behind it reads as haze */
+const SKY = 0xc3ced7;
 
-/** triangles in terrain.glb, so the readout can account for the ground */
-const GROUND_TRIS = 70755;
+/** triangles in terrain.glb plus city.glb, so the readout stays honest */
+const GROUND_TRIS = 70755 + 88354;
 
 /** Material key -> how it should read in the paper palette. */
 const LOOK: Record<string, { color: number; metal: number; rough: number }> = {
@@ -40,6 +42,8 @@ export interface ViewerHandle {
   setModel(url: string): void;
   /** drop the real terrain and aerial in under the model */
   setGround(on: boolean): void;
+  /** frame whatever is visible again, after panning away */
+  recenter(): void;
   dispose(): void;
 }
 
@@ -71,14 +75,11 @@ export function mountTrraViewer(
   controls.autoRotate = !matchMedia('(prefers-reduced-motion: reduce)').matches;
   controls.autoRotateSpeed = 0.35;
 
-  // The viewer sits in the middle of a page people are reading, so it must not
-  // eat a scroll. One finger scrolls past it and the wheel only zooms once the
-  // model has actually been grabbed.
+  controls.enablePan = true;
+  controls.screenSpacePanning = true;
+  // wheel zoom only after the model has been grabbed, so scrolling past the
+  // viewer on a laptop does not get captured
   controls.enableZoom = false;
-  controls.touches = { ONE: THREE.TOUCH.NONE, TWO: THREE.TOUCH.DOLLY_ROTATE };
-  // OrbitControls writes touch-action: none as an inline style, which beats the
-  // stylesheet and swallows one-finger scrolling. Put it back afterwards.
-  canvas.style.touchAction = 'pan-y';
 
   let touched = false;
   const take = () => {
@@ -87,6 +88,45 @@ export function mountTrraViewer(
     touched = true;
   };
   canvas.addEventListener('pointerdown', take);
+
+  // On a touch screen the viewer must not swallow a page scroll, but it still
+  // has to be properly drivable. So it stays inert until tapped, and from then
+  // on takes one finger to orbit and two to pan and zoom, until it is released.
+  // OrbitControls writes touch-action inline, which beats the stylesheet, so
+  // both states are set here rather than in CSS.
+  const coarse = matchMedia('(hover: none) and (pointer: coarse)').matches;
+  const stage = canvas.parentElement;
+  let grabBtn: HTMLButtonElement | null = null;
+  let releaseBtn: HTMLButtonElement | null = null;
+
+  function setEngaged(on: boolean): void {
+    if (on) {
+      canvas.style.touchAction = 'none';
+      controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
+      if (coarse) controls.enableZoom = true;
+    } else {
+      canvas.style.touchAction = 'pan-y';
+      controls.touches = { ONE: THREE.TOUCH.NONE, TWO: THREE.TOUCH.DOLLY_PAN };
+    }
+    if (grabBtn) grabBtn.hidden = on;
+    if (releaseBtn) releaseBtn.hidden = !on;
+  }
+
+  function chip(cls: string, label: string, run: () => void): HTMLButtonElement {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = cls;
+    b.textContent = label;
+    b.addEventListener('click', run);
+    stage?.appendChild(b);
+    return b;
+  }
+
+  if (coarse && stage) {
+    grabBtn = chip('stage-grab', 'Tap to explore', () => setEngaged(true));
+    releaseBtn = chip('stage-release', 'Done', () => setEngaged(false));
+  }
+  setEngaged(!coarse);
 
   // Mid morning from the north east, which is the sun the renders were lit with.
   const key = new THREE.DirectionalLight(0xfff0d2, 2.0);
@@ -131,7 +171,8 @@ export function mountTrraViewer(
   // coordinates as the structures. Both are fetched only if asked for, so the
   // page costs nothing until someone wants the world.
   const GROUND_TERRAIN = '/lab/trra/terrain.glb';
-  const GROUND_TEXTURE = '/lab/trra/ground.webp';
+  const GROUND_CITY = '/lab/trra/city.glb';
+  const GROUND_TEXTURE = '/lab/trra/world.webp';
   let groundGroup: THREE.Group | null = null;
   let groundPending = false;
   let groundOn = false;
@@ -146,9 +187,13 @@ export function mountTrraViewer(
       // the plate is 4.4 km across, so the abstract framing distances do not apply
       camera.far = Math.max(camera.far, 16000);
       camera.updateProjectionMatrix();
+      f.color.setHex(SKY);
+      renderer.setClearColor(SKY, 1);
       f.near = 2400;
-      f.far = 9500;
+      f.far = 11000;
     } else {
+      f.color.setHex(PAPER);
+      renderer.setClearColor(PAPER, 1);
       const dist = fitDistance();
       f.near = dist * 0.85;
       f.far = dist * 2.8;
@@ -162,21 +207,41 @@ export function mountTrraViewer(
     }
     groundPending = true;
     onStatus?.('Loading ground');
+
     const tex = new THREE.TextureLoader().load(GROUND_TEXTURE);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    // An orthophoto already contains sunlight. Lighting it again doubles the
-    // exposure and burns the plate to white, so the ground is shaded flat, and
-    // tone mapping is off because the photograph is already exposed.
-    const mat = new THREE.MeshBasicMaterial({ map: tex });
-    mat.toneMapped = false;
+    // The plate is a Cycles render of the v17 scene shot straight down, so it
+    // already carries that scene's lighting and grade. Lighting or tone mapping
+    // it a second time would just double both.
+    const groundMat = new THREE.MeshBasicMaterial({ map: tex });
+    groundMat.toneMapped = false;
+    // The facade archetypes and the rest of the context palette are baked into
+    // COLOR_0, so the material is a plain white shell that the vertex colours
+    // tint. That is what stops downtown reading as one lump of tan.
+    const cityMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      vertexColors: true,
+      roughness: 0.82,
+      metalness: 0.0,
+    });
+
+    const group = new THREE.Group();
+    let outstanding = 2;
+    const settle = () => {
+      if (--outstanding) return;
+      groundPending = false;
+      if (disposed) return;
+      groundGroup = group;
+      scene.add(group);
+      showGround();
+      reportTris();
+    };
+
     loader.load(
       GROUND_TERRAIN,
       (gltf) => {
-        groundPending = false;
-        if (disposed) return;
-        const g = gltf.scene;
-        g.traverse((o) => {
+        gltf.scene.traverse((o) => {
           const mesh = o as THREE.Mesh;
           if (!mesh.isMesh) return;
           // The terrain heightfield already carries the river, so the separate
@@ -185,19 +250,31 @@ export function mountTrraViewer(
             mesh.visible = false;
             return;
           }
-          mesh.material = mat;
+          mesh.material = groundMat;
           mesh.renderOrder = -1;
         });
-        groundGroup = g;
-        scene.add(g);
-        showGround();
-        reportTris();
+        group.add(gltf.scene);
+        settle();
       },
       undefined,
       () => {
-        groundPending = false;
         onStatus?.('Ground failed to load.');
+        settle();
       },
+    );
+
+    loader.load(
+      GROUND_CITY,
+      (gltf) => {
+        gltf.scene.traverse((o) => {
+          const mesh = o as THREE.Mesh;
+          if (mesh.isMesh) mesh.material = cityMat;
+        });
+        group.add(gltf.scene);
+        settle();
+      },
+      undefined,
+      settle,
     );
   }
 
@@ -446,6 +523,10 @@ export function mountTrraViewer(
     setModel(url) {
       load(url);
     },
+    recenter() {
+      touched = false;
+      refit(true);
+    },
     setGround(on) {
       groundOn = on;
       if (on) loadGround();
@@ -457,6 +538,8 @@ export function mountTrraViewer(
       run();
       io.disconnect();
       ro.disconnect();
+      grabBtn?.remove();
+      releaseBtn?.remove();
       if (groundGroup) {
         scene.remove(groundGroup);
         groundGroup.traverse((o) => {
