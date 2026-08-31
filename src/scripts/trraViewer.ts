@@ -14,6 +14,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 const PAPER = 0xf4eddf;
 const INK = 0x33291c;
 
+/** triangles in terrain.glb, so the readout can account for the ground */
+const GROUND_TRIS = 70755;
+
 /** Material key -> how it should read in the paper palette. */
 const LOOK: Record<string, { color: number; metal: number; rough: number }> = {
   steel: { color: 0x4b545f, metal: 0.8, rough: 0.45 },
@@ -35,6 +38,8 @@ export interface ViewerHandle {
   isolate(key: string): void;
   /** swap between the two models */
   setModel(url: string): void;
+  /** drop the real terrain and aerial in under the model */
+  setGround(on: boolean): void;
   dispose(): void;
 }
 
@@ -118,7 +123,82 @@ export function mountTrraViewer(
     mat.transparent = true;
     mat.depthWrite = false;
     grid.position.set(cx, y, cz);
+    grid.visible = !groundOn;
     scene.add(grid);
+  }
+
+  // The real terrain and the aerial that goes on it, in the same scene
+  // coordinates as the structures. Both are fetched only if asked for, so the
+  // page costs nothing until someone wants the world.
+  const GROUND_TERRAIN = '/lab/trra/terrain.glb';
+  const GROUND_TEXTURE = '/lab/trra/ground.webp';
+  let groundGroup: THREE.Group | null = null;
+  let groundPending = false;
+  let groundOn = false;
+
+  function showGround(): void {
+    if (groundGroup) groundGroup.visible = groundOn;
+    ground.visible = !groundOn;
+    if (grid) grid.visible = !groundOn;
+    const f = scene.fog as THREE.Fog;
+    if (!f || !f.isFog) return;
+    if (groundOn) {
+      // the plate is 4.4 km across, so the abstract framing distances do not apply
+      camera.far = Math.max(camera.far, 16000);
+      camera.updateProjectionMatrix();
+      f.near = 2400;
+      f.far = 9500;
+    } else {
+      const dist = fitDistance();
+      f.near = dist * 0.85;
+      f.far = dist * 2.8;
+    }
+  }
+
+  function loadGround(): void {
+    if (groundGroup || groundPending) {
+      showGround();
+      return;
+    }
+    groundPending = true;
+    onStatus?.('Loading ground');
+    const tex = new THREE.TextureLoader().load(GROUND_TEXTURE);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    // An orthophoto already contains sunlight. Lighting it again doubles the
+    // exposure and burns the plate to white, so the ground is shaded flat, and
+    // tone mapping is off because the photograph is already exposed.
+    const mat = new THREE.MeshBasicMaterial({ map: tex });
+    mat.toneMapped = false;
+    loader.load(
+      GROUND_TERRAIN,
+      (gltf) => {
+        groundPending = false;
+        if (disposed) return;
+        const g = gltf.scene;
+        g.traverse((o) => {
+          const mesh = o as THREE.Mesh;
+          if (!mesh.isMesh) return;
+          // The terrain heightfield already carries the river, so the separate
+          // water plane only contributes a seam where its edge stops.
+          if (systemOf(mesh.name) === 'water') {
+            mesh.visible = false;
+            return;
+          }
+          mesh.material = mat;
+          mesh.renderOrder = -1;
+        });
+        groundGroup = g;
+        scene.add(g);
+        showGround();
+        reportTris();
+      },
+      undefined,
+      () => {
+        groundPending = false;
+        onStatus?.('Ground failed to load.');
+      },
+    );
   }
 
   const draco = new DRACOLoader().setDecoderPath('/draco/');
@@ -255,13 +335,16 @@ export function mountTrraViewer(
     setGrid(span * 1.6, floor, centre.x, centre.z);
   }
 
-  function apply(animate: boolean): void {
+  function reportTris(): void {
     let shown = 0;
-    for (const [k, mesh] of parts) {
-      mesh.visible = !isolated || k === isolated;
-      if (mesh.visible) shown += tris.get(k) ?? 0;
-    }
+    for (const [k, mesh] of parts) if (mesh.visible) shown += tris.get(k) ?? 0;
+    if (groundOn && groundGroup) shown += GROUND_TRIS;
     onStatus?.(`${Math.round(shown).toLocaleString()} triangles`);
+  }
+
+  function apply(animate: boolean): void {
+    for (const [k, mesh] of parts) mesh.visible = !isolated || k === isolated;
+    reportTris();
     refit(animate);
   }
 
@@ -363,11 +446,30 @@ export function mountTrraViewer(
     setModel(url) {
       load(url);
     },
+    setGround(on) {
+      groundOn = on;
+      if (on) loadGround();
+      else showGround();
+      reportTris();
+    },
     dispose() {
       disposed = true;
       run();
       io.disconnect();
       ro.disconnect();
+      if (groundGroup) {
+        scene.remove(groundGroup);
+        groundGroup.traverse((o) => {
+          const m = o as THREE.Mesh;
+          if (m.isMesh) {
+            m.geometry.dispose();
+            const mat = m.material as THREE.MeshBasicMaterial;
+            mat.map?.dispose();
+            mat.dispose();
+          }
+        });
+        groundGroup = null;
+      }
       clear();
       controls.dispose();
       draco.dispose();

@@ -9,7 +9,7 @@ const OFFLINE_URL = '/offline/';
 /* the film's frame sequences, the 3D models, the mesh decoder and the
    full size photograph originals are big and only useful online; leave them
    to the HTTP cache instead of doubling them into cache storage */
-const SKIP = /^\/film\/(lg|sm|xl|portrait)\/|\.glb$|^\/draco\/|-full\.jpg$/;
+const SKIP = /^\/film\/(lg|sm|xl|portrait)\/|\.glb$|^\/draco\/|-full\.jpg$|\/ground\.webp$/;
 
 /* every page worth reading in a basement with no signal, plus the posters
    the homepage falls back to. the frame sequences stay online-only. */

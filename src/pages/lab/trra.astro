@@ -92,6 +92,13 @@ const progression = [
             <button type="button" data-url="/lab/trra/network.glb">Full network</button>
           </div>
         </div>
+        <div class="control-group" role="group" aria-label="Ground">
+          <span class="control-label">Ground</span>
+          <div class="control-row" id="trra-ground">
+            <button type="button" data-ground="off" class="is-on">Off</button>
+            <button type="button" data-ground="on">Aerial</button>
+          </div>
+        </div>
         <div class="control-group" role="group" aria-label="System">
           <span class="control-label">System</span>
           <div class="control-row" id="trra-systems">
@@ -107,9 +114,10 @@ const progression = [
       </div>
 
       <p class="viewer-caption">
-        Six meshes, one per material system, exported from the same file the renders come out of and
-        compressed to under a megabyte. Isolating a system is the question anyone actually asks in
-        front of a render.
+        Six meshes, one per material system, exported from the same file the renders come out of.
+        Isolating a system is the question anyone actually asks in front of a render. Turning the
+        ground on drops in the real terrain with the aerial draped on it, which is another 900 KB,
+        so it is only fetched if you ask for it.
       </p>
     </section>
 
@@ -277,6 +285,7 @@ const progression = [
       };
 
       arm('trra-systems', (btn) => viewer.isolate(btn.dataset.system ?? ''));
+      arm('trra-ground', (btn) => viewer.setGround(btn.dataset.ground === 'on'));
       arm('trra-extent', (btn) => {
         const url = btn.dataset.url;
         if (url) viewer.setModel(url);
@@ -422,10 +431,15 @@ const progression = [
   }
   .stage-note {
     position: absolute;
-    left: 0.9rem;
-    bottom: 0.7rem;
+    left: 0.6rem;
+    bottom: 0.5rem;
     margin: 0;
     pointer-events: none;
+    /* it sits over aerial photography once the ground is on, so it carries its
+       own backing rather than relying on the paper behind it */
+    padding: 0.2rem 0.45rem;
+    background: rgba(244, 237, 223, 0.82);
+    color: var(--ink);
   }
 
   .controls {
