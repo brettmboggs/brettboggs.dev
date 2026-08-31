@@ -114,6 +114,45 @@ const progression = [
     </section>
 
     <div class="prose">
+      <h2>Where this is</h2>
+      <p>
+        The scene sits on a validated transform between the model and the real world. Feeding the
+        anchors through it lands the Gateway Arch within 19 m of its published position and Busch
+        Stadium within 8 m, which is inside the accuracy of the aerial itself. So the job can be
+        drawn straight onto the photograph rather than pointed at.
+      </p>
+    </div>
+
+    <figure class="locator">
+      <div class="locator-frame">
+        <img
+          src="/lab/trra/locator.webp"
+          alt="Aerial photograph of the Mississippi at St. Louis with the MacArthur crossing marked, the Gateway Arch and Busch Stadium labelled for orientation."
+          width="1400"
+          height="1400"
+          loading="lazy"
+        />
+        <svg viewBox="0 0 1000 1000" aria-hidden="true">
+          <line class="reach" x1="592.0" y1="574.5" x2="706.0" y2="581.0" />
+          <line class="job" x1="388.2" y1="504.4" x2="592.0" y2="574.5" />
+          <circle class="pin" cx="592.0" cy="574.5" r="9" />
+          <circle class="dot" cx="459.5" cy="171.4" r="5" />
+          <text class="tag" x="474" y="176">Gateway Arch</text>
+          <circle class="dot" cx="228.3" cy="248.0" r="5" />
+          <text class="tag" x="243" y="253">Busch Stadium</text>
+          <line class="rule" x1="60" y1="946" x2="228.4" y2="946" />
+          <text class="tag" x="60" y="932">500 m</text>
+          <line class="rule" x1="946" y1="946" x2="946" y2="898" />
+          <text class="tag" x="939" y="884">N</text>
+        </svg>
+      </div>
+      <figcaption>
+        Bridge and wall in sienna, the rebuilt Illinois approach in ochre. Base imagery USGS National
+        Map, public domain, 1.45 m per pixel.
+      </figcaption>
+    </figure>
+
+    <div class="prose">
       <h2>The wall</h2>
       <p>
         3,380 precast panels at five feet square, 19 mm joints, set 55 mm proud in running bond.
@@ -269,6 +308,68 @@ const progression = [
     margin-top: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+  }
+
+  .locator {
+    margin: 3rem 0 0;
+  }
+  .locator-frame {
+    position: relative;
+    border: 2px solid var(--ink);
+    line-height: 0;
+  }
+  .locator-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .locator-frame svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .locator .job {
+    stroke: var(--sienna);
+    stroke-width: 7;
+    stroke-linecap: round;
+  }
+  .locator .reach {
+    stroke: var(--sunflower);
+    stroke-width: 4.5;
+    stroke-linecap: round;
+  }
+  .locator .pin {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 3;
+  }
+  .locator .dot {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.5;
+  }
+  .locator .rule {
+    stroke: #fff;
+    stroke-width: 4;
+  }
+  .locator .tag {
+    fill: #fff;
+    font-family: var(--mono);
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    paint-order: stroke;
+    stroke: rgba(24, 20, 14, 0.55);
+    stroke-width: 3.5;
+  }
+  .locator figcaption {
+    margin-top: 0.7rem;
+    max-width: var(--measure);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    line-height: 1.55;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
   }
 
   .viewer {
