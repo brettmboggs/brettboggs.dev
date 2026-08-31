@@ -313,6 +313,9 @@ export function mountTrraViewer(
   // long and a hundred metres wide, so the sphere is mostly empty air and the
   // model ends up a thread across the middle of the canvas.
   function fitDistance(): number {
+    // an empty box would hand back Infinity and poison the fog, which is
+    // reachable by toggling the ground before the first model has arrived
+    if (fitBox.isEmpty()) return 1000;
     const vFov = THREE.MathUtils.degToRad(camera.fov);
     const tanV = Math.tan(vFov / 2);
     const tanH = tanV * camera.aspect;

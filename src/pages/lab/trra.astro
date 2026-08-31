@@ -280,6 +280,13 @@ const progression = [
       if (status) status.textContent = text;
     });
 
+    if (!viewer) {
+      // no WebGL: the controls would be inert, so retire them and leave the
+      // stills and the text, which are the majority of the page anyway
+      document.querySelector('.controls')?.setAttribute('hidden', '');
+      document.querySelector('.viewer-hint')?.setAttribute('hidden', '');
+    }
+
     if (viewer) {
       const arm = (id: string, run: (btn: HTMLButtonElement) => void) => {
         const host = document.getElementById(id);
