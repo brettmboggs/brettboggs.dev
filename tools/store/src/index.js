@@ -159,25 +159,27 @@ async function handleCheckout(request, env) {
     // The order id travels with the payment, so the webhook can find its way
     // home even if our own write raced or failed.
     metadata: { order_id: orderId },
-    // Cards only, deliberately.
+    // Cards and Link, deliberately.
     //
-    // Stripe's automatic payment methods would also offer ACH bank debits and
-    // buy-now-pay-later. Those can report 'succeeded' and then reverse days
-    // later, after a deck of cards has already been printed and posted. A card
-    // is authorized and captured before 'succeeded' fires, so "paid" really
-    // means paid. Apple Pay and Google Pay both arrive as 'card'. Link was here
-    // too and was dropped: it is not activated on the account, so it only added
-    // a wallet banner nobody could use.
+    // Stripe's automatic payment methods would also offer ACH Direct Debit and
+    // buy-now-pay-later as standalone methods. ACH Direct Debit is the one to
+    // keep out: it can report success and then reverse days later, after a
+    // parcel has been printed and posted.
     //
-    // This governs what can be CHARGED. It does not govern what the Payment
-    // Element draws: in test mode Stripe also shows tabs for methods enabled on
-    // the account, which is why bank debit and Klarna can appear with promo
-    // badges. Those are turned off in the Stripe Dashboard under Settings,
-    // Payment methods, not here. Confirming one would fail against this list.
+    // Link is different and is allowed on purpose. It carries Instant Bank
+    // Payments, which confirm immediately, settle on the same timeline as
+    // cards, and which Stripe guarantees against bank-initiated returns. Only a
+    // customer dispute can claw one back, exactly as with a card. Link also
+    // brings Apple Pay, Google Pay and saved cards, which is the whole reason
+    // it is worth having.
     //
-    // Widening this is a one-line change, but only widen it to methods that
-    // cannot reverse after fulfillment, or move fulfillment behind a hold.
-    payment_method_types: ['card'],
+    // Link must be listed here even though it renders as a card wallet. Without
+    // it the Element still SHOWS Link's options and confirming one fails,
+    // which is a checkout that offers a button it cannot honour.
+    //
+    // Only widen this to methods that cannot reverse after fulfillment, or move
+    // fulfillment behind a hold first.
+    payment_method_types: ['card', 'link'],
   };
   if (shippingAddress) {
     intentParams.shipping = { name: shippingAddress.name, address: shippingAddress.address };
