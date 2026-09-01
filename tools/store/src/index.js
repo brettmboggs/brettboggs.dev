@@ -159,18 +159,25 @@ async function handleCheckout(request, env) {
     // The order id travels with the payment, so the webhook can find its way
     // home even if our own write raced or failed.
     metadata: { order_id: orderId },
-    // Cards and Link only, deliberately.
+    // Cards only, deliberately.
     //
     // Stripe's automatic payment methods would also offer ACH bank debits and
     // buy-now-pay-later. Those can report 'succeeded' and then reverse days
     // later, after a deck of cards has already been printed and posted. A card
     // is authorized and captured before 'succeeded' fires, so "paid" really
-    // means paid. Link is Stripe's saved-card wallet and settles the same way,
-    // and Apple Pay and Google Pay both arrive as 'card'.
+    // means paid. Apple Pay and Google Pay both arrive as 'card'. Link was here
+    // too and was dropped: it is not activated on the account, so it only added
+    // a wallet banner nobody could use.
+    //
+    // This governs what can be CHARGED. It does not govern what the Payment
+    // Element draws: in test mode Stripe also shows tabs for methods enabled on
+    // the account, which is why bank debit and Klarna can appear with promo
+    // badges. Those are turned off in the Stripe Dashboard under Settings,
+    // Payment methods, not here. Confirming one would fail against this list.
     //
     // Widening this is a one-line change, but only widen it to methods that
     // cannot reverse after fulfillment, or move fulfillment behind a hold.
-    payment_method_types: ['card', 'link'],
+    payment_method_types: ['card'],
   };
   if (shippingAddress) {
     intentParams.shipping = { name: shippingAddress.name, address: shippingAddress.address };
