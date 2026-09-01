@@ -1,9 +1,12 @@
 ---
+// A proof sheet of frames. Each frame is a plate: it opens in the viewer at
+// full size when the page mounts one (see Viewer.astro).
 interface Props {
   label: string;
   frames: { src: string; alt: string }[];
 }
 const { label, frames } = Astro.props;
+const num = (i: number) => String(i + 1).padStart(2, '0');
 ---
 
 <section class="sheet-block">
@@ -11,9 +14,16 @@ const { label, frames } = Astro.props;
   <div class="sheet">
     {
       frames.map((f, i) => (
-        <figure>
+        <figure
+          data-plate
+          data-title={label}
+          data-meta={`Frame ${num(i)}`}
+          tabindex="0"
+          role="button"
+          aria-label={`Open frame ${num(i)} at full size`}
+        >
           <img src={f.src} alt={f.alt} width="900" height="600" loading="lazy" />
-          <figcaption>{String(i + 1).padStart(2, '0')}</figcaption>
+          <figcaption>{num(i)}</figcaption>
         </figure>
       ))
     }

@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import Spread from '../../components/Spread.astro';
+import { useSpread } from '../../data/layout';
 
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 // a spanning entry shows the years it ran rather than a single day
@@ -22,6 +24,7 @@ interface Row {
   when: string;
   datetime: string;
   sort: number;
+  peek?: string;
 }
 
 const rows: Row[] = all
@@ -33,6 +36,7 @@ const rows: Row[] = all
     when: when(e.data.date, e.data.dateEnd),
     datetime: e.data.date.toISOString(),
     sort: ended(e).valueOf(),
+    peek: `/peek/${e.id}.webp`,
   }));
 
 // the photo sets collapse into a single row rather than crowding out everything else
@@ -46,6 +50,7 @@ if (photo.length) {
     when: when(opened, closed),
     datetime: opened.toISOString(),
     sort: closed.valueOf(),
+    peek: '/peek/photography.webp',
   });
 }
 
@@ -59,11 +64,22 @@ rows.sort((a, b) => b.sort - a.sort);
     <p class="lede">Case studies. The problem, the build, and what came of it.</p>
   </header>
   {
-    rows.length > 0 ? (
+    useSpread(rows.length) ? (
+      <Spread
+        items={rows.map((row) => ({
+          href: row.href,
+          title: row.title,
+          desc: row.desc,
+          meta: row.when,
+          datetime: row.datetime,
+          image: (row.peek ?? '/peek/photography.webp').replace(/\.webp$/, '-lg.webp'),
+        }))}
+      />
+    ) : rows.length > 0 ? (
       <ul class="entry-list">
         {rows.map((row) => (
           <li>
-            <a class="entry-row" href={row.href}>
+            <a class="entry-row" href={row.href} data-peek={row.peek}>
               <span>
                 <span class="entry-title">{row.title}</span>
                 <span class="entry-desc">{row.desc}</span>

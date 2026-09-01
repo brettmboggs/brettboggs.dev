@@ -1,6 +1,7 @@
-/* Eclipse gallery: a full screen viewer for pictures bigger than the page.
-   Every plate on the eclipse page opens at its full pixel size, pans and zooms.
-   No dependencies. The moon is round and the maths is not hard. */
+/* The picture viewer: a full screen stage for pictures bigger than the page.
+   Every plate opens at its full pixel size, pans and zooms, and steps through
+   the others. No dependencies. Plates that do not state their size are measured
+   when the full picture arrives. */
 
 type Plate = {
   full: string;
@@ -15,7 +16,7 @@ type View = { scale: number; x: number; y: number };
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
-export function mountEclipseGallery(root: ParentNode = document): void {
+export function mountViewer(root: ParentNode = document): void {
   const triggers = Array.from(root.querySelectorAll<HTMLElement>('[data-plate]'));
   if (triggers.length === 0) return;
 
@@ -141,6 +142,12 @@ export function mountEclipseGallery(root: ParentNode = document): void {
     full.src = plate.full;
     const done = () => {
       if (mine !== token) return;
+      // a plate that never said how big it is gets measured now, then fitted
+      if (!plate.w || !plate.h) {
+        plate.w = full.naturalWidth;
+        plate.h = full.naturalHeight;
+        reset();
+      }
       img.src = plate.full;
       elLoading.hidden = true;
     };

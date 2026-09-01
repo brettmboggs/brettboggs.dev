@@ -1,6 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import Sheet from '../../../components/Sheet.astro';
+import Viewer from '../../../components/Viewer.astro';
 
 const drinks = [
   { src: '/photo/product/d02.webp', alt: 'A bottle of Lunazul Blanco tequila lit low against a dark ground.' },
@@ -22,7 +23,7 @@ const goods = [
       <p class="lede">Bottles, cans, and goods on a small table.</p>
     </header>
 
-    <figure class="bleed">
+    <figure class="bleed" data-plate data-title="Product" tabindex="0" role="button" aria-label="Open the picture at full size">
       <img
         src="/photo/product/hero.webp"
         alt="A La Colombe draft latte can standing in warm light on wheat."
@@ -40,7 +41,7 @@ const goods = [
       <p>One light, a small table, and a lot of moving things an inch at a time.</p>
     </div>
 
-    <figure class="select">
+    <figure class="select" data-plate data-title="Product" tabindex="0" role="button" aria-label="Open the picture at full size">
       <img
         src="/photo/product/sel1.webp"
         alt="A stack of Liquid Death mountain water cans."
@@ -52,7 +53,7 @@ const goods = [
 
     <Sheet label="Drinks" frames={drinks} />
 
-    <figure class="select">
+    <figure class="select" data-plate data-title="Product" tabindex="0" role="button" aria-label="Open the picture at full size">
       <img
         src="/photo/product/sel2.webp"
         alt="A clear ice press on a bright yellow seamless ground."
@@ -64,6 +65,11 @@ const goods = [
 
     <Sheet label="Goods" frames={goods} />
 
+    <p class="colophon">
+      Prints of anything here are made to order in <a href="/store/">the store</a>.
+    </p>
+
     <a class="back-link" href="/work/photography/">All photography</a>
   </article>
+  <Viewer />
 </Base>

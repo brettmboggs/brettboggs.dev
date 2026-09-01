@@ -6,7 +6,7 @@ Contact: brettmboggs@gmail.com · GitHub: https://github.com/brettmboggs
 
 ## Datum
 
-Datum (https://datumci.com) is one system for running a construction company: projects, people, equipment, safety, and money in one place. Brett co-founded it and builds the product end to end as sole engineer: design, frontend, backend, architecture, security, infrastructure, and release.
+Datum (https://datumci.com) is one system for running a construction company: projects, people, equipment, safety, and money in one place. Brett co-founded it and builds the product end to end as full-stack engineer: design, frontend, backend, architecture, security, infrastructure, and release.
 
 Shipped, as counted on https://brettboggs.dev/work/datum/:
 - 2,122 HTTP endpoints across 338 backend services
@@ -17,6 +17,13 @@ Shipped, as counted on https://brettboggs.dev/work/datum/:
 - An ERP adapter framework with a durable writeback queue, normalizing phase codes and cost types
 - GDPR deletion and data subject export across three previously unconnected identity systems
 - A React Native app through TestFlight, an Outlook add-in, CI/CD into Azure with health checks and uptime monitoring
+
+## Before Datum
+
+- Operations Manager, Providence Capital (real estate investment), 2025 to present: intake-to-close documentation for 200+ active files, automated routing, correspondence templates, live reporting.
+- Area Manager, Tidal Wave Auto Spa, 2022 to 2025: eight locations, forty-plus people, centralized records, automated incident intake.
+- General Manager, Tidal Wave Auto Spa, 2020 to 2022: a $2.1M annual budget, KPI dashboards, two years of 100% compliance audits.
+- Associate degree, General Studies, St. Louis Community College.
 
 ## Work
 
@@ -29,6 +36,12 @@ Shipped, as counted on https://brettboggs.dev/work/datum/:
 - [The Ridge](https://brettboggs.dev/lab/ridge/): A golden hour flyover, rendered in Blender and scrubbed by scroll. It runs the front page.
 - [Sprout Siege](https://brettboggs.dev/lab/sprout-siege/): An idle farm game for iOS, built around a simulation core that never touches the screen.
 - [Keepsake](https://brettboggs.dev/lab/keepsake/): A seeded drawing, deterministic from its hash, different for every visitor.
+
+## About this site
+
+- [Colophon](https://brettboggs.dev/colophon/): how the site is made, with the weight of every page measured after each build
+- [Log](https://brettboggs.dev/log/): every commit to the site, read out of git at build time
+- [Resume](https://brettboggs.dev/resume/): the resume page, rendered from resume.json
 
 ## Machine-readable
 

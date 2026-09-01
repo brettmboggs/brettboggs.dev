@@ -1,6 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import Sheet from '../../../components/Sheet.astro';
+import Viewer from '../../../components/Viewer.astro';
 
 const ked = [
   { src: '/photo/ked/k01.webp', alt: 'The front quarter of a Panamera under a thick coat of white foam.' },
@@ -31,7 +32,7 @@ const tidal = [
       <p class="lede">Detailing, a car wash chain, and the people running them.</p>
     </header>
 
-    <figure class="bleed">
+    <figure class="bleed" data-plate data-title="Commercial" tabindex="0" role="button" aria-label="Open the picture at full size">
       <img
         src="/photo/ked/estate.webp"
         alt="A black G-Wagon on a brick drive before a stone estate, headlights on, pink sky behind."
@@ -50,7 +51,7 @@ const tidal = [
       <p>On location either way, on their schedule, working around customers.</p>
     </div>
 
-    <figure class="select">
+    <figure class="select" data-plate data-title="Commercial" tabindex="0" role="button" aria-label="Open the picture at full size">
       <img
         src="/photo/ked/flare.webp"
         alt="A white Panamera being rinsed into the low sun, spray hanging in the light."
@@ -62,7 +63,7 @@ const tidal = [
 
     <Sheet label="Knock Em Down · 2021 to 2022" frames={ked} />
 
-    <figure class="select">
+    <figure class="select" data-plate data-title="Commercial" tabindex="0" role="button" aria-label="Open the picture at full size">
       <img
         src="/photo/tidal/sel.webp"
         alt="A Bentley grille emerging from grey cloth brushes."
@@ -80,6 +81,11 @@ const tidal = [
       </p>
     </div>
 
+    <p class="colophon">
+      Prints of anything here are made to order in <a href="/store/">the store</a>.
+    </p>
+
     <a class="back-link" href="/work/photography/">All photography</a>
   </article>
+  <Viewer />
 </Base>

@@ -1,0 +1,634 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Depths are read off the build scripts, not estimated. 02_wall.py cuts the
+// face from Z 0.30 down to -6.30; 04_tiles.py starts tile 0 at Z 0.15 and takes
+// one metre per tile. Horizon boundaries are the midpoints of the fades in
+// 03_material.py BOUNDS.
+const horizons = [
+  { key: 'O', name: 'Litter', depth: '0 to 6 cm', note: 'Leaf duff, not yet soil. The only horizon you ever see.' },
+  { key: 'A', name: 'Topsoil', depth: '6 to 56 cm', note: 'Dark umber. Organic matter mixed down into mineral grain.' },
+  { key: 'B', name: 'Subsoil', depth: '56 cm to 2.3 m', note: 'Red clay. Everything washed out of A has accumulated here.' },
+  { key: 'C', name: 'Regolith', depth: '2.3 to 4.7 m', note: 'Pale ochre. Parent rock, broken but not yet moved.' },
+  { key: 'R', name: 'Bedrock', depth: 'below 4.7 m', note: 'Cool grey. Roots stop at 2.7 m, well short of it.' },
+];
+---
+
+<Base
+  title="The Underground · Lab · Brett Boggs"
+  description="A six metre soil profile you descend by scrolling, rendered in Blender. Roots grow as you go."
+  scene="lab"
+>
+  <article>
+    <header class="page-head">
+      <p class="eyebrow">Lab · Aug 2026</p>
+      <h1>The Underground</h1>
+      <p class="lede">
+        The Ridge looks at the grass. This is the same ground from the side, cut open six metres
+        down to rock. Scroll and the roots grow with you.
+      </p>
+    </header>
+
+    <div class="prose">
+      <p>
+        A real soil profile has five horizons, and only the top one is ever visible. The rest is
+        ordinary, universal and completely hidden, which seemed worth six metres of scroll.
+      </p>
+    </div>
+  </article>
+
+  <div class="wall-shell">
+    <div class="wall" id="ug-wall"></div>
+    <aside class="rod" id="ug-rod" aria-hidden="true">
+      <span class="rod-depth" id="ug-depth">0.0 m</span>
+      <span class="rod-horizon" id="ug-horizon">Litter</span>
+    </aside>
+  </div>
+
+  <article>
+    <section class="bed">
+      <p class="bed-note">Bedrock. Nothing grows through that.</p>
+    </section>
+
+    <div class="prose">
+      <h2>The profile</h2>
+      <p>
+        Nothing here is stylised. The colour arc is real reflectance: dry topsoil sits near 0.10 to
+        0.15 albedo, and mineral horizons get paler with depth because they carry less organic
+        matter. An early pass used 0.06 for topsoil and the whole face went to mud.
+      </p>
+    </div>
+
+    <ol class="horizons">
+      {
+        horizons.map((h) => (
+          <li>
+            <span class="h-key">{h.key}</span>
+            <span class="h-body">
+              <span class="h-name">{h.name}</span>
+              <span class="h-depth">{h.depth}</span>
+              <span class="h-note">{h.note}</span>
+            </span>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="prose">
+      <h2>Growth without a video</h2>
+      <p>
+        Roots are not a frame sequence. Each root layer ships as a colour plate plus a data plate
+        whose red channel holds the time that pixel was born, baked out of the growth simulation.
+        The shader draws everything born before the current scroll depth and feathers the edge, so
+        growth is continuous at any scroll speed, has no loop to seam, and costs two images instead
+        of a film.
+      </p>
+      <p>
+        The data plate has to be read raw. It is written as non colour data, so the byte is the
+        value. Letting the browser apply an sRGB decode bent the timeline badly enough that half the
+        growth landed in the first fifth of the scroll.
+      </p>
+
+      <h2>The lag is the trick</h2>
+      <p>
+        Driving growth straight off scroll position pins the growing front to one line of the screen,
+        because birth time is depth and the wall scrolls exactly one metre per tile. Nothing ever
+        changes where you are looking. Chasing the target instead of matching it means every scroll
+        leaves the tips behind and you watch them catch up.
+      </p>
+
+      <h2>What moves, and what does not</h2>
+      <p>
+        There are no worms. Roots, mycelium, water and rock only, which leaves very little honest
+        movement in a static face. Roots growing works because roots grow. Loose crumbs work because
+        you are the disturbance: they spawn against scroll distance, live in document coordinates so
+        they fall down the wall they came out of, and land under real gravity.
+      </p>
+      <p>
+        Moisture does not move, deliberately. Four attempts at animating the damp patches, drifting
+        sheen, per patch pulse, specular glint, all read as a film laid over the wall rather than as
+        wet ground, and none of them were perceptible to the person looking. A ten second moisture
+        pulse was invented. The patches are baked into the plates and stay put.
+      </p>
+
+      <h2>Light</h2>
+      <p>
+        One number does the lighting. The cut is a slot 1.6 m wide with camera invisible blockers, so
+        the open sky above is the only source. Sky visibility falls with the width of that opening,
+        which is what makes the descent go dark on its own, and 1.6 m puts the shadow line about a
+        third of the way down.
+      </p>
+
+      <h2>Still open</h2>
+      <p>
+        Roots stop at 2.7 m, so the bottom two tiles carry nothing but rock and are the least
+        interesting scroll on the page. Mycelium is one tile where it should probably be three. The
+        wall is a single column, so a wide monitor gets a tall thin strip of soil with a lot of paper
+        either side.
+      </p>
+    </div>
+
+    <a class="back-link" href="/lab/">Back to Lab</a>
+  </article>
+</Base>
+
+<script>
+  const A = '/lab/underground/';
+  const wall = document.getElementById('ug-wall');
+  const depthOut = document.getElementById('ug-depth');
+  const horizonOut = document.getElementById('ug-horizon');
+  const rod = document.getElementById('ug-rod');
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Same geometry the tiles were rendered on: 04_tiles.py TILE_TOP_Z and one
+  // metre per tile. Boundaries are the fade midpoints from 03_material.py.
+  const WALL_TOP_Z = 0.15;
+  const BIRTH_TOP = 0.12;
+  const BIRTH_END = -2.15;
+  const FRONT_AT = 0.52;
+  const EASE = 0.022;
+  const N_TILES = 6;
+  const BANDS = [
+    { z: 0.15, name: 'Litter' },
+    { z: -0.06, name: 'Topsoil' },
+    { z: -0.56, name: 'Subsoil' },
+    { z: -2.33, name: 'Regolith' },
+    { z: -4.73, name: 'Bedrock' },
+  ];
+
+  function readout() {
+    if (!wall || !rod || !depthOut || !horizonOut) return;
+    const r = wall.getBoundingClientRect();
+    const showing = r.bottom > 0 && r.top < innerHeight;
+    rod.classList.toggle('is-on', showing);
+    if (!showing) return;
+    const tileH = r.height / N_TILES;
+    if (!tileH) return;
+    const z = WALL_TOP_Z - ((FRONT_AT * innerHeight) - r.top) / tileH;
+    const depth = Math.max(0, -z);
+    depthOut.textContent = depth.toFixed(1) + ' m';
+    let name = BANDS[0].name;
+    for (const b of BANDS) if (z <= b.z) name = b.name;
+    horizonOut.textContent = name;
+  }
+
+  if (wall) start();
+
+  async function start() {
+    const manifest = await (await fetch(A + 'manifest.json')).json();
+
+    const tiles = [];
+    for (let i = 0; i < manifest.tiles; i++) {
+      const d = document.createElement('div');
+      d.className = 'tile';
+      const img = new Image();
+      img.src = A + 'tile_' + i + '.webp';
+      img.alt =
+        i === 0
+          ? 'The top of an excavated soil face: leaf litter, dark topsoil and the first roots.'
+          : '';
+      img.width = manifest.tile.w;
+      img.height = manifest.tile.h;
+      img.decoding = 'async';
+      if (i > 1) img.loading = 'lazy';
+      d.appendChild(img);
+      wall.appendChild(d);
+      tiles.push(d);
+    }
+
+    const VERT = [
+      '#version 300 es',
+      'in vec2 p; out vec2 uv;',
+      'void main(){ uv = vec2((p.x+1.0)*0.5, 1.0-(p.y+1.0)*0.5);',
+      '             gl_Position = vec4(p,0.0,1.0); }',
+    ].join('\n');
+
+    // Reads the timing map RAW. The data plates are written as Non-Color data,
+    // so the byte IS the value; an sRGB decode here bends the timeline badly.
+    const FRAG = [
+      '#version 300 es',
+      'precision highp float;',
+      'in vec2 uv; out vec4 outColor;',
+      'uniform sampler2D uColor;',
+      'uniform sampler2D uData;',
+      'uniform float uProgress, uFeather, uFront;',
+      'void main(){',
+      '  vec4 c = texture(uColor, uv);',
+      '  if (c.a < 0.004) { outColor = vec4(0.0); return; }',
+      '  float born = texture(uData, uv).r;',
+      '  float vis = clamp((uProgress - born)/uFeather, 0.0, 1.0);',
+      '  float g = (uProgress - born)/(uFeather*0.8);',
+      '  float front = exp(-g*g) * uFront;',
+      '  float a = c.a * vis;',
+      '  outColor = vec4((c.rgb + front) * a, a);',
+      '}',
+    ].join('\n');
+
+    function makeLayer(host, colorURL, dataURL, opts) {
+      opts = opts || {};
+      const canvas = document.createElement('canvas');
+      host.appendChild(canvas);
+      const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true });
+      if (!gl) return null;
+
+      const sh = (type, src) => {
+        const o = gl.createShader(type);
+        gl.shaderSource(o, src);
+        gl.compileShader(o);
+        if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) {
+          throw new Error(gl.getShaderInfoLog(o) || 'shader');
+        }
+        return o;
+      };
+      const prog = gl.createProgram();
+      gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
+      gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+        throw new Error(gl.getProgramInfoLog(prog) || 'link');
+      }
+      gl.useProgram(prog);
+
+      gl.bindVertexArray(gl.createVertexArray());
+      gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(prog, 'p');
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+      const uProgress = gl.getUniformLocation(prog, 'uProgress');
+      gl.uniform1i(gl.getUniformLocation(prog, 'uColor'), 0);
+      gl.uniform1i(gl.getUniformLocation(prog, 'uData'), 1);
+      gl.uniform1f(gl.getUniformLocation(prog, 'uFeather'), opts.feather || 0.05);
+      gl.uniform1f(gl.getUniformLocation(prog, 'uFront'), opts.front || 0.2);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.clearColor(0, 0, 0, 0);
+
+      const layer = { last: 0, ready: false, draw: () => {} };
+
+      (async () => {
+        const pairs = [
+          [colorURL, 0],
+          [dataURL, 1],
+        ];
+        for (const pair of pairs) {
+          const img = new Image();
+          img.src = pair[0];
+          await img.decode();
+          gl.activeTexture(gl.TEXTURE0 + pair[1]);
+          gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+          // never let the browser premultiply: the shader does it, and the data
+          // texture must survive upload untouched
+          gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, img);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        }
+        layer.ready = true;
+        layer.draw(layer.last);
+      })();
+
+      layer.draw = (p) => {
+        layer.last = p;
+        if (!layer.ready) return;
+        const r = host.getBoundingClientRect();
+        const dpr = Math.min(devicePixelRatio || 1, 2);
+        const w = Math.max(1, Math.round(r.width * dpr));
+        const h = Math.max(1, Math.round(r.height * dpr));
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
+        }
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform1f(uProgress, p);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      };
+      return layer;
+    }
+
+    const OPTS = {
+      root: { feather: 0.055, front: 0.14 },
+      myc: { feather: 0.07, front: 0.26 },
+    };
+    const groups = {};
+    for (const kind of Object.keys(manifest.features)) {
+      groups[kind] = [];
+      for (let i = 0; i < manifest.features[kind].tiles; i++) {
+        const l = makeLayer(
+          tiles[i],
+          A + kind + '_' + i + '.webp',
+          A + kind + 'time_' + i + '.webp',
+          OPTS[kind]
+        );
+        if (l) groups[kind].push(l);
+      }
+    }
+
+    // Reduced motion gets the finished wall: everything grown, no crumbs, no
+    // chase. The page still reads, it just does not animate.
+    if (reduced) {
+      for (const kind of Object.keys(groups)) groups[kind].forEach((l) => l.draw(1));
+      readout();
+      addEventListener('scroll', readout, { passive: true });
+      addEventListener('resize', readout);
+      return;
+    }
+
+    // ---------------------------------------------------------------- crumbs --
+    // The one piece of movement not on a clock: the reader scrolling IS the
+    // disturbance. Particles live in DOCUMENT coordinates so a crumb falls down
+    // the wall it came out of; a fixed canvas draws them at docY - scrollY.
+    const crumbCanvas = document.createElement('canvas');
+    crumbCanvas.className = 'crumbs';
+    document.body.appendChild(crumbCanvas);
+    const cx = crumbCanvas.getContext('2d');
+    const crumbImg = new Image();
+    crumbImg.src = A + 'crumbs.webp';
+    let crumbReady = false;
+    crumbImg
+      .decode()
+      .then(() => {
+        crumbReady = true;
+      })
+      .catch(() => {});
+
+    const CRUMB_CELL = 64;
+    const CRUMB_N = 8;
+    const GRAVITY = 5200;
+    const MAX_CRUMBS = 260;
+    const crumbs = [];
+    let lastScroll = scrollY;
+    let spawnBudget = 0;
+
+    function spawnCrumbs() {
+      const d = Math.abs(scrollY - lastScroll);
+      lastScroll = scrollY;
+      if (!crumbReady || d < 1) return;
+      const r = wall.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      // more disturbance shakes more loose, capped so a fling does not dump a
+      // hundred crumbs at once
+      spawnBudget += Math.min(d, 90) * 0.17;
+      const top = Math.max(r.top, 0);
+      const bot = Math.min(r.bottom, innerHeight);
+      while (spawnBudget >= 1 && crumbs.length < MAX_CRUMBS) {
+        spawnBudget -= 1;
+        const sy = top + Math.random() * Math.max(1, bot - top);
+        crumbs.push({
+          x: r.left + Math.random() * r.width,
+          y: sy + scrollY,
+          vx: (Math.random() - 0.5) * 40,
+          vy: Math.random() * 30,
+          rot: Math.random() * 6.28,
+          spin: (Math.random() - 0.5) * 7,
+          size: 5 + Math.random() * 11,
+          cell: Math.floor(Math.random() * CRUMB_N),
+          life: 0,
+        });
+      }
+    }
+
+    function drawCrumbs(dt) {
+      if (!cx) return;
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      const w = Math.round(innerWidth * dpr);
+      const h = Math.round(innerHeight * dpr);
+      if (crumbCanvas.width !== w || crumbCanvas.height !== h) {
+        crumbCanvas.width = w;
+        crumbCanvas.height = h;
+      }
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cx.clearRect(0, 0, innerWidth, innerHeight);
+      if (!crumbReady) return;
+      for (let i = crumbs.length - 1; i >= 0; i--) {
+        const c = crumbs[i];
+        c.life += dt;
+        c.vy += GRAVITY * dt;
+        c.vx *= 1 - 1.6 * dt;
+        c.x += c.vx * dt;
+        c.y += c.vy * dt;
+        c.rot += c.spin * dt;
+        const sy = c.y - scrollY;
+        if (sy > innerHeight + 40 || c.life > 6) {
+          crumbs.splice(i, 1);
+          continue;
+        }
+        cx.save();
+        cx.translate(c.x, sy);
+        cx.rotate(c.rot);
+        cx.globalAlpha = Math.min(1, c.life * 8);
+        cx.drawImage(
+          crumbImg,
+          c.cell * CRUMB_CELL,
+          0,
+          CRUMB_CELL,
+          CRUMB_CELL,
+          -c.size / 2,
+          -c.size / 2,
+          c.size,
+          c.size
+        );
+        cx.restore();
+      }
+      cx.globalAlpha = 1;
+    }
+
+    // ---------------------------------------------------------------- scroll --
+    function targets() {
+      const r = wall.getBoundingClientRect();
+      const tileH = r.height / N_TILES;
+      if (!tileH) return { root: 0, myc: 0 };
+      const z = WALL_TOP_Z - ((FRONT_AT * innerHeight) - r.top) / tileH;
+      const root = Math.max(0, Math.min(1, (BIRTH_TOP - z) / (BIRTH_TOP - BIRTH_END)));
+      const myc = Math.max(0, Math.min(1, (root - 0.05) / 0.42));
+      return { root: root, myc: myc };
+    }
+
+    const cur = { root: 0, myc: 0 };
+    const drawn = { root: -1, myc: -1 };
+    let onScreen = true;
+    let lastNow = 0;
+
+    function frame(now) {
+      requestAnimationFrame(frame);
+      const dt = Math.min(0.05, lastNow ? (now - lastNow) / 1000 : 0.016);
+      lastNow = now;
+      if (!onScreen) return;
+      spawnCrumbs();
+      drawCrumbs(dt);
+      // The lag is what makes growth perceptible: chasing the target leaves the
+      // tips behind and you watch them catch up.
+      const tgt = targets();
+      for (const kind of Object.keys(groups)) {
+        cur[kind] += (tgt[kind] - cur[kind]) * EASE;
+        if (Math.abs(cur[kind] - drawn[kind]) > 0.0012) {
+          groups[kind].forEach((l) => l.draw(cur[kind]));
+          drawn[kind] = cur[kind];
+        }
+      }
+      readout();
+    }
+
+    new IntersectionObserver(
+      (es) => {
+        onScreen = es.some((e) => e.isIntersecting);
+      },
+      { rootMargin: '200px' }
+    ).observe(wall);
+
+    // The rod also has to update when the loop is parked, otherwise scrolling
+    // past the wall leaves it on screen showing the last depth it saw.
+    addEventListener('scroll', readout, { passive: true });
+    addEventListener('resize', readout);
+    readout();
+    requestAnimationFrame(frame);
+  }
+</script>
+
+<style>
+  /* 100vw includes the scrollbar, so a full bleed shell overflows sideways */
+  .wall-shell {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-top: 3rem;
+    overflow-x: hidden;
+  }
+  .wall {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    border-left: 2px solid var(--ink);
+    border-right: 2px solid var(--ink);
+  }
+  .wall :global(.tile) {
+    position: relative;
+    display: block;
+    width: 100%;
+  }
+  .wall :global(.tile img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: -1px; /* kills the seam at fractional DPR */
+  }
+  .wall :global(.tile canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  :global(canvas.crumbs) {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .rod {
+    position: fixed;
+    right: clamp(0.8rem, 3vw, 2rem);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.5rem 0.7rem;
+    border-left: 2px solid var(--sienna);
+    background: rgba(244, 237, 223, 0.82);
+    backdrop-filter: blur(4px);
+    font-family: var(--mono);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-warm);
+  }
+  .rod.is-on {
+    opacity: 1;
+  }
+  .rod-depth {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .rod-horizon {
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  @media (max-width: 640px) {
+    .rod {
+      top: auto;
+      bottom: 1rem;
+      right: 1rem;
+      transform: none;
+      flex-direction: row;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+  }
+
+  .bed {
+    margin: 0 0 3rem;
+    padding-top: 2.5rem;
+  }
+  .bed-note {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .horizons {
+    list-style: none;
+    margin: 2.4rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+  .horizons li {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    border-top: 2px solid rgba(51, 41, 28, 0.16);
+    padding-top: 0.7rem;
+  }
+  .h-key {
+    flex: none;
+    width: 1.4em;
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--sienna);
+  }
+  .h-body {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .h-name {
+    font-weight: 500;
+  }
+  .h-depth,
+  .h-note {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rod {
+      transition: none;
+    }
+  }
+</style>

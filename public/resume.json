@@ -5,12 +5,22 @@
     "label": "Co-founder, Datum",
     "email": "brettmboggs@gmail.com",
     "url": "https://brettboggs.dev",
-    "summary": "Co-founder of Datum, an all-in-one construction management platform. Builds the product end to end as sole engineer: design, frontend, backend, architecture, security, infrastructure, and release.",
+    "summary": "Co-founder of Datum, an all-in-one construction management platform, building the product end to end as full-stack engineer: design, frontend, backend, architecture, security, infrastructure, and release. Before that, a decade running physical operations, a car wash chain and a real estate investment company, where the same instinct turned manual intake, correspondence, and reporting into systems that ran without me.",
+    "location": {
+      "city": "St. Louis",
+      "region": "MO",
+      "countryCode": "US"
+    },
     "profiles": [
       {
         "network": "GitHub",
         "username": "brettmboggs",
         "url": "https://github.com/brettmboggs"
+      },
+      {
+        "network": "LinkedIn",
+        "username": "brettmboggs",
+        "url": "https://www.linkedin.com/in/brettmboggs/"
       }
     ]
   },
@@ -19,7 +29,8 @@
       "name": "Datum",
       "position": "Co-founder · product, design & engineering",
       "url": "https://datumci.com",
-      "summary": "One system for running a construction company: projects, people, equipment, safety, and money in one place. Sole engineer; architecture, security, infrastructure and release.",
+      "startDate": "2025-01",
+      "summary": "One system for running a construction company: projects, people, equipment, safety, and money in one place. Full-stack engineer: architecture, security, infrastructure and release. Launched with a beta client in 2025.",
       "highlights": [
         "2,122 HTTP endpoints across 338 backend services",
         "908 tables in Azure SQL, behind 507 tracked migrations",
@@ -29,6 +40,44 @@
         "ERP adapter framework with a durable writeback queue, normalizing phase codes and cost types",
         "GDPR deletion and data subject export across three previously unconnected identity systems",
         "React Native app through TestFlight, an Outlook add-in, CI/CD into Azure with health checks and uptime monitoring"
+      ]
+    },
+    {
+      "name": "Providence Capital",
+      "position": "Operations Manager",
+      "startDate": "2025-01",
+      "summary": "Operations for a real estate investment company: the intake-to-close documentation workflow, the correspondence, and the reporting that shows where every file stands.",
+      "highlights": [
+        "Owned intake to close for 200+ active files at once, held to 98% accuracy with Salesforce custom fields, validation rules, and automated routing",
+        "Rebuilt correspondence from scratch: 12+ standardized templates with conditional language blocks, cutting revision requests 60% and turnaround from 3 days to 1.5",
+        "Pushed on-time file delivery from 82% to 97% in 90 days with real-time status dashboards and automated deadline escalations",
+        "Removed 85% of cross-team deadline misses by replacing manual handoffs between legal, finance, and closing with automated status triggers",
+        "Built a weekly automated reporting dashboard that freed 6 hours a week and gave leadership its first live view of the pipeline"
+      ]
+    },
+    {
+      "name": "Tidal Wave Auto Spa",
+      "position": "Area Manager",
+      "startDate": "2022-03",
+      "endDate": "2025-01",
+      "summary": "Eight locations and forty-plus people: daily operations, staffing, and the documentation that keeps a region legible.",
+      "highlights": [
+        "Built a centralized records system that cut document retrieval from 30 minutes to under 2",
+        "Tracked 150+ concurrent tasks at a 94% on-time completion rate with a priority matrix and automated escalation rules",
+        "Standardized incident intake with automated routing, cutting report processing time 45%",
+        "Replaced reactive check-ins with a weekly reporting cadence and structured regional visibility"
+      ]
+    },
+    {
+      "name": "Tidal Wave Auto Spa",
+      "position": "General Manager",
+      "startDate": "2020-02",
+      "endDate": "2022-03",
+      "summary": "One location, run as a business.",
+      "highlights": [
+        "Managed a $2.1M annual budget and built monthly KPI dashboards tracking 15+ metrics for regional leadership",
+        "Implemented a customer service tracking system that improved response time 35%",
+        "100% compliance audit rating two years running"
       ]
     },
     {
@@ -43,13 +92,23 @@
   "projects": [
     {
       "name": "brettboggs.dev",
-      "description": "This site. Astro, static, hand-built design system, a Blender-rendered scroll film on the front page.",
+      "description": "This site. Astro, static, hand-built design system, a Blender-rendered scroll film on the front page, and a build that measures and logs itself.",
       "url": "https://brettboggs.dev"
     },
     {
       "name": "Sprout Siege",
       "description": "An idle farm game for iOS, built around a simulation core that never touches the screen.",
       "url": "https://brettboggs.dev/lab/sprout-siege/"
+    },
+    {
+      "name": "CRM intake automation",
+      "entity": "Providence Capital",
+      "description": "Inherited a manual intake process with a 15% error rate and a 3-day turnaround. Redesigned it end to end with custom fields, validation rules, conditional logic, and automated notifications: 100% accuracy, processing time halved, 500+ files a month with almost no manual touch."
+    },
+    {
+      "name": "Multi-location reporting",
+      "entity": "Tidal Wave Auto Spa",
+      "description": "Twelve hours a month of manual compilation across eight locations, with no live view. An automated dashboard in Google Sheets and Salesforce pulling live data, calculating KPIs, and sending weekly exception reports cut that to two hours, read by 20+ people every week."
     }
   ],
   "skills": [
@@ -59,15 +118,34 @@
     },
     {
       "name": "Backend",
-      "keywords": ["Azure", "Azure SQL", "Entra ID", "CI/CD", "Multi-tenant architecture"]
+      "keywords": ["Azure", "Azure Functions", "Azure SQL", "Entra ID", "GitHub Actions", "REST APIs", "Multi-tenant architecture"]
+    },
+    {
+      "name": "AI",
+      "keywords": ["Agent and guardrail design", "Claude", "ChatGPT", "Prompt engineering"]
+    },
+    {
+      "name": "Operations",
+      "keywords": ["Salesforce", "HubSpot", "Airtable", "Notion", "ClickUp", "Make.com", "Zapier", "SOP development", "Process mapping"]
+    },
+    {
+      "name": "Data",
+      "keywords": ["Google Sheets", "Salesforce dashboards", "KPI dashboards", "Power BI"]
     },
     {
       "name": "Elsewhere",
       "keywords": ["Photography", "Blender"]
     }
   ],
+  "education": [
+    {
+      "institution": "St. Louis Community College",
+      "area": "General Studies",
+      "studyType": "Associate"
+    }
+  ],
   "meta": {
     "canonical": "https://brettboggs.dev/resume.json",
-    "lastModified": "2026-08-26"
+    "lastModified": "2026-09-01"
   }
 }

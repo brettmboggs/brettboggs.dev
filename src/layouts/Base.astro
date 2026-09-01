@@ -6,6 +6,7 @@ import '@fontsource-variable/instrument-sans/wght-italic.css';
 import '@fontsource/spline-sans-mono/400.css';
 import '@fontsource/spline-sans-mono/500.css';
 import '../styles/global.css';
+import { ogFor } from '../data/og';
 
 interface Props {
   title: string;
@@ -30,7 +31,7 @@ const {
   title,
   description = 'Brett Boggs. Work and experiments.',
   home = false,
-  ogImage = '/og.png',
+  ogImage: ogGiven,
   article,
   noindex = false,
   scene,
@@ -49,6 +50,12 @@ const here = path.startsWith('/work')
       : path.startsWith('/store')
         ? 'store'
         : '';
+
+// the social card: a page's own picture if it brought one, else the card drawn
+// for it at build time (src/data/og.ts), else the film
+const card = ogFor(path);
+const ogImage = ogGiven ?? (card ? `/og/${card.id}.png` : '/og.png');
+const ogAlt = ogGiven || !card ? 'Brett Boggs. Work and experiments.' : `${card.title} ${card.note}`;
 
 const year = new Date().getFullYear();
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -107,6 +114,32 @@ const schema = home
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#F4EDDF" />
     <meta name="apple-mobile-web-app-title" content="Brett Boggs" />
+    {
+      !home && (
+        <script is:inline>
+          /* dusk, decided before first paint: after sunset the paper cools. sunset is
+             guessed from the clock and the month, never from location. ?dusk=1 or
+             ?dusk=0 in the address sets a choice that stays on this device. */
+          (function () {
+            try {
+              var q = new URLSearchParams(location.search).get('dusk');
+              if (q === '0' || q === '1') localStorage.setItem('bb.dusk', q);
+              var pick = localStorage.getItem('bb.dusk');
+              var d = new Date();
+              var h = d.getHours() + d.getMinutes() / 60;
+              var set = [17, 17.5, 18, 19, 19.5, 20, 20, 19.5, 18.5, 18, 17, 16.5][d.getMonth()];
+              var rise = [7.2, 6.9, 6.4, 5.7, 5.3, 5.1, 5.3, 5.7, 6.1, 6.5, 6.9, 7.2][d.getMonth()];
+              var dusk = pick ? pick === '1' : h >= set || h < rise;
+              if (dusk) {
+                document.documentElement.dataset.dusk = '1';
+                var m = document.querySelector('meta[name="theme-color"]');
+                if (m) m.setAttribute('content', '#E3D8C4');
+              }
+            } catch (e) {}
+          })();
+        </script>
+      )
+    }
 
     <meta property="og:type" content={article ? 'article' : 'website'} />
     <meta property="og:site_name" content="Brett Boggs" />
@@ -117,7 +150,7 @@ const schema = home
     <meta property="og:image" content={social} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Brett Boggs. Work and experiments." />
+    <meta property="og:image:alt" content={ogAlt} />
     {article && <meta property="article:published_time" content={article.published.toISOString()} />}
     {article?.modified && (
       <meta property="article:modified_time" content={article.modified.toISOString()} />
@@ -149,6 +182,13 @@ const schema = home
     </main>
     <footer class:list={['site-footer', 'wrap', { floating: home }]} id="site-footer">
       <p>&copy; {year} Brett Boggs</p>
+      {!home && (
+        <nav class="foot-nav" aria-label="About this site">
+          <a href="/colophon/">Colophon</a>
+          <a href="/log/">Log</a>
+          <a href="/resume/">Resume</a>
+        </nav>
+      )}
     </footer>
     {puck && (
       <nav class="puck" id="puck" aria-label="Quick navigation" data-here={here} data-home={home ? '1' : ''}>
@@ -189,6 +229,10 @@ const schema = home
     )}
     <script>
       import { paintGhost, type SceneKey } from '../scripts/station';
+      import { mountPeek } from '../scripts/peek';
+
+      // index rows that carry a still show it beside the cursor
+      mountPeek();
 
       // section pages: the zoomed crop stays under the page, ghost-faint
       const ghost = document.getElementById('scene-ghost');
@@ -361,10 +405,34 @@ const schema = home
     padding-bottom: 2.5rem;
     border-top: 2px solid var(--ink);
   }
+  .site-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem 2rem;
+    flex-wrap: wrap;
+  }
   .site-footer p {
     font-family: var(--mono);
     font-size: 0.78rem;
     color: var(--ink-soft);
+  }
+  .foot-nav {
+    display: flex;
+    gap: 1.4rem;
+    margin-left: auto;
+  }
+  .foot-nav a {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 400;
+    color: var(--ink-soft);
+  }
+  .foot-nav a:hover,
+  .foot-nav a:focus-visible {
+    color: var(--rust);
   }
   /* the homepage ends on the film's settled frame: the footer is not part of
      the scroll there. it floats up over the render as the station assembles,

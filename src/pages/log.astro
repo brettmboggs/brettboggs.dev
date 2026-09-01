@@ -1,0 +1,183 @@
+---
+import { execSync } from 'node:child_process';
+import Base from '../layouts/Base.astro';
+
+// The build log: every commit to this site, read out of git while the site is
+// being built. Nothing is fetched at view time and nothing is curated after
+// the fact; the messages are the ones written when the work landed. The deploy
+// checks the repo out with full history so the whole line is here.
+
+type Commit = { hash: string; date: string; subject: string };
+
+let commits: Commit[] = [];
+try {
+  const raw = execSync('git log --no-merges --date=short --format=%h%x1f%ad%x1f%s', {
+    encoding: 'utf8',
+  });
+  commits = raw
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => {
+      const [hash, date, subject] = line.split('\x1f');
+      return { hash, date, subject };
+    });
+} catch {
+  commits = [];
+}
+
+const days = new Map<string, Commit[]>();
+for (const c of commits) {
+  if (!days.has(c.date)) days.set(c.date, []);
+  days.get(c.date)!.push(c);
+}
+const first = commits.at(-1)?.date;
+
+const fmtDay = (iso: string) =>
+  new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+const fmtShort = (iso: string) =>
+  new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+
+const repo = 'https://github.com/brettmboggs/brettboggs.dev';
+---
+
+<Base title="Log · Brett Boggs" description="Every commit to this site, one line each, read out of git at build time.">
+  <header class="page-head">
+    <p class="eyebrow">Log</p>
+    <h1>The build log.</h1>
+    <p class="lede">
+      Every commit to this site, one line each, written as the work landed and read straight out
+      of git when the site is built. Nothing here is fetched, and nothing is tidied afterwards.
+    </p>
+  </header>
+
+  {
+    commits.length > 0 ? (
+      <>
+        <p class="tally">
+          <span>{commits.length} commits</span>
+          <span>{days.size} days</span>
+          {first && <span>since {fmtShort(first)}</span>}
+          <a href={repo} rel="noopener">source</a>
+        </p>
+        <div class="days">
+          {[...days].map(([date, list]) => (
+            <section class="day">
+              <h2 class="day-head">
+                <time datetime={date}>{fmtDay(date)}</time>
+                <span class="day-count">{list.length}</span>
+              </h2>
+              <ol class="day-list">
+                {list.map((c) => (
+                  <li>
+                    <a class="commit" href={`${repo}/commit/${c.hash}`} rel="noopener">
+                      {c.subject}
+                    </a>
+                    <span class="hash">{c.hash}</span>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ))}
+        </div>
+      </>
+    ) : (
+      <p class="empty-note">The log could not be read at build time.</p>
+    )
+  }
+
+  <a class="back-link" href="/">&larr; Home</a>
+</Base>
+
+<style>
+  .tally {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.6rem;
+    margin-top: 2.6rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    max-width: none;
+  }
+  .tally a {
+    font-weight: 400;
+    color: var(--rust);
+  }
+  .days {
+    margin-top: 0.5rem;
+  }
+  .day {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: 0.5rem 2rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--paper-deep);
+  }
+  .day-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    font-family: var(--mono);
+    font-variation-settings: normal;
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .day-count {
+    color: var(--ink-soft);
+  }
+  .day-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .day-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+  }
+  .commit {
+    color: var(--ink);
+    font-weight: 400;
+  }
+  .hash {
+    flex-shrink: 0;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    opacity: 0.7;
+  }
+  @media (max-width: 640px) {
+    .day {
+      grid-template-columns: 1fr;
+    }
+    .day-head {
+      justify-content: flex-start;
+    }
+    .hash {
+      display: none;
+    }
+  }
+</style>

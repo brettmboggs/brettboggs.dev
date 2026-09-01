@@ -1,0 +1,448 @@
+---
+import Base from '../layouts/Base.astro';
+import resume from '../../public/resume.json';
+
+// The resume, rendered from the same JSON Resume file that machines read at
+// /resume.json. One source; the page and the file cannot disagree. Print it
+// and the site's chrome steps out of the way: two letter pages at most, black
+// on white, no role or project split across the fold.
+
+const b = resume.basics;
+const github = b.profiles.find((p) => p.network === 'GitHub');
+const linkedin = b.profiles.find((p) => p.network === 'LinkedIn');
+const city = b.location?.city ?? 'St. Louis';
+
+const month = (ym: string) =>
+  new Date(`${ym}-15T12:00:00Z`).toLocaleDateString('en-US', {
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+const span = (w: { startDate?: string; endDate?: string }) =>
+  w.startDate ? `${month(w.startDate)} to ${w.endDate ? month(w.endDate) : 'now'}` : 'Now';
+
+const host = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+const updated = new Date(`${resume.meta.lastModified}T12:00:00Z`).toLocaleDateString('en-US', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<Base title="Resume · Brett Boggs" description={b.summary} puck={false}>
+  <article class="cv">
+    <header class="page-head cv-head">
+      <p class="eyebrow">Resume</p>
+      <h1>{b.name}</h1>
+      <p class="lede">{b.label} · {city}</p>
+      <ul class="cv-contact">
+        <li><a href={`mailto:${b.email}`}>{b.email}</a></li>
+        <li><a href={b.url}>{host(b.url)}</a></li>
+        {github && <li><a href={github.url} rel="noopener">{host(github.url)}</a></li>}
+        {linkedin && <li><a href={linkedin.url} rel="noopener">{host(linkedin.url)}</a></li>}
+      </ul>
+    </header>
+
+    <p class="cv-summary">{b.summary}</p>
+
+    <section class="cv-sec">
+      <h2>Work</h2>
+      {
+        resume.work.map((w) => (
+          <div class="cv-item">
+            <div class="cv-row">
+              <h3>{w.position}</h3>
+              <span class="cv-when">{span(w)}</span>
+            </div>
+            <p class="cv-org">
+              {w.name}
+              {w.url && (
+                <>
+                  {' · '}
+                  <a href={w.url} rel="noopener">{host(w.url)}</a>
+                </>
+              )}
+            </p>
+            <p class="cv-text">{w.summary}</p>
+            {w.highlights && (
+              <ul class="cv-points">
+                {w.highlights.map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))
+      }
+    </section>
+
+    <div class="cv-cols">
+      <section class="cv-sec">
+        <h2>Projects</h2>
+        {
+          resume.projects.map((p) => (
+            <div class="cv-item">
+              <div class="cv-row">
+                <h3>{p.name}</h3>
+                <span class="cv-when">
+                  {'url' in p && p.url ? <a href={p.url}>{host(p.url)}</a> : 'entity' in p ? p.entity : ''}
+                </span>
+              </div>
+              <p class="cv-text">{p.description}</p>
+            </div>
+          ))
+        }
+      </section>
+
+      <div class="cv-side">
+        <section class="cv-sec">
+          <h2>Skills</h2>
+          <dl class="cv-skills">
+            {
+              resume.skills.map((s) => (
+                <div>
+                  <dt>{s.name}</dt>
+                  <dd>{s.keywords.join(', ')}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </section>
+
+        <section class="cv-sec">
+          <h2>Education</h2>
+          {
+            resume.education.map((e) => (
+              <div class="cv-item">
+                <div class="cv-row">
+                  <h3>{e.institution}</h3>
+                </div>
+                <p class="cv-org">
+                  {e.studyType} degree, {e.area}
+                </p>
+              </div>
+            ))
+          }
+        </section>
+      </div>
+    </div>
+
+    <footer class="cv-foot">
+      <p class="cv-meta">
+        Updated {updated}. The same data as <a href="/resume.json">JSON Resume</a>.
+      </p>
+      <button class="cv-print" id="cv-print" type="button">Print, or save as PDF</button>
+    </footer>
+  </article>
+</Base>
+
+<script>
+  document.getElementById('cv-print')?.addEventListener('click', () => window.print());
+</script>
+
+<style>
+  .cv-contact {
+    list-style: none;
+    margin: 1.2rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.6rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+  }
+  .cv-contact a {
+    font-weight: 400;
+  }
+  .cv-summary {
+    margin-top: 2.4rem;
+    font-size: 1.15rem;
+    line-height: 1.55;
+  }
+  .cv-sec {
+    margin-top: 2.6rem;
+    padding-top: 1.2rem;
+    border-top: 2px solid var(--ink);
+  }
+  .cv-sec h2 {
+    font-family: var(--mono);
+    font-variation-settings: normal;
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .cv-item + .cv-item {
+    margin-top: 1.8rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--paper-deep);
+  }
+  .cv-item {
+    margin-top: 1.2rem;
+  }
+  .cv-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .cv-row h3 {
+    font-size: 1.35rem;
+  }
+  .cv-when {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .cv-when a {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0.06em;
+  }
+  .cv-org {
+    margin-top: 0.2rem;
+    color: var(--ink-soft);
+  }
+  .cv-org a {
+    font-weight: 400;
+  }
+  .cv-text {
+    margin-top: 0.7rem;
+  }
+  .cv-points {
+    margin: 0.8rem 0 0;
+    padding-left: 1.1rem;
+    max-width: var(--measure);
+    display: grid;
+    gap: 0.3rem;
+  }
+  .cv-points li::marker {
+    color: var(--sunflower);
+  }
+  .cv-skills {
+    margin: 1rem 0 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .cv-skills > div {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+  }
+  .cv-skills dt {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .cv-skills dd {
+    margin: 0;
+  }
+  .cv-foot {
+    margin-top: 3rem;
+    padding-top: 1.2rem;
+    border-top: 2px solid var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .cv-meta {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+  .cv-meta a {
+    font-weight: 400;
+  }
+  .cv-print {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: none;
+    border: 2px solid var(--ink);
+    border-radius: 0;
+    padding: 0.55rem 1rem;
+    cursor: pointer;
+    transition:
+      background 0.3s var(--ease-warm),
+      color 0.3s var(--ease-warm);
+  }
+  .cv-print:hover,
+  .cv-print:focus-visible {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  @media (max-width: 640px) {
+    .cv-skills > div {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+  }
+
+  /* on paper: letter, as few sheets as the content allows. these live in the
+     scoped block because the page's own rules are scoped too, and a global rule
+     would lose to them. */
+  @media print {
+    .page-head {
+      padding-top: 0;
+    }
+    .page-head h1 {
+      margin-top: 0.1rem;
+      font-size: 21pt;
+      animation: none;
+    }
+    .page-head .lede {
+      margin-top: 0.2rem;
+      font-size: 9.5pt;
+    }
+    .cv-contact {
+      margin-top: 0.35rem;
+      font-size: 7.5pt;
+      gap: 0.2rem 1.2rem;
+    }
+    .cv-summary {
+      margin-top: 0.7rem;
+      font-size: 9.5pt;
+      line-height: 1.35;
+    }
+    .cv-sec {
+      margin-top: 0.65rem;
+      padding-top: 0.4rem;
+    }
+    .cv-sec h2 {
+      font-size: 6.5pt;
+    }
+    .cv-item {
+      margin-top: 0.35rem;
+      break-inside: avoid;
+    }
+    .cv-item + .cv-item {
+      margin-top: 0.45rem;
+      padding-top: 0.4rem;
+    }
+    .cv-row h3 {
+      font-size: 11pt;
+    }
+    .cv-when {
+      font-size: 6.5pt;
+    }
+    .cv-org {
+      margin-top: 0.05rem;
+      font-size: 8.5pt;
+    }
+    .cv-text,
+    .cv-points {
+      margin-top: 0.25rem;
+      max-width: none;
+    }
+    .cv-text {
+      font-size: 9pt;
+    }
+    /* the eight Datum lines run in two columns on paper */
+    .cv-points {
+      display: block;
+      columns: 2;
+      column-gap: 1.2rem;
+      font-size: 8.5pt;
+      line-height: 1.3;
+    }
+    .cv-points li {
+      break-inside: avoid;
+      padding-bottom: 0.15rem;
+    }
+    /* projects on the left; skills and education stacked on the right */
+    .cv-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 1.6rem;
+      align-items: start;
+    }
+    .cv-side .cv-sec + .cv-sec {
+      margin-top: 0.8rem;
+    }
+    .cv-skills {
+      margin-top: 0.35rem;
+      gap: 0.25rem;
+    }
+    .cv-skills > div {
+      grid-template-columns: 5rem 1fr;
+      gap: 0.5rem;
+    }
+    .cv-skills dt {
+      font-size: 6.5pt;
+    }
+    .cv-skills dd {
+      font-size: 8.5pt;
+    }
+    .cv-foot {
+      margin-top: 0.6rem;
+      padding-top: 0.35rem;
+    }
+    .cv-meta {
+      font-size: 6.5pt;
+    }
+    .cv-print {
+      display: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* on paper the site steps back: no header, no grain, no ghost, black on white */
+  @media print {
+    @page {
+      size: letter;
+      margin: 0.5in 0.6in;
+    }
+    :root {
+      --paper: #fff;
+      --paper-deep: #ddd;
+      --ink: #111;
+      --ink-soft: #444;
+      --rust: #111;
+      --sunflower: #111;
+    }
+    html,
+    body {
+      background: #fff;
+      -webkit-font-smoothing: auto;
+    }
+    body {
+      font-size: 9.5pt;
+      line-height: 1.35;
+    }
+    p {
+      max-width: none;
+    }
+    body::after,
+    .site-header,
+    .site-footer,
+    .puck,
+    .scene-ghost,
+    .peek {
+      display: none !important;
+    }
+    main.wrap {
+      max-width: none;
+      padding: 0;
+      min-height: 0;
+    }
+    a {
+      color: inherit;
+      background-image: none;
+    }
+  }
+</style>

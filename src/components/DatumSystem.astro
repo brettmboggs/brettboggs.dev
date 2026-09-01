@@ -1,0 +1,398 @@
+---
+// Datum, drawn as a system. One plate per part, laid out in the layers a
+// request passes through, with the tenant boundary drawn around the three
+// layers that enforce it. Rest on a plate and the caption underneath explains
+// it. Every figure and claim here is already on this page or in the decision
+// logs it links; the drawing adds no number the site does not state elsewhere.
+
+type Node = { id: string; name: string; fig: string; text: string };
+type Layer = { key: string; label: string; nodes: Node[] };
+type Group = { inside: boolean; layers: Layer[] };
+
+const groups: Group[] = [
+  {
+    inside: false,
+    layers: [
+      {
+        key: 'clients',
+        label: 'Clients',
+        nodes: [
+          {
+            id: 'web',
+            name: 'Web app',
+            fig: '300 screens · 338 components',
+            text: 'React. Everyone opens Datum to their own work: what needs action, what is coming up, and what is running late.',
+          },
+          {
+            id: 'field',
+            name: 'Field app',
+            fig: 'React Native · TestFlight',
+            text: 'Daily reports, hazards, timecards and concrete pours, captured on site while they are happening.',
+          },
+          {
+            id: 'outlook',
+            name: 'Outlook add-in',
+            fig: 'across the organization',
+            text: 'An add-in deployed across the organization, so the office side of the work reaches Datum without leaving the mailbox.',
+          },
+        ],
+      },
+      {
+        key: 'identity',
+        label: 'Identity',
+        nodes: [
+          {
+            id: 'entra',
+            name: 'Entra ID',
+            fig: 'the verified principal',
+            text: 'Every request carries the tenant and the role of a principal the directory has verified. Nothing about either is taken from the caller, and later, nothing is taken from a model.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    inside: true,
+    layers: [
+      {
+        key: 'services',
+        label: 'Services',
+        nodes: [
+          {
+            id: 'api',
+            name: '338 services',
+            fig: '2,122 HTTP endpoints',
+            text: 'Every handler runs inside a tenant scope and the pool primes that context on every query, so a call site cannot forget it. Twenty-nine background timers are wrapped the same way.',
+          },
+          {
+            id: 'sops',
+            name: '132 SOPs',
+            fig: 'automated end to end',
+            text: 'Standard operating procedures, automated end to end.',
+          },
+          {
+            id: 'agents',
+            name: 'Agent layer',
+            fig: 'registry · tool grants · memory',
+            text: 'Agents run from a registry with per-agent tool grants and persistent, tenant-scoped memory. An agent inherits the clearance of the person asking and never has one of its own.',
+          },
+        ],
+      },
+      {
+        key: 'guards',
+        label: 'Guards',
+        nodes: [
+          {
+            id: 'sqlguard',
+            name: 'SQL guard',
+            fig: 'cannot write · cannot cross',
+            text: 'Model-authored SQL is proven read-only and tenant-bound in code, never in the prompt. Unknown tables count as tenant-keyed, so a table added tomorrow is protected before anyone updates a list.',
+          },
+          {
+            id: 'policy',
+            name: 'Data policy',
+            fig: 'read-only is not need-to-know',
+            text: 'A foreman asking a colleague’s salary is refused, the way he would be at the HR office. Craft rates stay open to anyone who prices work.',
+          },
+          {
+            id: 'spend',
+            name: 'Spend and kill switch',
+            fig: 'per tenant, inside the provider',
+            text: 'A per-tenant kill switch, a monthly spend cap and role gating, enforced where background jobs cannot go around them. Every statement runs with a five second lock timeout, because a foreman may be waiting on that row.',
+          },
+        ],
+      },
+      {
+        key: 'data',
+        label: 'Data',
+        nodes: [
+          {
+            id: 'sql',
+            name: 'Azure SQL',
+            fig: '908 tables · 507 migrations',
+            text: 'One shared platform. Tenant columns are NOT NULL with no default, so an unstamped insert refuses instead of quietly landing in someone else’s company.',
+          },
+          {
+            id: 'rls',
+            name: 'Row-level security',
+            fig: '852 tables · fail closed',
+            text: 'FILTER and BLOCK policies keyed to session context. A query that never set its tenant sees zero rows and writes none, however clever the SQL above it.',
+          },
+          {
+            id: 'lint',
+            name: 'Tenancy lint',
+            fig: 'the build refuses',
+            text: 'Any new table that has not declared its tenancy fails the build. It caught an unregistered table within weeks, with no human memory involved.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    inside: false,
+    layers: [
+      {
+        key: 'edges',
+        label: 'Edges',
+        nodes: [
+          {
+            id: 'erp',
+            name: 'ERP adapter',
+            fig: 'durable writeback queue',
+            text: 'The accounting system contractors already run owns actuals; Datum owns creation, estimates and projections. Verified intents queue in SQL with backoff, idempotent enqueue and an append-only sync log. Phase codes and cost types normalize per tenant.',
+          },
+          {
+            id: 'gdpr',
+            name: 'GDPR',
+            fig: 'deletion · subject export',
+            text: 'Deletion and data subject export, which meant resolving one person across three identity systems that had never been connected.',
+          },
+          {
+            id: 'ops',
+            name: 'Azure CI/CD',
+            fig: 'health checks · uptime',
+            text: 'Release into Azure with health checks and uptime monitoring.',
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const first = groups[0].layers[0].nodes[0];
+---
+
+<div class="sys" id="sys">
+  <p class="sys-head">How it is put together</p>
+  <p class="sys-note">
+    A request passes down through these layers. Rest on a plate, or tap one, and it explains
+    itself. Nothing here is a number the page does not already count.
+  </p>
+
+  <div class="sys-body">
+    {
+      groups.map((g) => (
+        <div class:list={['sys-group', { 'sys-inside': g.inside }]}>
+          {g.inside && <span class="sys-inside-label">one tenant boundary, three layers deep</span>}
+          {g.layers.map((layer) => (
+            <div class="sys-layer">
+              <span class="sys-key">{layer.label}</span>
+              <div class="sys-plates" style={`--n: ${layer.nodes.length}`}>
+                {layer.nodes.map((n) => (
+                  <button
+                    type="button"
+                    class:list={['sys-plate', { 'is-on': n.id === first.id }]}
+                    data-name={n.name}
+                    data-text={n.text}
+                  >
+                    <span class="sys-name">{n.name}</span>
+                    <span class="sys-fig">{n.fig}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="sys-caption" aria-live="polite">
+    <p class="sys-cap-name" id="sys-cap-name">{first.name}</p>
+    <p class="sys-cap-text" id="sys-cap-text">{first.text}</p>
+  </div>
+</div>
+
+<script>
+  const sys = document.getElementById('sys');
+  if (sys) {
+    const name = document.getElementById('sys-cap-name')!;
+    const text = document.getElementById('sys-cap-text')!;
+    const plates = Array.from(sys.querySelectorAll<HTMLButtonElement>('.sys-plate'));
+    const pick = (b: HTMLButtonElement): void => {
+      plates.forEach((p) => p.classList.toggle('is-on', p === b));
+      name.textContent = b.dataset.name ?? '';
+      text.textContent = b.dataset.text ?? '';
+    };
+    plates.forEach((b) => {
+      b.addEventListener('pointerenter', () => pick(b));
+      b.addEventListener('focus', () => pick(b));
+      b.addEventListener('click', () => pick(b));
+    });
+  }
+</script>
+
+<style>
+  .sys {
+    margin-top: 4rem;
+    --line: rgba(243, 241, 236, 0.28);
+    --line-soft: rgba(243, 241, 236, 0.14);
+    --dim: #b7ad9c;
+  }
+  .sys-head {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--sunflower);
+  }
+  .sys-note {
+    margin-top: 0.5rem;
+    color: var(--dim);
+  }
+  .sys-body {
+    margin-top: 2rem;
+    display: grid;
+    gap: 0;
+  }
+  .sys-group {
+    display: grid;
+    gap: 1.1rem;
+    position: relative;
+    padding: 0.2rem 0;
+  }
+  /* the boundary: a dashed fence with its label on the post */
+  .sys-inside {
+    margin: 1.2rem 0;
+    padding: 1.6rem 1.1rem 1.1rem;
+    border: 1px dashed var(--line);
+  }
+  .sys-inside-label {
+    position: absolute;
+    top: -0.55rem;
+    left: 0.9rem;
+    padding: 0 0.5rem;
+    background: #1e2022;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--sunflower);
+  }
+  /* the line a request follows: a short stem between every layer, drawn as an
+     absolutely placed pseudo-element so it never becomes a grid item itself */
+  .sys-layer,
+  .sys-group {
+    position: relative;
+  }
+  .sys-layer + .sys-layer {
+    margin-top: 1.1rem;
+  }
+  .sys-group + .sys-group {
+    margin-top: 1.4rem;
+  }
+  .sys-layer + .sys-layer::before,
+  .sys-group + .sys-group::before {
+    content: '';
+    position: absolute;
+    top: -1.1rem;
+    height: 1.1rem;
+    width: 1px;
+    /* centred over the plates column, which starts after the key column */
+    left: calc(7.5rem + (100% - 7.5rem) / 2);
+    background: var(--line);
+  }
+  .sys-group + .sys-group::before {
+    top: -1.4rem;
+    height: 1.4rem;
+    left: 50%;
+  }
+  .sys-layer {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+  .sys-key {
+    padding-top: 0.85rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .sys-plates {
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  .sys-plate {
+    display: grid;
+    gap: 0.3rem;
+    justify-items: start;
+    text-align: left;
+    padding: 0.8rem 0.9rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    background: rgba(243, 241, 236, 0.03);
+    color: #f3f1ec;
+    cursor: default;
+    transition:
+      border-color 0.35s var(--ease-warm),
+      background 0.35s var(--ease-warm);
+  }
+  .sys-plate:hover,
+  .sys-plate:focus-visible,
+  .sys-plate.is-on {
+    border-color: var(--sunflower);
+    background: rgba(217, 151, 30, 0.1);
+    outline: none;
+  }
+  .sys-plate:focus-visible {
+    box-shadow: 0 0 0 2px rgba(217, 151, 30, 0.45);
+  }
+  .sys-name {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 40, 'SOFT' 40, 'WONK' 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    line-height: 1.15;
+  }
+  .sys-fig {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .sys-caption {
+    margin-top: 1.8rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+    min-height: 7.5rem;
+  }
+  .sys-cap-name {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--sunflower);
+  }
+  .sys-cap-text {
+    margin-top: 0.5rem;
+    color: #d9d2c4;
+  }
+  @media (max-width: 700px) {
+    .sys-layer {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+    .sys-key {
+      padding-top: 0;
+    }
+    .sys-plates {
+      grid-template-columns: 1fr;
+    }
+    .sys-layer + .sys-layer::before {
+      left: 50%;
+    }
+    .sys-caption {
+      min-height: 9rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sys-plate {
+      transition: none;
+    }
+  }
+</style>

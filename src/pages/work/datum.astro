@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import DatumSystem from '../../components/DatumSystem.astro';
 
 // Bespoke project page for Datum.
 // Every <figure data-media-slot> is a swap point: replace the <img>/<video>
@@ -118,7 +119,7 @@ import Base from '../../layouts/Base.astro';
     <div class="band-inner wrap">
       <h2>What is&nbsp;shipped.</h2>
       <p class="build-lede">
-        Sole engineer. Architecture, security, infrastructure and release, all mine.
+        Full-stack engineer. Architecture, security, infrastructure and release, end to end.
       </p>
       <dl class="figures">
         <div>
@@ -156,6 +157,7 @@ import Base from '../../layouts/Base.astro';
           organization, and CI/CD into Azure with health checks and uptime monitoring.
         </p>
       </div>
+      <DatumSystem />
       <div class="logs">
         <p class="logs-head">Decision logs</p>
         <p class="logs-note">The engineering behind three of those claims: what was chosen, what it cost, what broke.</p>

@@ -27,6 +27,7 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
 
     <div class="hero-copy" id="hero-copy">
       <h1 class="hero-title">Walk through the&nbsp;work.</h1>
+      <p class="hero-id">Brett Boggs &middot; co-founder and full-stack engineer, Datum &middot; St.&nbsp;Louis</p>
     </div>
 
     <!-- the station: the film's final movement plants a benchmark on the
@@ -147,6 +148,15 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
     font-size: clamp(2.5rem, 7vw, 5.5rem);
     color: var(--ink);
+  }
+  .hero-id {
+    max-width: none;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    opacity: 0.78;
   }
   @media (max-width: 640px) {
     .hero-copy {
@@ -620,6 +630,13 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
         duration: 0.9,
         ease: 'power2.out',
         delay: 0.4,
+      });
+      gsap.from('.hero-id', {
+        opacity: 0,
+        y: 10,
+        duration: 0.9,
+        ease: 'power2.out',
+        delay: 0.7,
       });
     }
   }

@@ -4,42 +4,56 @@ import Base from '../../layouts/Base.astro';
 const entries = [
   {
     href: '/lab/trra/',
+    peek: '/peek/trra.webp',
     title: 'The MacArthur',
     desc: 'A rail bridge approach in St. Louis, rebuilt to scale from public data so the job could be stood in.',
     meta: 'Aug 2026',
   },
   {
     href: '/lab/field/',
+    peek: '/peek/field.webp',
     title: 'The Field',
     desc: 'The grass above. Every blade is a spring on your GPU, and the cursor is weather.',
     meta: 'Aug 2026',
   },
   {
     href: '/lab/keepsake/',
+    peek: '/peek/keepsake.webp',
     title: 'Keepsake',
     desc: 'A seeded drawing of a field, different for every visitor. Yours to keep.',
     meta: 'Aug 2026',
   },
   {
     href: '/lab/sprout-siege/',
+    peek: '/peek/sprout-siege.webp',
     title: 'Sprout Siege',
     desc: 'An idle farm game for iOS, built around a simulation core that never touches the screen.',
     meta: 'Aug 2026',
   },
   {
     href: '/lab/ridge/',
+    peek: '/peek/ridge.webp',
     title: 'The Ridge',
     desc: 'A golden hour flyover, rendered in Blender and scrubbed by scroll. It runs the front page.',
     meta: 'Aug 2026',
   },
   {
+    href: '/lab/underground/',
+    peek: '/peek/underground.webp',
+    title: 'The Underground',
+    desc: 'The same ground as the Ridge, cut open six metres to rock. Roots grow as you scroll.',
+    meta: 'Aug 2026',
+  },
+  {
     href: '/lab/bridge/',
+    peek: '/peek/bridge.webp',
     title: 'The Bridge',
     desc: 'A cable-stayed crossing that surveys, drafts, and builds itself as you scroll. Datum’s first landing film.',
     meta: 'Jul 2026',
   },
   {
     href: '/lab/drafting-film/',
+    peek: '/peek/drafting-film.webp',
     title: 'The Drafting Film',
     desc: 'A highway underpass you draft by scrolling. It ran Datum’s landing page for one night.',
     meta: 'Jul 2026',
@@ -58,7 +72,7 @@ const entries = [
       <ul class="entry-list">
         {entries.map((entry) => (
           <li>
-            <a class="entry-row" href={entry.href}>
+            <a class="entry-row" href={entry.href} data-peek={entry.peek}>
               <span>
                 <span class="entry-title">{entry.title}</span>
                 <span class="entry-desc">{entry.desc}</span>

@@ -1,6 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import Sheet from '../../../components/Sheet.astro';
+import Viewer from '../../../components/Viewer.astro';
 
 const stoneSugar = [
   { src: '/photo/stone-sugar/f01.webp', alt: 'The Big Top marquee for Circus Flora against a bright sky.' },
@@ -39,7 +40,7 @@ const solis = [
       <p class="lede">Bands on festival stages, in bar rooms, and one afternoon in a studio.</p>
     </header>
 
-    <figure class="bleed">
+    <figure class="bleed" data-plate data-title="Live Music" tabindex="0" role="button" aria-label="Open the picture at full size">
       <img
         src="/photo/stone-sugar/hero.webp"
         alt="Stone Sugar standing in a field by the water, black and white."
@@ -60,7 +61,7 @@ const solis = [
       </p>
     </div>
 
-    <figure class="select">
+    <figure class="select" data-plate data-title="Live Music" tabindex="0" role="button" aria-label="Open the picture at full size">
       <img
         src="/photo/stone-sugar/lights.webp"
         alt="A drummer silhouetted against red and green light bars."
@@ -72,7 +73,7 @@ const solis = [
 
     <Sheet label="Stone Sugar · 2021 to 2022" frames={stoneSugar} />
 
-    <figure class="select">
+    <figure class="select" data-plate data-title="Live Music" tabindex="0" role="button" aria-label="Open the picture at full size">
       <img
         src="/photo/stone-sugar/case.webp"
         alt="A sticker covered hard case propped against an amplifier."
@@ -85,6 +86,11 @@ const solis = [
     <Sheet label="Sawhorse Studio · May 2022" frames={sawhorse} />
     <Sheet label="Solis Armada · 2022 to 2023" frames={solis} />
 
+    <p class="colophon">
+      Prints of anything here are made to order in <a href="/store/">the store</a>.
+    </p>
+
     <a class="back-link" href="/work/photography/">All photography</a>
   </article>
+  <Viewer />
 </Base>

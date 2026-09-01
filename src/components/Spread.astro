@@ -1,0 +1,219 @@
+---
+// The spread: how an index reads while it is short. Each entry gets a plate
+// the width of a magazine page, its title set large beside it, sides
+// alternating down the page so two or three entries fill it like features
+// rather than sitting as two thin rows above a lot of paper. Past a handful
+// of entries the index pages switch back to the list (see src/data/layout.ts).
+export interface SpreadItem {
+  href: string;
+  title: string;
+  desc: string;
+  meta: string;
+  datetime?: string;
+  /** the plate picture, 3:2 */
+  image: string;
+  alt?: string;
+}
+
+interface Props {
+  items: SpreadItem[];
+}
+const { items } = Astro.props;
+const num = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<ol class="spread">
+  {
+    items.map((item, i) => (
+      <li class="spread-item">
+        <a class="spread-link" href={item.href}>
+          <figure class="spread-plate">
+            <span class="spread-mat">
+              <img
+                src={item.image}
+                alt={item.alt ?? ''}
+                width="1200"
+                height="800"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </span>
+          </figure>
+          <span class="spread-copy">
+            <span class="spread-num">{num(i)}</span>
+            <span class="spread-title">{item.title}</span>
+            <span class="spread-desc">{item.desc}</span>
+            {item.datetime ? (
+              <time class="spread-meta" datetime={item.datetime}>
+                {item.meta}
+              </time>
+            ) : (
+              <span class="spread-meta">{item.meta}</span>
+            )}
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .spread {
+    list-style: none;
+    margin: 3rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 4.5rem;
+  }
+  .spread-link {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(14rem, 5fr);
+    gap: 2rem 3rem;
+    align-items: end;
+    color: var(--ink);
+    background-image: none;
+    font-weight: 400;
+  }
+  /* every second feature swaps sides and hangs a little lower, so the page
+     reads as a spread and not as a grid that ran out */
+  .spread-item:nth-child(even) .spread-link {
+    grid-template-columns: minmax(14rem, 5fr) minmax(0, 7fr);
+  }
+  .spread-item:nth-child(even) .spread-plate {
+    order: 2;
+  }
+  .spread-item:nth-child(even) .spread-copy {
+    order: 1;
+    text-align: right;
+    justify-items: end;
+  }
+  .spread-item:nth-child(even) {
+    padding-left: 6%;
+  }
+  .spread-item:nth-child(odd) {
+    padding-right: 6%;
+  }
+
+  /* the plate, mounted the way the portrait is: a mat cut from the paper,
+     a rule across the top, nothing that casts a shadow */
+  .spread-plate {
+    margin: 0;
+  }
+  .spread-mat {
+    display: block;
+    padding: 0.55rem;
+    background: var(--paper-deep);
+    border-top: 2px solid var(--ink);
+    transition: border-color 0.45s var(--ease-warm);
+  }
+  .spread-mat img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    background: var(--paper);
+  }
+
+  .spread-copy {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: start;
+    padding-bottom: 0.4rem;
+  }
+  .spread-num {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    color: var(--rust);
+  }
+  .spread-title {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 90, 'SOFT' 50, 'WONK' 0;
+    font-weight: 600;
+    font-size: clamp(2.2rem, 4.6vw, 3.4rem);
+    line-height: 1;
+    text-wrap: balance;
+    transition:
+      transform 0.45s var(--ease-warm),
+      font-variation-settings 0.45s var(--ease-warm);
+  }
+  .spread-desc {
+    color: var(--ink-soft);
+    max-width: 30ch;
+  }
+  .spread-meta {
+    margin-top: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .spread-link:hover .spread-title,
+  .spread-link:focus-visible .spread-title {
+    transform: translateX(0.5rem);
+    font-variation-settings: 'opsz' 90, 'SOFT' 50, 'WONK' 1;
+  }
+  .spread-item:nth-child(even) .spread-link:hover .spread-title,
+  .spread-item:nth-child(even) .spread-link:focus-visible .spread-title {
+    transform: translateX(-0.5rem);
+  }
+  .spread-link:hover .spread-mat,
+  .spread-link:focus-visible .spread-mat {
+    border-top-color: var(--sunflower);
+  }
+  .spread-link:focus-visible {
+    outline: none;
+  }
+  .spread-link:focus-visible .spread-mat {
+    outline: 2px solid var(--sienna);
+    outline-offset: 4px;
+  }
+
+  /* the features rise in as they enter, the same motion the rows use */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .spread-item {
+        animation-name: rise;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 45%;
+      }
+    }
+  }
+
+  @media (max-width: 760px) {
+    .spread {
+      gap: 3.2rem;
+    }
+    .spread-link,
+    .spread-item:nth-child(even) .spread-link {
+      grid-template-columns: 1fr;
+      gap: 1.1rem;
+    }
+    .spread-item:nth-child(even),
+    .spread-item:nth-child(odd) {
+      padding: 0;
+    }
+    .spread-item:nth-child(even) .spread-plate {
+      order: 1;
+    }
+    .spread-item:nth-child(even) .spread-copy {
+      order: 2;
+      text-align: left;
+      justify-items: start;
+    }
+    .spread-item:nth-child(even) .spread-link:hover .spread-title {
+      transform: translateX(0.5rem);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .spread-title,
+    .spread-mat {
+      transition: none;
+    }
+  }
+</style>

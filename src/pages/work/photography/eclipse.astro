@@ -1,5 +1,6 @@
 ---
 import Base from '../../../layouts/Base.astro';
+import Viewer from '../../../components/Viewer.astro';
 import data from '../../../data/eclipse.json';
 
 const A = '/photo/eclipse';
@@ -268,12 +269,11 @@ const stages = data.stages.map((s, i) => ({
 
     <a class="back-link" href="/work/photography/">All photography</a>
   </article>
+  <Viewer />
 </Base>
 
 <script>
-  import { mountEclipseGallery } from '../../../scripts/eclipseGallery';
 
-  mountEclipseGallery();
 
   // the arc has two cuts of the same picture: evened out, and left alone
   const arcPlate = document.getElementById('arc-plate');
@@ -299,169 +299,6 @@ const stages = data.stages.map((s, i) => ({
     });
   }
 </script>
-
-<style is:global>
-  /* the viewer lives on the body, so its rules cannot be scoped to the page */
-  html.ec-locked,
-  html.ec-locked body {
-    overflow: hidden;
-  }
-
-  .ec-viewer {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    background: #0b0805;
-    opacity: 0;
-    transition: opacity 0.3s var(--ease-warm);
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-  }
-  /* [hidden] has to beat the display above, or the shell sits over the page */
-  .ec-viewer[hidden] {
-    display: none;
-  }
-  .ec-viewer.is-on {
-    opacity: 1;
-  }
-  .ec-stage {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    touch-action: none;
-    cursor: zoom-in;
-  }
-  .ec-stage.is-zoomed {
-    cursor: grab;
-  }
-  .ec-stage.is-zoomed:active {
-    cursor: grabbing;
-  }
-  .ec-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform-origin: 0 0;
-    max-width: none;
-    user-select: none;
-    -webkit-user-drag: none;
-  }
-
-  .ec-bar {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.85rem 1.1rem;
-    pointer-events: none;
-    background: linear-gradient(to bottom, rgba(11, 8, 5, 0.85), rgba(11, 8, 5, 0));
-  }
-  .ec-bar-bottom {
-    align-self: end;
-    background: linear-gradient(to top, rgba(11, 8, 5, 0.85), rgba(11, 8, 5, 0));
-  }
-  .ec-bar > * {
-    pointer-events: auto;
-  }
-  .ec-label {
-    margin: 0;
-    max-width: none;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.3rem 0.9rem;
-  }
-  .ec-title {
-    font-family: var(--display);
-    font-variation-settings: 'opsz' 60, 'SOFT' 40, 'WONK' 0;
-    font-size: 1.15rem;
-    color: #f4eddf;
-  }
-  .ec-meta,
-  .ec-hint {
-    font-family: var(--mono);
-    font-size: 0.74rem;
-    letter-spacing: 0.09em;
-    color: #b09a78;
-    margin: 0;
-  }
-  .ec-tools {
-    display: flex;
-    gap: 0.4rem;
-    flex-shrink: 0;
-  }
-  .ec-btn {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.06em;
-    color: #f4eddf;
-    background: rgba(244, 237, 223, 0.06);
-    border: 1px solid rgba(244, 237, 223, 0.28);
-    border-radius: 0;
-    padding: 0.34rem 0.72rem;
-    min-width: 2.4rem;
-    cursor: pointer;
-    background-image: none;
-    font-weight: 400;
-    transition:
-      background 0.25s var(--ease-warm),
-      border-color 0.25s var(--ease-warm);
-  }
-  .ec-btn:hover,
-  .ec-btn:focus-visible {
-    background: rgba(244, 237, 223, 0.16);
-    border-color: #f4eddf;
-  }
-  .ec-zoom {
-    min-width: 4rem;
-  }
-  .ec-loading {
-    position: absolute;
-    left: 50%;
-    bottom: 4.6rem;
-    transform: translateX(-50%);
-    margin: 0;
-    z-index: 3;
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #b09a78;
-    pointer-events: none;
-  }
-
-  @media (max-width: 620px) {
-    /* tools on their own row, title underneath and clipped rather than stacked letter by letter */
-    .ec-bar-top {
-      flex-direction: column-reverse;
-      align-items: stretch;
-      gap: 0.55rem;
-      padding: 0.7rem 0.8rem;
-    }
-    .ec-tools {
-      justify-content: flex-end;
-      flex-wrap: wrap;
-    }
-    .ec-label {
-      display: block;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .ec-title {
-      font-size: 0.95rem;
-    }
-    .ec-meta {
-      display: none;
-    }
-    .ec-btn {
-      padding: 0.3rem 0.6rem;
-      min-width: 2.1rem;
-    }
-  }
-</style>
 
 <style>
   /* --- night ground: the photographs bring their own weather --- */

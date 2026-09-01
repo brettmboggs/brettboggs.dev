@@ -1,5 +1,5 @@
-/* Golden Hour — design tokens and base styles.
-   Direction: 70s poster warmth, Swiss restraint. Type-led — no iconography. */
+/* Golden Hour: design tokens and base styles.
+   Direction: 70s poster warmth, Swiss restraint. Type-led: no iconography. */
 
 :root {
   --paper: #F4EDDF;
@@ -43,7 +43,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* film grain — printed, not rendered */
+/* film grain: printed, not rendered */
 body::after {
   content: '';
   position: fixed;
@@ -205,7 +205,7 @@ a:focus-visible {
   height: auto;
 }
 
-/* tables — editorial rows like the entry lists: rules, not boxes */
+/* tables: editorial rows like the entry lists: rules, not boxes */
 .prose table {
   display: block;
   overflow-x: auto;
@@ -254,7 +254,7 @@ a:focus-visible {
   }
 }
 
-/* rising reveal — the one entrance motion, staggered via --delay */
+/* rising reveal: the one entrance motion, staggered via --delay */
 .reveal {
   animation: rise 0.9s var(--ease-warm) both;
   animation-delay: var(--delay, 0s);
@@ -283,7 +283,7 @@ a:focus-visible {
   }
 }
 
-/* --- cross-document view transitions — native CSS, zero JS --- */
+/* --- cross-document view transitions: native CSS, zero JS --- */
 
 @view-transition {
   navigation: auto;
@@ -301,7 +301,7 @@ a:focus-visible {
   }
 }
 
-/* scroll-driven reveal — entry rows rise as they enter the viewport.
+/* scroll-driven reveal: entry rows rise as they enter the viewport.
    progressive: browsers without scroll timelines just show the rows. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
@@ -315,7 +315,7 @@ a:focus-visible {
       animation-range: entry 0% entry 55%;
     }
 
-    /* type that settles — page heads ease their Fraunces axes as they leave:
+    /* type that settles: page heads ease their Fraunces axes as they leave:
        optical size falls and softness rises, display type receding into text.
        scoped to .page-head, which the homepage never uses; the film owns
        that headline and nothing here may touch it. */
@@ -408,4 +408,50 @@ a:focus-visible {
   .sheet {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* --- peek: the still that rides beside the cursor on an index row --- */
+.peek {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  width: 18rem;
+  padding: 0.45rem;
+  background: var(--paper-deep);
+  border-top: 2px solid var(--ink);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-200vw, 0, 0);
+  transition: opacity 0.35s var(--ease-warm);
+  will-change: transform;
+}
+.peek.is-on {
+  opacity: 1;
+}
+.peek img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  background: var(--paper);
+}
+
+/* plates open in the viewer */
+[data-plate] {
+  cursor: zoom-in;
+}
+
+/* --- dusk: after sunset the paper cools and the ink deepens. set on <html>
+   before first paint by Base.astro from the clock and the month; the film
+   pages never carry it, the render owns its own light. --- */
+html[data-dusk] {
+  --paper: #e3d8c4;
+  --paper-deep: #d3c6ab;
+  --ink: #261e14;
+  --ink-soft: #5a4d3c;
+  --rust: #873a1e;
+}
+html[data-dusk] .scene-ghost {
+  filter: brightness(0.86) saturate(0.9);
 }

@@ -1,0 +1,190 @@
+---
+import { execSync } from 'node:child_process';
+import Base from '../layouts/Base.astro';
+import astroPkg from 'astro/package.json';
+
+// How the site is made, with the build stamping itself at the bottom. The
+// weight table is written in after the build by tools/weigh.mjs, which
+// replaces the marker below with what it measured.
+
+let commit = '';
+try {
+  commit = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+} catch {
+  commit = '';
+}
+const built = new Date();
+const builtOn = built.toLocaleDateString('en-US', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+const repo = 'https://github.com/brettmboggs/brettboggs.dev';
+---
+
+<Base title="Colophon · Brett Boggs" description="How this site is made: the tools, the pipeline, and the weight of every page.">
+  <header class="page-head">
+    <p class="eyebrow">Colophon</p>
+    <h1>How this site is made.</h1>
+    <p class="lede">The tools, the pipeline, and the weight of every page. Built by hand, hosted for nothing.</p>
+  </header>
+
+  <p class="stamp">
+    <span>Build {commit || 'local'}</span>
+    <span>{builtOn}</span>
+    <span>Astro {astroPkg.version}</span>
+    <a href={repo} rel="noopener">source</a>
+  </p>
+
+  <div class="prose">
+    <h2>The stack</h2>
+    <p>
+      Astro, fully static. There is no framework in the page and no CSS framework under it: plain
+      CSS with custom properties, and TypeScript written for the one page that needs it. GSAP drives
+      the film scrub, and three.js turns the models. Fonts are self hosted: Fraunces for display,
+      Instrument Sans for reading, Spline Sans Mono for labels. A GitHub Action builds every push
+      and GitHub Pages serves it under a domain from Namecheap, which puts the monthly bill at zero.
+    </p>
+
+    <h2>The film</h2>
+    <p>
+      The Ridge was modelled and rendered in Blender with Cycles, 192 frames, on free CC0 assets
+      from Poly Haven for the sky, the ground and the grass. A Node script runs the frames through
+      sharp into WebP at two sizes with posters and a manifest. In the browser the frames decode into
+      a canvas and the scroll position picks the frame, so the flyover runs at whatever speed you
+      read. The last movement plants the station: the menu on the ridge is a pure function of how
+      far the film has run, and its landmarks were measured off the frame in pixels. Choosing one is
+      a camera dive, and the page you land on keeps the same crop underneath as a faint ghost.
+    </p>
+
+    <h2>The lab</h2>
+    <p>
+      Each experiment brings its own engine. The MacArthur is a three.js orbit viewer over models
+      built from public survey data. The Field is a WebGPU compute shader with a spring for every
+      blade. The keepsake is an SVG drawn from a seed, so the same address always draws the same
+      field. Everything that moves has a still or a fallback for browsers and people who would
+      rather it did not.
+    </p>
+
+    <h2>Type and motion</h2>
+    <p>
+      Fraunces does the art direction with its optical size, softness and wonk axes. Page heads
+      interpolate those axes on a scroll timeline as they leave the screen, display type settling
+      into text, with no script involved. Pages change under native cross-document view transitions.
+      Every motion on the site is switched off for a reduced motion preference. One gotcha for
+      anyone copying this: the default CSS minifier folds scroll timelines into the animation
+      shorthand, which stable browsers reject, so the build minifies CSS with esbuild instead.
+    </p>
+
+    <h2>Offline</h2>
+    <p>
+      A service worker caches the core pages and posters at install, fetches navigations network
+      first so a new deploy is never served stale, and serves hashed assets cache first. The site
+      installs, and there is a page for when the signal goes. The film frames stay online only.
+    </p>
+
+    <h2>The store</h2>
+    <p>
+      The shelf is a static page with Stripe Elements in the browser. A Cloudflare Worker holds the
+      catalogue, keeps the pictures in KV, and prices every order again from its own list, because
+      nothing the page believes about money is trusted. It runs in test mode until it does not.
+    </p>
+
+    <h2>Machine readers</h2>
+    <p>
+      There is an <a href="/llms.txt">llms.txt</a>, a <a href="/resume.json">JSON Resume</a> that
+      also renders the <a href="/resume/">resume page</a>, and schema.org data on the front page.
+      Each page gets its own social card at build time, drawn in the site's type by satori and
+      rasterised by sharp, from the same list the site uses for titles. The
+      <a href="/log/">log</a> reads git during the build.
+    </p>
+
+    <h2>Dusk</h2>
+    <p>
+      After sunset the paper cools and the ink deepens on the reading pages. Sunset is guessed
+      from your clock and the month, not from where you are. Add <code>?dusk=1</code> or
+      <code>?dusk=0</code> to any address to choose for yourself; the choice stays on your device.
+    </p>
+
+    <h2>The weight</h2>
+    <p>
+      Measured after every build: the HTML, the CSS and the script each page loads, gzipped as a
+      browser would fetch them. Pictures, film frames and models are not counted. They are most of
+      what you see and none of what this table is about.
+    </p>
+    <div class="weigh"><!--weigh--></div>
+  </div>
+
+  <a class="back-link" href="/">&larr; Home</a>
+</Base>
+
+<style>
+  .stamp {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.6rem;
+    margin-top: 2.6rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    max-width: none;
+  }
+  .stamp a {
+    font-weight: 400;
+    color: var(--rust);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    color: var(--rust);
+  }
+  .weigh {
+    margin-top: 1.6em;
+  }
+  .weigh :global(table) {
+    display: block;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+  .weigh :global(th) {
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    border-bottom: 2px solid var(--ink);
+    padding: 0 1.4rem 0.55rem 0;
+  }
+  .weigh :global(td) {
+    border-bottom: 1px solid var(--paper-deep);
+    padding: 0.5rem 1.4rem 0.5rem 0;
+    white-space: nowrap;
+  }
+  .weigh :global(td:not(:first-child)),
+  .weigh :global(th:not(:first-child)) {
+    text-align: right;
+  }
+  .weigh :global(th:last-child),
+  .weigh :global(td:last-child) {
+    padding-right: 0;
+  }
+  .weigh :global(td a) {
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .weigh :global(.weigh-note) {
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+</style>
