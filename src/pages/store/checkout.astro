@@ -576,7 +576,13 @@ const csp = [
       renderSummary(data.amount, data.items);
 
       elements = stripe.elements({ clientSecret, appearance });
-      const paymentElement = elements.create('payment', { layout: 'tabs' });
+      // Accordion, not tabs.
+      //
+      // With one payment method a tab strip is a row of one, and any method
+      // Stripe promotes alongside it looks like an equal option. The accordion
+      // puts the card form open at the top and anything else below it, plainly
+      // labelled, which is what it is.
+      const paymentElement = elements.create('payment', { layout: 'accordion' });
       placeholder?.remove();
       paymentElement.mount('#payment-element');
 
