@@ -1,0 +1,519 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// The shelf, led by the pictures.
+//
+// Prints are sold as image by size, so the page groups them: one picture, then
+// its sizes underneath. Everything is fetched at view time rather than baked at
+// build, because the catalogue is server side and a page that ships its own
+// prices is a page that can disagree with the till.
+//
+// Previews are found by convention at /photo/store/<imageId>.webp. The store API
+// never says where a picture lives, and the site never says what one costs.
+---
+
+<Base title="Store · Brett Boggs" description="Prints and files." noindex={true}>
+  <header class="page-head">
+    <p class="eyebrow">Store</p>
+    <h1>Store</h1>
+    <p class="lede">
+      Printed to order on heavyweight matte art paper. Free shipping in the United States.
+    </p>
+  </header>
+
+  <div id="shelf" class="shelf" aria-live="polite" aria-busy="true">
+    <p class="empty-note">Loading the shelf.</p>
+  </div>
+
+  <aside class="till" id="till" hidden>
+    <div class="till-lines">
+      <p class="till-count" id="till-count"></p>
+      <p class="till-total" id="till-total"></p>
+    </div>
+    <a class="till-go" href="/store/checkout/">Checkout</a>
+  </aside>
+
+  <a class="back-link" href="/">&larr; Home</a>
+</Base>
+
+<!-- Global, not scoped, and namespaced under #shelf / #till instead. Rows are
+     built in JS, and Astro's scoped styles only attach to elements that were in
+     the template, so scoping here would style nothing. -->
+<style is:global>
+  #shelf {
+    margin-top: 3rem;
+  }
+
+  /* One picture and its sizes. A rule between them, no boxes. */
+  #shelf .work {
+    padding: 2.4rem 0;
+    border-top: 1px solid color-mix(in oklab, var(--ink) 18%, transparent);
+  }
+
+  #shelf .work:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  #shelf .work-figure {
+    margin: 0 0 1.4rem;
+    line-height: 0;
+    background: color-mix(in oklab, var(--paper-deep) 60%, transparent);
+  }
+
+  #shelf .work-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Nothing to show yet: a plate the right shape, so the layout does not jump
+     when Brett drops the picture in. */
+  #shelf .work-figure.is-empty {
+    aspect-ratio: 3 / 2;
+    display: grid;
+    place-items: center;
+    border: 1px dashed color-mix(in oklab, var(--ink) 28%, transparent);
+  }
+
+  #shelf .work-figure.is-empty::after {
+    content: attr(data-note);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  #shelf .work-title {
+    font-family: var(--display);
+    font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+    font-variation-settings: 'SOFT' 60, 'WONK' 1;
+    line-height: 1.15;
+    margin: 0;
+  }
+
+  #shelf .work-tier {
+    display: inline-block;
+    margin-left: 0.7rem;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    vertical-align: 0.3em;
+  }
+
+  #shelf .work-blurb {
+    margin: 0.5rem 0 0;
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  #shelf .work-spec {
+    margin: 0.35rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+  }
+
+  /* The size ladder. Each row is a size, its price, and a way in. */
+  #shelf .sizes {
+    list-style: none;
+    margin: 1.4rem 0 0;
+    padding: 0;
+  }
+
+  #shelf .size {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 0 1.2rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid color-mix(in oklab, var(--ink) 12%, transparent);
+  }
+
+  #shelf .size-name {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+  }
+
+  #shelf .size-price {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  #shelf .item-add {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid var(--sienna);
+    padding: 0.2rem 0;
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--ink);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s var(--ease-warm), color 0.2s var(--ease-warm);
+  }
+
+  #shelf .item-add:hover {
+    color: var(--rust);
+    border-color: var(--rust);
+  }
+
+  #shelf .stepper {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid color-mix(in oklab, var(--ink) 32%, transparent);
+  }
+
+  #shelf .stepper button {
+    appearance: none;
+    background: none;
+    border: 0;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    line-height: 1;
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+    transition: background-color 0.18s var(--ease-warm);
+  }
+
+  #shelf .stepper button:hover {
+    background: color-mix(in oklab, var(--sunflower) 22%, transparent);
+  }
+
+  #shelf .stepper button:disabled {
+    opacity: 0.35;
+    cursor: default;
+    background: none;
+  }
+
+  #shelf .stepper output {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    min-width: 2.2ch;
+    display: grid;
+    place-items: center;
+    padding: 0 0.2rem;
+    border-inline: 1px solid color-mix(in oklab, var(--ink) 32%, transparent);
+  }
+
+  /* The scale drawing, shown for whichever size is actually being bought. */
+  #shelf .size-scale {
+    grid-column: 1 / -1;
+    margin: 0.8rem 0 0.2rem;
+    overflow-x: auto;
+  }
+
+  #shelf .size-scale svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  #shelf .sf-ground {
+    stroke: color-mix(in oklab, var(--ink) 28%, transparent);
+    stroke-width: 1;
+  }
+
+  #shelf .sf-item {
+    fill: color-mix(in oklab, var(--sunflower) 20%, transparent);
+    stroke: var(--sienna);
+    stroke-width: 1.5;
+  }
+
+  #shelf .sf-ref {
+    fill: none;
+    stroke: color-mix(in oklab, var(--ink) 38%, transparent);
+    stroke-width: 1.25;
+    stroke-linecap: round;
+  }
+
+  #shelf .sf-dim {
+    font-family: var(--mono);
+    font-size: 10px;
+    fill: var(--ink-soft);
+  }
+
+  #shelf .sf-mid {
+    text-anchor: middle;
+  }
+
+  #shelf .sf-muted {
+    opacity: 0.75;
+  }
+
+  /* [hidden] sets display:none, which a later display:flex would quietly
+     override. Say it explicitly so an empty cart really hides the till. */
+  #till[hidden] {
+    display: none;
+  }
+
+  #till {
+    position: sticky;
+    bottom: 0;
+    margin-top: 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem 1.5rem;
+    padding: 1rem 0;
+    background: linear-gradient(to top, var(--paper) 72%, transparent);
+    border-top: 2px solid var(--ink);
+  }
+
+  #till .till-lines {
+    display: flex;
+    align-items: baseline;
+    gap: 1.2rem;
+  }
+
+  #till .till-count,
+  #till .till-total {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+  }
+
+  #till .till-count {
+    color: var(--ink-soft);
+  }
+
+  #till .till-go {
+    font-family: var(--display);
+    font-size: 1.15rem;
+    text-decoration: none;
+    color: var(--ink);
+    border-bottom: 2px solid var(--sunflower);
+    padding-bottom: 0.1rem;
+    transition: border-color 0.2s var(--ease-warm);
+  }
+
+  #till .till-go:hover {
+    border-color: var(--sienna);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shelf .stepper button,
+    #shelf .item-add,
+    #till .till-go {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { fetchCatalog, readCart, setQty, cartCount, money, type Product } from '../../scripts/store';
+  import { scaleFigure } from '../../scripts/scaleFigure';
+
+  const shelf = document.getElementById('shelf')!;
+  const till = document.getElementById('till')!;
+  const tillCount = document.getElementById('till-count')!;
+  const tillTotal = document.getElementById('till-total')!;
+
+  let products: Product[] = [];
+
+  type Group = { key: string; title: string; blurb: string; tier: string | null; items: Product[] };
+
+  /** Prints group under their picture. Everything else stands alone. */
+  function group(list: Product[]): Group[] {
+    const byImage = new Map<string, Group>();
+    const singles: Group[] = [];
+
+    for (const p of list) {
+      if (p.imageId) {
+        let g = byImage.get(p.imageId);
+        if (!g) {
+          g = { key: p.imageId, title: p.imageTitle ?? p.name, blurb: p.blurb, tier: p.tierLabel, items: [] };
+          byImage.set(p.imageId, g);
+        }
+        g.items.push(p);
+      } else {
+        singles.push({ key: p.id, title: p.name, blurb: p.blurb, tier: null, items: [p] });
+      }
+    }
+    // Sizes ascending by price so the ladder reads small to large.
+    for (const g of byImage.values()) g.items.sort((a, b) => a.price - b.price);
+    return [...byImage.values(), ...singles];
+  }
+
+  function buildShelf() {
+    const groups = group(products);
+    if (groups.length === 0) {
+      shelf.innerHTML = '<p class="empty-note">Nothing on the shelf yet.</p>';
+      shelf.setAttribute('aria-busy', 'false');
+      return;
+    }
+
+    shelf.innerHTML = '';
+
+    groups.forEach((g, i) => {
+      const section = document.createElement('section');
+      section.className = 'work reveal';
+      section.style.setProperty('--delay', `${i * 0.06}s`);
+
+      // A picture only for prints. Goods like the cards speak for themselves.
+      if (g.items[0].imageId) {
+        const fig = document.createElement('figure');
+        fig.className = 'work-figure';
+        const img = document.createElement('img');
+        img.src = `/photo/store/${g.key}.webp`;
+        img.alt = g.title;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        // No picture yet: show a plate of the right shape rather than a broken
+        // image, so adding one later does not reflow the page.
+        img.addEventListener('error', () => {
+          fig.classList.add('is-empty');
+          fig.dataset.note = 'picture to come';
+          img.remove();
+        });
+        fig.appendChild(img);
+        section.appendChild(fig);
+      }
+
+      const h = document.createElement('h2');
+      h.className = 'work-title';
+      h.textContent = g.title;
+      if (g.tier) {
+        const tier = document.createElement('span');
+        tier.className = 'work-tier';
+        tier.textContent = g.tier;
+        h.appendChild(tier);
+      }
+      section.appendChild(h);
+
+      const blurb = document.createElement('p');
+      blurb.className = 'work-blurb';
+      blurb.textContent = g.blurb;
+      section.appendChild(blurb);
+
+      if (g.items[0].material) {
+        const spec = document.createElement('p');
+        spec.className = 'work-spec';
+        spec.textContent = g.items[0].material.replace(/,\s*\d+ x \d+ in$/, '');
+        section.appendChild(spec);
+      }
+
+      const list = document.createElement('ul');
+      list.className = 'sizes';
+      section.appendChild(list);
+
+      for (const p of g.items) {
+        const li = document.createElement('li');
+        li.className = 'size';
+        li.dataset.for = p.id;
+        list.appendChild(li);
+        drawSize(p, li);
+      }
+
+      shelf.appendChild(section);
+    });
+
+    shelf.setAttribute('aria-busy', 'false');
+    renderTill();
+  }
+
+  /** One size row. Redrawn alone on change, so the page never re-animates. */
+  function drawSize(p: Product, li: HTMLElement) {
+    const qty = readCart()[p.id] ?? 0;
+    li.innerHTML = '';
+
+    const name = document.createElement('span');
+    name.className = 'size-name';
+    name.textContent = p.dims ? `${p.dims.w} x ${p.dims.h} ${p.dims.units}` : p.name;
+
+    const price = document.createElement('span');
+    price.className = 'size-price';
+    price.textContent = money(p.price);
+
+    const change = (next: number) => {
+      setQty(p.id, next);
+      drawSize(p, li);
+      renderTill();
+    };
+
+    const action = document.createElement('span');
+    if (qty > 0) {
+      const stepper = document.createElement('span');
+      stepper.className = 'stepper';
+
+      const less = document.createElement('button');
+      less.type = 'button';
+      less.textContent = '−';
+      less.setAttribute('aria-label', `One fewer ${p.name}`);
+      less.addEventListener('click', () => change(qty - 1));
+
+      const out = document.createElement('output');
+      out.textContent = String(qty);
+      out.setAttribute('aria-label', `${qty} in the cart`);
+
+      const more = document.createElement('button');
+      more.type = 'button';
+      more.textContent = '+';
+      more.disabled = qty >= 10;
+      more.setAttribute('aria-label', `One more ${p.name}`);
+      more.addEventListener('click', () => change(qty + 1));
+
+      stepper.append(less, out, more);
+      action.appendChild(stepper);
+    } else {
+      const add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'item-add';
+      add.textContent = 'Add';
+      add.addEventListener('click', () => change(1));
+      action.appendChild(add);
+    }
+
+    li.append(name, price, action);
+
+    // The scale drawing follows what is actually in the cart, so the buyer sees
+    // the size they chose rather than a generic one.
+    if (p.dims && qty > 0) {
+      const fig = document.createElement('figure');
+      fig.className = 'size-scale';
+      fig.appendChild(scaleFigure(p.dims, p.name));
+      li.appendChild(fig);
+    }
+  }
+
+  function renderTill() {
+    const cart = readCart();
+    const count = cartCount(cart);
+    if (count === 0) {
+      till.hidden = true;
+      return;
+    }
+    // Display only. The server prices the order again at checkout, and its
+    // answer is the one that gets charged.
+    const subtotal = products.reduce((sum, p) => sum + p.price * (cart[p.id] ?? 0), 0);
+    tillCount.textContent = `${count} item${count === 1 ? '' : 's'}`;
+    tillTotal.textContent = `${money(subtotal)}, shipping included`;
+    till.hidden = false;
+  }
+
+  fetchCatalog()
+    .then((list) => {
+      products = list;
+
+      // Drop anything the catalog no longer sells. A cart holding a retired
+      // product id is not a cosmetic problem: checkout rejects the whole cart
+      // as unknown, and the buyer gets a dead end they cannot clear.
+      const known = new Set(list.map((p) => p.id));
+      const stale = Object.keys(readCart()).filter((id) => !known.has(id));
+      stale.forEach((id) => setQty(id, 0));
+
+      buildShelf();
+    })
+    .catch(() => {
+      shelf.innerHTML = '<p class="empty-note">The shelf is not reachable right now.</p>';
+      shelf.setAttribute('aria-busy', 'false');
+    });
+</script>

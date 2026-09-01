@@ -1,0 +1,18 @@
+name = "brettboggs-store"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+# Secrets are NOT here. They go in with `wrangler secret put` and live only in
+# Cloudflare. Nothing in this repo ever contains a key.
+#   STRIPE_SECRET_KEY      sk_test_... then sk_live_... when the store opens
+#   STRIPE_WEBHOOK_SECRET  whsec_...   from the webhook endpoint in Stripe
+#   POD_API_KEY            from the print partner
+
+[vars]
+POD_PROVIDER = "prodigi"
+POD_SANDBOX = "true"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "brettboggs-store"
+database_id = "530f6507-403d-45ac-a594-d097f4391a3e"

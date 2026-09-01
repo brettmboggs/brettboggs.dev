@@ -1,0 +1,655 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const STORE_API = import.meta.env.PUBLIC_STORE_API ?? 'http://127.0.0.1:8788';
+const STRIPE_PK = import.meta.env.PUBLIC_STRIPE_PK ?? '';
+const apiOrigin = new URL(STORE_API).origin;
+
+// PCI DSS 4.0.1 leaves requirements 6.4.3 and 11.6.1 with the merchant even
+// when Stripe does the processing: know every script on the payment page, and
+// be able to tell when it changes. This page is the whole inventory.
+//
+//   self          the site's own bundled module for this page
+//   js.stripe.com Stripe.js, which must load from Stripe's domain. It cannot be
+//                 self-hosted, and that is the point: the card fields live in
+//                 an iframe this origin cannot read.
+//
+// Nothing else is permitted to load or connect here. No analytics, no fonts
+// from a third party, no tag manager, now or later.
+const csp = [
+  "default-src 'self'",
+  "script-src 'self' https://js.stripe.com",
+  "frame-src https://js.stripe.com https://hooks.stripe.com",
+  `connect-src 'self' ${apiOrigin} https://api.stripe.com`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data:",
+  "base-uri 'none'",
+  "form-action 'none'",
+].join('; ');
+---
+
+<Base title="Checkout · Brett Boggs" description="Checkout." noindex={true} puck={false} noServiceWorker={true}>
+  <meta slot="head" http-equiv="Content-Security-Policy" content={csp} />
+  <script slot="head" is:inline src="https://js.stripe.com/v3/"></script>
+
+  <header class="page-head">
+    <p class="eyebrow">Store</p>
+    <h1>Checkout</h1>
+  </header>
+
+  <div id="unavailable" class="empty-note" hidden>
+    Checkout is not configured yet.
+  </div>
+
+  <div id="empty" class="empty-note" hidden>
+    Nothing in the cart. <a href="/store/">Back to the store</a>.
+  </div>
+
+  <form id="checkout" class="checkout" hidden novalidate>
+    <!-- 1. What is being bought, priced by the server, not by this page. -->
+    <section class="panel" aria-labelledby="h-order">
+      <h2 class="panel-title" id="h-order"><span class="panel-num">01</span> Order</h2>
+      <ul class="lines" id="lines"></ul>
+      <dl class="totals" id="totals"></dl>
+    </section>
+
+    <!-- 2. Where it goes. Every field carries the autocomplete token the
+         browser expects, so a saved address fills the whole block at once. -->
+    <section class="panel" aria-labelledby="h-details">
+      <h2 class="panel-title" id="h-details"><span class="panel-num">02</span> Details</h2>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          inputmode="email"
+          spellcheck="false"
+          required
+          placeholder="you@example.com"
+        />
+        <p class="hint">Your receipt and any download links go here.</p>
+      </div>
+
+      <fieldset class="ship" id="ship" hidden>
+        <legend>Shipping</legend>
+
+        <div class="field">
+          <label for="ship-name">Name</label>
+          <input id="ship-name" name="name" type="text" autocomplete="shipping name" required />
+        </div>
+
+        <div class="field">
+          <label for="ship-line1">Address</label>
+          <input
+            id="ship-line1"
+            name="line1"
+            type="text"
+            autocomplete="shipping address-line1"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="ship-line2">Apartment, suite, etc. <span class="opt">optional</span></label>
+          <input id="ship-line2" name="line2" type="text" autocomplete="shipping address-line2" />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="ship-city">City</label>
+            <input
+              id="ship-city"
+              name="city"
+              type="text"
+              autocomplete="shipping address-level2"
+              required
+            />
+          </div>
+          <div class="field">
+            <label for="ship-state">State</label>
+            <input
+              id="ship-state"
+              name="state"
+              type="text"
+              autocomplete="shipping address-level1"
+              required
+            />
+          </div>
+          <div class="field">
+            <label for="ship-postal">ZIP</label>
+            <input
+              id="ship-postal"
+              name="postal_code"
+              type="text"
+              autocomplete="shipping postal-code"
+              inputmode="numeric"
+              required
+            />
+          </div>
+        </div>
+
+        <input type="hidden" name="country" value="US" />
+      </fieldset>
+    </section>
+
+    <!-- 3. Card fields. This is Stripe's iframe. The number never reaches this
+         page, this origin, or the Worker. -->
+    <section class="panel" aria-labelledby="h-pay">
+      <h2 class="panel-title" id="h-pay"><span class="panel-num">03</span> Payment</h2>
+      <div id="payment-element" class="payment-slot">
+        <p class="hint" id="payment-placeholder">Fill in your details and the card fields appear.</p>
+      </div>
+    </section>
+
+    <p class="err" id="err" role="alert" hidden></p>
+
+    <button class="pay" id="pay" type="submit" disabled>
+      <span id="pay-label">Enter your details</span>
+    </button>
+
+    <p class="fineprint">
+      Card details go straight to Stripe. They never touch this site.
+    </p>
+  </form>
+
+  <a class="back-link" href="/store/">&larr; Store</a>
+</Base>
+
+<!-- The order lines and totals rows are built in JS, so they never receive
+     Astro's scoping attribute. Namespaced under their ids instead of scoped. -->
+<style is:global>
+  /* Order lines: figures in mono, aligned, the way the rest of the site sets
+     numbers. */
+  #lines {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  #lines li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.35rem 0;
+    font-size: 0.92rem;
+  }
+
+  #lines .qty {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    margin-left: 0.5rem;
+  }
+
+  #lines .amt,
+  #totals dd {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  #totals {
+    margin: 0.9rem 0 0;
+    padding-top: 0.7rem;
+    border-top: 1px solid color-mix(in oklab, var(--ink) 18%, transparent);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.3rem 1.5rem;
+  }
+
+  #totals dt {
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+  }
+
+  #totals dd {
+    margin: 0;
+    text-align: right;
+  }
+
+  #totals dt.grand {
+    font-family: var(--display);
+    font-size: 1rem;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  #totals dd.grand {
+    font-size: 1rem;
+    color: var(--ink);
+    font-weight: 600;
+  }
+</style>
+
+<style>
+  .checkout {
+    margin-top: 2.5rem;
+    max-width: 34rem;
+  }
+
+  .panel {
+    padding-top: 1.6rem;
+    margin-top: 1.6rem;
+    border-top: 1px solid color-mix(in oklab, var(--ink) 18%, transparent);
+  }
+
+  .panel:first-child {
+    margin-top: 0;
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .panel-title {
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-variation-settings: 'SOFT' 60;
+    margin: 0 0 1.1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+  }
+
+  .panel-num {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: var(--sienna);
+  }
+
+  .field {
+    margin-top: 1rem;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    margin-bottom: 0.35rem;
+  }
+
+  .opt {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  /* Underlines, not boxes. Matches the editorial rules used site wide. */
+  .field input {
+    width: 100%;
+    appearance: none;
+    background: color-mix(in oklab, var(--paper-deep) 55%, transparent);
+    border: 0;
+    border-bottom: 1.5px solid color-mix(in oklab, var(--ink) 34%, transparent);
+    padding: 0.55rem 0.6rem;
+    font: inherit;
+    font-size: 0.95rem;
+    color: var(--ink);
+    transition: border-color 0.2s var(--ease-warm), background-color 0.2s var(--ease-warm);
+  }
+
+  .field input:hover {
+    background: color-mix(in oklab, var(--paper-deep) 85%, transparent);
+  }
+
+  .field input:focus {
+    outline: none;
+    border-bottom-color: var(--sienna);
+    background: color-mix(in oklab, var(--sunflower) 10%, transparent);
+  }
+
+  .field input:user-invalid {
+    border-bottom-color: var(--rust);
+  }
+
+  /* The browser paints its own autofill background. Repaint it in paper so a
+     filled form still looks like this site. */
+  .field input:-webkit-autofill,
+  .field input:-webkit-autofill:hover,
+  .field input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--ink);
+    -webkit-box-shadow: 0 0 0 40rem var(--paper-deep) inset;
+    caret-color: var(--ink);
+  }
+
+  .hint {
+    margin: 0.4rem 0 0;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+
+  .ship {
+    border: 0;
+    padding: 0;
+    margin: 1.6rem 0 0;
+  }
+
+  .ship legend {
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    padding: 0;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 0 0.8rem;
+  }
+
+  @media (max-width: 30rem) {
+    .field-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .payment-slot {
+    min-height: 2.5rem;
+  }
+
+  .pay {
+    display: block;
+    width: 100%;
+    margin-top: 2rem;
+    appearance: none;
+    background: var(--ink);
+    color: var(--paper);
+    border: 0;
+    padding: 0.95rem 1.2rem;
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-variation-settings: 'SOFT' 60;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease-warm);
+  }
+
+  .pay:hover:not(:disabled) {
+    background: var(--rust);
+  }
+
+  .pay:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .err {
+    margin: 1.2rem 0 0;
+    padding: 0.7rem 0.9rem;
+    background: color-mix(in oklab, var(--rust) 12%, transparent);
+    border-left: 3px solid var(--rust);
+    font-size: 0.88rem;
+    color: var(--ink);
+  }
+
+  .fineprint {
+    margin: 1rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .field input,
+    .pay {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { readCart, cartItems, money, clearCart } from '../../scripts/store';
+
+  // Read straight from the build-time env rather than a handoff on window.
+  // An inline script would be the obvious way to pass these, and the Content
+  // Security Policy on this page deliberately forbids inline scripts.
+  const cfg = {
+    api: import.meta.env.PUBLIC_STORE_API ?? 'http://127.0.0.1:8788',
+    pk: import.meta.env.PUBLIC_STRIPE_PK ?? '',
+  };
+
+  const form = document.getElementById('checkout') as HTMLFormElement;
+  const emptyNote = document.getElementById('empty')!;
+  const unavailable = document.getElementById('unavailable')!;
+  const linesEl = document.getElementById('lines')!;
+  const totalsEl = document.getElementById('totals')!;
+  const shipSet = document.getElementById('ship') as HTMLFieldSetElement;
+  const errEl = document.getElementById('err')!;
+  const payBtn = document.getElementById('pay') as HTMLButtonElement;
+  const payLabel = document.getElementById('pay-label')!;
+  const paymentSlot = document.getElementById('payment-element')!;
+  const placeholder = document.getElementById('payment-placeholder');
+
+  if (!cfg.pk || !(window as any).Stripe) {
+    unavailable.hidden = false;
+    throw new Error('Stripe publishable key is not configured');
+  }
+
+  const items = cartItems(readCart());
+  if (items.length === 0) {
+    emptyNote.hidden = false;
+    throw new Error('empty cart');
+  }
+  form.hidden = false;
+
+  const stripe = (window as any).Stripe(cfg.pk);
+  let elements: any = null;
+  let clientSecret: string | null = null;
+  let mounting = false;
+
+  // Golden Hour, translated into the handful of variables the Elements iframe
+  // accepts. The typefaces stay Stripe's default sans: a custom face inside the
+  // iframe has to be fetched from a public URL, and the CSP above deliberately
+  // permits no third party font host on this page.
+  const appearance = {
+    theme: 'flat',
+    variables: {
+      colorPrimary: '#B85C38',
+      colorBackground: '#EFE6D4',
+      colorText: '#33291C',
+      colorTextSecondary: '#6B5D48',
+      colorDanger: '#8F3F22',
+      fontSizeBase: '15px',
+      spacingUnit: '4px',
+      borderRadius: '0px',
+      focusBoxShadow: 'none',
+      focusOutline: 'none',
+    },
+    rules: {
+      '.Input': {
+        border: 'none',
+        borderBottom: '1.5px solid rgba(51, 41, 28, 0.34)',
+        padding: '9px 10px',
+        boxShadow: 'none',
+      },
+      '.Input:focus': {
+        borderBottom: '1.5px solid #B85C38',
+        backgroundColor: 'rgba(217, 151, 30, 0.10)',
+      },
+      '.Input--invalid': { borderBottom: '1.5px solid #8F3F22' },
+      '.Label': {
+        fontSize: '12px',
+        letterSpacing: '0.04em',
+        color: '#6B5D48',
+        marginBottom: '5px',
+      },
+      '.Tab': { border: '1px solid rgba(51, 41, 28, 0.28)', boxShadow: 'none' },
+      '.Tab--selected': { borderColor: '#B85C38', color: '#33291C' },
+    },
+  };
+
+  function showError(message: string) {
+    errEl.textContent = message;
+    errEl.hidden = false;
+  }
+
+  function clearError() {
+    errEl.hidden = true;
+    errEl.textContent = '';
+  }
+
+  function collectShipping() {
+    const data = new FormData(form);
+    return {
+      name: String(data.get('name') ?? ''),
+      line1: String(data.get('line1') ?? ''),
+      line2: String(data.get('line2') ?? ''),
+      city: String(data.get('city') ?? ''),
+      state: String(data.get('state') ?? ''),
+      postal_code: String(data.get('postal_code') ?? ''),
+      country: 'US',
+    };
+  }
+
+  function detailsComplete(): boolean {
+    const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return false;
+    if (shipSet.hidden) return true;
+    const s = collectShipping();
+    return Boolean(s.name && s.line1 && s.city && s.state && s.postal_code);
+  }
+
+  function renderSummary(amount: any, lines: any[]) {
+    linesEl.innerHTML = '';
+    for (const line of lines) {
+      const li = document.createElement('li');
+      const left = document.createElement('span');
+      left.textContent = line.name;
+      if (line.qty > 1) {
+        const q = document.createElement('span');
+        q.className = 'qty';
+        q.textContent = `x${line.qty}`;
+        left.appendChild(q);
+      }
+      const right = document.createElement('span');
+      right.className = 'amt';
+      right.textContent = money(line.lineTotal);
+      li.append(left, right);
+      linesEl.appendChild(li);
+    }
+
+    totalsEl.innerHTML = '';
+    const row = (label: string, value: string, grand = false) => {
+      const dt = document.createElement('dt');
+      dt.textContent = label;
+      const dd = document.createElement('dd');
+      dd.textContent = value;
+      if (grand) {
+        dt.className = 'grand';
+        dd.className = 'grand';
+      }
+      totalsEl.append(dt, dd);
+    };
+    row('Subtotal', money(amount.subtotal));
+    if (amount.shipping > 0) row('Shipping', money(amount.shipping));
+    if (amount.tax > 0) row('Tax', money(amount.tax));
+    row('Total', money(amount.total), true);
+  }
+
+  // Ask the server to price the cart and open a payment. Runs once the details
+  // are complete. The totals shown from here on are the server's, not ours.
+  async function beginPayment() {
+    if (clientSecret || mounting) return;
+    mounting = true;
+    clearError();
+    payLabel.textContent = 'Preparing';
+
+    try {
+      const body: any = {
+        email: (document.getElementById('email') as HTMLInputElement).value.trim(),
+        items,
+      };
+      if (!shipSet.hidden) body.shipping = collectShipping();
+
+      const res = await fetch(`${cfg.api}/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Could not start checkout.');
+
+      clientSecret = data.clientSecret;
+      renderSummary(data.amount, data.items);
+
+      elements = stripe.elements({ clientSecret, appearance });
+      const paymentElement = elements.create('payment', { layout: 'tabs' });
+      placeholder?.remove();
+      paymentElement.mount('#payment-element');
+
+      paymentElement.on('ready', () => {
+        payBtn.disabled = false;
+        payLabel.textContent = `Pay ${money(data.amount.total)}`;
+      });
+      paymentElement.on('change', (e: any) => {
+        if (e.error) showError(e.error.message);
+        else clearError();
+      });
+    } catch (err: any) {
+      showError(err.message ?? 'Could not start checkout.');
+      payLabel.textContent = 'Enter your details';
+      mounting = false;
+    }
+  }
+
+  // Which fields to show. Digital-only carts never ask for an address.
+  async function decideShipping() {
+    try {
+      const res = await fetch(`${cfg.api}/catalog`);
+      const { products } = await res.json();
+      const byId = new Map(products.map((p: any) => [p.id, p]));
+      const needsShipping = items.some((i) => (byId.get(i.id) as any)?.kind === 'pod');
+      shipSet.hidden = !needsShipping;
+
+      const lines = items.map((i) => {
+        const p = byId.get(i.id) as any;
+        return { name: p?.name ?? i.id, qty: i.qty, lineTotal: (p?.price ?? 0) * i.qty };
+      });
+      const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
+      renderSummary({ subtotal, shipping: 0, tax: 0, total: subtotal }, lines);
+    } catch {
+      showError('Could not reach the store.');
+    }
+  }
+
+  form.addEventListener('input', () => {
+    if (clientSecret) return;
+    if (detailsComplete()) beginPayment();
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!elements || !clientSecret) return;
+
+    payBtn.disabled = true;
+    payLabel.textContent = 'Paying';
+    clearError();
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: { return_url: `${window.location.origin}/store/thanks/` },
+    });
+
+    // Reached only if the payment did NOT redirect, which means it failed.
+    // A success leaves this page entirely.
+    if (error) {
+      showError(error.message ?? 'The payment did not go through.');
+      payBtn.disabled = false;
+      payLabel.textContent = 'Try again';
+    }
+  });
+
+  // The cart is cleared on the way out, not on the way back, because the
+  // thanks page can be reached without a payment ever completing.
+  window.addEventListener('pagehide', () => {
+    if (clientSecret && payBtn.disabled && payLabel.textContent === 'Paying') clearCart();
+  });
+
+  decideShipping();
+</script>
