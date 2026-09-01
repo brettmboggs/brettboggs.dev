@@ -11,7 +11,7 @@
 // customer can close the tab, and a stranger can visit the success URL. Stripe
 // calling this Worker with a signed event is the only evidence that counts.
 
-import { publicCatalog, priceCart, CartError } from './catalog.js';
+import { publicCatalog, priceCart, assertSellable, CartError } from './catalog.js';
 import { createPaymentIntent, verifyWebhook, SignatureError, StripeError } from './stripe.js';
 import {
   newId,
@@ -96,6 +96,7 @@ async function handleCheckout(request, env) {
   let priced;
   try {
     priced = priceCart(body.items);
+    assertSellable(priced.items, env);
   } catch (err) {
     if (err instanceof CartError) return json({ error: err.message }, 400, request);
     throw err;

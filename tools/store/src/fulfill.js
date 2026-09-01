@@ -152,20 +152,32 @@ function getPodProvider(env) {
 const PRODIGI = {
   name: 'prodigi',
 
+  // Prodigi ACCEPTS ?merchantReference= and then ignores it: the response is
+  // the same list of recent orders whatever you pass, including for a reference
+  // that cannot exist. Trusting it meant taking orders[0] and concluding the
+  // order was already placed, which would mark a paid order as sent while the
+  // printer had never heard of it.
+  //
+  // So the filtering happens here, on our side, over a page of recent orders.
+  // We only ever look immediately before creating, so a genuine duplicate is
+  // always recent. If it is somehow older than this window we create a second
+  // order, which is a bad day, but a far better one than never printing at all.
   async findOrder(env, reference) {
-    const res = await fetch(
-      `${prodigiBase(env)}/v4.0/Orders?merchantReference=${encodeURIComponent(reference)}`,
-      { headers: { 'X-API-Key': env.POD_API_KEY } },
-    );
+    const res = await fetch(`${prodigiBase(env)}/v4.0/Orders?top=100`, {
+      headers: { 'X-API-Key': env.POD_API_KEY },
+    });
     if (!res.ok) throw new Error(`Prodigi lookup failed: ${res.status}`);
     const body = await res.json();
-    const found = body.orders && body.orders[0];
+    const found = (body.orders ?? []).find((o) => o.merchantReference === reference);
     return found ? { id: found.id } : null;
   },
 
   async createOrder(env, { reference, item, shipping, email }) {
-    const sku = PROD_SKUS[item.id];
+    const sku = PROD_SKUS[item.id] ?? printSkuFor(item);
     if (!sku) throw new Error(`No print SKU mapped for product ${item.id}`);
+    if (!sku.assetUrl) {
+      throw new Error(`No print file for ${item.id}. The image needs a hosted, signed file before it can be printed.`);
+    }
 
     const res = await fetch(`${prodigiBase(env)}/v4.0/Orders`, {
       method: 'POST',
@@ -219,6 +231,23 @@ const prodigiBase = (env) =>
 // Art 200gsm; GLOBAL-FAP-A2 is 42x59.4cm. The catalog still calls this product
 // "13 x 19", so either the name or the SKU has to change before it sells.
 const PROD_SKUS = {
-  'cards-deck': { sku: 'PLAY-CARD', sizing: 'fill', assetUrl: 'TODO' },
-  'photo-print-13x19': { sku: 'GLOBAL-FAP-16X24', sizing: 'fillPrintArea', assetUrl: 'TODO' },
+  'cards-deck': {
+    sku: 'PLAY-CARD',
+    // Prodigi accepts only fillPrintArea, fitPrintArea or stretchToPrintArea.
+    // 'fill' reads as reasonable and is rejected with a validation error.
+    sizing: 'fillPrintArea',
+    // PLACEHOLDER. A plain plate at card size, so the sandbox has a real file
+    // to fetch and the flow can be walked end to end. The actual card artwork
+    // is not hosted anywhere yet. MUST become a signed R2 URL to the real file
+    // before a single deck is printed for money.
+    assetUrl: 'https://brettboggs.dev/store/placeholder-card.jpg',
+  },
 };
+
+// Prints carry their SKU on the line item, so they need no hand-written entry.
+// What they still lack is a hosted print file per image, which is the next
+// piece of work. Returning a null assetUrl makes that failure loud and specific
+// rather than a confusing rejection from the printer.
+function printSkuFor(item) {
+  return item.sku ? { sku: item.sku, sizing: 'fillPrintArea', assetUrl: null } : null;
+}

@@ -21,6 +21,8 @@ import Base from '../../layouts/Base.astro';
     </p>
   </header>
 
+  <p class="notice" id="notice" hidden></p>
+
   <div id="shelf" class="shelf" aria-live="polite" aria-busy="true">
     <p class="empty-note">Loading the shelf.</p>
   </div>
@@ -40,6 +42,23 @@ import Base from '../../layouts/Base.astro';
      built in JS, and Astro's scoped styles only attach to elements that were in
      the template, so scoping here would style nothing. -->
 <style is:global>
+  #notice[hidden] {
+    display: none;
+  }
+
+  /* Says plainly that nothing can really be bought yet. It disappears on its
+     own the moment the Worker is running live keys, so it cannot be forgotten
+     and left on a working store. */
+  #notice {
+    display: block;
+    margin: 2rem 0 0;
+    padding: 0.8rem 1rem;
+    border-left: 3px solid var(--sienna);
+    background: color-mix(in oklab, var(--sunflower) 12%, transparent);
+    font-size: 0.9rem;
+    color: var(--ink);
+  }
+
   #shelf {
     margin-top: 3rem;
   }
@@ -309,7 +328,7 @@ import Base from '../../layouts/Base.astro';
 </style>
 
 <script>
-  import { fetchCatalog, readCart, setQty, cartCount, money, type Product } from '../../scripts/store';
+  import { fetchCatalog, readCart, setQty, cartCount, money, STORE_API, type Product } from '../../scripts/store';
   import { scaleFigure } from '../../scripts/scaleFigure';
 
   const shelf = document.getElementById('shelf')!;
@@ -358,8 +377,9 @@ import Base from '../../layouts/Base.astro';
       section.className = 'work reveal';
       section.style.setProperty('--delay', `${i * 0.06}s`);
 
-      // A picture only for prints. Goods like the cards speak for themselves.
-      if (g.items[0].imageId) {
+      // Every group may carry a picture, found at /photo/store/<key>.webp.
+      // For prints the key is the image id; for goods it is the product id.
+      {
         const fig = document.createElement('figure');
         fig.className = 'work-figure';
         const img = document.createElement('img');
@@ -498,6 +518,21 @@ import Base from '../../layouts/Base.astro';
     tillTotal.textContent = `${money(subtotal)}, shipping included`;
     till.hidden = false;
   }
+
+  // The store answers whether it is running test or live keys. If it is in
+  // test mode nothing can actually be bought, and a visitor deserves to be told
+  // that before they type a card number rather than after.
+  fetch(`${STORE_API}/health`)
+    .then((r) => r.json())
+    .then((h) => {
+      if (h.mode === 'test') {
+        const notice = document.getElementById('notice')!;
+        notice.textContent =
+          'The store is not open yet. Everything here works, but payments run in test mode, so a real card will be declined and nothing will be printed or posted.';
+        notice.hidden = false;
+      }
+    })
+    .catch(() => {});
 
   fetchCatalog()
     .then((list) => {

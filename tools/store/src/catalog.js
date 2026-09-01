@@ -81,7 +81,7 @@ export const IMAGES = {
 // --- Standalone goods, which are not image by size ---------------------------
 export const GOODS = {
   'cards-deck': {
-    live: false,
+    live: true,
     name: 'Playing cards',
     kind: 'pod',
     // Prodigi charges $10.83 a deck plus $12.12 to ship it, with no minimum and
@@ -93,10 +93,22 @@ export const GOODS = {
     ship: 1212,
     sku: 'PLAY-CARD',
     dims: { w: 2.5, h: 3.5, units: 'in' },
-    material: '54 cards, standard poker size, in a white presentation box',
-    // Said plainly because the buyer is owed it: Prodigi prints one image on
-    // the back of every card and uses its own standard faces.
-    blurb: 'Printed to order. One artwork across the backs, standard faces.',
+    material: '54 cards, standard poker size',
+    blurb: 'A full deck. Custom faces, custom backs, custom tuck box.',
+
+    // CANNOT BE FULFILLED BY PRODIGI, and must not go on sale until that is
+    // resolved.
+    //
+    // Prodigi's PLAY-CARD takes ONE image, prints it on the back of every card,
+    // and supplies its own standard faces in a plain white box. The deck in the
+    // product photo has bespoke faces, a bespoke joker and a printed tuck box,
+    // none of which that product can make. Selling this through Prodigi would
+    // put a picture of one thing next to a description of another.
+    //
+    // It is live only because the store is in test mode and says so on the
+    // page. Before real money: move it to a deck manufacturer that prints full
+    // custom decks, or take it down.
+    printerCanMake: false,
   },
 
   'print-file-eclipse': {
@@ -150,6 +162,7 @@ function buildPrints() {
 }
 
 export const PRODUCTS = { ...buildPrints(), ...GOODS };
+
 
 // A limited edition that is not counted is a lie, and the counting is not built
 // yet. Until it is, refuse to boot with a limited product switched on, so the
@@ -251,3 +264,21 @@ export function priceCart(cart) {
 }
 
 export class CartError extends Error {}
+
+/**
+ * A product the printer cannot actually make must never be sold for real money.
+ * Test mode is fine: the store page says plainly that nothing ships.
+ *
+ * Called from checkout, where the key in use is known. Module load is too early
+ * to know it, and a guard that cannot see the environment is only decoration.
+ */
+export function assertSellable(items, env) {
+  const liveMoney = Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_SECRET_KEY.startsWith('sk_live'));
+  if (!liveMoney) return;
+
+  for (const item of items) {
+    if (PRODUCTS[item.id]?.printerCanMake === false) {
+      throw new CartError(`${PRODUCTS[item.id].name} is not available to order yet.`);
+    }
+  }
+}
