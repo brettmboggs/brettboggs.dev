@@ -9,8 +9,6 @@ type Plate = {
   h: number;
   title: string;
   meta: string;
-  orig?: string;
-  origLabel?: string;
 };
 
 type View = { scale: number; x: number; y: number };
@@ -31,8 +29,6 @@ export function mountEclipseGallery(root: ParentNode = document): void {
       h: Number(el.dataset.h ?? img?.naturalHeight ?? 0) || 0,
       title: el.dataset.title ?? '',
       meta: el.dataset.meta ?? '',
-      orig: el.dataset.orig,
-      origLabel: el.dataset.origLabel,
     };
   };
 
@@ -53,7 +49,6 @@ export function mountEclipseGallery(root: ParentNode = document): void {
         <button type="button" class="ec-btn" id="ec-out" aria-label="Zoom out">&minus;</button>
         <button type="button" class="ec-btn ec-zoom" id="ec-fit" aria-label="Reset zoom"><span id="ec-pct">Fit</span></button>
         <button type="button" class="ec-btn" id="ec-in" aria-label="Zoom in">+</button>
-        <a class="ec-btn ec-orig" id="ec-orig" target="_blank" rel="noopener" hidden>Original</a>
         <button type="button" class="ec-btn ec-close" id="ec-close" aria-label="Close">Close</button>
       </div>
     </div>
@@ -136,13 +131,6 @@ export function mountEclipseGallery(root: ParentNode = document): void {
     elMeta.textContent = plate.meta;
     img.alt = plate.title;
     elHint.textContent = `${index + 1} of ${triggers.length}`;
-    const orig = $<HTMLAnchorElement>('#ec-orig');
-    orig.hidden = !plate.orig;
-    if (plate.orig) {
-      orig.href = plate.orig;
-      orig.title = plate.origLabel ? `Original file: ${plate.origLabel}` : 'Original file';
-    }
-
     // the thumbnail is already decoded, so the frame is never empty
     img.src = plate.thumb;
     elLoading.hidden = false;
@@ -190,7 +178,7 @@ export function mountEclipseGallery(root: ParentNode = document): void {
   // --- wiring ----------------------------------------------------------
   triggers.forEach((el, i) => {
     el.addEventListener('click', (e) => {
-      // an explicit link out to the original file wins over the viewer
+      // a plate that carries its own link opens that, not the viewer
       if ((e.target as HTMLElement).closest('a')) return;
       e.preventDefault();
       open(i, el);
