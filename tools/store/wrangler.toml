@@ -16,3 +16,10 @@ POD_SANDBOX = "true"
 binding = "DB"
 database_name = "brettboggs-store"
 database_id = "530f6507-403d-45ac-a594-d097f4391a3e"
+
+# Pictures live here rather than in R2. R2 wants a card on file even within its
+# free allowance; KV does not, and gives 1GB with 100,000 reads a day for free.
+# The ceiling is 25MB per file, which a 300dpi print of these sizes fits inside.
+[[kv_namespaces]]
+binding = "MEDIA"
+id = "f7cb7cd2e8254cf3b67737c8fd5673e8"

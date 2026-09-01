@@ -8,6 +8,13 @@
 // resize an image without a paid image service, and shipping a 40MB master to
 // every visitor is not an option, so the admin page does it on a canvas and
 // sends both files. It costs nothing and keeps the print file off the web.
+//
+// Files live in Workers KV rather than R2. R2 is the natural home for this and
+// R2 requires a card on file even inside its free allowance. KV needs neither,
+// gives 1GB and 100,000 reads a day on the free plan, and costs nothing at this
+// scale. The tradeoff is a hard 25MB ceiling per value, which a 300dpi print of
+// these sizes fits inside comfortably. If the store ever outgrows that, R2 is a
+// small change: only put, get and delete differ.
 
 import {
   SIZES,
@@ -21,7 +28,8 @@ import { randomId, requireAdmin, requireUser, audit, createInvite, AuthError } f
 const nowIso = () => new Date().toISOString();
 
 const MAX_PREVIEW_BYTES = 8 * 1024 * 1024;
-const MAX_PRINT_BYTES = 120 * 1024 * 1024;
+// Workers KV refuses anything larger. Said in the error rather than discovered.
+const MAX_PRINT_BYTES = 25 * 1024 * 1024;
 
 /** Slug from a title. Ids are stable and appear in product ids, so never auto-change one. */
 export function slugify(s) {
@@ -183,15 +191,16 @@ async function uploadImageFile(env, session, id, request, url) {
   const type = request.headers.get('Content-Type') ?? 'application/octet-stream';
 
   const limit = kind === 'print' ? MAX_PRINT_BYTES : MAX_PREVIEW_BYTES;
+  const mb = Math.round(limit / (1024 * 1024));
   const declared = Number(request.headers.get('Content-Length') ?? 0);
-  if (declared > limit) throw new AdminError('That file is too large.', 413);
+  if (declared > limit) throw new AdminError(`That file is over ${mb}MB, which is the limit.`, 413);
 
   const ext = extFor(type);
   const key = `images/${id}/${kind}-${randomId(6)}.${ext}`;
   const body = await request.arrayBuffer();
-  if (body.byteLength > limit) throw new AdminError('That file is too large.', 413);
+  if (body.byteLength > limit) throw new AdminError(`That file is over ${mb}MB, which is the limit.`, 413);
 
-  await env.MEDIA.put(key, body, { httpMetadata: { contentType: type } });
+  await env.MEDIA.put(key, body, { metadata: { contentType: type } });
 
   const old = kind === 'print' ? img.print_key : img.preview_key;
   if (old) await env.MEDIA.delete(old).catch(() => {});
@@ -395,14 +404,17 @@ export async function serveMedia(request, env, url) {
   // signed link, and only for as long as it needs it.
   if (/\/print-/.test(key)) return new Response('Not found', { status: 404 });
 
-  const object = await env.MEDIA.get(key);
-  if (!object) return new Response('Not found', { status: 404 });
+  const { value, metadata } = await env.MEDIA.getWithMetadata(key, { type: 'arrayBuffer' });
+  if (!value) return new Response('Not found', { status: 404 });
 
-  const headers = new Headers();
-  object.writeHttpMetadata(headers);
-  headers.set('etag', object.httpEtag);
-  headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-  return new Response(object.body, { headers });
+  // Keys carry a random suffix and never change contents, so this can be
+  // cached hard. A replaced picture gets a new key.
+  return new Response(value, {
+    headers: {
+      'Content-Type': metadata?.contentType ?? 'application/octet-stream',
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    },
+  });
 }
 
 async function safeJson(request) {
