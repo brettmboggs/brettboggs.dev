@@ -167,14 +167,16 @@ const schema = home
           <span class="puck-hidden">Open navigation</span>
         </button>
         <svg class="puck-stems" viewBox="0 0 160 160" aria-hidden="true">
-          <line pathLength="1" x1="132.8" y1="111.8" x2="113" y2="55" />
-          <line pathLength="1" x1="117.9" y1="117.9" x2="66" y2="82" />
-          <line pathLength="1" x1="111.8" y1="132.8" x2="42" y2="126" />
+          <line pathLength="1" x1="128.4" y1="112.3" x2="113.6" y2="30.4" />
+          <line pathLength="1" x1="120.5" y1="115.8" x2="75.2" y2="56" />
+          <line pathLength="1" x1="114.6" y1="122.3" x2="43.2" y2="88" />
+          <line pathLength="1" x1="112.1" y1="129.2" x2="27.2" y2="126.4" />
         </svg>
         <ul class="puck-menu" id="puck-menu">
           <li><a href="/work/" data-deg="0" aria-current={here === 'work' ? 'page' : undefined}><span class="pk-num">01</span>Work</a></li>
           <li><a href="/lab/" data-deg="64" aria-current={here === 'lab' ? 'page' : undefined}><span class="pk-num">02</span>Lab</a></li>
           <li><a href="/about/" data-deg="-50" aria-current={here === 'about' ? 'page' : undefined}><span class="pk-num">03</span>About</a></li>
+          <li><a href="/store/" data-deg="30" aria-current={here === 'store' ? 'page' : undefined}><span class="pk-num">04</span>Store</a></li>
         </ul>
       </nav>
     )}
@@ -417,6 +419,21 @@ const schema = home
     transform: none;
     pointer-events: auto;
   }
+  /* The flags bloom OUTSIDE the puck's own box, which is just the 3.4rem face.
+     Reaching for one takes the pointer out of .puck, pointerleave fires, and the
+     menu closes before it can be clicked. This is an invisible bridge covering
+     the bloom, so the pointer stays inside. It exists only while open, or it
+     would sit over the page swallowing clicks, and z-index keeps it behind the
+     flags rather than in front of them. */
+  .puck.is-open::before {
+    content: '';
+    position: absolute;
+    right: -0.6rem;
+    bottom: -0.6rem;
+    width: 14rem;
+    height: 11rem;
+    z-index: -1;
+  }
   .puck-face {
     display: grid;
     place-items: center;
@@ -474,9 +491,10 @@ const schema = home
     stroke-dashoffset: 0;
     transition-delay: var(--in-delay, 0s);
   }
-  .puck-stems line:nth-child(1) { --in-delay: 0s;    --out-delay: 0.1s; }
-  .puck-stems line:nth-child(2) { --in-delay: 0.06s; --out-delay: 0.05s; }
-  .puck-stems line:nth-child(3) { --in-delay: 0.12s; --out-delay: 0s; }
+  .puck-stems line:nth-child(1) { --in-delay: 0s;    --out-delay: 0.15s; }
+  .puck-stems line:nth-child(2) { --in-delay: 0.05s; --out-delay: 0.1s; }
+  .puck-stems line:nth-child(3) { --in-delay: 0.1s;  --out-delay: 0.05s; }
+  .puck-stems line:nth-child(4) { --in-delay: 0.15s; --out-delay: 0s; }
 
   .puck-menu {
     list-style: none;
@@ -539,9 +557,10 @@ const schema = home
   .puck-menu a[aria-current='page'] .pk-num {
     color: var(--sunflower);
   }
-  .puck-menu li:nth-child(1) a { --bloom-x: -1.4rem; --bloom-y: -5.4rem; --in-delay: 0s;    --out-delay: 0.1s; }
-  .puck-menu li:nth-child(2) a { --bloom-x: -4.6rem; --bloom-y: -3.4rem; --in-delay: 0.06s; --out-delay: 0.05s; }
-  .puck-menu li:nth-child(3) a { --bloom-x: -6.2rem; --bloom-y: -0.4rem; --in-delay: 0.12s; --out-delay: 0s; }
+  .puck-menu li:nth-child(1) a { --bloom-x: -1.2rem; --bloom-y: -6.4rem; --in-delay: 0s;    --out-delay: 0.15s; }
+  .puck-menu li:nth-child(2) a { --bloom-x: -3.6rem; --bloom-y: -4.8rem; --in-delay: 0.05s; --out-delay: 0.1s; }
+  .puck-menu li:nth-child(3) a { --bloom-x: -5.6rem; --bloom-y: -2.8rem; --in-delay: 0.1s;  --out-delay: 0.05s; }
+  .puck-menu li:nth-child(4) a { --bloom-x: -6.6rem; --bloom-y: -0.4rem; --in-delay: 0.15s; --out-delay: 0s; }
 
   .puck-hidden {
     position: absolute;
