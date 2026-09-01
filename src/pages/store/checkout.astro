@@ -1,8 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 
-const STORE_API = import.meta.env.PUBLIC_STORE_API ?? 'http://127.0.0.1:8788';
-const STRIPE_PK = import.meta.env.PUBLIC_STRIPE_PK ?? '';
+const STORE_API =
+  import.meta.env.PUBLIC_STORE_API ?? 'https://brettboggs-store.brettmboggs.workers.dev';
 const apiOrigin = new URL(STORE_API).origin;
 
 // PCI DSS 4.0.1 leaves requirements 6.4.3 and 11.6.1 with the merchant even
@@ -404,15 +404,12 @@ const csp = [
 </style>
 
 <script>
-  import { readCart, cartItems, money, clearCart } from '../../scripts/store';
+  import { readCart, cartItems, money, clearCart, STORE_API, STRIPE_PK } from '../../scripts/store';
 
   // Read straight from the build-time env rather than a handoff on window.
   // An inline script would be the obvious way to pass these, and the Content
   // Security Policy on this page deliberately forbids inline scripts.
-  const cfg = {
-    api: import.meta.env.PUBLIC_STORE_API ?? 'http://127.0.0.1:8788',
-    pk: import.meta.env.PUBLIC_STRIPE_PK ?? '',
-  };
+  const cfg = { api: STORE_API, pk: STRIPE_PK };
 
   const form = document.getElementById('checkout') as HTMLFormElement;
   const emptyNote = document.getElementById('empty')!;

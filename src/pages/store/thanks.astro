@@ -32,7 +32,7 @@ import Base from '../../layouts/Base.astro';
 </style>
 
 <script>
-  import { clearCart } from '../../scripts/store';
+  import { clearCart, STRIPE_PK } from '../../scripts/store';
 
   const headline = document.getElementById('headline')!;
   const detail = document.getElementById('detail')!;
@@ -47,7 +47,7 @@ import Base from '../../layouts/Base.astro';
     }
   };
 
-  const pk = import.meta.env.PUBLIC_STRIPE_PK ?? '';
+  const pk = STRIPE_PK;
   const secret = new URLSearchParams(window.location.search).get('payment_intent_client_secret');
 
   if (!secret) {

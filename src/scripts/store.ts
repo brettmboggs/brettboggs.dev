@@ -6,8 +6,22 @@
 // checkout from its own catalog. Nothing the browser believes about money is
 // ever trusted, including by this file.
 
+// The deployed Worker is the DEFAULT, not the fallback.
+//
+// These are compiled into the bundle at build time, and the CI build has no
+// .env file. Defaulting to localhost meant the published page asked every
+// visitor's own machine for the catalogue, which is why a deployed store looked
+// empty while it worked perfectly in development.
+//
+// Both values are public by design: a hostname, and a Stripe publishable key
+// that is meant to sit in the browser. Set PUBLIC_STORE_API in .env to point at
+// a local Worker while developing.
 export const STORE_API =
-  import.meta.env.PUBLIC_STORE_API ?? 'http://127.0.0.1:8788';
+  import.meta.env.PUBLIC_STORE_API ?? 'https://brettboggs-store.brettmboggs.workers.dev';
+
+export const STRIPE_PK =
+  import.meta.env.PUBLIC_STRIPE_PK ??
+  'pk_test_51UAtaB2Yr32StLP0VmliMflz813vYNkeWRSg2WMAnywpTggPKs3JOG5szgXnhJ2J0d2uL91iiLPf3ZdAS3IeJSqw00p6YQZ8cg';
 
 export type Dims = { w: number; h: number; units: string };
 
