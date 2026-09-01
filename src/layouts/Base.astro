@@ -281,12 +281,38 @@ const schema = home
           face.setAttribute('aria-expanded', String(open));
           if (!open) aim(homeDeg);
         }
+        // a mouse opens the puck by arriving and closes it by leaving. a finger
+        // has no arrive or leave, only the tap, so it gets the toggle alone: a
+        // tap that also fired pointerenter and focus would open and close the
+        // menu in the same instant, which is what a phone used to see here.
+        let byTouch = false;
+        puckEl.addEventListener('pointerdown', (e) => {
+          byTouch = e.pointerType !== 'mouse';
+        });
         face.addEventListener('click', () => setOpen(!puckEl.classList.contains('is-open')));
-        puckEl.addEventListener('pointerenter', () => setOpen(true));
-        puckEl.addEventListener('pointerleave', () => setOpen(false));
-        puckEl.addEventListener('focusin', () => setOpen(true));
+        puckEl.addEventListener('pointerenter', (e) => {
+          if (e.pointerType === 'mouse') setOpen(true);
+        });
+        puckEl.addEventListener('pointerleave', (e) => {
+          if (e.pointerType === 'mouse') setOpen(false);
+        });
+        puckEl.addEventListener('focusin', () => {
+          if (!byTouch) setOpen(true);
+        });
         puckEl.addEventListener('focusout', (e) => {
           if (!puckEl.contains(e.relatedTarget as Node)) setOpen(false);
+        });
+        // a tap on the page, or on the invisible bridge under the flags, closes it
+        document.addEventListener('pointerdown', (e) => {
+          if (!puckEl!.classList.contains('is-open')) return;
+          const t = e.target as Node;
+          if (t === puckEl || !puckEl!.contains(t)) setOpen(false);
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && puckEl!.classList.contains('is-open')) {
+            setOpen(false);
+            face.blur();
+          }
         });
         links.forEach((a) => {
           const point = (): void => aim(a.dataset.deg ?? '0');
@@ -433,6 +459,12 @@ const schema = home
   .foot-nav a:hover,
   .foot-nav a:focus-visible {
     color: var(--rust);
+  }
+  /* on a phone the puck sits over the footer's corner; leave it room */
+  @media (max-width: 640px) {
+    .site-footer:not(.floating) {
+      padding-bottom: 6rem;
+    }
   }
   /* the homepage ends on the film's settled frame: the footer is not part of
      the scroll there. it floats up over the render as the station assembles,

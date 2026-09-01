@@ -36,8 +36,9 @@ const H = 480;
 // given), then cut a 3:2 window `top` pixels down from a 1440-wide render;
 // `left` and `width` narrow the window, otherwise it is the middle 1200px.
 const shots = {
-  datum: { file: 'public/datum-stack-hero/poster.webp' },
-  photography: { file: 'public/photo/stone-sugar/hero.webp' },
+  // the mark alone on Datum's ink: the render reads soft at plate size
+  datum: { mark: 'tools/datum-mark-cream.png', bg: '#1e2022', size: 0.36 },
+  photography: { file: 'public/photo/ked/flare.webp' },
   eclipse: { file: 'public/photo/eclipse/plane-transit-760.webp' },
   'live-music': { file: 'public/photo/stone-sugar/f02.webp' },
   commercial: { file: 'public/photo/ked/estate.webp' },
@@ -161,6 +162,18 @@ for (const [id, shot] of Object.entries(shots)) {
   if (only && !only.includes(id)) continue;
   const out = path.join(OUT, `${id}.webp`);
   const large = path.join(OUT, `${id}-lg.webp`);
+  if (shot.mark) {
+    // a logo set on a flat ground, at both sizes
+    for (const [w, h, file] of [[W, H, out], [W * 2, H * 2, large]]) {
+      const mark = await sharp(path.resolve(shot.mark)).resize({ height: Math.round(h * shot.size) }).toBuffer();
+      await sharp({ create: { width: w, height: h, channels: 3, background: shot.bg } })
+        .composite([{ input: mark, gravity: 'centre' }])
+        .webp({ quality: 82 })
+        .toFile(file);
+    }
+    console.log(`peek: ${id} from ${shot.mark}`);
+    continue;
+  }
   if (shot.file) {
     const src = sharp(path.resolve(shot.file));
     await src.clone().resize(W, H, { fit: 'cover', position: 'attention' }).webp({ quality: 78 }).toFile(out);
