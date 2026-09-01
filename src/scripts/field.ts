@@ -1,4 +1,4 @@
-// The Field — a prairie computed live. Compute passes integrate every grass
+// The Field, a prairie computed live. Compute passes integrate every grass
 // blade as a spring driven by a traveling wind field, and a drift of seeds
 // riding the same wind; render passes draw a warm sky, the blades back to
 // front, then the seeds in the air. Blades bent by a gust catch the low sun,

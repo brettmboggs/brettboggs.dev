@@ -99,7 +99,7 @@ export function initFilm({ canvas, pinTarget, frameCount, onProgress }: FilmOpti
     img.onload = settle;
     img.onerror = settle;
     img.src = url(i);
-    // pre-warm off the scroll path — a first drawImage on an undecoded frame stalls the main
+    // pre-warm off the scroll path: a first drawImage on an undecoded frame stalls the main
     // thread. best effort only: decode() never settles in a tab that isn't compositing.
     img.decode().then(settle, () => {});
   }
