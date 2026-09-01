@@ -107,6 +107,7 @@ export async function loadProducts(db, { all = false } = {}) {
         imageTitle: img.title,
         sizeId,
         printKey: img.print_key,
+        previewKey: img.preview_key,
         tier: img.tier,
         tierLabel: tier.label,
         editionLimit: tier.limit ?? null,
@@ -129,6 +130,7 @@ export async function loadProducts(db, { all = false } = {}) {
       imageTitle: null,
       sizeId: null,
       printKey: g.asset_key,
+      previewKey: g.preview_key,
       tierLabel: null,
       editionLimit: null,
     };
@@ -156,6 +158,10 @@ export async function publicCatalog(db) {
       imageId: p.imageId,
       imageTitle: p.imageTitle,
       sizeId: p.sizeId,
+      // Where the picture actually is. The store used to guess this from a
+      // naming convention, which broke the moment uploads became real files
+      // with random names.
+      previewKey: p.previewKey ?? null,
     }));
 }
 

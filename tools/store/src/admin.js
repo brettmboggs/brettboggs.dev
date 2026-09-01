@@ -52,7 +52,10 @@ export function aspectFor(width, height) {
   let best = null;
   for (const c of candidates) {
     const diff = Math.abs(r - c.value);
-    if (!best || diff < best.diff) best = { name: c.name, diff };
+    // `value` has to travel with the winner: the tolerance below is relative to
+    // it, and without it the comparison is against undefined and every picture
+    // comes back shapeless.
+    if (!best || diff < best.diff) best = { name: c.name, diff, value: c.value };
   }
   // More than about 6% off and it is a different shape. Offering a size that
   // does not fit means a print arrives cropped, which is worse than no listing.
@@ -336,7 +339,10 @@ export async function handleAdmin(request, env, url, session, json) {
   requireAdmin(session);
   const path = url.pathname.replace(/^\/admin/, '');
   const method = request.method;
-  const body = method === 'GET' || method === 'DELETE' ? {} : await safeJson(request);
+  // Only the JSON routes get parsed here. A PUT carries a file, and reading it
+  // as JSON first consumes the stream, so the upload handler finds an empty
+  // body and the whole request dies with "Body has already been used".
+  const body = method === 'POST' || method === 'PATCH' ? await safeJson(request) : {};
 
   // Everything the panel needs to draw itself in one call.
   if (path === '/bootstrap' && method === 'GET') {

@@ -328,7 +328,7 @@ import Base from '../../layouts/Base.astro';
 </style>
 
 <script>
-  import { fetchCatalog, readCart, setQty, cartCount, money, STORE_API, type Product } from '../../scripts/store';
+  import { fetchCatalog, readCart, setQty, cartCount, money, mediaUrl, STORE_API, type Product } from '../../scripts/store';
   import { scaleFigure } from '../../scripts/scaleFigure';
 
   const shelf = document.getElementById('shelf')!;
@@ -338,7 +338,14 @@ import Base from '../../layouts/Base.astro';
 
   let products: Product[] = [];
 
-  type Group = { key: string; title: string; blurb: string; tier: string | null; items: Product[] };
+  type Group = {
+    key: string;
+    title: string;
+    blurb: string;
+    tier: string | null;
+    preview: string | null;
+    items: Product[];
+  };
 
   /** Prints group under their picture. Everything else stands alone. */
   function group(list: Product[]): Group[] {
@@ -349,12 +356,19 @@ import Base from '../../layouts/Base.astro';
       if (p.imageId) {
         let g = byImage.get(p.imageId);
         if (!g) {
-          g = { key: p.imageId, title: p.imageTitle ?? p.name, blurb: p.blurb, tier: p.tierLabel, items: [] };
+          g = {
+            key: p.imageId,
+            title: p.imageTitle ?? p.name,
+            blurb: p.blurb,
+            tier: p.tierLabel,
+            preview: p.previewKey,
+            items: [],
+          };
           byImage.set(p.imageId, g);
         }
         g.items.push(p);
       } else {
-        singles.push({ key: p.id, title: p.name, blurb: p.blurb, tier: null, items: [p] });
+        singles.push({ key: p.id, title: p.name, blurb: p.blurb, tier: null, preview: p.previewKey, items: [p] });
       }
     }
     // Sizes ascending by price so the ladder reads small to large.
@@ -377,13 +391,13 @@ import Base from '../../layouts/Base.astro';
       section.className = 'work reveal';
       section.style.setProperty('--delay', `${i * 0.06}s`);
 
-      // Every group may carry a picture, found at /photo/store/<key>.webp.
-      // For prints the key is the image id; for goods it is the product id.
-      {
+      // The picture comes from wherever it was uploaded to, not from a name we
+      // hope exists.
+      if (g.preview) {
         const fig = document.createElement('figure');
         fig.className = 'work-figure';
         const img = document.createElement('img');
-        img.src = `/photo/store/${g.key}.webp`;
+        img.src = mediaUrl(g.preview);
         img.alt = g.title;
         img.loading = 'lazy';
         img.decoding = 'async';

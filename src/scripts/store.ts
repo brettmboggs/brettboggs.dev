@@ -39,7 +39,12 @@ export type Product = {
   imageId: string | null;
   imageTitle: string | null;
   sizeId: string | null;
+  /** Where the picture lives, uploaded from the admin panel. */
+  previewKey: string | null;
 };
+
+/** A stored file, served by the Worker. */
+export const mediaUrl = (key: string) => `${STORE_API}/media/${key}`;
 
 export type Cart = Record<string, number>;
 
