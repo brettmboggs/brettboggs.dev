@@ -230,19 +230,9 @@ const prodigiBase = (env) =>
 // Prodigi has no 13x19. GLOBAL-FAP-16X24 is 40x60cm / 16x24in on Enhanced Matte
 // Art 200gsm; GLOBAL-FAP-A2 is 42x59.4cm. The catalog still calls this product
 // "13 x 19", so either the name or the SKU has to change before it sells.
-const PROD_SKUS = {
-  'cards-deck': {
-    sku: 'PLAY-CARD',
-    // Prodigi accepts only fillPrintArea, fitPrintArea or stretchToPrintArea.
-    // 'fill' reads as reasonable and is rejected with a validation error.
-    sizing: 'fillPrintArea',
-    // PLACEHOLDER. A plain plate at card size, so the sandbox has a real file
-    // to fetch and the flow can be walked end to end. The actual card artwork
-    // is not hosted anywhere yet. MUST become a signed R2 URL to the real file
-    // before a single deck is printed for money.
-    assetUrl: 'https://brettboggs.dev/store/placeholder-card.jpg',
-  },
-};
+// Products needing a hand-written SKU. Empty: prints carry their own SKU and
+// print file, both set from the admin panel.
+const PROD_SKUS = {};
 
 // Prints carry their SKU on the line item, so they need no hand-written entry.
 // What they still lack is a hosted print file per image, which is the next

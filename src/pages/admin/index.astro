@@ -1,0 +1,821 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// The panel. Pictures, prices, descriptions, publishing and client access, all
+// without a deploy. Everything here talks to the store Worker, which checks the
+// session on every request: nothing is trusted because this page drew it.
+---
+
+<Base title="Admin" description="Store admin." noindex={true} puck={false} noServiceWorker={true}>
+  <header class="page-head">
+    <p class="eyebrow">Admin</p>
+    <h1 id="head">Admin</h1>
+    <p class="lede" id="lede">Checking.</p>
+  </header>
+
+  <section id="signin" hidden>
+    <button class="go" id="signin-btn" type="button">Sign in with a passkey</button>
+    <p class="note" id="signin-note" hidden></p>
+  </section>
+
+  <div id="panel" hidden>
+    <nav class="tabs">
+      <button class="tab is-on" data-tab="images" type="button">Pictures</button>
+      <button class="tab" data-tab="goods" type="button">Other items</button>
+      <button class="tab" data-tab="people" type="button">People</button>
+      <button class="tab" data-tab="orders" type="button">Orders</button>
+    </nav>
+
+    <p class="note" id="msg" hidden></p>
+
+    <section class="pane" id="pane-images">
+      <div class="pane-head">
+        <h2>Pictures</h2>
+        <button class="add" id="add-image" type="button">Add a picture</button>
+      </div>
+      <div id="images"></div>
+    </section>
+
+    <section class="pane" id="pane-goods" hidden>
+      <div class="pane-head">
+        <h2>Other items</h2>
+        <button class="add" id="add-good" type="button">Add an item</button>
+      </div>
+      <div id="goods"></div>
+    </section>
+
+    <section class="pane" id="pane-people" hidden>
+      <div class="pane-head">
+        <h2>People</h2>
+        <button class="add" id="add-user" type="button">Invite someone</button>
+      </div>
+      <div id="people"></div>
+    </section>
+
+    <section class="pane" id="pane-orders" hidden>
+      <div class="pane-head"><h2>Orders</h2></div>
+      <div id="orders"></div>
+    </section>
+
+    <button class="signout" id="signout" type="button">Sign out</button>
+  </div>
+
+  <a class="back-link" href="/">&larr; Home</a>
+</Base>
+
+<style is:global>
+  #panel .tabs {
+    display: flex;
+    gap: 0.2rem;
+    margin-top: 2.5rem;
+    border-bottom: 1px solid color-mix(in oklab, var(--ink) 20%, transparent);
+  }
+  #panel .tab {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    padding: 0.6rem 0.9rem;
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  #panel .tab.is-on {
+    color: var(--ink);
+    border-bottom-color: var(--sienna);
+  }
+  #panel .pane-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  #panel .pane-head h2 {
+    font-family: var(--display);
+    font-size: 1.3rem;
+    margin: 0;
+  }
+  #panel .add,
+  .go,
+  .signout {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid var(--sienna);
+    padding: 0.25rem 0;
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .go {
+    display: block;
+    margin-top: 2rem;
+    background: var(--ink);
+    color: var(--paper);
+    border: 0;
+    padding: 0.85rem 1.4rem;
+    font-family: var(--display);
+    font-size: 1.05rem;
+  }
+  .signout {
+    margin-top: 3rem;
+    color: var(--ink-soft);
+    border-bottom-color: color-mix(in oklab, var(--ink) 30%, transparent);
+  }
+  .note {
+    margin: 1.2rem 0 0;
+    padding: 0.7rem 0.9rem;
+    border-left: 3px solid var(--sienna);
+    background: color-mix(in oklab, var(--sunflower) 12%, transparent);
+    font-size: 0.9rem;
+  }
+  .note.bad {
+    border-color: var(--rust);
+    background: color-mix(in oklab, var(--rust) 12%, transparent);
+  }
+
+  /* one record */
+  #panel .row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0 1.2rem;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--ink) 14%, transparent);
+  }
+  #panel .row-thumb {
+    aspect-ratio: 3 / 2;
+    background: color-mix(in oklab, var(--paper-deep) 70%, transparent);
+    border: 1px dashed color-mix(in oklab, var(--ink) 25%, transparent);
+    display: grid;
+    place-items: center;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--ink-soft);
+    text-align: center;
+    overflow: hidden;
+  }
+  #panel .row-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  #panel .row-body {
+    min-width: 0;
+  }
+  #panel .row-title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  #panel .row-title strong {
+    font-family: var(--display);
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+  #panel .pill {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.4rem;
+    border: 1px solid color-mix(in oklab, var(--ink) 25%, transparent);
+    color: var(--ink-soft);
+  }
+  #panel .pill.live {
+    color: var(--olive);
+    border-color: var(--olive);
+  }
+  #panel .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.7rem 1rem;
+    margin-top: 0.9rem;
+  }
+  #panel label.f {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+  }
+  #panel label.f input,
+  #panel label.f select,
+  #panel label.f textarea {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    appearance: none;
+    background: color-mix(in oklab, var(--paper-deep) 55%, transparent);
+    border: 0;
+    border-bottom: 1.5px solid color-mix(in oklab, var(--ink) 30%, transparent);
+    padding: 0.4rem 0.5rem;
+    font: inherit;
+    font-size: 0.88rem;
+    color: var(--ink);
+  }
+  #panel label.f textarea {
+    min-height: 4.5rem;
+    resize: vertical;
+  }
+  #panel label.f input:focus,
+  #panel label.f select:focus,
+  #panel label.f textarea:focus {
+    outline: none;
+    border-bottom-color: var(--sienna);
+  }
+  #panel .sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-top: 0.9rem;
+  }
+  #panel .size-opt {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+  }
+  #panel .size-opt input[type='number'] {
+    width: 5.5rem;
+    background: color-mix(in oklab, var(--paper-deep) 55%, transparent);
+    border: 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
+    padding: 0.2rem 0.3rem;
+    font: inherit;
+    font-size: 0.75rem;
+  }
+  #panel .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.1rem;
+    align-items: center;
+  }
+  #panel .actions button {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 1.5px solid var(--sienna);
+    padding: 0.15rem 0;
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  #panel .actions button.danger {
+    border-color: var(--rust);
+    color: var(--rust);
+  }
+  #panel .actions button:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  #panel .file {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+  }
+  #panel table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+  }
+  #panel th {
+    text-align: left;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.62rem;
+    color: var(--ink-soft);
+    padding: 0.4rem 0.6rem 0.4rem 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--ink) 20%, transparent);
+  }
+  #panel td {
+    padding: 0.5rem 0.6rem 0.5rem 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--ink) 10%, transparent);
+    vertical-align: top;
+  }
+  #panel .invite {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    word-break: break-all;
+    background: color-mix(in oklab, var(--sunflower) 14%, transparent);
+    padding: 0.5rem 0.6rem;
+    margin-top: 0.5rem;
+  }
+</style>
+
+<script>
+  import { api, signIn, signOut, shrink, uploadFile, mediaUrl, money, parseMoney } from '../../scripts/admin';
+
+  const $ = (id: string) => document.getElementById(id)!;
+  const head = $('head');
+  const lede = $('lede');
+  const signinBox = $('signin');
+  const panel = $('panel');
+  const msg = $('msg');
+
+  let state: any = null;
+
+  const say = (text: string, bad = false) => {
+    msg.textContent = text;
+    msg.classList.toggle('bad', bad);
+    msg.hidden = false;
+    if (!bad) setTimeout(() => (msg.hidden = true), 4000);
+  };
+
+  const el = (tag: string, cls?: string, text?: string) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+
+  function field(labelText: string, input: HTMLElement) {
+    const l = el('label', 'f');
+    l.appendChild(document.createTextNode(labelText));
+    l.appendChild(input);
+    return l;
+  }
+
+  const input = (value: string, attrs: Record<string, string> = {}) => {
+    const i = document.createElement('input');
+    i.type = attrs.type ?? 'text';
+    i.value = value ?? '';
+    for (const [k, v] of Object.entries(attrs)) if (k !== 'type') i.setAttribute(k, v);
+    return i;
+  };
+
+  const textarea = (value: string) => {
+    const t = document.createElement('textarea');
+    t.value = value ?? '';
+    return t;
+  };
+
+  // --- boot ------------------------------------------------------------------
+
+  async function boot() {
+    const me = await api('/auth/me');
+    if (!me.signedIn) {
+      lede.textContent = 'Sign in to manage the store.';
+      signinBox.hidden = false;
+      return;
+    }
+    if (me.role !== 'admin') {
+      lede.textContent = 'This account cannot manage the store.';
+      return;
+    }
+    await load();
+  }
+
+  async function load() {
+    state = await api('/admin/bootstrap');
+    head.textContent = 'Admin';
+    lede.textContent = state.storageReady
+      ? 'Add pictures, set prices, publish. Changes are live immediately.'
+      : 'File storage is not switched on yet, so pictures cannot be uploaded.';
+    signinBox.hidden = true;
+    panel.hidden = false;
+    renderImages();
+    renderGoods();
+    renderPeople();
+    renderOrders();
+  }
+
+  $('signin-btn').addEventListener('click', async () => {
+    const note = $('signin-note');
+    note.hidden = false;
+    note.textContent = 'Follow the prompt from your device.';
+    try {
+      await signIn();
+      note.hidden = true;
+      await load();
+    } catch (err: any) {
+      note.textContent = err?.message ?? 'That did not work.';
+      note.classList.add('bad');
+    }
+  });
+
+  $('signout').addEventListener('click', async () => {
+    await signOut();
+    location.reload();
+  });
+
+  document.querySelectorAll('.tab').forEach((tab) =>
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('is-on', t === tab));
+      const want = (tab as HTMLElement).dataset.tab;
+      for (const name of ['images', 'goods', 'people', 'orders']) {
+        ($(`pane-${name}`) as HTMLElement).hidden = name !== want;
+      }
+    }),
+  );
+
+  // --- pictures --------------------------------------------------------------
+
+  function renderImages() {
+    const host = $('images');
+    host.innerHTML = '';
+    if (!state.images.length) {
+      host.appendChild(el('p', 'empty-note', 'No pictures yet.'));
+      return;
+    }
+    for (const img of state.images) host.appendChild(imageRow(img));
+  }
+
+  function imageRow(img: any) {
+    const row = el('div', 'row');
+
+    const thumb = el('div', 'row-thumb');
+    if (img.preview_key) {
+      const i = document.createElement('img');
+      i.src = mediaUrl(img.preview_key);
+      i.alt = img.title;
+      thumb.appendChild(i);
+    } else {
+      thumb.textContent = 'no picture';
+    }
+    row.appendChild(thumb);
+
+    const body = el('div', 'row-body');
+
+    const title = el('div', 'row-title');
+    title.appendChild(el('strong', undefined, img.title));
+    title.appendChild(el('span', `pill ${img.status === 'live' ? 'live' : ''}`, img.status));
+    if (img.aspect) title.appendChild(el('span', 'pill', img.aspect));
+    body.appendChild(title);
+
+    const grid = el('div', 'grid');
+    const fTitle = input(img.title);
+    const fTier = document.createElement('select');
+    for (const [key, tier] of Object.entries(state.tiers) as any) {
+      const o = document.createElement('option');
+      o.value = key;
+      o.textContent = `${key} (${tier.label})`;
+      if (key === img.tier) o.selected = true;
+      fTier.appendChild(o);
+    }
+    grid.appendChild(field('Title', fTitle));
+    grid.appendChild(field('Tier', fTier));
+    body.appendChild(grid);
+
+    const fBlurb = textarea(img.blurb ?? '');
+    body.appendChild(field('Short description, shown on the store', fBlurb));
+
+    // Sizes and prices. Unticked means not offered; blank price means use the
+    // ladder for that tier.
+    const sizes = el('div', 'sizes');
+    const chosen = new Set(img.sizes ?? []);
+    const priceInputs: Record<string, HTMLInputElement> = {};
+    const sizeChecks: Record<string, HTMLInputElement> = {};
+
+    for (const [sizeId, size] of Object.entries(state.sizes) as any) {
+      const wrap = el('label', 'size-opt');
+      const check = input('', { type: 'checkbox' }) as HTMLInputElement;
+      check.checked = chosen.has(sizeId);
+      // A size of the wrong shape would arrive cropped, so it cannot be picked.
+      if (img.aspect && size.aspect !== img.aspect) {
+        check.disabled = true;
+        check.checked = false;
+        wrap.title = `This picture is ${img.aspect}; that size is ${size.aspect}.`;
+      }
+      sizeChecks[sizeId] = check;
+
+      const price = input(img.overrides?.[sizeId] != null ? String(img.overrides[sizeId] / 100) : '', {
+        type: 'number',
+        step: '1',
+        min: '0',
+        placeholder: String((img.effectivePrices?.[sizeId] ?? size.base) / 100),
+      }) as HTMLInputElement;
+      priceInputs[sizeId] = price;
+
+      wrap.appendChild(check);
+      wrap.appendChild(document.createTextNode(sizeId));
+      wrap.appendChild(price);
+      sizes.appendChild(wrap);
+    }
+    body.appendChild(sizes);
+
+    const files = el('p', 'file');
+    files.textContent = `${img.preview_key ? 'preview set' : 'no preview'} · ${img.print_key ? 'print file set' : 'no print file'}`;
+    body.appendChild(files);
+
+    const actions = el('div', 'actions');
+
+    const pick = (labelText: string, kind: 'preview' | 'print') => {
+      const b = el('button', undefined, labelText) as HTMLButtonElement;
+      b.disabled = !state.storageReady;
+      b.addEventListener('click', () => choose(img.id, kind, b));
+      return b;
+    };
+    actions.appendChild(pick('Upload picture', 'preview'));
+    actions.appendChild(pick('Upload print file', 'print'));
+
+    const save = el('button', undefined, 'Save') as HTMLButtonElement;
+    save.addEventListener('click', async () => {
+      save.disabled = true;
+      const prices: Record<string, number> = {};
+      for (const [sizeId, box] of Object.entries(priceInputs)) {
+        const cents = box.value.trim() ? parseMoney(box.value) : null;
+        if (cents != null) prices[sizeId] = cents;
+      }
+      try {
+        await api(`/admin/images/${img.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            title: fTitle.value,
+            blurb: fBlurb.value,
+            tier: fTier.value,
+            sizes: Object.entries(sizeChecks).filter(([, c]) => c.checked).map(([s]) => s),
+            prices,
+          }),
+        });
+        say('Saved.');
+        await load();
+      } catch (err: any) {
+        say(err.message, true);
+      }
+      save.disabled = false;
+    });
+    actions.appendChild(save);
+
+    const pub = el('button', undefined, img.status === 'live' ? 'Unpublish' : 'Publish') as HTMLButtonElement;
+    pub.addEventListener('click', async () => {
+      pub.disabled = true;
+      try {
+        await api(`/admin/images/${img.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            status: img.status === 'live' ? 'draft' : 'live',
+            sizes: Object.entries(sizeChecks).filter(([, c]) => c.checked).map(([s]) => s),
+          }),
+        });
+        await load();
+      } catch (err: any) {
+        say(err.message, true);
+        pub.disabled = false;
+      }
+    });
+    actions.appendChild(pub);
+
+    const del = el('button', 'danger', 'Delete') as HTMLButtonElement;
+    del.addEventListener('click', async () => {
+      if (!confirm(`Delete "${img.title}" and its files? This cannot be undone.`)) return;
+      try {
+        await api(`/admin/images/${img.id}`, { method: 'DELETE' });
+        await load();
+      } catch (err: any) {
+        say(err.message, true);
+      }
+    });
+    actions.appendChild(del);
+
+    body.appendChild(actions);
+    row.appendChild(body);
+    return row;
+  }
+
+  /** Opens a file picker and uploads. Previews are shrunk here first. */
+  function choose(imageId: string, kind: 'preview' | 'print', button: HTMLButtonElement) {
+    const picker = document.createElement('input');
+    picker.type = 'file';
+    picker.accept = kind === 'print' ? 'image/*,.tif,.tiff' : 'image/*';
+    picker.addEventListener('change', async () => {
+      const file = picker.files?.[0];
+      if (!file) return;
+      const original = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Uploading';
+      try {
+        if (kind === 'preview') {
+          const small = await shrink(file);
+          await uploadFile(imageId, 'preview', small.blob, small.width, small.height);
+        } else {
+          // The print file goes up untouched. Its pixel size decides the shape,
+          // so read that before sending.
+          const dims = await readSize(file).catch(() => null);
+          await uploadFile(imageId, 'print', file, dims?.width, dims?.height);
+        }
+        say('Uploaded.');
+        await load();
+      } catch (err: any) {
+        say(err.message, true);
+        button.disabled = false;
+        button.textContent = original ?? 'Upload';
+      }
+    });
+    picker.click();
+  }
+
+  function readSize(file: File): Promise<{ width: number; height: number }> {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('unreadable'));
+      };
+      img.src = url;
+    });
+  }
+
+  $('add-image').addEventListener('click', async () => {
+    const title = prompt('What is this picture called?');
+    if (!title) return;
+    try {
+      await api('/admin/images', { method: 'POST', body: JSON.stringify({ title }) });
+      await load();
+    } catch (err: any) {
+      say(err.message, true);
+    }
+  });
+
+  // --- other items -----------------------------------------------------------
+
+  function renderGoods() {
+    const host = $('goods');
+    host.innerHTML = '';
+    if (!state.goods.length) {
+      host.appendChild(el('p', 'empty-note', 'Nothing here.'));
+      return;
+    }
+    for (const g of state.goods) {
+      const row = el('div', 'row');
+      row.appendChild(el('div', 'row-thumb', g.kind));
+      const body = el('div', 'row-body');
+
+      const title = el('div', 'row-title');
+      title.appendChild(el('strong', undefined, g.name));
+      title.appendChild(el('span', `pill ${g.status === 'live' ? 'live' : ''}`, g.status));
+      body.appendChild(title);
+
+      const grid = el('div', 'grid');
+      const fName = input(g.name);
+      const fPrice = input(String(g.price / 100), { type: 'number', step: '1', min: '0' });
+      grid.appendChild(field('Name', fName));
+      grid.appendChild(field('Price', fPrice));
+      body.appendChild(grid);
+
+      const fBlurb = textarea(g.blurb ?? '');
+      body.appendChild(field('Description', fBlurb));
+
+      const actions = el('div', 'actions');
+      const save = el('button', undefined, 'Save');
+      save.addEventListener('click', async () => {
+        try {
+          await api(`/admin/goods/${g.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ name: fName.value, blurb: fBlurb.value, price: parseMoney(fPrice.value) ?? g.price }),
+          });
+          say('Saved.');
+          await load();
+        } catch (err: any) {
+          say(err.message, true);
+        }
+      });
+      const pub = el('button', undefined, g.status === 'live' ? 'Unpublish' : 'Publish');
+      pub.addEventListener('click', async () => {
+        try {
+          await api(`/admin/goods/${g.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: g.status === 'live' ? 'draft' : 'live' }),
+          });
+          await load();
+        } catch (err: any) {
+          say(err.message, true);
+        }
+      });
+      actions.append(save, pub);
+      body.appendChild(actions);
+      row.appendChild(body);
+      host.appendChild(row);
+    }
+  }
+
+  $('add-good').addEventListener('click', async () => {
+    const name = prompt('What is this item called?');
+    if (!name) return;
+    try {
+      await api('/admin/goods', { method: 'POST', body: JSON.stringify({ name, kind: 'pod', price: 0 }) });
+      await load();
+    } catch (err: any) {
+      say(err.message, true);
+    }
+  });
+
+  // --- people ----------------------------------------------------------------
+
+  function renderPeople() {
+    const host = $('people');
+    host.innerHTML = '';
+    const table = document.createElement('table');
+    table.innerHTML =
+      '<thead><tr><th>Email</th><th>Role</th><th>Status</th><th>Passkeys</th><th></th></tr></thead>';
+    const tbody = document.createElement('tbody');
+
+    for (const u of state.users) {
+      const tr = document.createElement('tr');
+      tr.appendChild(el('td', undefined, u.email));
+      tr.appendChild(el('td', undefined, u.role));
+      tr.appendChild(el('td', undefined, u.status));
+      tr.appendChild(el('td', undefined, String(u.passkeys)));
+
+      const td = document.createElement('td');
+      const actions = el('div', 'actions');
+      actions.style.margin = '0';
+
+      const invite = el('button', undefined, 'New invite link');
+      invite.addEventListener('click', async () => {
+        try {
+          const r = await api(`/admin/users/${u.id}/invite`, { method: 'POST', body: '{}' });
+          const box = el('div', 'invite', `${location.origin}/admin/enroll/?t=${r.inviteToken}`);
+          td.appendChild(box);
+        } catch (err: any) {
+          say(err.message, true);
+        }
+      });
+      actions.appendChild(invite);
+
+      if (u.id !== state.me.id) {
+        const toggle = el('button', u.status === 'active' ? 'danger' : '', u.status === 'active' ? 'Revoke' : 'Restore');
+        toggle.addEventListener('click', async () => {
+          try {
+            await api(`/admin/users/${u.id}/status`, {
+              method: 'POST',
+              body: JSON.stringify({ status: u.status === 'active' ? 'revoked' : 'active' }),
+            });
+            await load();
+          } catch (err: any) {
+            say(err.message, true);
+          }
+        });
+        actions.appendChild(toggle);
+      }
+
+      td.appendChild(actions);
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+    }
+
+    table.appendChild(tbody);
+    host.appendChild(table);
+  }
+
+  $('add-user').addEventListener('click', async () => {
+    const email = prompt('Their email address');
+    if (!email) return;
+    const role = confirm('OK for a client, Cancel to make them an admin') ? 'client' : 'admin';
+    try {
+      const r = await api('/admin/users', { method: 'POST', body: JSON.stringify({ email, role }) });
+      await load();
+      say('Invited. Copy the link from their row.');
+      const box = el('div', 'invite', `${location.origin}/admin/enroll/?t=${r.inviteToken}`);
+      $('people').prepend(box);
+    } catch (err: any) {
+      say(err.message, true);
+    }
+  });
+
+  // --- orders ----------------------------------------------------------------
+
+  function renderOrders() {
+    const host = $('orders');
+    host.innerHTML = '';
+    if (!state.orders.length) {
+      host.appendChild(el('p', 'empty-note', 'No orders yet.'));
+      return;
+    }
+    const table = document.createElement('table');
+    table.innerHTML =
+      '<thead><tr><th>When</th><th>Status</th><th>Charged</th><th>Cost</th><th>Kept</th><th>Email</th></tr></thead>';
+    const tbody = document.createElement('tbody');
+    for (const o of state.orders) {
+      const cost = (o.cost_print ?? 0) + (o.cost_ship ?? 0);
+      const tr = document.createElement('tr');
+      tr.appendChild(el('td', undefined, new Date(o.created_at).toLocaleDateString()));
+      tr.appendChild(el('td', undefined, o.status));
+      tr.appendChild(el('td', undefined, money(o.amount_total)));
+      tr.appendChild(el('td', undefined, cost ? money(cost) : '-'));
+      tr.appendChild(el('td', undefined, cost ? money(o.amount_total - cost) : '-'));
+      tr.appendChild(el('td', undefined, o.email));
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    host.appendChild(table);
+  }
+
+  boot().catch((err) => {
+    lede.textContent = err?.message ?? 'Could not reach the store.';
+  });
+</script>

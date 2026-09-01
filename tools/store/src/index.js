@@ -12,6 +12,18 @@
 // calling this Worker with a signed event is the only evidence that counts.
 
 import { publicCatalog, priceCart, assertSellable, CartError } from './catalog.js';
+import {
+  startEnrollment,
+  finishEnrollment,
+  startLogin,
+  finishLogin,
+  readSession,
+  endSession,
+  sessionCookie,
+  clearCookie,
+  AuthError,
+} from './auth.js';
+import { handleAdmin, serveMedia, AdminError } from './admin.js';
 import { createPaymentIntent, verifyWebhook, SignatureError, StripeError } from './stripe.js';
 import {
   newId,
@@ -33,8 +45,11 @@ function corsHeaders(request) {
   return ALLOWED_ORIGINS.has(origin)
     ? {
         'Access-Control-Allow-Origin': origin,
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
+        // The admin panel lives on the site and this API on workers.dev, so the
+        // session cookie is cross origin and needs saying so explicitly.
+        'Access-Control-Allow-Credentials': 'true',
         Vary: 'Origin',
       }
     : { Vary: 'Origin' };
@@ -57,7 +72,17 @@ export default {
 
     try {
       if (url.pathname === '/catalog' && request.method === 'GET') {
-        return json({ products: publicCatalog() }, 200, request);
+        return json({ products: await publicCatalog(env.DB) }, 200, request);
+      }
+      if (url.pathname.startsWith('/media/')) {
+        return serveMedia(request, env, url);
+      }
+      if (url.pathname.startsWith('/auth/')) {
+        return await handleAuth(request, env, url);
+      }
+      if (url.pathname.startsWith('/admin/')) {
+        const session = await readSession(env, request);
+        return await handleAdmin(request, env, url, session, json);
       }
       if (url.pathname === '/checkout' && request.method === 'POST') {
         return await handleCheckout(request, env);
@@ -71,12 +96,61 @@ export default {
       }
       return json({ error: 'Not found' }, 404, request);
     } catch (err) {
+      // Expected refusals carry their own status and a message meant to be read.
+      if (err instanceof AuthError || err instanceof AdminError) {
+        return json({ error: err.message }, err.status ?? 400, request);
+      }
       // Never leak internals to the browser. The detail goes to the log.
       console.error('unhandled', err && err.stack ? err.stack : err);
       return json({ error: 'Something went wrong.' }, 500, request);
     }
   },
 };
+
+// --- Auth --------------------------------------------------------------------
+
+async function handleAuth(request, env, url) {
+  const origin = request.headers.get('Origin') ?? 'https://brettboggs.dev';
+  const path = url.pathname.replace(/^\/auth/, '');
+  const body = request.method === 'POST' ? await request.json().catch(() => ({})) : {};
+  const ua = request.headers.get('User-Agent') ?? '';
+
+  const reply = (data, status = 200, cookie = null) => {
+    const headers = { 'Content-Type': 'application/json', ...corsHeaders(request) };
+    if (cookie) headers['Set-Cookie'] = cookie;
+    return new Response(JSON.stringify(data), { status, headers });
+  };
+
+  if (path === '/me' && request.method === 'GET') {
+    const session = await readSession(env, request);
+    return reply(
+      session
+        ? { signedIn: true, id: session.id, email: session.email, name: session.name, role: session.role }
+        : { signedIn: false },
+    );
+  }
+
+  if (path === '/enroll/start' && request.method === 'POST') {
+    return reply(await startEnrollment(env, body.inviteToken, origin));
+  }
+  if (path === '/enroll/finish' && request.method === 'POST') {
+    const sid = await finishEnrollment(env, { ...body, userAgent: ua }, origin);
+    return reply({ ok: true }, 200, sessionCookie(sid));
+  }
+  if (path === '/login/start' && request.method === 'POST') {
+    return reply(await startLogin(env, origin));
+  }
+  if (path === '/login/finish' && request.method === 'POST') {
+    const sid = await finishLogin(env, { ...body, userAgent: ua }, origin);
+    return reply({ ok: true }, 200, sessionCookie(sid));
+  }
+  if (path === '/logout' && request.method === 'POST') {
+    await endSession(env, request);
+    return reply({ ok: true }, 200, clearCookie());
+  }
+
+  return reply({ error: 'Not found' }, 404);
+}
 
 // --- Checkout ----------------------------------------------------------------
 
@@ -95,7 +169,7 @@ async function handleCheckout(request, env) {
 
   let priced;
   try {
-    priced = priceCart(body.items);
+    priced = await priceCart(env.DB, body.items);
     assertSellable(priced.items, env);
   } catch (err) {
     if (err instanceof CartError) return json({ error: err.message }, 400, request);

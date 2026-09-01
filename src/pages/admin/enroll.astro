@@ -1,0 +1,122 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Registers a passkey against a one-time invitation. This is the only way an
+// account gets its first credential, and the link that carries it expires.
+---
+
+<Base title="Set up sign in" description="Register a passkey." noindex={true} puck={false} noServiceWorker={true}>
+  <header class="page-head">
+    <p class="eyebrow">Admin</p>
+    <h1>Set up sign in</h1>
+    <p class="lede" id="lede">
+      This registers a passkey on this device. No password, nothing to remember.
+    </p>
+  </header>
+
+  <div class="panel" id="panel">
+    <label class="field">
+      <span>Name this device</span>
+      <input id="label" type="text" value="" placeholder="Laptop" autocomplete="off" />
+    </label>
+    <button class="go" id="go" type="button">Create passkey</button>
+    <p class="note" id="note" hidden></p>
+  </div>
+
+  <a class="back-link" href="/">&larr; Home</a>
+</Base>
+
+<style>
+  .panel {
+    margin-top: 2.5rem;
+    max-width: 26rem;
+  }
+  .field span {
+    display: block;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    margin-bottom: 0.35rem;
+  }
+  .field input {
+    width: 100%;
+    appearance: none;
+    background: color-mix(in oklab, var(--paper-deep) 55%, transparent);
+    border: 0;
+    border-bottom: 1.5px solid color-mix(in oklab, var(--ink) 34%, transparent);
+    padding: 0.55rem 0.6rem;
+    font: inherit;
+    color: var(--ink);
+  }
+  .field input:focus {
+    outline: none;
+    border-bottom-color: var(--sienna);
+  }
+  .go {
+    display: block;
+    width: 100%;
+    margin-top: 1.4rem;
+    appearance: none;
+    background: var(--ink);
+    color: var(--paper);
+    border: 0;
+    padding: 0.85rem 1.2rem;
+    font-family: var(--display);
+    font-size: 1.05rem;
+    cursor: pointer;
+  }
+  .go:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .note {
+    margin-top: 1rem;
+    padding: 0.7rem 0.9rem;
+    border-left: 3px solid var(--sienna);
+    background: color-mix(in oklab, var(--sunflower) 12%, transparent);
+    font-size: 0.9rem;
+  }
+  .note.bad {
+    border-color: var(--rust);
+    background: color-mix(in oklab, var(--rust) 12%, transparent);
+  }
+</style>
+
+<script>
+  import { enroll, passkeysSupported } from '../../scripts/admin';
+
+  const token = new URLSearchParams(location.search).get('t') ?? '';
+  const go = document.getElementById('go') as HTMLButtonElement;
+  const label = document.getElementById('label') as HTMLInputElement;
+  const note = document.getElementById('note')!;
+  const panel = document.getElementById('panel')!;
+
+  const say = (msg: string, bad = false) => {
+    note.textContent = msg;
+    note.classList.toggle('bad', bad);
+    note.hidden = false;
+  };
+
+  label.value = /Mac/i.test(navigator.platform) ? 'Mac' : /Win/i.test(navigator.platform) ? 'PC' : 'Phone';
+
+  if (!token) {
+    panel.hidden = true;
+    say('This link is missing its invitation code.', true);
+  } else if (!passkeysSupported()) {
+    panel.hidden = true;
+    say('This browser cannot do passkeys. Try a current Chrome, Safari or Firefox.', true);
+  }
+
+  go.addEventListener('click', async () => {
+    go.disabled = true;
+    say('Follow the prompt from your device.');
+    try {
+      await enroll(token, label.value.trim() || 'passkey');
+      say('Done. Taking you to the panel.');
+      location.href = '/admin/';
+    } catch (err: any) {
+      say(err?.message ?? 'That did not work.', true);
+      go.disabled = false;
+    }
+  });
+</script>

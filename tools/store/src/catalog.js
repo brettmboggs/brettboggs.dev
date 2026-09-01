@@ -1,42 +1,29 @@
-// The catalog. This file is the ONLY place a price exists.
+// The catalog, read from the database.
 //
-// The browser sends product ids and quantities. It never sends a price, and
-// nothing the browser sends about money is trusted. Every total is recomputed
-// here, server side, on every checkout.
+// This used to be a hand-edited object, which meant every new photograph was a
+// code change, a build and a deploy, with Brett waiting on someone else to do
+// it. Pictures, prices, descriptions and what is published now live in D1 and
+// are edited from /admin on the site.
 //
-// A print is two things, not one: WHICH PICTURE and WHAT SIZE. They are modelled
-// as separate axes and multiplied together, because otherwise every new photo
-// means hand-writing five near-identical products and every price change means
-// editing all of them. Product ids are `image-size`, e.g. `copper-hour-16x24`.
-//
-// live:false means inert: it will not price, will not appear in the catalog
-// response, and is rejected at checkout. Nothing sells until Brett says so.
+// What stays in code is pricing POLICY rather than pricing: the size ladder,
+// what each size costs to print, and the tier multipliers. Those are decisions
+// about the shape of the business, they change rarely, and getting one wrong
+// silently is expensive. A per-image override lives in the database for when a
+// particular picture should not follow the ladder.
 
 // --- Sizes -------------------------------------------------------------------
 //
 // SHIPPING IS INCLUDED IN EVERY PRICE. The buyer is told shipping is free and it
-// genuinely is: there is no surcharge anywhere in checkout. `cost` is what
-// Prodigi charges to print and `ship` what it charges to deliver in the US, both
-// quoted 2026-09-01, and `base` already covers both.
+// genuinely is. `cost` is what Prodigi charges to print and `ship` to deliver in
+// the US, both quoted 2026-09-01, and `base` already covers both.
 //
-// This is why the store is US only for now. Prodigi prints regionally so most
-// countries are cheaper, but Canada is an outlier: a deck ships there for $23.35
-// against $12.12 here, which would swallow a whole deck's margin. A free
-// shipping promise that quietly excludes people is worse than not making it.
+// US only for now: Prodigi prints regionally and most countries are cheaper,
+// but Canada is an outlier that would swallow a print's margin under a blanket
+// free shipping promise.
 //
-// `aspect` is the printable shape. A 3:2 photograph fits 12x18, 16x24, 20x30 and
-// 24x36 exactly; 8x10 is 4:5 and would have to crop. Sizes are matched to each
-// picture's shape rather than offered blindly.
-//
-// `base` is the open-edition price for an ordinary picture at that size, and it
-// is deliberately NOT cost-plus. Printing an 8x10 costs $9.00 and a 24x36 costs
-// $22.00, so cost-plus would price a wall-sized print at barely more than a
-// small one, which is not how anyone buys a photograph. This ladder is priced on
-// presence, checked against the open-edition market: working professionals sit
-// between $75 and $500, and the usual advice for an emerging photographer at
-// 16x24 is $150 to $300. It sits at the bottom of that on purpose. An unknown
-// name selling an open edition should want the first buyer more than the first
-// margin.
+// `base` is deliberately NOT cost-plus. An 8x10 costs $9.00 to print and a
+// 24x36 costs $22.00, so cost-plus would price a wall-sized piece at barely
+// more than a small one, which is not how anyone buys a photograph.
 export const SIZES = {
   '8x10': { sku: 'GLOBAL-FAP-8X10', dims: { w: 8, h: 10, units: 'in' }, aspect: '4:5', base: 6000, cost: 900, ship: 1185 },
   '12x18': { sku: 'GLOBAL-FAP-12X18', dims: { w: 12, h: 18, units: 'in' }, aspect: '2:3', base: 9000, cost: 1400, ship: 1295 },
@@ -45,81 +32,16 @@ export const SIZES = {
   '24x36': { sku: 'GLOBAL-FAP-24X36', dims: { w: 24, h: 36, units: 'in' }, aspect: '2:3', base: 26000, cost: 2200, ship: 1590 },
 };
 
-const PAPER = 'Enhanced Matte Art paper, 200gsm';
+export const PAPER = 'Enhanced Matte Art paper, 200gsm';
 
-// --- Tiers -------------------------------------------------------------------
-//
-// Same paper, same printer, same cost. A tier is a claim about the picture, not
-// about the object, so the only honest reasons to charge more are that the work
-// is in more demand or that there is deliberately less of it.
-//
-// `limit` is a hard cap on how many of that image will ever be sold, across all
-// sizes. It is enforced against the orders table, not merely advertised. An
-// edition that is not counted is a lie.
+// A tier is a claim about the picture, not the object. Same paper, same printer,
+// same cost, so the only honest reasons to charge more are demand or genuine
+// scarcity. `limit` is a hard cap, enforced against orders rather than merely
+// advertised, because an edition that is not counted is a lie.
 export const TIERS = {
   standard: { label: 'Open edition', multiplier: 1 },
   premium: { label: 'Open edition', multiplier: 1.35 },
   limited: { label: 'Limited edition of 25', multiplier: 2.1, limit: 25 },
-};
-
-// --- Images ------------------------------------------------------------------
-//
-// Placeholders until Brett names each picture, its tier, and which sizes suit
-// its shape. A 6:1 panorama must never be offered at 16x24: the crop would
-// either lie about the photograph or arrive with the sky cut off.
-export const IMAGES = {
-  'copper-hour': {
-    live: false,
-    title: 'The Copper Hour',
-    tier: 'standard',
-    sizes: ['12x18', '16x24', '20x30'],
-    asset: 'eclipse/copper-hour.tif',
-    blurb: 'The lunar eclipse of 27 August 2026.',
-  },
-};
-
-// --- Standalone goods, which are not image by size ---------------------------
-export const GOODS = {
-  'cards-deck': {
-    live: true,
-    name: 'Playing cards',
-    kind: 'pod',
-    // Prodigi charges $10.83 a deck plus $12.12 to ship it, with no minimum and
-    // no stock to carry. Bulk printing is far cheaper per unit, roughly $2 to
-    // $3, but means ordering hundreds up front. Art decks retail roughly $10 to
-    // $46; $40 delivered sits mid-range once postage is counted.
-    price: 4000,
-    cost: 1083,
-    ship: 1212,
-    sku: 'PLAY-CARD',
-    dims: { w: 2.5, h: 3.5, units: 'in' },
-    material: '54 cards, standard poker size',
-    blurb: 'A full deck. Custom faces, custom backs, custom tuck box.',
-
-    // CANNOT BE FULFILLED BY PRODIGI, and must not go on sale until that is
-    // resolved.
-    //
-    // Prodigi's PLAY-CARD takes ONE image, prints it on the back of every card,
-    // and supplies its own standard faces in a plain white box. The deck in the
-    // product photo has bespoke faces, a bespoke joker and a printed tuck box,
-    // none of which that product can make. Selling this through Prodigi would
-    // put a picture of one thing next to a description of another.
-    //
-    // It is live only because the store is in test mode and says so on the
-    // page. Before real money: move it to a deck manufacturer that prints full
-    // custom decks, or take it down.
-    printerCanMake: false,
-  },
-
-  'print-file-eclipse': {
-    live: false,
-    name: 'The Copper Hour, print-ready file',
-    kind: 'digital',
-    price: 2500,
-    cost: 0,
-    asset: 'eclipse/copper-hour-3600.tif',
-    blurb: 'Full resolution file, licensed for a single personal print.',
-  },
 };
 
 export const KINDS_REQUIRING_SHIPPING = new Set(['pod']);
@@ -127,62 +49,97 @@ export const KINDS_REQUIRING_SHIPPING = new Set(['pod']);
 /** Rounded to the nearest $5 so a tier multiplier never produces $162.37. */
 const round5 = (cents) => Math.round(cents / 500) * 500;
 
-/** Expands the image by size grid into concrete, priced products. */
-function buildPrints() {
-  const out = {};
-  for (const [imageId, image] of Object.entries(IMAGES)) {
-    const tier = TIERS[image.tier];
-    if (!tier) throw new Error(`Image ${imageId} has unknown tier ${image.tier}`);
+/** Which sizes suit a picture of this shape. A 6:1 panorama gets none of them. */
+export function sizesForAspect(aspect) {
+  return Object.entries(SIZES)
+    .filter(([, s]) => s.aspect === aspect)
+    .map(([id]) => id);
+}
 
-    for (const sizeId of image.sizes) {
+export function priceFor(sizeId, tierName, overrides = {}) {
+  if (overrides[sizeId] != null) return overrides[sizeId];
+  const size = SIZES[sizeId];
+  const tier = TIERS[tierName] ?? TIERS.standard;
+  return round5(size.base * tier.multiplier);
+}
+
+// --- Reading the catalog -----------------------------------------------------
+
+/**
+ * Expands live images into products, one per size, plus any live goods.
+ * `all` includes drafts, which only the admin panel asks for.
+ */
+export async function loadProducts(db, { all = false } = {}) {
+  const where = all ? '' : `WHERE status = 'live'`;
+
+  const [images, prices, goods] = await Promise.all([
+    db.prepare(`SELECT * FROM images ${where} ORDER BY sort_order, created_at`).all(),
+    db.prepare(`SELECT * FROM image_prices`).all(),
+    db.prepare(`SELECT * FROM goods ${where} ORDER BY sort_order, created_at`).all(),
+  ]);
+
+  const overridesByImage = {};
+  for (const row of prices.results ?? []) {
+    (overridesByImage[row.image_id] ??= {})[row.size_id] = row.price;
+  }
+
+  const products = {};
+
+  for (const img of images.results ?? []) {
+    const tier = TIERS[img.tier] ?? TIERS.standard;
+    const sizes = safeParse(img.sizes_json) ?? sizesForAspect(img.aspect);
+
+    for (const sizeId of sizes) {
       const size = SIZES[sizeId];
-      if (!size) throw new Error(`Image ${imageId} lists unknown size ${sizeId}`);
+      if (!size) continue;
 
-      out[`${imageId}-${sizeId}`] = {
-        live: image.live,
-        name: `${image.title}, ${size.dims.w} x ${size.dims.h}`,
+      products[`${img.id}-${sizeId}`] = {
+        live: img.status === 'live',
+        name: `${img.title}, ${size.dims.w} x ${size.dims.h}`,
         kind: 'pod',
-        price: round5(size.base * tier.multiplier),
+        price: priceFor(sizeId, img.tier, overridesByImage[img.id] ?? {}),
         cost: size.cost,
         sku: size.sku,
         dims: size.dims,
         material: `${PAPER}, ${size.dims.w} x ${size.dims.h} in`,
-        blurb: image.blurb,
-        imageId,
-        imageTitle: image.title,
+        blurb: img.blurb ?? '',
+        imageId: img.id,
+        imageTitle: img.title,
         sizeId,
-        asset: image.asset,
-        tier: image.tier,
+        printKey: img.print_key,
+        tier: img.tier,
         tierLabel: tier.label,
         editionLimit: tier.limit ?? null,
       };
     }
   }
-  return out;
-}
 
-export const PRODUCTS = { ...buildPrints(), ...GOODS };
-
-
-// A limited edition that is not counted is a lie, and the counting is not built
-// yet. Until it is, refuse to boot with a limited product switched on, so the
-// claim can never reach a buyer ahead of the enforcement.
-for (const [id, p] of Object.entries(PRODUCTS)) {
-  if (p.live && p.editionLimit) {
-    throw new Error(
-      `${id} is live with an edition limit, but edition counting is not implemented. ` +
-        'Build the enforcement before selling a numbered edition.',
-    );
+  for (const g of goods.results ?? []) {
+    products[g.id] = {
+      live: g.status === 'live',
+      name: g.name,
+      kind: g.kind,
+      price: g.price,
+      cost: g.cost ?? 0,
+      sku: g.sku,
+      dims: null,
+      material: g.material,
+      blurb: g.blurb ?? '',
+      imageId: null,
+      imageTitle: null,
+      sizeId: null,
+      printKey: g.asset_key,
+      tierLabel: null,
+      editionLimit: null,
+    };
   }
+
+  return products;
 }
 
-export function getProduct(id) {
-  const p = PRODUCTS[id];
-  return p && p.live ? p : null;
-}
-
-export function publicCatalog() {
-  return Object.entries(PRODUCTS)
+export async function publicCatalog(db) {
+  const products = await loadProducts(db);
+  return Object.entries(products)
     .filter(([, p]) => p.live)
     .map(([id, p]) => ({
       id,
@@ -191,35 +148,33 @@ export function publicCatalog() {
       price: p.price,
       blurb: p.blurb,
       // Sent so the store can draw the thing at true scale. A buyer who cannot
-      // picture 16 by 24 inches is being asked to guess, and guessing is how
-      // people end up disappointed by a parcel.
-      dims: p.dims ?? null,
-      material: p.material ?? null,
-      tierLabel: p.tierLabel ?? null,
-      editionLimit: p.editionLimit ?? null,
-      imageId: p.imageId ?? null,
-      // The site groups by these. It never learns where the picture lives: the
-      // preview is found by convention at /photo/store/<imageId>.webp, so the
-      // Worker stays out of the image business and the site stays out of the
-      // pricing business.
-      imageTitle: p.imageTitle ?? null,
-      sizeId: p.sizeId ?? null,
+      // picture 16 by 24 inches is being asked to guess.
+      dims: p.dims,
+      material: p.material,
+      tierLabel: p.tierLabel,
+      editionLimit: p.editionLimit,
+      imageId: p.imageId,
+      imageTitle: p.imageTitle,
+      sizeId: p.sizeId,
     }));
 }
 
 // Turns an untrusted [{id, qty}] cart into a priced, frozen set of line items.
 // Throws on anything it does not recognise rather than guessing.
-export function priceCart(cart) {
+export async function priceCart(db, cart) {
   if (!Array.isArray(cart) || cart.length === 0) throw new CartError('Cart is empty.');
   if (cart.length > 20) throw new CartError('Too many line items.');
 
+  const products = await loadProducts(db);
   const items = [];
   let subtotal = 0;
   let requiresShipping = false;
 
   for (const raw of cart) {
-    const product = getProduct(raw?.id);
-    if (!product) throw new CartError(`Unknown or unavailable item: ${String(raw?.id).slice(0, 40)}`);
+    const product = products[raw?.id];
+    if (!product || !product.live) {
+      throw new CartError(`Unknown or unavailable item: ${String(raw?.id).slice(0, 40)}`);
+    }
 
     // Strict: the quantity must already BE a number. No coercion, because
     // Number('0x10') is 16 and a cart is not the place to discover that.
@@ -237,8 +192,9 @@ export function priceCart(cart) {
       name: product.name,
       kind: product.kind,
       sku: product.sku ?? null,
-      // Carried onto the frozen line item so an order records what it cost us
-      // on the day it was placed, not what the catalog says months later.
+      printKey: product.printKey ?? null,
+      // Carried onto the frozen line so an order records what it cost us on the
+      // day it was placed, not what the catalog says months later.
       cost: product.cost ?? 0,
       imageId: product.imageId ?? null,
       editionLimit: product.editionLimit ?? null,
@@ -248,13 +204,11 @@ export function priceCart(cart) {
     });
   }
 
-  // Shipping is deliberately NOT computed here. It depends on the whole cart in
-  // ways no per-item figure can express: two prints share one tube, but a print
-  // and a deck ship as two parcels from two different labs. It is quoted live
-  // from the printer and added by the caller.
+  // Shipping depends on the whole cart in ways no per-item figure can express:
+  // two prints share one tube, but a print and a deck ship as two parcels from
+  // two labs. It is quoted live and added by the caller.
   //
-  // Tax is a hard zero by Brett's decision: reflected in the prices rather than
-  // charged as a line.
+  // Tax is a hard zero by Brett's decision: reflected in prices, not charged.
   const tax = 0;
 
   if (subtotal < 50) throw new CartError('Order total is below the minimum Stripe will charge.');
@@ -263,22 +217,27 @@ export function priceCart(cart) {
   return { items, subtotal, tax, requiresShipping };
 }
 
-export class CartError extends Error {}
-
 /**
- * A product the printer cannot actually make must never be sold for real money.
- * Test mode is fine: the store page says plainly that nothing ships.
- *
- * Called from checkout, where the key in use is known. Module load is too early
- * to know it, and a guard that cannot see the environment is only decoration.
+ * A product with no print file must never be sold for real money. Test mode is
+ * fine: the store page says plainly that nothing ships.
  */
 export function assertSellable(items, env) {
   const liveMoney = Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_SECRET_KEY.startsWith('sk_live'));
   if (!liveMoney) return;
 
   for (const item of items) {
-    if (PRODUCTS[item.id]?.printerCanMake === false) {
-      throw new CartError(`${PRODUCTS[item.id].name} is not available to order yet.`);
+    if (item.kind === 'pod' && !item.printKey) {
+      throw new CartError(`${item.name} has no print file yet and cannot be ordered.`);
     }
   }
 }
+
+function safeParse(s) {
+  try {
+    return JSON.parse(s);
+  } catch {
+    return null;
+  }
+}
+
+export class CartError extends Error {}

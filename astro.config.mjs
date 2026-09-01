@@ -17,7 +17,10 @@ export default defineConfig({
       // worker's fallback; /store/ is unfinished and sells nothing yet. All
       // are noindexed and unlisted.
       filter: (page) =>
-        !page.includes('/roadmap/') && !page.includes('/offline/') && !page.includes('/store/'),
+        !page.includes('/roadmap/') &&
+        !page.includes('/offline/') &&
+        !page.includes('/store/') &&
+        !page.includes('/admin/'),
     }),
   ],
 });
