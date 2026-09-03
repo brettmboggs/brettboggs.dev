@@ -17,7 +17,7 @@ const INK = 0x33291c;
 const SKY = 0xc3ced7;
 
 /** triangles in terrain.glb plus city.glb, so the readout stays honest */
-const GROUND_TRIS = 70755 + 88354;
+const GROUND_TRIS = 70755 + 86726;
 
 /** Material key -> how it should read in the paper palette. */
 const LOOK: Record<string, { color: number; metal: number; rough: number }> = {
@@ -211,9 +211,9 @@ export function mountTrraViewer(
     const tex = new THREE.TextureLoader().load(GROUND_TEXTURE);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    // The plate is a Cycles render of the v17 scene shot straight down, so it
-    // already carries that scene's lighting and grade. Lighting or tone mapping
-    // it a second time would just double both.
+    // The plate is a Cycles render of the v23 scene shot straight down, with
+    // the real trees in it, so it already carries that scene's lighting and
+    // grade. Lighting or tone mapping it a second time would just double both.
     const groundMat = new THREE.MeshBasicMaterial({ map: tex });
     groundMat.toneMapped = false;
     // The facade archetypes and the rest of the context palette are baked into

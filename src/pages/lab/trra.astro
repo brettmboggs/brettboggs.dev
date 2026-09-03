@@ -40,7 +40,7 @@ const progression = [
 >
   <article>
     <header class="page-head">
-      <p class="eyebrow">Lab · Aug 2026</p>
+      <p class="eyebrow">Lab · Sep 2026</p>
       <h1>The MacArthur</h1>
       <p class="lede">
         A retaining wall and bridge approach on the Terminal Railroad's MacArthur crossing, built to
@@ -51,13 +51,13 @@ const progression = [
     <figure class="shot">
       <img
         src="/lab/trra/hero.webp"
-        alt="Aerial view of the MacArthur Bridge crossing the Mississippi into downtown St. Louis, with the retaining wall and rail approach in the foreground."
-        width="2000"
-        height="1125"
+        alt="The precast retaining wall and the double track on it running away toward the downtown St. Louis skyline, the truss bridge and the river on the left."
+        width="1920"
+        height="1033"
         loading="eager"
         fetchpriority="high"
       />
-      <figcaption>Looking north west across the Mississippi. Downtown and the Arch sit where they sit.</figcaption>
+      <figcaption>Off the west end of the truss, along the top of the wall, downtown ahead.</figcaption>
     </figure>
 
     <div class="prose">
@@ -103,6 +103,7 @@ const progression = [
           <span class="control-label">View</span>
           <div class="control-row">
             <button type="button" id="trra-recenter">Recenter</button>
+            <button type="button" id="trra-fullscreen" hidden>Fullscreen</button>
           </div>
         </div>
         <div class="control-group" role="group" aria-label="System">
@@ -121,10 +122,12 @@ const progression = [
 
       <p class="viewer-caption">
         Six meshes, one per material system, exported from the same file the renders come out of.
-        Isolating a system is the question anyone actually asks in front of a render. Turning the
-        ground on brings in the rest of the scene: the terrain, downtown and the built context as
-        real geometry, with the ground itself carrying a Cycles render of the world shot straight
-        down. That is another megabyte, so it is only fetched if you ask for it.
+        Isolating a system is the question anyone actually asks in front of a render. The eight
+        thousand bolts and the rivets are left out of this copy: they are a million triangles that
+        nobody can see at this distance. Turning the ground on brings in the rest of the scene: the
+        terrain, downtown and the built context as real geometry, with the ground itself carrying a
+        Cycles render of the world shot straight down, trees and all. That is another megabyte, so
+        it is only fetched if you ask for it.
       </p>
     </section>
 
@@ -180,12 +183,51 @@ const progression = [
     <figure class="shot">
       <img
         src="/lab/trra/wall.webp"
-        alt="Close view of the mechanically stabilised earth wall with the truss bridge behind it."
+        alt="The precast panel face of the retaining wall running to a limestone bridge pier, with the open deck approach carrying on behind it."
         width="1800"
-        height="1013"
+        height="968"
         loading="lazy"
       />
-      <figcaption>The wall, from the angle it will be looked at.</figcaption>
+      <figcaption>The wall face into the limestone pier. Panel courses stay level across the whole run.</figcaption>
+    </figure>
+
+    <div class="prose">
+      <h2>The bridge</h2>
+      <p>
+        The crossing started as an envelope and is now built off the sheets. The two new ballast
+        deck spans, the truss floor, the open deck approaches and the bents under them follow the
+        plan and steel drawings down to the bolted field splices at the third points of the
+        girders and the bent connection plates that hang each stringer off its floorbeam. Around
+        8,300 bolts are modelled as bolts. Where a detail is not on a drawing it is written down
+        as an assumption rather than quietly drawn.
+      </p>
+      <p>
+        Track came with it. Both mains now run dead straight off the east truss, every turnout and
+        crossover is a No. 12 on a 365 m curve, and the approaches carry open deck beyond the fill
+        the way the existing structure does.
+      </p>
+    </div>
+
+    <figure class="shot">
+      <img
+        src="/lab/trra/span.webp"
+        alt="Looking along the bridge deck from above the wall, both tracks converging through the turnout, the truss and downtown ahead."
+        width="1600"
+        height="861"
+        loading="lazy"
+      />
+      <figcaption>Off the end of the wall, through the turnout, onto the crossing.</figcaption>
+    </figure>
+
+    <figure class="shot">
+      <img
+        src="/lab/trra/deck.webp"
+        alt="Standing on the bridge deck between the truss verticals, two ballasted tracks running away between the walkways and handrails."
+        width="1600"
+        height="861"
+        loading="lazy"
+      />
+      <figcaption>Inside the truss. Stringers, curbs, walkway and rail sit where the steel sheets put them.</figcaption>
     </figure>
 
     <div class="prose">
@@ -234,12 +276,12 @@ const progression = [
     <figure class="shot">
       <img
         src="/lab/trra/yard.webp"
-        alt="Low aerial over the floodplain showing the trestle, trees and aerial photography on the ground."
-        width="1400"
-        height="788"
+        alt="The steel truss on the left, the retaining wall and its limestone pier in the middle, and the approach trestle running off through the floodplain trees."
+        width="1600"
+        height="861"
         loading="lazy"
       />
-      <figcaption>Floodplain and trestle. Trees sit only inside real wood polygons, cleared off every road and track.</figcaption>
+      <figcaption>Truss, wall, trestle. Trees sit only inside real wood polygons, cleared off every road and track.</figcaption>
     </figure>
 
     <div class="prose">
@@ -301,6 +343,24 @@ const progression = [
       arm('trra-systems', (btn) => viewer.isolate(btn.dataset.system ?? ''));
       arm('trra-ground', (btn) => viewer.setGround(btn.dataset.ground === 'on'));
       document.getElementById('trra-recenter')?.addEventListener('click', () => viewer.recenter());
+
+      // Fullscreen takes the whole viewer, controls and all, because isolating a
+      // system is the reason to be big in the first place. iOS Safari has no
+      // element fullscreen, so the button only appears where it will work.
+      const shell = document.querySelector('.viewer') as HTMLElement | null;
+      const fsBtn = document.getElementById('trra-fullscreen') as HTMLButtonElement | null;
+      if (shell && fsBtn && shell.requestFullscreen) {
+        fsBtn.hidden = false;
+        fsBtn.addEventListener('click', () => {
+          if (document.fullscreenElement) document.exitFullscreen();
+          else shell.requestFullscreen().catch(() => {});
+        });
+        document.addEventListener('fullscreenchange', () => {
+          const on = document.fullscreenElement === shell;
+          fsBtn.textContent = on ? 'Exit fullscreen' : 'Fullscreen';
+          fsBtn.classList.toggle('is-on', on);
+        });
+      }
       arm('trra-extent', (btn) => {
         const url = btn.dataset.url;
         if (url) viewer.setModel(url);
@@ -436,6 +496,26 @@ const progression = [
     margin-top: 1.2rem;
     border: 2px solid var(--ink);
     background: var(--paper);
+  }
+
+  /* fullscreen: the stage takes whatever the controls and the head leave */
+  .viewer:fullscreen {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 1.1rem 1.4rem 1.4rem;
+    background: var(--paper);
+    overflow: hidden;
+  }
+  .viewer:fullscreen .stage {
+    flex: 1;
+    min-height: 0;
+  }
+  .viewer:fullscreen .stage canvas {
+    height: 100%;
+  }
+  .viewer:fullscreen .viewer-caption {
+    display: none;
   }
   .stage canvas {
     display: block;
