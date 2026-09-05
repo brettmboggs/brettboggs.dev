@@ -309,6 +309,20 @@ final class PlayerController {
         publishSnapshot()
     }
 
+    func isFavourite(_ soundID: String) -> Bool {
+        settings.favouriteSoundIDs.contains(soundID)
+    }
+
+    func toggleFavourite(_ soundID: String) {
+        if settings.favouriteSoundIDs.contains(soundID) {
+            settings.favouriteSoundIDs.remove(soundID)
+        } else {
+            settings.favouriteSoundIDs.insert(soundID)
+        }
+        settings.save()
+        Haptics.tap(enabled: settings.hapticsEnabled)
+    }
+
     func requestUpgrade(_ reason: PaywallReason) {
         guard !entitlements.isPro else { return }
         paywall = reason

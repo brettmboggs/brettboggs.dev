@@ -56,12 +56,18 @@ final class Settings {
     /// Mirror finished sessions into the Health app.
     var writeToHealth: Bool = false
 
+    /// Sound ids the person starred. Surfaced as the first shelf.
+    var favouriteSoundIDs: Set<String> = []
+
     var hasSeenWelcome: Bool = false
 
     // MARK: Persistence
 
     private static let filename = "settings.json"
 
+    /// Every field is optional-on-read in practice because a settings file
+    /// written by an older build will not have the newest keys. Decoding is
+    /// already best-effort: a failure returns defaults rather than throwing.
     private struct Snapshot: Codable {
         var masterVolume: Double
         var tilt: Double
@@ -84,6 +90,7 @@ final class Settings {
         var autoDimSeconds: Double
         var hapticsEnabled: Bool
         var writeToHealth: Bool
+        var favouriteSoundIDs: [String]
         var hasSeenWelcome: Bool
     }
 
@@ -113,6 +120,7 @@ final class Settings {
         settings.autoDimSeconds = snapshot.autoDimSeconds
         settings.hapticsEnabled = snapshot.hapticsEnabled
         settings.writeToHealth = snapshot.writeToHealth
+        settings.favouriteSoundIDs = Set(snapshot.favouriteSoundIDs)
         settings.hasSeenWelcome = snapshot.hasSeenWelcome
         return settings
     }
@@ -140,6 +148,7 @@ final class Settings {
             autoDimSeconds: autoDimSeconds,
             hapticsEnabled: hapticsEnabled,
             writeToHealth: writeToHealth,
+            favouriteSoundIDs: Array(favouriteSoundIDs).sorted(),
             hasSeenWelcome: hasSeenWelcome
         )
         Persistence.save(snapshot, to: Settings.filename)

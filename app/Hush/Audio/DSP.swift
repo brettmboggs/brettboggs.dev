@@ -280,13 +280,23 @@ struct Phasor {
 
 // MARK: - Grains
 
-/// One transient: a decaying resonant ping mixed with a noise burst. Used for
-/// raindrops, fire crackle, cricket chirps and rail clatter.
+/// One transient: a resonant tone mixed with a noise burst, rising over an
+/// attack and then decaying. Used for raindrops, fire crackle, cricket chirps,
+/// rail clatter, clock ticks and chimes.
+///
+/// The attack is the important part. A grain that starts at full amplitude on
+/// a single sample is a step in the waveform, which is a click, and a click is
+/// the one thing guaranteed to pull someone out of light sleep. Dense fast
+/// events want it near zero; anything sparse and exposed wants tens of
+/// milliseconds so it swells instead of snapping.
 struct Grain {
     init() {}
 
     var active: Bool = false
     var amp: Float = 0
+    var peak: Float = 0
+    var attackRemaining: Int = 0
+    var attackStep: Float = 0
     var decay: Float = 0.999
     var phase: Float = 0
     var phaseInc: Float = 0
@@ -308,13 +318,17 @@ final class GrainBank {
     }
 
     /// Steals the quietest slot if all are busy, so density never clips.
+    ///
+    /// `attackSeconds` of zero keeps the old behaviour for dense textures where
+    /// a crisp edge is the character. Anything sparse should pass a real value.
     func trigger(
         frequency: Float,
         decaySeconds: Float,
         amplitude: Float,
         noiseAmount: Float,
         pan: Float,
-        resonance: Float = 6
+        resonance: Float = 6,
+        attackSeconds: Float = 0
     ) {
         var index = -1
         var quietest: Float = .greatestFiniteMagnitude
@@ -326,13 +340,23 @@ final class GrainBank {
 
         var grain = Grain()
         grain.active = true
-        grain.amp = amplitude
+        grain.peak = amplitude
         grain.decay = expf(-1 / (max(decaySeconds, 0.001) * sampleRateRef))
         grain.phase = 0
         grain.phaseInc = frequency / sampleRateRef
         grain.noiseAmount = noiseAmount
         grain.pan = clampf(pan, 0, 1)
         grain.filter.setBandpass(frequency, q: resonance, sampleRate: sampleRateRef)
+
+        let attack = Int(max(attackSeconds, 0) * sampleRateRef)
+        if attack > 1 {
+            grain.amp = 0
+            grain.attackRemaining = attack
+            grain.attackStep = amplitude / Float(attack)
+        } else {
+            grain.amp = amplitude
+            grain.attackRemaining = 0
+        }
         grains[index] = grain
     }
 
@@ -350,10 +374,16 @@ final class GrainBank {
             let raw = lerpf(tone, grains[i].filter.process(noise), grains[i].noiseAmount)
             let value = raw * grains[i].amp
 
-            grains[i].amp *= grains[i].decay
-            if grains[i].amp < 0.0002 {
-                grains[i].active = false
-                grains[i].filter.reset()
+            if grains[i].attackRemaining > 0 {
+                grains[i].amp += grains[i].attackStep
+                grains[i].attackRemaining -= 1
+                if grains[i].attackRemaining == 0 { grains[i].amp = grains[i].peak }
+            } else {
+                grains[i].amp *= grains[i].decay
+                if grains[i].amp < 0.0002 {
+                    grains[i].active = false
+                    grains[i].filter.reset()
+                }
             }
 
             left += value * (1 - grains[i].pan)

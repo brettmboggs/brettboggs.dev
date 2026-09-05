@@ -15,6 +15,9 @@
 				34B24C631228C8C968A5F9FB /* RecordingTexture.swift */,
 				93E144F05C3D750B0907690F /* Renderer.swift */,
 				73A3D596670CDEE40848A039 /* Textures.swift */,
+				874582554146AB96CBC0D2F9 /* TexturesLiving.swift */,
+				090DE6CBB0952D8F87FE2B28 /* TexturesRooms.swift */,
+				91F109A4C470AD39846060A4 /* TexturesWeather.swift */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -25,6 +28,7 @@
 		07990DC159C2290FD1631CB2 /* Theme.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = C5F941F32786CE33C51BCE61 /* Theme.swift */; };
 		088A77B1655E183A232FF318 /* SleepTimerActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerActivity.swift; sourceTree = "<group>"; };
 		08A0C071BD45562BD61988FA /* SharedState.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 0676CFFDA5ADF25847BA6C86 /* SharedState.swift */; };
+		090DE6CBB0952D8F87FE2B28 /* TexturesRooms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TexturesRooms.swift; sourceTree = "<group>"; };
 		0F89527838B1B28A15F8561F /* BedsideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BedsideView.swift; sourceTree = "<group>"; };
 		1100EC9AE92EFFAE27F866A8 /* HushIntents.swift in Sources-ext */ = {isa = PBXBuildFile; fileRef = B85900B251C489190ECB1EF4 /* HushIntents.swift */; };
 		12AD5CED1C8EB74B56196A01 /* AlarmNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmNotifications.swift; sourceTree = "<group>"; };
@@ -232,6 +236,9 @@
 				1839CF8ECCBD47EF27D45BE4 /* RecordingTexture.swift */,
 				9A32CE149AE0285E057E1EE1 /* Renderer.swift */,
 				E44F3BF16671FCF66B60C52C /* Textures.swift */,
+				876326657679A0B45841E656 /* TexturesLiving.swift */,
+				E91755C2130B0D768E566B56 /* TexturesRooms.swift */,
+				F5E14C93A4DDAD4F8BD23A2B /* TexturesWeather.swift */,
 				2548997D93F176A26D8E4E90 /* HushApp.swift */,
 				C8213174A29AD2CDF45F6389 /* HushShortcuts.swift */,
 				AEE923494A5113FA9ED857CF /* PlaybackActions.swift */,
@@ -317,6 +324,8 @@
 			productReference = 1369DD924D2F7341DF644FA1 /* HushWidgets.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		874582554146AB96CBC0D2F9 /* TexturesLiving.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TexturesLiving.swift; sourceTree = "<group>"; };
+		876326657679A0B45841E656 /* TexturesLiving.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 874582554146AB96CBC0D2F9 /* TexturesLiving.swift */; };
 		886565EA1F2F46FCA45BD5EA /* BedsideView.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 0F89527838B1B28A15F8561F /* BedsideView.swift */; };
 		888EA2EE1AE6D7A8440DE5BB /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -364,6 +373,7 @@
 		8E581C6107454561BD617358 /* SleepTimerActivity.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 088A77B1655E183A232FF318 /* SleepTimerActivity.swift */; };
 		8E5E5443B815C0A9A8AF39A4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8FFEF7CD4F3D418C9FF77493 /* SleepTimerLiveActivity.swift in Sources-ext */ = {isa = PBXBuildFile; fileRef = F0E6488041C21316828D5DA9 /* SleepTimerLiveActivity.swift */; };
+		91F109A4C470AD39846060A4 /* TexturesWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TexturesWeather.swift; sourceTree = "<group>"; };
 		93E144F05C3D750B0907690F /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		952934C5F561C757DC607802 /* HushWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HushWidgetsBundle.swift; sourceTree = "<group>"; };
 		9A32CE149AE0285E057E1EE1 /* Renderer.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 93E144F05C3D750B0907690F /* Renderer.swift */; };
@@ -529,6 +539,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E91755C2130B0D768E566B56 /* TexturesRooms.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 090DE6CBB0952D8F87FE2B28 /* TexturesRooms.swift */; };
 		E9B4C61D80947F4187E3676C /* HushWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HushWidgets.entitlements; sourceTree = "<group>"; };
 		E9E38C36129928ED180DE6CC /* NowView.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 34B871794CDAC8D5E75472EB /* NowView.swift */; };
 		EB12F685944315C425ABFF58 /* Resources */ = {
@@ -606,6 +617,7 @@
 		F1786F3C126291DE09E478DD /* MixWidget.swift in Sources-ext */ = {isa = PBXBuildFile; fileRef = 8E36E15BE8A5E0B31D27B585 /* MixWidget.swift */; };
 		F2558D2A09D2C9B7366BF064 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		F3114644D59CB840B30C0F3B /* HushWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1369DD924D2F7341DF644FA1 /* HushWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F5E14C93A4DDAD4F8BD23A2B /* TexturesWeather.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 91F109A4C470AD39846060A4 /* TexturesWeather.swift */; };
 		FABDB2D86AD298078C20192E /* Store.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = FB36A1CC7C977BD661F5F616 /* Store.swift */; };
 		FB36A1CC7C977BD661F5F616 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		FC3E3BC4EF464435E69F6651 /* Views */ = {

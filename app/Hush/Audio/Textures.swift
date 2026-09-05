@@ -190,7 +190,10 @@ final class RainTexture: Texture {
                 amplitude: dropLevel * (0.35 + dropRNG.uniform() * 0.9),
                 noiseAmount: dropNoise,
                 pan: dropRNG.uniform(),
-                resonance: dropResonance
+                resonance: dropResonance,
+                // Rain is dense enough that individual drops never stand out,
+                // but a ringing metal drip needs the edge taken off.
+                attackSeconds: character == .roof ? 0.0012 : 0.0002
             )
         }
 
@@ -531,11 +534,12 @@ final class FireTexture: Texture {
                     ? 0.03 + crackRNG.uniform() * 0.07
                     : 0.002 + crackRNG.uniform() * 0.014,
                 amplitude: big
-                    ? 0.30 + crackRNG.uniform() * 0.40
-                    : 0.06 + crackRNG.uniform() * 0.26,
+                    ? 0.22 + crackRNG.uniform() * 0.16
+                    : 0.06 + crackRNG.uniform() * 0.22,
                 noiseAmount: 0.78,
                 pan: 0.15 + crackRNG.uniform() * 0.7,
-                resonance: 2.5 + crackRNG.uniform() * 6
+                resonance: 2.5 + crackRNG.uniform() * 6,
+                attackSeconds: big ? 0.004 : 0.0004
             )
         }
 
@@ -838,7 +842,8 @@ final class TrainTexture: Texture {
                 amplitude: clackLevel * (0.6 + clackRNG.uniform() * 0.6),
                 noiseAmount: 0.62,
                 pan: pan,
-                resonance: 4 + clackRNG.uniform() * 6
+                resonance: 4 + clackRNG.uniform() * 6,
+                attackSeconds: 0.0035
             )
             if inPair {
                 inPair = false
@@ -939,6 +944,22 @@ enum TextureFactory {
         case "fan": return FanTexture()
         case "airliner": return AirlinerTexture()
         case "train": return TrainTexture()
+        case "thunder.distant": return DistantThunderTexture()
+        case "waterfall": return WaterfallTexture()
+        case "blizzard": return BlizzardTexture()
+        case "frogs": return FrogTexture()
+        case "birds": return BirdTexture()
+        case "purr": return PurrTexture()
+        case "heartbeat": return HeartbeatTexture()
+        case "fan.oscillating": return OscillatingFanTexture()
+        case "ac": return AirConditionerTexture()
+        case "washer": return WasherTexture()
+        case "dryer": return DryerTexture()
+        case "cafe": return CafeTexture()
+        case "highway": return HighwayTexture()
+        case "clock": return ClockTexture()
+        case "chimes": return ChimeTexture()
+        case "bowl": return BowlTexture()
         case "noise.white": return PlainNoiseTexture(colour: .white)
         case "noise.pink": return PlainNoiseTexture(colour: .pink)
         case "noise.brown": return PlainNoiseTexture(colour: .brown)

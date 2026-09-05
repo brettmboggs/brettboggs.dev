@@ -15,7 +15,7 @@ public enum SoundSource: Codable, Hashable, Sendable {
 
 /// Which shelf a texture lives on in the library.
 public enum SoundFamily: String, Codable, CaseIterable, Sendable {
-    case recorded, rain, water, wind, fire, noise, night, machines
+    case recorded, rain, water, wind, fire, living, machines, places, tones, noise
 
     public var title: String {
         switch self {
@@ -24,9 +24,11 @@ public enum SoundFamily: String, Codable, CaseIterable, Sendable {
         case .water: return "Water"
         case .wind: return "Wind"
         case .fire: return "Fire"
-        case .noise: return "Noise"
-        case .night: return "Night"
+        case .living: return "Living"
         case .machines: return "Machines"
+        case .places: return "Places"
+        case .tones: return "Tones"
+        case .noise: return "Noise"
         }
     }
 
@@ -39,9 +41,11 @@ public enum SoundFamily: String, Codable, CaseIterable, Sendable {
         case .water: return 2
         case .wind: return 3
         case .fire: return 4
-        case .night: return 5
+        case .living: return 5
         case .machines: return 6
-        case .noise: return 7
+        case .places: return 7
+        case .tones: return 8
+        case .noise: return 9
         }
     }
 }
@@ -168,13 +172,13 @@ public enum SoundCatalog {
             defaultTone: 0.45, defaultMotion: 0.5
         ),
         SoundKind(
-            id: "crickets", name: "Crickets", family: .night,
+            id: "crickets", name: "Crickets", family: .living,
             blurb: "August, after dark.", symbol: "moon.stars",
             toneLabel: "Pitch", motionLabel: "Density",
             defaultTone: 0.5, defaultMotion: 0.4, defaultLevel: 0.5
         ),
         SoundKind(
-            id: "cabin", name: "Room Tone", family: .night,
+            id: "cabin", name: "Room Tone", family: .places,
             blurb: "An old house holding still.", symbol: "square.split.bottomrightquarter",
             toneLabel: "Air", motionLabel: "Drift",
             defaultTone: 0.4, defaultMotion: 0.35
@@ -196,6 +200,102 @@ public enum SoundCatalog {
             blurb: "Rails, and the gaps between them.", symbol: "tram",
             toneLabel: "Car", motionLabel: "Clatter",
             defaultTone: 0.45, defaultMotion: 0.5
+        ),
+        SoundKind(
+            id: "thunder.distant", name: "Distant Thunder", family: .rain,
+            blurb: "Weather that stayed away.", symbol: "cloud.bolt",
+            toneLabel: "Distance", motionLabel: "Frequency",
+            defaultTone: 0.35, defaultMotion: 0.4, defaultLevel: 0.6
+        ),
+        SoundKind(
+            id: "waterfall", name: "Waterfall", family: .water,
+            blurb: "Heavy water, close up.", symbol: "arrow.down.to.line",
+            toneLabel: "Spray", motionLabel: "Surge",
+            defaultTone: 0.42, defaultMotion: 0.45, defaultLevel: 0.72
+        ),
+        SoundKind(
+            id: "blizzard", name: "Blizzard", family: .wind,
+            blurb: "Snow takes the top end with it.", symbol: "snowflake",
+            toneLabel: "Height", motionLabel: "Gusts",
+            defaultTone: 0.4, defaultMotion: 0.5, defaultLevel: 0.68
+        ),
+        SoundKind(
+            id: "frogs", name: "Frogs", family: .living,
+            blurb: "A pond, well after dark.", symbol: "leaf",
+            toneLabel: "Pitch", motionLabel: "Density",
+            defaultTone: 0.45, defaultMotion: 0.4, defaultLevel: 0.5
+        ),
+        SoundKind(
+            id: "birds", name: "Dawn Chorus", family: .living,
+            blurb: "Made for waking, not for sleeping.", symbol: "bird",
+            toneLabel: "Pitch", motionLabel: "Density",
+            defaultTone: 0.5, defaultMotion: 0.45, defaultLevel: 0.45
+        ),
+        SoundKind(
+            id: "purr", name: "Purring", family: .living,
+            blurb: "A cat that has decided to stay.", symbol: "pawprint",
+            toneLabel: "Size", motionLabel: "Rumble",
+            defaultTone: 0.45, defaultMotion: 0.55, defaultLevel: 0.6
+        ),
+        SoundKind(
+            id: "heartbeat", name: "Womb", family: .living,
+            blurb: "Sixty beats, and the sound around them.", symbol: "heart",
+            toneLabel: "Depth", motionLabel: "Rate",
+            defaultTone: 0.45, defaultMotion: 0.35, defaultLevel: 0.7
+        ),
+        SoundKind(
+            id: "fan.oscillating", name: "Oscillating Fan", family: .machines,
+            blurb: "Turning away, and back.", symbol: "arrow.trianglehead.2.clockwise",
+            toneLabel: "Motor", motionLabel: "Sweep",
+            defaultTone: 0.5, defaultMotion: 0.45, defaultLevel: 0.7
+        ),
+        SoundKind(
+            id: "ac", name: "Air Conditioner", family: .machines,
+            blurb: "The window unit, on low.", symbol: "snowflake.circle",
+            toneLabel: "Air", motionLabel: "Compressor",
+            defaultTone: 0.45, defaultMotion: 0.4, defaultLevel: 0.7
+        ),
+        SoundKind(
+            id: "washer", name: "Washing Machine", family: .machines,
+            blurb: "Mid cycle, through a wall.", symbol: "washer",
+            toneLabel: "Motor", motionLabel: "Cycle",
+            defaultTone: 0.45, defaultMotion: 0.4, defaultLevel: 0.68
+        ),
+        SoundKind(
+            id: "dryer", name: "Tumble Dryer", family: .machines,
+            blurb: "Something in there goes around.", symbol: "dryer",
+            toneLabel: "Heat", motionLabel: "Tumble",
+            defaultTone: 0.42, defaultMotion: 0.4, defaultLevel: 0.68
+        ),
+        SoundKind(
+            id: "cafe", name: "Coffee Shop", family: .places,
+            blurb: "Voices, never words.", symbol: "cup.and.saucer",
+            toneLabel: "Room", motionLabel: "Bustle",
+            defaultTone: 0.45, defaultMotion: 0.45, defaultLevel: 0.55
+        ),
+        SoundKind(
+            id: "highway", name: "Distant Highway", family: .places,
+            blurb: "Far enough that cars are weather.", symbol: "road.lanes",
+            toneLabel: "Distance", motionLabel: "Traffic",
+            defaultTone: 0.35, defaultMotion: 0.4, defaultLevel: 0.65
+        ),
+        SoundKind(
+            id: "clock", name: "Mantel Clock", family: .places,
+            blurb: "One second, then the next.", symbol: "clock",
+            toneLabel: "Wood", motionLabel: "Tempo",
+            defaultTone: 0.45, defaultMotion: 0.4, defaultLevel: 0.45
+        ),
+        SoundKind(
+            id: "chimes", name: "Wind Chimes", family: .tones,
+            blurb: "The wind decides when.", symbol: "wind.snow",
+            toneLabel: "Tuning", motionLabel: "Breeze",
+            defaultTone: 0.45, defaultMotion: 0.35, defaultLevel: 0.5
+        ),
+        SoundKind(
+            id: "bowl", name: "Singing Bowl", family: .tones,
+            blurb: "Struck, then left alone.", symbol: "circle.circle",
+            toneLabel: "Pitch", motionLabel: "Shimmer",
+            defaultTone: 0.4, defaultMotion: 0.4, defaultLevel: 0.55
         ),
         SoundKind(
             id: "noise.white", name: "White", family: .noise,

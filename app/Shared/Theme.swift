@@ -26,8 +26,10 @@ public enum Palette {
         case .water: return Color(hex: 0x6E8C86)
         case .wind: return Color(hex: 0x8D9478)
         case .fire: return Color(hex: 0xD4783C)
-        case .night: return Color(hex: 0x7C7392)
+        case .living: return Color(hex: 0x7F9464)
         case .machines: return Color(hex: 0x9A8B76)
+        case .places: return Color(hex: 0x7C7392)
+        case .tones: return Color(hex: 0xB08AA6)
         case .noise: return Color(hex: 0xC9A06A)
         }
     }

@@ -326,6 +326,53 @@ def check_calls(files: list[Path], decls: dict[str, Decl]) -> list[str]:
     return problems
 
 
+def check_numeric_literals(files: list[Path]) -> list[str]:
+    """Hex and binary literals with digits outside their base."""
+    problems = []
+    for path in files:
+        clean = blank_noise(path.read_text())
+        for m in re.finditer(r'\b0([xXbB])([0-9A-Za-z_]+)', clean):
+            base, digits = m.group(1).lower(), m.group(2)
+            allowed = '0123456789abcdef_' if base == 'x' else '01_'
+            bad = {c for c in digits.lower() if c not in allowed}
+            # A float literal like 0x1p3 or a suffix is not our concern here.
+            bad -= {'p'}
+            if bad:
+                line = clean[:m.start()].count('\n') + 1
+                problems.append(
+                    f"{path.relative_to(ROOT)}:{line}: "
+                    f"0{m.group(1)}{digits} is not a valid literal "
+                    f"({', '.join(sorted(bad))} out of range)"
+                )
+    return problems
+
+
+def check_catalog(files: list[Path]) -> list[str]:
+    """Every catalog sound must have a texture, and vice versa.
+
+    A missing case falls through to the factory's default and plays brown
+    noise under the wrong name, which no compiler will ever complain about.
+    """
+    catalog = ROOT / 'Shared/SoundCatalog.swift'
+    factory = ROOT / 'Hush/Audio/Textures.swift'
+    if not catalog.exists() or not factory.exists():
+        return []
+
+    catalog_text = catalog.read_text()
+    ids = set(re.findall(r'id: "([^"]+)", name:', catalog_text))
+    recordings = set(re.findall(
+        r'id: "([^"]+)"[^)]*?source: \.recording', catalog_text, re.S))
+    cases = set(re.findall(
+        r'case "([^"]+)": return \w+Texture', factory.read_text()))
+
+    problems = []
+    for missing in sorted(ids - cases - recordings):
+        problems.append(f"catalog sound '{missing}' has no case in TextureFactory")
+    for extra in sorted(cases - ids):
+        problems.append(f"TextureFactory handles '{extra}', which is not in the catalog")
+    return problems
+
+
 def check_overrides(decls: dict[str, Decl]) -> list[str]:
     problems = []
     for decl in decls.values():
@@ -355,7 +402,12 @@ if __name__ == '__main__':
         if 'DerivedData' not in p.parts
     )
     decls = collect(files)
-    problems = check_calls(files, decls) + check_overrides(decls)
+    problems = (
+        check_calls(files, decls)
+        + check_overrides(decls)
+        + check_numeric_literals(files)
+        + check_catalog(files)
+    )
 
     types = sum(1 for d in decls.values() if d.kind in ('struct', 'class', 'enum'))
     if problems:
