@@ -108,6 +108,7 @@ final class Settings {
     /// Nights of twenty minutes or more.
     var nightsCompleted: Int = 0
     var didOfferAfterFirstNight: Bool = false
+    var didAskForReview: Bool = false
     var lastPaywallShown: Date?
 
     // MARK: Persistence
@@ -151,6 +152,7 @@ final class Settings {
         var goal: SleepGoal?
         var nightsCompleted: Int?
         var didOfferAfterFirstNight: Bool?
+        var didAskForReview: Bool?
         var lastPaywallShown: Date?
     }
 
@@ -193,6 +195,7 @@ final class Settings {
         if let v = s.goal { settings.goal = v }
         if let v = s.nightsCompleted { settings.nightsCompleted = v }
         if let v = s.didOfferAfterFirstNight { settings.didOfferAfterFirstNight = v }
+        if let v = s.didAskForReview { settings.didAskForReview = v }
         settings.lastPaywallShown = s.lastPaywallShown
         return settings
     }
@@ -233,6 +236,7 @@ final class Settings {
             goal: goal,
             nightsCompleted: nightsCompleted,
             didOfferAfterFirstNight: didOfferAfterFirstNight,
+            didAskForReview: didAskForReview,
             lastPaywallShown: lastPaywallShown
         )
         Persistence.save(snapshot, to: Settings.filename)

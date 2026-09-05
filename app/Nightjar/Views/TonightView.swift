@@ -1,9 +1,11 @@
+import StoreKit
 import SwiftUI
 
 /// The front door. One mix, one button, one breath.
 struct TonightView: View {
     @Environment(PlayerController.self) private var player
     @Environment(\.openSettings) private var openSettings
+    @Environment(\.requestReview) private var requestReview
 
     @State private var showTimer = false
     @State private var showRoutine = false
@@ -36,8 +38,9 @@ struct TonightView: View {
             }
         }
         .onReceive(clock) { date in now = date }
-        .onAppear { offerIfDue() }
+        .onAppear { offerIfDue(); askForReviewIfDue() }
         .onChange(of: player.pendingFirstNightOffer) { _, _ in offerIfDue() }
+        .onChange(of: player.pendingReviewRequest) { _, _ in askForReviewIfDue() }
         .sheet(isPresented: $showTimer) { TimerSheet() }
         .sheet(isPresented: $showRoutine) { RoutineSheet() }
         .fullScreenCover(isPresented: $showBedside) { BedsideView() }
@@ -256,6 +259,18 @@ struct TonightView: View {
         guard player.pendingFirstNightOffer, !player.plan.isPlus, player.paywall == nil else { return }
         player.consumeFirstNightOffer()
         player.requestUpgrade(.firstNight)
+    }
+
+    /// Never on top of the paywall, and never while a session is running. iOS
+    /// decides whether the prompt actually appears; all we control is that we
+    /// ask at a moment the app has earned.
+    private func askForReviewIfDue() {
+        guard player.pendingReviewRequest,
+              player.paywall == nil,
+              !player.isPlaying,
+              player.breath == nil else { return }
+        player.consumeReviewRequest()
+        requestReview()
     }
 }
 

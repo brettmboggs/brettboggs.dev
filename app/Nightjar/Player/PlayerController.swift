@@ -66,6 +66,7 @@ final class PlayerController {
     /// The first full night just ended. The Tonight screen turns this into one
     /// soft offer, once.
     private(set) var pendingFirstNightOffer = false
+    private(set) var pendingReviewRequest = false
 
     // MARK: Internals
 
@@ -85,6 +86,7 @@ final class PlayerController {
     private static let pauseFadeSeconds: Double = 1.6
     /// A night is anything longer than this.
     private static let nightSeconds: TimeInterval = 20 * 60
+    private static let nightsBeforeReviewRequest = 3
 
     // MARK: - Life cycle
 
@@ -251,8 +253,22 @@ final class PlayerController {
             if settings.nightsCompleted == 1, !settings.didOfferAfterFirstNight, !plan.isPlus {
                 pendingFirstNightOffer = true
             }
+            // The third night, not the first. By then the app has actually done
+            // the thing it claims to do, and the first night already has the
+            // Plus offer on it. Asked once, ever.
+            if settings.nightsCompleted == PlayerController.nightsBeforeReviewRequest,
+               !settings.didAskForReview {
+                pendingReviewRequest = true
+            }
             settings.save()
         }
+    }
+
+    /// Tonight calls this after the system has been asked.
+    func consumeReviewRequest() {
+        pendingReviewRequest = false
+        settings.didAskForReview = true
+        settings.save()
     }
 
     /// The Tonight screen calls this after it has shown the offer.
