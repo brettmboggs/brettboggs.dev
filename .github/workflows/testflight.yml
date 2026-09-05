@@ -1,0 +1,137 @@
+name: TestFlight
+
+# Every push to main that touches the app is archived on a macOS runner and
+# uploaded to TestFlight. Testers on the TestFlight list get the new build
+# automatically. macOS runners are free on public repositories.
+#
+# Secrets this needs (Settings › Secrets and variables › Actions):
+#   APPLE_TEAM_ID          ten characters, from developer.apple.com › Membership
+#   ASC_KEY_ID             App Store Connect API key id
+#   ASC_ISSUER_ID          App Store Connect API issuer id
+#   ASC_KEY_P8             the whole AuthKey_XXXX.p8 file, pasted as text
+#   DIST_CERT_P12_BASE64   Apple Distribution certificate + key, .p12, base64
+#   DIST_CERT_PASSWORD     the password given when exporting that .p12
+# app/README.md walks through getting each one.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - ".github/workflows/testflight.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Paths
+        run: |
+          echo "KEYCHAIN_PATH=$RUNNER_TEMP/nightjar.keychain-db" >> "$GITHUB_ENV"
+          echo "KEY_PATH=$RUNNER_TEMP/AuthKey.p8" >> "$GITHUB_ENV"
+
+      - name: Pick the newest Xcode on the runner
+        run: |
+          XCODE="$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Install the distribution certificate
+        env:
+          P12_BASE64: ${{ secrets.DIST_CERT_P12_BASE64 }}
+          P12_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD }}
+        run: |
+          set -euo pipefail
+          P12="$RUNNER_TEMP/dist.p12"
+          echo -n "$P12_BASE64" | base64 --decode -o "$P12"
+          KEYCHAIN_PASSWORD="$(uuidgen)"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$P12" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          security find-identity -v -p codesigning "$KEYCHAIN_PATH"
+
+      - name: Write the App Store Connect key
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$ASC_KEY_P8" > "$KEY_PATH"
+
+      - name: Generate the Xcode project
+        env:
+          NIGHTJAR_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          python3 app/tools/make_project.py
+          python3 app/tools/verify_project.py
+
+      - name: Archive
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          xcodebuild archive \
+            -project app/Nightjar.xcodeproj \
+            -scheme Nightjar \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath "$RUNNER_TEMP/Nightjar.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CURRENT_PROJECT_VERSION=${{ github.run_number }} \
+            -quiet
+          test -d "$RUNNER_TEMP/Nightjar.xcarchive" || { echo "::error::archive was not produced"; exit 1; }
+
+      - name: Upload to TestFlight
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>teamID</key><string>${APPLE_TEAM_ID}</string>
+            <key>uploadSymbols</key><true/>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict>
+          </plist>
+          EOF
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/Nightjar.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+          echo "Build ${{ github.run_number }} is on its way to TestFlight."
+
+      - name: Clean up the keychain
+        if: always()
+        run: |
+          security delete-keychain "$KEYCHAIN_PATH" 2>/dev/null || true
+          rm -f "$KEY_PATH"

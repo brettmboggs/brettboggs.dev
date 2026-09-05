@@ -1,0 +1,41 @@
+import Foundation
+
+/// Flat Codable JSON in Application Support.
+///
+/// Deliberately not SwiftData or Core Data: the whole data model is a handful
+/// of small structs and nothing here is worth a migration story. Nothing ever
+/// leaves the phone.
+enum Persistence {
+    static var directory: URL {
+        let fm = FileManager.default
+        let base = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        return base.appendingPathComponent("Nightjar", isDirectory: true)
+    }
+
+    private static func url(_ name: String) -> URL {
+        directory.appendingPathComponent(name, isDirectory: false)
+    }
+
+    static func load<T: Decodable>(_ type: T.Type, from name: String) -> T? {
+        guard let data = try? Data(contentsOf: url(name)) else { return nil }
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try? decoder.decode(type, from: data)
+    }
+
+    static func save<T: Encodable>(_ value: T, to name: String) {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        guard let data = try? encoder.encode(value) else { return }
+        let target = url(name)
+        do {
+            try FileManager.default.createDirectory(
+                at: directory, withIntermediateDirectories: true
+            )
+            try data.write(to: target, options: .atomic)
+        } catch {
+            NSLog("Slumbio: could not save \(name): \(error.localizedDescription)")
+        }
+    }
+}

@@ -1,0 +1,82 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Privacy policy for the Slumbio iPhone app. App Store Connect requires a
+// URL; the app links here from Settings and from the paywall.
+const updated = 'September 2026';
+---
+
+<Base title="Privacy · Slumbio" description="What Slumbio does with your data. Nothing." noindex puck={false}>
+  <header class="page-head">
+    <p class="eyebrow">Slumbio · updated {updated}</p>
+    <h1>Privacy</h1>
+    <p class="lede">Slumbio has no account, no server and no analytics. Nothing you do in it leaves your phone.</p>
+  </header>
+
+  <section class="body">
+    <h2>What the app stores</h2>
+    <p>
+      Your settings, saved mixes, breathing preferences and the sleep journal
+      are written to the app's own folder on your phone. They are included in
+      your iCloud or iTunes device backup like any other app data. Deleting the
+      app deletes them.
+    </p>
+
+    <h2>What the app sends</h2>
+    <p>
+      Nothing. The app makes no network requests. There is no crash reporting,
+      no usage tracking, no advertising identifier, and no third-party code
+      that phones home.
+    </p>
+
+    <h2>Purchases</h2>
+    <p>
+      Slumbio Plus is sold through Apple's in-app purchase system. Apple
+      handles payment and knows what you bought; I receive aggregate sales
+      figures from Apple and nothing about you personally. Subscriptions can be
+      managed or cancelled in Settings › Apple Account › Subscriptions on your
+      phone.
+    </p>
+
+    <h2>Notifications</h2>
+    <p>
+      If you turn on the sunrise alarm, the bedtime reminder, or start a free
+      week, the app schedules local notifications on your phone. They are
+      created and delivered by iOS on the device. No notification server is
+      involved.
+    </p>
+
+    <h2>Health</h2>
+    <p>Slumbio does not read or write Health data.</p>
+
+    <h2>Children</h2>
+    <p>Slumbio is not directed at children under 13 and collects no data from anyone.</p>
+
+    <h2>Changes</h2>
+    <p>
+      If any of this changes, the date at the top will, and the app will say
+      so before it does anything new.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Brett Boggs, <a href="mailto:brettmboggs@gmail.com">brettmboggs@gmail.com</a>.
+    </p>
+  </section>
+
+  <a class="back-link" href="/slumbio/">&larr; Slumbio</a>
+</Base>
+
+<style>
+  .body {
+    max-width: 38rem;
+    margin: 2rem 0 3rem;
+  }
+  .body h2 {
+    margin: 2rem 0 0.5rem;
+    font-size: 1.15rem;
+  }
+  .body p {
+    margin: 0 0 1rem;
+  }
+</style>

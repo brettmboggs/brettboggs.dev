@@ -1,0 +1,94 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : "https://brettboggs.dev/nightjar/privacy/"
+      }
+    ]
+  },
+  "identifier" : "A1F4C2E8",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "39.99",
+      "familyShareable" : true,
+      "internalID" : "6F2B91D4",
+      "localizations" : [
+        {
+          "description" : "Every sound, every breathing pattern, routines, the sunrise alarm and your whole sleep history. One payment, no renewal.",
+          "displayName" : "Slumbio Plus Lifetime",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "dev.brettboggs.nightjar.plus.lifetime",
+      "referenceName" : "Plus Lifetime",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21503817",
+      "localizations" : [],
+      "name" : "Slumbio Plus",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "19.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "7A11C3E0",
+          "introductoryOffer" : {
+            "internalID" : "7A11C3E1",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "Every sound, every breathing pattern, routines, the sunrise alarm and your whole sleep history.",
+              "displayName" : "Slumbio Plus Yearly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "dev.brettboggs.nightjar.plus.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Plus Yearly",
+          "subscriptionGroupID" : "21503817",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "3.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "7A11C3E2",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Every sound, every breathing pattern, routines, the sunrise alarm and your whole sleep history.",
+              "displayName" : "Slumbio Plus Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "dev.brettboggs.nightjar.plus.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Plus Monthly",
+          "subscriptionGroupID" : "21503817",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
