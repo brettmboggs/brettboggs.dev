@@ -12,7 +12,7 @@ struct SoundsView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
-                ScreenTitle(title: "Sounds", subtitle: "\(SoundCatalog.all.count) of them. None of them loop.") {
+                ScreenTitle(title: "Sounds", subtitle: "\(SoundCatalog.all.count) of them. Two of them loop.") {
                     IconButton(systemImage: "rectangle.stack") { showMixes = true }
                         .padding(.top, 6)
                 }
