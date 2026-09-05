@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Generates Hush's 1024pt app icon.
+"""Generates Nightjar's 1024pt app icon: the orb, and nothing else.
 
-An abstract warm horizon: no moon, no musical notes, nothing literal. Pure
-stdlib so it stays reproducible with no toolchain to install.
+Pure stdlib so it stays reproducible with no toolchain to install. Same
+colours as the shader, so the icon and the app are the same object.
 """
 import math
 import struct
@@ -10,7 +10,7 @@ import zlib
 from pathlib import Path
 
 SIZE = 1024
-OUT = Path(__file__).resolve().parent.parent / "Hush/Assets.xcassets/AppIcon.appiconset/icon-1024.png"
+OUT = Path(__file__).resolve().parent.parent / "Nightjar/Assets.xcassets/AppIcon.appiconset/icon-1024.png"
 
 
 def lerp(a, b, t):
@@ -18,7 +18,6 @@ def lerp(a, b, t):
 
 
 def stops_at(stops, t):
-    """Interpolate a list of (position, (r,g,b), alpha) stops."""
     if t <= stops[0][0]:
         return stops[0][1], stops[0][2]
     if t >= stops[-1][0]:
@@ -37,93 +36,60 @@ def over(dst, src, alpha):
     return tuple(lerp(dst[j], src[j], alpha) for j in range(3))
 
 
-GROUND = [
-    (0.00, (0x17, 0x10, 0x09), 1.0),
-    (0.55, (0x0E, 0x0A, 0x07), 1.0),
-    (1.00, (0x0A, 0x07, 0x05), 1.0),
-]
+GROUND_TOP = (0x12, 0x0E, 0x0B)
+GROUND_BOTTOM = (0x0A, 0x08, 0x06)
 
-GLOW = [
-    (0.00, (0xF2, 0xB4, 0x5E), 0.95),
-    (0.26, (0xD9, 0x8A, 0x3C), 0.62),
-    (0.58, (0x9A, 0x4F, 0x27), 0.26),
-    (1.00, (0x6B, 0x2F, 0x18), 0.00),
+# Outer body: ember into rose into dusk, fading to nothing.
+HALO = [
+    (0.00, (0xE3, 0x9A, 0x4A), 0.92),
+    (0.30, (0xD0, 0x7E, 0x5C), 0.70),
+    (0.55, (0x9C, 0x5E, 0x6A), 0.34),
+    (0.78, (0x5E, 0x55, 0x7C), 0.12),
+    (1.00, (0x3A, 0x36, 0x52), 0.00),
 ]
 
 CORE = [
-    (0.00, (0xFF, 0xD9, 0xA0), 0.90),
-    (1.00, (0xF0, 0xA4, 0x4E), 0.00),
+    (0.00, (0xFB, 0xE8, 0xCC), 1.00),
+    (0.55, (0xF3, 0xC0, 0x84), 0.75),
+    (1.00, (0xE3, 0x9A, 0x4A), 0.00),
 ]
 
-# Three settling bands: centre y, left x, right x, opacity. Thick enough to
-# still read as a mark at 60pt on a home screen, which is the only size that
-# really matters.
-BANDS = [
-    (0.560, 0.150, 0.850, 0.62),
-    (0.655, 0.245, 0.755, 0.42),
-    (0.745, 0.350, 0.650, 0.24),
-]
-BAND_INK = (0xF7, 0xE8, 0xD2)
-BAND_HALF_HEIGHT = 11.0  # pixels
+CENTER = (0.50, 0.50)
+HALO_RADIUS = 0.68
+CORE_RADIUS = 0.23
 
-GLOW_CENTER = (0.50, 0.80)
-GLOW_RADIUS = 0.58
-CORE_RADIUS = 0.24
+
+def wobble(angle):
+    """A slightly organic edge, so it is a body and not a disc."""
+    return 1 + 0.035 * math.sin(3 * angle + 0.4) + 0.022 * math.sin(5 * angle + 2.1)
 
 
 def build():
     rows = bytearray()
-    cx, cy = GLOW_CENTER
-
+    cx, cy = CENTER
     for y in range(SIZE):
-        rows.append(0)  # PNG filter type: none
+        rows.append(0)
         fy = (y + 0.5) / SIZE
-        base_colour, _ = stops_at(GROUND, fy)
-        veil = 0.55 * fy * fy
-
-        # Only bands whose capsule can reach this row are worth testing.
-        active = [
-            (cy_b * SIZE, x0 * SIZE, x1 * SIZE, alpha)
-            for cy_b, x0, x1, alpha in BANDS
-            if abs((y + 0.5) - cy_b * SIZE) <= BAND_HALF_HEIGHT + 1.5
-        ]
-
+        base = tuple(lerp(GROUND_TOP[j], GROUND_BOTTOM[j], fy) for j in range(3))
         for x in range(SIZE):
             fx = (x + 0.5) / SIZE
             dx = fx - cx
             dy = fy - cy
             dist = math.sqrt(dx * dx + dy * dy)
+            angle = math.atan2(dy, dx)
+            w = wobble(angle)
 
-            pixel = base_colour
-
-            colour, alpha = stops_at(GLOW, min(dist / GLOW_RADIUS, 1.0))
+            pixel = base
+            colour, alpha = stops_at(HALO, min(dist / (HALO_RADIUS * w), 1.0))
             if alpha > 0:
                 pixel = over(pixel, colour, alpha)
-
-            colour, alpha = stops_at(CORE, min(dist / CORE_RADIUS, 1.0))
+            colour, alpha = stops_at(CORE, min(dist / (CORE_RADIUS * w), 1.0))
             if alpha > 0:
                 pixel = over(pixel, colour, alpha)
-
-            for band_y, bx0, bx1, band_alpha in active:
-                px, py = x + 0.5, y + 0.5
-                if px < bx0:
-                    d = math.hypot(px - bx0, py - band_y)
-                elif px > bx1:
-                    d = math.hypot(px - bx1, py - band_y)
-                else:
-                    d = abs(py - band_y)
-                # One pixel of feathering keeps the rounded caps clean.
-                coverage = max(0.0, min(1.0, (BAND_HALF_HEIGHT - d) / 1.5 + 0.5))
-                if coverage > 0:
-                    pixel = over(pixel, BAND_INK, band_alpha * coverage)
-
-            if veil > 0:
-                pixel = over(pixel, (0x0A, 0x07, 0x05), veil)
 
             rows.append(max(0, min(255, int(pixel[0] + 0.5))))
             rows.append(max(0, min(255, int(pixel[1] + 0.5))))
             rows.append(max(0, min(255, int(pixel[2] + 0.5))))
-
     return bytes(rows)
 
 
@@ -133,7 +99,7 @@ def chunk(tag, payload):
 
 
 def write_png(raw, path):
-    header = struct.pack(">IIBBBBB", SIZE, SIZE, 8, 2, 0, 0, 0)  # 8-bit truecolour
+    header = struct.pack(">IIBBBBB", SIZE, SIZE, 8, 2, 0, 0, 0)
     data = (
         b"\x89PNG\r\n\x1a\n"
         + chunk(b"IHDR", header)

@@ -353,8 +353,8 @@ def check_catalog(files: list[Path]) -> list[str]:
     A missing case falls through to the factory's default and plays brown
     noise under the wrong name, which no compiler will ever complain about.
     """
-    catalog = ROOT / 'Shared/SoundCatalog.swift'
-    factory = ROOT / 'Hush/Audio/Textures.swift'
+    catalog = ROOT / 'Nightjar/Model/SoundCatalog.swift'
+    factory = ROOT / 'Nightjar/Audio/Textures.swift'
     if not catalog.exists() or not factory.exists():
         return []
 

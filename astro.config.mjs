@@ -14,13 +14,15 @@ export default defineConfig({
   integrations: [
     sitemap({
       // /roadmap/ is a working page for Brett; /offline/ is the service
-      // worker's fallback; /store/ is unfinished and sells nothing yet. All
-      // are noindexed and unlisted.
+      // worker's fallback; /store/ is unfinished and sells nothing yet;
+      // /nightjar/ holds the app's support and policy pages until it ships.
+      // All are noindexed and unlisted.
       filter: (page) =>
         !page.includes('/roadmap/') &&
         !page.includes('/offline/') &&
         !page.includes('/store/') &&
-        !page.includes('/admin/'),
+        !page.includes('/admin/') &&
+        !page.includes('/nightjar/'),
     }),
   ],
 });

@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Support page for the iPhone app. Linked from inside the app and from App
+// Store Connect. Kept out of the sitemap and search results until it ships.
+---
+
+<Base title="Nightjar · Brett Boggs" description="Sound that never loops. Breathing you can see." noindex puck={false}>
+  <header class="page-head">
+    <p class="eyebrow">iPhone</p>
+    <h1>Nightjar</h1>
+    <p class="lede">
+      A sleep app. Sound that never loops, breathing you can see, and one tap
+      from the couch to the timer.
+    </p>
+  </header>
+
+  <section class="body">
+    <p>
+      Nightjar is on TestFlight. If you have a link, open it on your phone
+      and install the TestFlight app when it asks. New builds arrive on their
+      own.
+    </p>
+    <p>
+      Something wrong, or an idea? Write to
+      <a href="mailto:brettmboggs@gmail.com">brettmboggs@gmail.com</a>. I read
+      all of it.
+    </p>
+    <ul class="links">
+      <li><a href="/nightjar/privacy/">Privacy</a></li>
+      <li><a href="/nightjar/terms/">Terms</a></li>
+    </ul>
+  </section>
+
+  <a class="back-link" href="/">&larr; Home</a>
+</Base>
+
+<style>
+  .body {
+    max-width: 38rem;
+    margin: 2rem 0 3rem;
+  }
+  .body p {
+    margin: 0 0 1rem;
+  }
+  .links {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+</style>

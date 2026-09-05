@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Build Hush and install it on the iPhone plugged into this Mac.
+# Build Nightjar and install it on the iPhone plugged into this Mac.
 #
 #   ./tools/install.sh
 #
@@ -12,7 +12,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
 BOLD=$'\033[1m'; DIM=$'\033[2m'; RED=$'\033[31m'; GREEN=$'\033[32m'; OFF=$'\033[0m'
-LOG="$(mktemp -t hush-build)"
+LOG="$(mktemp -t nightjar-build)"
 
 say()  { printf '%s%s%s\n' "$BOLD" "$1" "$OFF"; }
 note() { printf '%s  %s%s\n' "$DIM" "$1" "$OFF"; }
@@ -22,7 +22,7 @@ command -v xcodebuild >/dev/null || die "Xcode command line tools are not instal
 
 # --- 1. Which phone? --------------------------------------------------------
 say "Looking for a connected iPhone"
-DEVICES_JSON="$(mktemp -t hush-devices)"
+DEVICES_JSON="$(mktemp -t nightjar-devices)"
 xcrun devicectl list devices --json-output "$DEVICES_JSON" >/dev/null 2>&1
 
 read -r UDID DEVICE_NAME <<<"$(python3 - "$DEVICES_JSON" <<'PY'
@@ -75,8 +75,8 @@ python3 tools/make_project.py >/dev/null || die "Could not generate the Xcode pr
 say "Building"
 note "first build takes a few minutes"
 xcodebuild \
-    -project Hush.xcodeproj \
-    -scheme Hush \
+    -project Nightjar.xcodeproj \
+    -scheme Nightjar \
     -configuration Debug \
     -destination "id=$UDID" \
     -derivedDataPath build \
@@ -92,8 +92,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-APP="$(find build/Build/Products -name 'Hush.app' -maxdepth 3 | head -1)"
-[ -n "$APP" ] || die "Built, but Hush.app is not where expected. Log: $LOG"
+APP="$(find build/Build/Products -name 'Nightjar.app' -maxdepth 3 | head -1)"
+[ -n "$APP" ] || die "Built, but Nightjar.app is not where expected. Log: $LOG"
 
 # --- 5. Install and launch --------------------------------------------------
 say "Installing on $DEVICE_NAME"
@@ -103,7 +103,7 @@ if ! xcrun devicectl device install app --device "$UDID" "$APP" >>"$LOG" 2>&1; t
     exit 1
 fi
 
-xcrun devicectl device process launch --device "$UDID" dev.brettboggs.hush >>"$LOG" 2>&1
+xcrun devicectl device process launch --device "$UDID" dev.brettboggs.nightjar >>"$LOG" 2>&1
 
-printf '\n%sHush is on %s.%s\n' "$GREEN" "$DEVICE_NAME" "$OFF"
+printf '\n%sNightjar is on %s.%s\n' "$GREEN" "$DEVICE_NAME" "$OFF"
 note "If it will not open: Settings > General > VPN & Device Management > trust your Apple ID, then tap the icon."

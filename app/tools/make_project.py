@@ -1,55 +1,41 @@
 #!/usr/bin/env python3
-"""Generates Hush.xcodeproj from the source tree.
+"""Generates Nightjar.xcodeproj from the source tree.
 
 Hand-maintaining a .pbxproj is miserable and hand-editing one in a diff is
-worse, so the project file is generated. Add a Swift file anywhere under
-Hush/, HushWidgets/ or Shared/ and re-run this; membership follows the folder.
+worse, so the project file is generated. Add a Swift or Metal file anywhere
+under Nightjar/ and re-run this; membership follows the folder.
 
     python3 tools/make_project.py
 
-UUIDs are derived from a hash of the object's role, so regenerating produces a
-byte-identical file and the project does not churn in git.
+One app target, no extensions, no entitlements. A free Apple ID can sign and
+install it; a paid one can ship it. UUIDs are derived from a hash of each
+object's role, so regenerating produces a byte-identical file and the project
+does not churn in git.
 """
 import hashlib
 import os
 import re
-import shutil
-import sys
 from pathlib import Path
 
-# A free Apple ID cannot provision App Groups, and the widget extension needs
-# one to see the app's state. `--solo` emits an app-only project with no
-# extension and no entitlements at all, which a free account can sign and
-# install. Everything except the widgets, the Control Centre toggle and the
-# Live Activity works exactly the same: UserDefaults and the file store both
-# already fall back to app-local storage when the shared container is absent.
-SOLO = "--solo" in sys.argv
-
 ROOT = Path(__file__).resolve().parent.parent
-PROJECT = ROOT / "Hush.xcodeproj"
+PROJECT = ROOT / "Nightjar.xcodeproj"
 
-APP_NAME = "Hush"
-EXT_NAME = "HushWidgets"
-BUNDLE_ID = "dev.brettboggs.hush"
-EXT_BUNDLE_ID = f"{BUNDLE_ID}.widgets"
+APP_NAME = "Nightjar"
+BUNDLE_ID = "dev.brettboggs.nightjar"
 DEPLOYMENT_TARGET = "18.0"
 SWIFT_VERSION = "5.0"
 MARKETING_VERSION = "1.0"
 PROJECT_VERSION = "1"
 
+
 def development_team() -> str:
     """The Apple team id to sign with, preserved across regeneration.
 
-    Xcode writes DEVELOPMENT_TEAM into project.pbxproj when you pick a team in
-    Signing & Capabilities. Regenerating the project used to wipe it, so every
-    push from a machine without Xcode silently un-signed the project and the
-    next device build failed with "Signing requires a development team". That
-    is a generator bug, not a user error.
-
-    Checked in order: an explicit environment override, a gitignored
-    Local.xcconfig, then whatever the current project file already says.
+    Checked in order: an explicit environment override (what CI uses), a
+    gitignored Local.xcconfig, then whatever the current project file already
+    says, so a team picked in Xcode's Signing pane survives a regeneration.
     """
-    override = os.environ.get("HUSH_TEAM_ID", "").strip()
+    override = os.environ.get("NIGHTJAR_TEAM_ID", "").strip()
     if override:
         return override
 
@@ -70,13 +56,14 @@ def development_team() -> str:
 
 FILE_TYPES = {
     ".swift": "sourcecode.swift",
+    ".metal": "sourcecode.metal",
     ".plist": "text.plist.xml",
-    ".entitlements": "text.plist.entitlements",
     ".xcassets": "folder.assetcatalog",
     ".md": "net.daringfireball.markdown",
     ".png": "image.png",
     ".m4a": "file",
     ".xcconfig": "text.xcconfig",
+    ".storekit": "text",
 }
 
 
@@ -92,12 +79,11 @@ def quote(value: str) -> str:
     return f'"{escaped}"'
 
 
-def swift_sources(directory: Path) -> list[Path]:
-    found = [
-        path.relative_to(ROOT)
-        for path in sorted((ROOT / directory).rglob("*.swift"))
-    ]
-    return found
+def sources(directory: Path) -> list[Path]:
+    found = []
+    for pattern in ("*.swift", "*.metal"):
+        found += [p.relative_to(ROOT) for p in (ROOT / directory).rglob(pattern)]
+    return sorted(found)
 
 
 class Project:
@@ -129,25 +115,21 @@ def build() -> str:
     project = Project()
     team = development_team()
 
-    app_swift = swift_sources(Path("Hush"))
-    ext_swift = [] if SOLO else swift_sources(Path(EXT_NAME))
-    shared_swift = swift_sources(Path("Shared"))
+    app_sources = sources(Path(APP_NAME))
 
     # The asset catalog plus every bundled recording.
-    resources = [Path("Hush/Assets.xcassets")] + [
+    resources = [Path(f"{APP_NAME}/Assets.xcassets")] + [
         path.relative_to(ROOT)
-        for path in sorted((ROOT / "Hush/Resources").rglob("*"))
+        for path in sorted((ROOT / f"{APP_NAME}/Resources").rglob("*"))
         if path.is_file()
     ]
-    support = [Path("Hush/Info.plist"), Path("Signing.xcconfig")]
-    if not SOLO:
-        support += [
-            Path("Hush/Hush.entitlements"),
-            Path(f"{EXT_NAME}/Info.plist"),
-            Path(f"{EXT_NAME}/{EXT_NAME}.entitlements"),
-        ]
+    support = [
+        Path(f"{APP_NAME}/Info.plist"),
+        Path("Signing.xcconfig"),
+        Path(f"{APP_NAME}.storekit"),
+    ]
 
-    all_files = app_swift + ext_swift + shared_swift + resources + support
+    all_files = app_sources + resources + support
 
     # ---- PBXFileReference -------------------------------------------------
     file_refs: dict[str, str] = {}
@@ -163,20 +145,12 @@ def build() -> str:
         )
 
     app_product = uuid_for("product:app")
-    ext_product = uuid_for("product:ext")
     project.add(
         app_product,
         f"{APP_NAME}.app",
         '{isa = PBXFileReference; explicitFileType = wrapper.application; '
         'includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; }'
         % quote(f"{APP_NAME}.app"),
-    )
-    project.add(
-        ext_product,
-        f"{EXT_NAME}.appex",
-        '{isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; '
-        'includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; }'
-        % quote(f"{EXT_NAME}.appex"),
     )
 
     # ---- PBXBuildFile -----------------------------------------------------
@@ -193,28 +167,17 @@ def build() -> str:
             entries.append((uuid, path.name))
         return entries
 
-    app_sources = build_files(app_swift + shared_swift, "Sources-app")
-    ext_sources = build_files(ext_swift + shared_swift, "Sources-ext")
-    app_resources = build_files(resources, "Resources-app")
-
-    embed_file = uuid_for("buildfile:embed-appex")
-    project.add(
-        embed_file,
-        f"{EXT_NAME}.appex in Embed Foundation Extensions",
-        "{isa = PBXBuildFile; fileRef = %s /* %s.appex */; "
-        "settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; }" % (ext_product, EXT_NAME),
-    )
+    source_entries = build_files(app_sources, "Sources")
+    resource_entries = build_files(resources, "Resources")
 
     # ---- Groups -----------------------------------------------------------
     def file_list(entries) -> str:
         if not entries:
             return "(\n\t\t\t)"
-        rows = "".join(
-            f"\n\t\t\t\t{uuid} /* {name} */," for uuid, name in entries
-        )
+        rows = "".join(f"\n\t\t\t\t{uuid} /* {name} */," for uuid, name in entries)
         return "(%s\n\t\t\t)" % rows
 
-    def make_group(uuid: str, name: str, path: str | None, children: list[tuple[str, str]]) -> None:
+    def make_group(uuid: str, name: str, path, children: list[tuple[str, str]]) -> None:
         rows = "".join(f"\n\t\t\t\t{child} /* {label} */," for child, label in children)
         body = [
             "isa = PBXGroup;",
@@ -230,13 +193,7 @@ def build() -> str:
     def group_tree(directory: Path, files: list[Path]) -> tuple[str, str]:
         """Builds a group mirroring the folder layout under `directory`."""
         uuid = uuid_for(f"group:{directory}")
-        direct = sorted(
-            [f for f in files if f.parent == directory],
-            key=lambda p: p.name,
-        )
-        # The first path component below `directory` for every nested file.
-        # Taking `f.parent` here would skip intermediate directories that hold
-        # only other directories, orphaning everything beneath them.
+        direct = sorted([f for f in files if f.parent == directory], key=lambda p: p.name)
         immediate = sorted({
             directory / f.relative_to(directory).parts[0]
             for f in files
@@ -254,104 +211,42 @@ def build() -> str:
         make_group(uuid, directory.name, directory.name, children)
         return uuid, directory.name
 
-    app_files = app_swift + resources + [Path("Hush/Info.plist")]
-    if not SOLO:
-        app_files.append(Path("Hush/Hush.entitlements"))
-    app_group, _ = group_tree(Path("Hush"), app_files)
-    ext_files = [] if SOLO else ext_swift + [
-        Path(f"{EXT_NAME}/Info.plist"), Path(f"{EXT_NAME}/{EXT_NAME}.entitlements")
-    ]
-    ext_group, _ = group_tree(Path(EXT_NAME), ext_files)
-    shared_group, _ = group_tree(Path("Shared"), shared_swift)
+    app_files = app_sources + resources + [Path(f"{APP_NAME}/Info.plist")]
+    app_group, _ = group_tree(Path(APP_NAME), app_files)
 
     products_group = uuid_for("group:products")
-    products = [(app_product, f"{APP_NAME}.app")]
-    if not SOLO:
-        products.append((ext_product, f"{EXT_NAME}.appex"))
-    make_group(products_group, "Products", None, products)
+    make_group(products_group, "Products", None, [(app_product, f"{APP_NAME}.app")])
 
     main_group = uuid_for("group:main")
-    signing_ref = file_refs["Signing.xcconfig"]
-    top = [(app_group, "Hush")]
-    if not SOLO:
-        top.append((ext_group, EXT_NAME))
-    top += [
-        (shared_group, "Shared"),
-        (signing_ref, "Signing.xcconfig"),
+    make_group(main_group, "", None, [
+        (app_group, APP_NAME),
+        (file_refs["Signing.xcconfig"], "Signing.xcconfig"),
+        (file_refs[f"{APP_NAME}.storekit"], f"{APP_NAME}.storekit"),
         (products_group, "Products"),
-    ]
-    make_group(main_group, "", None, top)
+    ])
 
     # ---- Build phases -----------------------------------------------------
-    def phase(uuid: str, isa: str, name: str, entries, extra: str = "") -> None:
+    def phase(uuid: str, isa: str, name: str, entries) -> None:
         project.add(
             uuid,
             name,
             "{\n\t\t\tisa = %s;\n"
             "\t\t\tbuildActionMask = 2147483647;\n"
             "\t\t\tfiles = %s;\n"
-            "%s"
             "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n\t\t}"
-            % (isa, file_list(entries), extra),
+            % (isa, file_list(entries)),
         )
 
-    app_sources_phase = uuid_for("phase:app:sources")
-    app_frameworks_phase = uuid_for("phase:app:frameworks")
-    app_resources_phase = uuid_for("phase:app:resources")
-    app_embed_phase = uuid_for("phase:app:embed")
-    ext_sources_phase = uuid_for("phase:ext:sources")
-    ext_frameworks_phase = uuid_for("phase:ext:frameworks")
-    ext_resources_phase = uuid_for("phase:ext:resources")
-
-    phase(app_sources_phase, "PBXSourcesBuildPhase", "Sources", app_sources)
-    phase(app_frameworks_phase, "PBXFrameworksBuildPhase", "Frameworks", [])
-    phase(app_resources_phase, "PBXResourcesBuildPhase", "Resources", app_resources)
-    phase(ext_sources_phase, "PBXSourcesBuildPhase", "Sources", ext_sources)
-    phase(ext_frameworks_phase, "PBXFrameworksBuildPhase", "Frameworks", [])
-    phase(ext_resources_phase, "PBXResourcesBuildPhase", "Resources", [])
-
-    project.add(
-        app_embed_phase,
-        "Embed Foundation Extensions",
-        "{\n\t\t\tisa = PBXCopyFilesBuildPhase;\n"
-        "\t\t\tbuildActionMask = 2147483647;\n"
-        '\t\t\tdstPath = "";\n'
-        "\t\t\tdstSubfolderSpec = 13;\n"
-        "\t\t\tfiles = %s;\n"
-        '\t\t\tname = "Embed Foundation Extensions";\n'
-        "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n\t\t}"
-        % file_list([(embed_file, f"{EXT_NAME}.appex")]),
-    )
-
-    # ---- Dependency -------------------------------------------------------
-    project_uuid = uuid_for("project")
-    proxy = uuid_for("proxy:ext")
-    dependency = uuid_for("dependency:ext")
-    ext_target = uuid_for("target:ext")
-    app_target = uuid_for("target:app")
-
-    project.add(
-        proxy,
-        "PBXContainerItemProxy",
-        "{\n\t\t\tisa = PBXContainerItemProxy;\n"
-        f"\t\t\tcontainerPortal = {project_uuid} /* Project object */;\n"
-        "\t\t\tproxyType = 1;\n"
-        f"\t\t\tremoteGlobalIDString = {ext_target};\n"
-        f"\t\t\tremoteInfo = {EXT_NAME};\n\t\t}}",
-    )
-    project.add(
-        dependency,
-        "PBXTargetDependency",
-        "{\n\t\t\tisa = PBXTargetDependency;\n"
-        f"\t\t\ttarget = {ext_target} /* {EXT_NAME} */;\n"
-        f"\t\t\ttargetProxy = {proxy} /* PBXContainerItemProxy */;\n\t\t}}",
-    )
+    sources_phase = uuid_for("phase:app:sources")
+    frameworks_phase = uuid_for("phase:app:frameworks")
+    resources_phase = uuid_for("phase:app:resources")
+    phase(sources_phase, "PBXSourcesBuildPhase", "Sources", source_entries)
+    phase(frameworks_phase, "PBXFrameworksBuildPhase", "Frameworks", [])
+    phase(resources_phase, "PBXResourcesBuildPhase", "Resources", resource_entries)
 
     # ---- Build configurations --------------------------------------------
     def settings_block(pairs: dict[str, str]) -> str:
-        rows = "".join(
-            f"\n\t\t\t\t{key} = {value};" for key, value in sorted(pairs.items())
-        )
+        rows = "".join(f"\n\t\t\t\t{key} = {value};" for key, value in sorted(pairs.items()))
         return "{%s\n\t\t\t}" % rows
 
     base = {
@@ -399,7 +294,7 @@ def build() -> str:
         "CURRENT_PROJECT_VERSION": PROJECT_VERSION,
         "ENABLE_PREVIEWS": "YES",
         "GENERATE_INFOPLIST_FILE": "NO",
-        "INFOPLIST_FILE": "Hush/Info.plist",
+        "INFOPLIST_FILE": f"{APP_NAME}/Info.plist",
         "LD_RUNPATH_SEARCH_PATHS": '(\n\t\t\t\t\t"$(inherited)",\n\t\t\t\t\t"@executable_path/Frameworks",\n\t\t\t\t)',
         "MARKETING_VERSION": MARKETING_VERSION,
         "PRODUCT_BUNDLE_IDENTIFIER": BUNDLE_ID,
@@ -407,50 +302,29 @@ def build() -> str:
         "SWIFT_EMIT_LOC_STRINGS": "YES",
         "TARGETED_DEVICE_FAMILY": "1",
     }
-    if not SOLO:
-        app_common["CODE_SIGN_ENTITLEMENTS"] = "Hush/Hush.entitlements"
     if team:
         app_common["DEVELOPMENT_TEAM"] = team
 
-    ext_common = {
-        "CODE_SIGN_ENTITLEMENTS": f"{EXT_NAME}/{EXT_NAME}.entitlements",
-        "CODE_SIGN_STYLE": "Automatic",
-        "CURRENT_PROJECT_VERSION": PROJECT_VERSION,
-        "GENERATE_INFOPLIST_FILE": "NO",
-        "INFOPLIST_FILE": f"{EXT_NAME}/Info.plist",
-        "LD_RUNPATH_SEARCH_PATHS": '(\n\t\t\t\t\t"$(inherited)",\n\t\t\t\t\t"@executable_path/Frameworks",\n\t\t\t\t\t"@executable_path/../../Frameworks",\n\t\t\t\t)',
-        "MARKETING_VERSION": MARKETING_VERSION,
-        "PRODUCT_BUNDLE_IDENTIFIER": EXT_BUNDLE_ID,
-        "PRODUCT_NAME": '"$(TARGET_NAME)"',
-        "SKIP_INSTALL": "YES",
-        "SWIFT_EMIT_LOC_STRINGS": "YES",
-        "TARGETED_DEVICE_FAMILY": "1",
-    }
-    if team:
-        ext_common["DEVELOPMENT_TEAM"] = team
-
+    signing_ref = file_refs["Signing.xcconfig"]
     configs = {
         "project:Debug": debug,
         "project:Release": release,
         "app:Debug": app_common,
         "app:Release": app_common,
-        "ext:Debug": ext_common,
-        "ext:Release": ext_common,
     }
     config_uuids = {}
     for key, values in configs.items():
         name = key.split(":")[1]
         uuid = uuid_for(f"buildconfig:{key}")
         config_uuids[key] = uuid
-        base = ""
-        if key.startswith(("app:", "ext:")):
-            base = (f"\t\t\tbaseConfigurationReference = {signing_ref} "
-                    "/* Signing.xcconfig */;\n")
+        base_line = ""
+        if key.startswith("app:"):
+            base_line = f"\t\t\tbaseConfigurationReference = {signing_ref} /* Signing.xcconfig */;\n"
         project.add(
             uuid,
             name,
             "{\n\t\t\tisa = XCBuildConfiguration;\n"
-            f"{base}"
+            f"{base_line}"
             f"\t\t\tbuildSettings = {settings_block(values)};\n"
             f"\t\t\tname = {name};\n\t\t}}",
         )
@@ -472,54 +346,27 @@ def build() -> str:
 
     project_config_list = config_list("project")
     app_config_list = config_list("app")
-    ext_config_list = config_list("ext")
 
-    # ---- Targets ----------------------------------------------------------
-    app_target_lines = [
-        "{\n\t\t\tisa = PBXNativeTarget;\n",
-        f"\t\t\tbuildConfigurationList = {app_config_list};\n",
-        "\t\t\tbuildPhases = (\n",
-        f"\t\t\t\t{app_sources_phase} /* Sources */,\n",
-        f"\t\t\t\t{app_frameworks_phase} /* Frameworks */,\n",
-        f"\t\t\t\t{app_resources_phase} /* Resources */,\n",
-    ]
-    if not SOLO:
-        app_target_lines.append(
-            f"\t\t\t\t{app_embed_phase} /* Embed Foundation Extensions */,\n"
-        )
-    app_target_lines += [
-        "\t\t\t);\n",
-        "\t\t\tbuildRules = (\n\t\t\t);\n",
-        "\t\t\tdependencies = (\n",
-    ]
-    if not SOLO:
-        app_target_lines.append(f"\t\t\t\t{dependency} /* PBXTargetDependency */,\n")
-    app_target_lines += [
-        "\t\t\t);\n",
-        f"\t\t\tname = {APP_NAME};\n",
-        f"\t\t\tproductName = {APP_NAME};\n",
-        f"\t\t\tproductReference = {app_product} /* {APP_NAME}.app */;\n",
-        '\t\t\tproductType = "com.apple.product-type.application";\n\t\t}',
-    ]
-    project.add(app_target, APP_NAME, "".join(app_target_lines))
-    if not SOLO:
-      project.add(
-        ext_target,
-        EXT_NAME,
+    # ---- Target -----------------------------------------------------------
+    project_uuid = uuid_for("project")
+    app_target = uuid_for("target:app")
+    project.add(
+        app_target,
+        APP_NAME,
         "{\n\t\t\tisa = PBXNativeTarget;\n"
-        f"\t\t\tbuildConfigurationList = {ext_config_list};\n"
+        f"\t\t\tbuildConfigurationList = {app_config_list};\n"
         "\t\t\tbuildPhases = (\n"
-        f"\t\t\t\t{ext_sources_phase} /* Sources */,\n"
-        f"\t\t\t\t{ext_frameworks_phase} /* Frameworks */,\n"
-        f"\t\t\t\t{ext_resources_phase} /* Resources */,\n"
+        f"\t\t\t\t{sources_phase} /* Sources */,\n"
+        f"\t\t\t\t{frameworks_phase} /* Frameworks */,\n"
+        f"\t\t\t\t{resources_phase} /* Resources */,\n"
         "\t\t\t);\n"
         "\t\t\tbuildRules = (\n\t\t\t);\n"
         "\t\t\tdependencies = (\n\t\t\t);\n"
-        f"\t\t\tname = {EXT_NAME};\n"
-        f"\t\t\tproductName = {EXT_NAME};\n"
-        f"\t\t\tproductReference = {ext_product} /* {EXT_NAME}.appex */;\n"
-        '\t\t\tproductType = "com.apple.product-type.app-extension";\n\t\t}',
-      )
+        f"\t\t\tname = {APP_NAME};\n"
+        f"\t\t\tproductName = {APP_NAME};\n"
+        f"\t\t\tproductReference = {app_product} /* {APP_NAME}.app */;\n"
+        '\t\t\tproductType = "com.apple.product-type.application";\n\t\t}',
+    )
 
     # ---- Project ----------------------------------------------------------
     project.add(
@@ -532,7 +379,6 @@ def build() -> str:
         "\t\t\t\tLastUpgradeCheck = 1620;\n"
         "\t\t\t\tTargetAttributes = {\n"
         f"\t\t\t\t\t{app_target} = {{\n\t\t\t\t\t\tCreatedOnToolsVersion = 16.2;\n\t\t\t\t\t}};\n"
-        f"{'' if SOLO else chr(9) * 5 + ext_target + ' = {' + chr(10) + chr(9) * 6 + 'CreatedOnToolsVersion = 16.2;' + chr(10) + chr(9) * 5 + '};' + chr(10)}"
         "\t\t\t\t};\n"
         "\t\t\t};\n"
         f"\t\t\tbuildConfigurationList = {project_config_list};\n"
@@ -547,26 +393,8 @@ def build() -> str:
         '\t\t\tprojectRoot = "";\n'
         "\t\t\ttargets = (\n"
         f"\t\t\t\t{app_target} /* {APP_NAME} */,\n"
-        f"{'' if SOLO else chr(9) * 4 + ext_target + ' /* ' + EXT_NAME + ' */,' + chr(10)}"
         "\t\t\t);\n\t\t}",
     )
-
-    if SOLO:
-        for key in list(project.objects):
-            if key in {ext_target, ext_product, ext_config_list, proxy, dependency,
-                       ext_sources_phase, ext_frameworks_phase, ext_resources_phase,
-                       app_embed_phase, embed_file, ext_group,
-                       config_uuids["ext:Debug"], config_uuids["ext:Release"]}:
-                del project.objects[key]
-        for path in ext_swift:
-            project.objects.pop(uuid_for(f"buildfile:Sources-ext:{path}"), None)
-        for path in shared_swift:
-            project.objects.pop(uuid_for(f"buildfile:Sources-ext:{path}"), None)
-        for path in [Path(f"{EXT_NAME}/Info.plist"),
-                     Path(f"{EXT_NAME}/{EXT_NAME}.entitlements")]:
-            project.objects.pop(uuid_for(f"fileref:{path}"), None)
-        for path in swift_sources(Path(EXT_NAME)):
-            project.objects.pop(uuid_for(f"fileref:{path}"), None)
 
     return project.render(project_uuid)
 
@@ -578,15 +406,15 @@ SCHEME = """<?xml version="1.0" encoding="UTF-8"?>
          <BuildActionEntry buildForTesting = "YES" buildForRunning = "YES" buildForProfiling = "YES" buildForArchiving = "YES" buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "{app_target}"
-               BuildableName = "Hush.app"
-               BlueprintName = "Hush"
-               ReferencedContainer = "container:Hush.xcodeproj">
+               BlueprintIdentifier = "{target}"
+               BuildableName = "{app}.app"
+               BlueprintName = "{app}"
+               ReferencedContainer = "container:{app}.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
-   <TestAction buildConfiguration = "Debug" selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv = "YES">
+   <TestAction buildConfiguration = "Debug" selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv = "YES" shouldAutocreateTestPlan = "YES">
       <Testables>
       </Testables>
    </TestAction>
@@ -594,24 +422,24 @@ SCHEME = """<?xml version="1.0" encoding="UTF-8"?>
       <BuildableProductRunnable runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "{app_target}"
-            BuildableName = "Hush.app"
-            BlueprintName = "Hush"
-            ReferencedContainer = "container:Hush.xcodeproj">
+            BlueprintIdentifier = "{target}"
+            BuildableName = "{app}.app"
+            BlueprintName = "{app}"
+            ReferencedContainer = "container:{app}.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <StoreKitConfigurationFileReference
-         identifier = "../../../Hush.storekit">
+         identifier = "../../../{app}.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction buildConfiguration = "Release" shouldUseLaunchSchemeArgsEnv = "YES" savedToolIdentifier = "" useCustomWorkingDirectory = "NO" debugDocumentVersioning = "YES">
       <BuildableProductRunnable runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "{app_target}"
-            BuildableName = "Hush.app"
-            BlueprintName = "Hush"
-            ReferencedContainer = "container:Hush.xcodeproj">
+            BlueprintIdentifier = "{target}"
+            BuildableName = "{app}.app"
+            BlueprintName = "{app}"
+            ReferencedContainer = "container:{app}.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
@@ -632,23 +460,19 @@ WORKSPACE = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 
+def write(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists() and path.read_text() == content:
+        return
+    path.write_text(content)
+
+
 if __name__ == "__main__":
-    preserved = development_team()
-    if preserved:
-        os.environ["HUSH_TEAM_ID"] = preserved
-
-    if PROJECT.exists():
-        shutil.rmtree(PROJECT)
-    (PROJECT / "project.xcworkspace").mkdir(parents=True)
-    (PROJECT / "xcshareddata/xcschemes").mkdir(parents=True)
-
-    (PROJECT / "project.pbxproj").write_text(build())
-    if SOLO:
-        print("  solo mode: app target only, no App Group, no widget extension")
-    (PROJECT / "project.xcworkspace/contents.xcworkspacedata").write_text(WORKSPACE)
-    (PROJECT / "xcshareddata/xcschemes/Hush.xcscheme").write_text(
-        SCHEME.replace("{app_target}", uuid_for("target:app"))
+    write(PROJECT / "project.pbxproj", build())
+    write(PROJECT / "project.xcworkspace" / "contents.xcworkspacedata", WORKSPACE)
+    write(
+        PROJECT / "xcshareddata" / "xcschemes" / f"{APP_NAME}.xcscheme",
+        SCHEME.replace("{target}", uuid_for("target:app")).replace("{app}", APP_NAME),
     )
-    lines = (PROJECT / "project.pbxproj").read_text().count("\n")
-    signing = f"team {preserved}" if preserved else "no team set yet"
-    print(f"wrote {PROJECT.relative_to(ROOT)} ({lines} lines, {signing})")
+    team = development_team()
+    print(f"wrote {PROJECT.relative_to(ROOT)}" + (f" (team {team})" if team else " (no team set)"))
