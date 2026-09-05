@@ -247,6 +247,16 @@ struct JournalSheet: View {
                 }
                 .buttonStyle(.plain)
 
+                // The notes are sleep hygiene, and the patterns are breathing
+                // exercises. Neither is medical advice, and one of them has a
+                // real contraindication, so say so where they are used rather
+                // than only in the terms.
+                Text("None of this is medical advice. If sleep has been a problem for weeks, or you have a heart or breathing condition, talk to a doctor.")
+                    .font(Typeface.body(11))
+                    .foregroundStyle(Palette.inkFaint)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 18)
+
                 Color.clear.frame(height: 20)
             }
             .pageGutter()

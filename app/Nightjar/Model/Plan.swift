@@ -29,7 +29,7 @@ enum PlusFeature: String, CaseIterable, Identifiable, Sendable {
 
     var detail: String {
         switch self {
-        case .library: return "All \(SoundCatalog.all.count), recordings included. Twelve are free."
+        case .library: return "All \(SoundCatalog.all.count) of them. Twelve are free."
         case .layers: return "Two is a sound. Six is a place."
         case .breath: return "Coherent, long exhale, the sigh, and your own."
         case .routine: return "Breathe, then sound, then the timer. One tap."

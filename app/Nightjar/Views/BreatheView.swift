@@ -69,6 +69,16 @@ struct BreatheView: View {
                     }
                     .padding(.top, 26)
 
+                // The notes are sleep hygiene, and the patterns are breathing
+                // exercises. Neither is medical advice, and one of them has a
+                // real contraindication, so say so where they are used rather
+                // than only in the terms.
+                Text("Breathing exercises are not medical advice. If you have a heart or breathing condition, talk to a doctor first.")
+                    .font(Typeface.body(11))
+                    .foregroundStyle(Palette.inkFaint)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 18)
+
                     Color.clear.frame(height: 96)
                 }
                 .pageGutter()

@@ -19,7 +19,7 @@ public enum SoundFamily: String, Codable, CaseIterable, Sendable {
 
     public var title: String {
         switch self {
-        case .recorded: return "Recordings"
+        case .recorded: return "Looped"
         case .rain: return "Rain"
         case .water: return "Water"
         case .wind: return "Wind"
@@ -113,7 +113,7 @@ public enum SoundCatalog {
     public static let all: [SoundKind] = [
         SoundKind(
             id: "rec.brown", name: "Brown Noise", family: .recorded,
-            blurb: "Recorded, not generated. Ten minutes, looped.",
+            blurb: "Ten minutes long. The only sounds here that repeat.",
             symbol: "waveform.path",
             toneLabel: "Tilt", motionLabel: "Drift",
             defaultTone: 0.5, defaultMotion: 0.3, defaultLevel: 0.72,
@@ -121,7 +121,7 @@ public enum SoundCatalog {
         ),
         SoundKind(
             id: "rec.deep-brown", name: "Deep Brown", family: .recorded,
-            blurb: "The same room, lower and heavier.",
+            blurb: "The same again, lower and heavier.",
             symbol: "waveform.path.ecg",
             toneLabel: "Tilt", motionLabel: "Drift",
             defaultTone: 0.44, defaultMotion: 0.3, defaultLevel: 0.78,

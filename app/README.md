@@ -21,8 +21,8 @@ breath sound under it. `Nightjar/Living/Orb.metal` is the shader,
 instance that lives behind the tabs.
 
 **Sounds.** 35, most of them synthesised in real time from noise and filters,
-so there is nothing to loop. Two are bundled recordings streamed with a
-crossfade. Each has a level and two shaping controls that reach into the
+so there is nothing to loop. Two are pre-rendered files streamed with a
+crossfade; they are the only sounds here that repeat. Each has a level and two shaping controls that reach into the
 generator. Up to six layer at once.
 
 **Breathe.** 4·7·8, box, coherent, long exhale, the physiological sigh, and a
@@ -175,7 +175,7 @@ with a real free tier underneath it:
 
 | Free forever | Plus |
 | --- | --- |
-| 12 sounds | All 35, recordings included |
+| 12 sounds | All 35 |
 | 2 layers | 6 layers |
 | 2 saved mixes | Unlimited |
 | 4·7·8 and box breathing | Every pattern, plus your own |
@@ -226,9 +226,9 @@ Renderer (audio thread)
 nothing is allocated, attached or detached while audio is running, and nothing
 can click.
 
-**Recordings stream, they do not load.** A single background queue tops up a
-two-second ring buffer for every active recording. The loop is crossfaded, not
-butt-joined.
+**The streamed files stream, they do not load.** A single background queue
+tops up a two-second ring buffer for each active one. The loop is crossfaded,
+not butt-joined.
 
 **Nothing blocks the audio thread.** Parameters are plain `Float` fields
 written from the main thread and read on the audio thread, then smoothed or
@@ -251,7 +251,7 @@ crackle, cricket chirps and rail clatter.
    `nextFrame()` for one stereo frame.
 3. `python3 tools/check_swift.py` confirms the catalog and the factory agree.
 
-### Adding a recording
+### Adding a streamed file
 
 1. Drop the `.m4a` into `Nightjar/Resources/Recordings/`.
 2. Add a `SoundKind` with `source: .recording(resource: "file-name")`.
@@ -270,7 +270,7 @@ app/
 │   ├── Player/      the controller, breath sessions, lock screen, reminders
 │   ├── Views/       SwiftUI
 │   ├── Support/     theme, haptics, formatters
-│   └── Resources/   bundled recordings
+│   └── Resources/   the two streamed audio files
 ├── Nightjar.storekit   local store for the simulator
 ├── Signing.xcconfig    includes the gitignored Local.xcconfig
 └── tools/              project, verifier, installer, icon
