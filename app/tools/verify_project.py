@@ -64,6 +64,7 @@ def walk(group_uuid: str, prefix: Path):
         if child in groups:
             walk(child, here)
         elif child in file_paths:
+            seen_files.add(child)
             resolved = here / file_paths[child]
             # Products live in BUILT_PRODUCTS_DIR, not on disk.
             if resolved.suffix in {".app", ".appex"}:
@@ -71,11 +72,23 @@ def walk(group_uuid: str, prefix: Path):
             if not (ROOT / resolved).exists():
                 problems.append(f"file reference does not exist: {resolved}")
 
+seen_files: set[str] = set()
+
 root_group = re.search(r"mainGroup = ([0-9A-F]{24});", text)
 if root_group:
     walk(root_group.group(1), Path("."))
 else:
     problems.append("no mainGroup found")
+
+# Every file reference must be reachable from the main group. One that is not
+# still compiles, but Xcode cannot resolve its path: it lands in "Recovered
+# References" and shows red.
+orphans = set(file_paths) - seen_files
+for uuid in sorted(orphans):
+    name = file_paths[uuid]
+    if name.endswith((".app", ".appex")):
+        continue
+    problems.append(f"file reference is not in any group: {name}")
 
 # --- Target membership --------------------------------------------------------
 def sources_for(phase_label: str) -> set[str]:

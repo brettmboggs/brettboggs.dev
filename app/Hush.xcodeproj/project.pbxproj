@@ -96,6 +96,7 @@
 				BE20DE3A14213AA478796819 /* Intents */,
 				FC77337805E59E333EA8C1C9 /* Model */,
 				4B507E8DBBEA4624C081A08B /* Player */,
+				7108396389EDB7D7B65AEA38 /* Resources */,
 				3A2F330068F4988A035BBF28 /* Support */,
 				FC3E3BC4EF464435E69F6651 /* Views */,
 				8E5E5443B815C0A9A8AF39A4 /* Assets.xcassets */,
@@ -280,6 +281,14 @@
 			sourceTree = "<group>";
 		};
 		70232BCDA04F75922108FBA0 /* LiveActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityController.swift; sourceTree = "<group>"; };
+		7108396389EDB7D7B65AEA38 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E26B4DFD45E2A6C5029D5E75 /* Recordings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		73A3D596670CDEE40848A039 /* Textures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Textures.swift; sourceTree = "<group>"; };
 		74D830426764D86D1F1F1E5E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		767467B460279FC342A55349 /* HealthWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthWriter.swift; sourceTree = "<group>"; };
@@ -482,6 +491,15 @@
 		D011674C10791C501B373EE7 /* NowPlayingCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingCenter.swift; sourceTree = "<group>"; };
 		DF017553050E99663AA260ED /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		E0616E7B6D876B1C9AB16482 /* Journal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Journal.swift; sourceTree = "<group>"; };
+		E26B4DFD45E2A6C5029D5E75 /* Recordings */ = {
+			isa = PBXGroup;
+			children = (
+				C036CA59C2C6064D4F1595CE /* brown-noise.m4a */,
+				BD3C3E552243778205CB3C4D /* deep-brown.m4a */,
+			);
+			path = Recordings;
+			sourceTree = "<group>";
+		};
 		E276E6F1CD3B9318C6E782AA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;

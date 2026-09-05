@@ -190,13 +190,13 @@ def build() -> str:
             [f for f in files if f.parent == directory],
             key=lambda p: p.name,
         )
-        subdirs = sorted({
-            f.parent for f in files
-            if f.parent != directory and directory in f.parents
-        })
-        # Only immediate children.
+        # The first path component below `directory` for every nested file.
+        # Taking `f.parent` here would skip intermediate directories that hold
+        # only other directories, orphaning everything beneath them.
         immediate = sorted({
-            d for d in subdirs if d.parent == directory
+            directory / f.relative_to(directory).parts[0]
+            for f in files
+            if f.parent != directory and directory in f.parents
         })
 
         children: list[tuple[str, str]] = []
