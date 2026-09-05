@@ -1,0 +1,8 @@
+// Copy to Local.xcconfig and put your Apple team id here, then run
+// `python3 tools/make_project.py`. Local.xcconfig is gitignored, so your
+// signing identity never lands in the repository and regenerating the
+// project never wipes it.
+//
+// Find the id: Xcode > Settings > Accounts > your Apple ID > Manage
+// Certificates, or the ten-character code in Signing & Capabilities.
+DEVELOPMENT_TEAM = XXXXXXXXXX

@@ -103,8 +103,13 @@ ext_files = sources_for("Sources-ext")
 
 expected_app = {p.name for p in (ROOT / "Hush").rglob("*.swift")} | \
                {p.name for p in (ROOT / "Shared").rglob("*.swift")}
-expected_ext = {p.name for p in (ROOT / "HushWidgets").rglob("*.swift")} | \
-               {p.name for p in (ROOT / "Shared").rglob("*.swift")}
+# Solo projects (see make_project.py --solo) drop the widget extension on
+# purpose, so there is nothing to compare against.
+solo = not ext_files
+expected_ext = set() if solo else (
+    {p.name for p in (ROOT / "HushWidgets").rglob("*.swift")} |
+    {p.name for p in (ROOT / "Shared").rglob("*.swift")}
+)
 
 if app_files != expected_app:
     problems.append(f"app sources mismatch: missing {expected_app - app_files}, extra {app_files - expected_app}")
@@ -123,5 +128,5 @@ if problems:
         print("  -", problem)
     sys.exit(1)
 
-print(f"project OK: {len(defined)} objects, "
-      f"{len(app_files)} app sources, {len(ext_files)} widget sources")
+shape = "solo, app target only" if solo else f"{len(ext_files)} widget sources"
+print(f"project OK: {len(defined)} objects, {len(app_files)} app sources, {shape}")

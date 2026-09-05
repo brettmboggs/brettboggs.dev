@@ -28,6 +28,7 @@
 		07990DC159C2290FD1631CB2 /* Theme.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = C5F941F32786CE33C51BCE61 /* Theme.swift */; };
 		088A77B1655E183A232FF318 /* SleepTimerActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerActivity.swift; sourceTree = "<group>"; };
 		08A0C071BD45562BD61988FA /* SharedState.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 0676CFFDA5ADF25847BA6C86 /* SharedState.swift */; };
+		090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		090DE6CBB0952D8F87FE2B28 /* TexturesRooms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TexturesRooms.swift; sourceTree = "<group>"; };
 		0F89527838B1B28A15F8561F /* BedsideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BedsideView.swift; sourceTree = "<group>"; };
 		1100EC9AE92EFFAE27F866A8 /* HushIntents.swift in Sources-ext */ = {isa = PBXBuildFile; fileRef = B85900B251C489190ECB1EF4 /* HushIntents.swift */; };
@@ -329,6 +330,7 @@
 		886565EA1F2F46FCA45BD5EA /* BedsideView.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 0F89527838B1B28A15F8561F /* BedsideView.swift */; };
 		888EA2EE1AE6D7A8440DE5BB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = HushWidgets/HushWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -394,6 +396,7 @@
 		A49B633D18139BBA3F13F65F /* brown-noise.m4a in Resources-app */ = {isa = PBXBuildFile; fileRef = C036CA59C2C6064D4F1595CE /* brown-noise.m4a */; };
 		A4F26FAF97A8095E609EACFB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = HushWidgets/HushWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -422,6 +425,7 @@
 				3975D8EDCE401413F5D7ECB2 /* Hush */,
 				F167F6E42CF86E425EA1309B /* HushWidgets */,
 				B8A7C4C7C43B9A2F11EEEA63 /* Shared */,
+				090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */,
 				6F7199ED7B63CDA338A0FB82 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -554,6 +558,7 @@
 		};
 		ECD3FF0D57E2FBF8BE98DC29 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -577,6 +582,7 @@
 		};
 		EF19C69A107C529BF28BA8D4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
