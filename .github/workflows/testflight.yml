@@ -32,12 +32,14 @@ jobs:
   upload:
     runs-on: macos-15
     timeout-minutes: 60
-    env:
-      KEYCHAIN_PATH: ${{ runner.temp }}/nightjar.keychain-db
-      KEY_PATH: ${{ runner.temp }}/AuthKey.p8
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+
+      - name: Paths
+        run: |
+          echo "KEYCHAIN_PATH=$RUNNER_TEMP/nightjar.keychain-db" >> "$GITHUB_ENV"
+          echo "KEY_PATH=$RUNNER_TEMP/AuthKey.p8" >> "$GITHUB_ENV"
 
       - name: Pick the newest Xcode on the runner
         run: |
