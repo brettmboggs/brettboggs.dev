@@ -1,31 +1,79 @@
 ---
 import Base from '../../layouts/Base.astro';
 
-// Support page for the iPhone app. Linked from inside the app and from App
-// Store Connect. Kept out of the sitemap and search results until it ships.
+// The app's page. Linked from inside the app, from the App Store listing as
+// both the support and marketing URL, and from anywhere Brett points people.
+// Indexed, unlike the policy pages, because this is the one that has to be
+// findable.
+const appStore = 'https://apps.apple.com/app/id6808987732';
 ---
 
-<Base title="Slumbio · Brett Boggs" description="Sound that never loops. Breathing you can see." noindex puck={false}>
+<Base
+  title="Slumbio · Sleep sound, made as it plays"
+  description="An iPhone sleep app. Thirty-five sounds, and most of them are generated as they play, so they never repeat."
+  puck={false}
+>
   <header class="page-head">
     <p class="eyebrow">iPhone</p>
     <h1>Slumbio</h1>
     <p class="lede">
-      A sleep app. Sound that never loops, breathing you can see, and one tap
-      from the couch to the timer.
+      Sound that is made as it plays, breathing you can see, and one button
+      from the couch to the sleep timer.
     </p>
   </header>
 
   <section class="body">
     <p>
-      Slumbio is on TestFlight. If you have a link, open it on your phone
-      and install the TestFlight app when it asks. New builds arrive on their
-      own.
+      Most sleep apps play a recording on a loop. Given long enough you start
+      hearing the seam, and once you have heard it you cannot stop hearing it.
     </p>
     <p>
+      Slumbio has thirty-five sounds and thirty-three of them are built as
+      they play, from noise and filters, one frame at a time. Rain that never
+      falls the same way twice. A fire that crackles when it feels like it.
+      Wind that gusts and settles on its own schedule. There is no loop,
+      because there is no recording to loop. Two of the sounds are
+      pre-rendered files and those two do repeat; they are labelled.
+    </p>
+    <p>
+      Layer up to six at once. Each has a level and two controls that reach
+      into the sound itself, so a light rain becomes a downpour and a room
+      becomes a bigger room.
+    </p>
+
+    <h2>Breathing you can see</h2>
+    <p>
+      A soft body of light sits behind every screen. In a breathing session it
+      is the instruction: the screen fills on the inhale and empties on the
+      exhale, with a tap at each turn and a breath sound underneath. Six
+      patterns, two to fifteen minutes, and a session always ends at the end of
+      a cycle rather than mid-breath.
+    </p>
+
+    <h2>Nothing leaves the phone</h2>
+    <p>
+      No account, no server, no analytics, no tracking. There is no network
+      code in the app at all, which is why the App Store privacy label reads
+      Data Not Collected. The sleep journal, the mixes and the settings live on
+      the device and nowhere else.
+    </p>
+
+    <h2>Free, and meant to stay usable</h2>
+    <p>
+      Twelve sounds, two layers, two breathing patterns, the sleep timer,
+      bedside mode and every note are free for good. Plus adds the rest.
+    </p>
+
+    <p class="cta">
+      <a href={appStore}>Get Slumbio on the App Store</a>
+    </p>
+
+    <p class="fine">
       Something wrong, or an idea? Write to
       <a href="mailto:brettmboggs@gmail.com">brettmboggs@gmail.com</a>. I read
       all of it.
     </p>
+
     <ul class="links">
       <li><a href="/slumbio/privacy/">Privacy</a></li>
       <li><a href="/slumbio/terms/">Terms</a></li>
@@ -42,6 +90,16 @@ import Base from '../../layouts/Base.astro';
   }
   .body p {
     margin: 0 0 1rem;
+  }
+  .body h2 {
+    margin: 2.25rem 0 0.75rem;
+    font-size: 1.05rem;
+  }
+  .cta {
+    margin: 2.5rem 0 1.5rem;
+  }
+  .fine {
+    font-size: 0.95rem;
   }
   .links {
     list-style: none;

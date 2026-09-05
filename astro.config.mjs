@@ -23,14 +23,15 @@ export default defineConfig({
     sitemap({
       // /roadmap/ is a working page for Brett; /offline/ is the service
       // worker's fallback; /store/ is unfinished and sells nothing yet;
-      // /slumbio/ holds the app's support and policy pages until it ships.
-      // All are noindexed and unlisted.
+      // /slumbio/ is the app's own page and should be found; only its policy
+      // pages and the old /nightjar/ redirects stay out.
       filter: (page) =>
         !page.includes('/roadmap/') &&
         !page.includes('/offline/') &&
         !page.includes('/store/') &&
         !page.includes('/admin/') &&
-        !page.includes('/slumbio/') &&
+        !page.includes('/slumbio/privacy/') &&
+        !page.includes('/slumbio/terms/') &&
         !page.includes('/nightjar/'),
     }),
   ],
