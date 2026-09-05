@@ -14,7 +14,7 @@ final class VoiceSlot {
 
     init(kind: SoundKind, sampleRate: Float) {
         soundID = kind.id
-        texture = TextureFactory.make(id: kind.id)
+        texture = TextureFactory.make(kind)
         texture.prepare(
             sampleRate: sampleRate,
             tone: Float(kind.defaultTone),
@@ -93,6 +93,7 @@ final class Renderer {
     }
 
     deinit {
+        releaseRecordings()
         scratchL.deallocate()
         scratchR.deallocate()
     }
@@ -102,6 +103,29 @@ final class Renderer {
     func slot(for soundID: String) -> VoiceSlot? {
         guard let i = slotIndex[soundID] else { return nil }
         return slots[i]
+    }
+
+    /// Opens and closes file streams to match the mix.
+    ///
+    /// Must be called before the matching gains are raised: activation resets a
+    /// ring buffer, which is only safe while the voice is still silent.
+    func updateRecordings(active: Set<String>) {
+        for slot in slots {
+            guard let recording = slot.texture as? RecordingTexture else { continue }
+            let shouldPlay = active.contains(slot.soundID)
+            if shouldPlay && !recording.isActive {
+                recording.activate()
+            } else if !shouldPlay && recording.isActive {
+                recording.deactivate()
+            }
+        }
+    }
+
+    /// Stops every reader. Called when the graph is torn down.
+    func releaseRecordings() {
+        for slot in slots {
+            (slot.texture as? RecordingTexture)?.deactivate()
+        }
     }
 
     /// Ramps the master output to `value` over `seconds`. Used for the start

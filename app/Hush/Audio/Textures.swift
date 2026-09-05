@@ -920,8 +920,11 @@ final class PlainNoiseTexture: Texture {
 // MARK: - Factory
 
 enum TextureFactory {
-    static func make(id: String) -> Texture {
-        switch id {
+    static func make(_ kind: SoundKind) -> Texture {
+        if case .recording(let resource) = kind.source {
+            return RecordingTexture(resource: resource)
+        }
+        switch kind.id {
         case "rain.light": return RainTexture(character: .light)
         case "rain.heavy": return RainTexture(character: .heavy)
         case "rain.roof": return RainTexture(character: .roof)

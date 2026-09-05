@@ -1,8 +1,14 @@
 # Hush
 
-An iPhone sleep-sound app. Every sound is synthesized in real time, a sample at
-a time. There are no audio files in the bundle, nothing to download, and nothing
-that loops.
+An iPhone sleep-sound app with two kinds of sound in one engine.
+
+Most of the library is **synthesized** in real time, a sample at a time, from
+noise and filters. Those never loop, because there is nothing to loop.
+
+The **Recordings** shelf is real audio, streamed from the bundle and looped with
+a crossfade. Both kinds are just voices in the same renderer, so they mix
+together, share the sleep-timer fade and the sunrise ramp, and take the same two
+shaping controls.
 
 ---
 
@@ -55,10 +61,12 @@ Lock Screen and Control Center transport, AirPlay, and Now Playing metadata that
 shows a real countdown while the sleep timer runs. Skip forward and back move
 through saved mixes, since there are no tracks to skip.
 
-**Shaping.** Every texture has two continuous controls beyond level: the labels
-change per sound (Glass/Drops for light rain, Metal/Drips for a tin roof,
-Coals/Crackle for a fire). This is the thing a library of recorded loops cannot
-do, and it is worth putting in front of people.
+**Shaping.** Every sound has two continuous controls beyond level, and the
+labels change per sound: Glass/Drops for light rain, Metal/Drips for a tin roof,
+Coals/Crackle for a fire, Tilt/Drift for a recording. On a synthesized texture
+these reach into the generator itself. On a recording, Tilt is a shelf pair and
+Drift is a slow level wander that keeps a ten-minute loop from settling into
+something the ear can memorise.
 
 **Wake.** An alarm with a sunrise ramp: over your chosen window the mix crosses
 to a gentler wake sound and climbs from silence to full, so the alarm arrives at
@@ -82,20 +90,38 @@ usual mix. No permissions, nothing leaves the phone.
 
 ```
 Renderer (audio thread)
- ├─ 17 VoiceSlots, one per catalog sound, all allocated at launch
- │   └─ Texture subclass  →  stereo frame, sample by sample
+ ├─ one VoiceSlot per catalog sound, all allocated at launch
+ │   ├─ Texture subclass        → generates a stereo frame
+ │   └─ RecordingTexture        → drains a ring buffer
+ │        ↑ filled by a reader thread: decode → crossfade loop → resample
  ├─ per-voice gain ramp
  ├─ master ramp   (fade in / sleep timer / sunrise)
  ├─ tilt shelves  (one global warm↔bright control)
  └─ soft clipper
 ```
 
-Two decisions drive everything else:
+Recordings deliberately go through the renderer rather than through a separate
+`AVAudioPlayerNode`. A player node would be less code, but its output would
+bypass the master ramp, and the sleep-timer fade, the sunrise and the limiter
+would then behave differently for files than for synthesis. One path is worth
+the extra work.
 
-**Every sound is pre-allocated.** All 17 textures exist from launch, whether or
-not they are in the mix. Turning a sound on is a gain change, so nothing is
+Three decisions drive everything else:
+
+**Every sound is pre-allocated.** Every texture exists from launch, whether or
+not it is in the mix. Turning a sound on is a gain change, so nothing is
 allocated, attached or detached while audio is running, and nothing can click.
-The cost is about 30 KB of filter state.
+The cost is about 30 KB of filter state, plus 1 MB of ring buffer per recording.
+
+**Recordings stream, they do not load.** Ten minutes of 44.1 kHz stereo is over
+200 MB as float, so nothing is held in memory. A single background queue tops up
+a two-second ring buffer for every active recording, waking every 400 ms. The
+readers stop when playback stops.
+
+**The loop is crossfaded, not butt-joined.** Splicing the end of a recording
+onto its start leaves a step in the waveform, and on broadband noise a step is
+an audible tick every ten minutes, all night. The last two seconds fade out
+under the first two fading in, which on noise is inaudible.
 
 **Nothing blocks the audio thread.** Parameters are plain `Float` fields written
 from the main thread and read on the audio thread, then smoothed or ramped
@@ -108,22 +134,29 @@ filter, a leaky integrator for brown, RBJ biquads, band-limited random walks for
 gusts and swell, and a fixed-capacity grain bank for raindrops, fire crackle,
 cricket chirps and rail clatter.
 
-### Adding a sound
+### Adding a recording
 
-Two steps, and the folder layout means the project file does not need editing.
+1. Drop the `.m4a` into `Hush/Resources/Recordings/`.
+2. Add a `SoundKind` to `SoundCatalog.all` in `Shared/SoundCatalog.swift` with
+   `source: .recording(resource: "your-file-name")`, no extension.
+3. `python3 tools/make_project.py`
 
-1. Add a `SoundKind` to `SoundCatalog.all` in `Shared/SoundCatalog.swift`. The
-   `id` is the key the engine switches on. `toneLabel` and `motionLabel` are
-   what the two shaping sliders will be called for this sound.
+Any sample rate, any length, mono or stereo. The reader resamples to whatever
+the output route is running at, and picks its crossfade length from the file
+(two seconds, or a quarter of the file if it is shorter than eight).
 
+### Adding a synthesized sound
+
+1. Add a `SoundKind` to `SoundCatalog.all`, leaving `source` at its default.
+   `toneLabel` and `motionLabel` name the two shaping sliders for this sound.
 2. Add a `Texture` subclass in `Audio/Textures.swift` and a case in
-   `TextureFactory.make(id:)`. Override `build()` for one-time setup that needs
+   `TextureFactory.make(_:)`. Override `build()` for one-time setup that needs
    the sample rate, `configure()` for anything derived from `tone` and `motion`
    (it runs at control rate, every 64 samples), and `nextFrame()` for one
    stereo frame.
 
-The library screen, the mixer, the widgets and the intents all read from the
-catalog, so a new sound shows up everywhere on its own.
+Either way, the library screen, the mixer, the widgets and the intents all read
+from the catalog, so a new sound shows up everywhere on its own.
 
 ---
 
@@ -132,7 +165,8 @@ catalog, so a new sound shows up everywhere on its own.
 ```
 app/
 ├── Hush/               app target
-│   ├── Audio/          DSP primitives, textures, renderer, AVAudioEngine
+│   ├── Audio/          DSP, textures, file streaming, renderer, AVAudioEngine
+│   ├── Resources/      bundled recordings
 │   ├── Model/          settings, mix library, journal, persistence
 │   ├── Player/         the controller, Now Playing, alarms, Live Activity
 │   ├── Views/          SwiftUI
@@ -176,6 +210,13 @@ needs one capability to provision instead of two. To turn it on: Signing &
 Capabilities → **+ Capability** → HealthKit, on the Hush target. The Settings
 toggle detects the refusal and turns itself back off with an explanation until
 you do.
+
+**Bundled audio is about 29 MB and will grow.** Both recordings are 194 kbps
+stereo AAC. Two things worth knowing as the shelf fills up: brown noise
+compresses well and loses almost nothing in mono, which halves each file; and
+past a few sounds, the right answer is On-Demand Resources so the App Store
+download stays small and sounds are fetched on first use. Neither is worth doing
+for two files. If the git repository itself gets heavy, Git LFS is the fix.
 
 **`HushWidgets/HushControl.swift` is the newest API surface in the project**
 (iOS 18 Control Center). If a future SDK moves it, that one file can be deleted

@@ -111,6 +111,9 @@ public extension Mix {
     }
 
     static let presets: [Mix] = [
+        make("Deep Brown · Recorded", [
+            ("rec.deep-brown", 0.82, 0.44, 0.30),
+        ]),
         make("Long Rain", [
             ("rain.light", 0.72, 0.42, 0.5),
             ("noise.brown", 0.30, 0.40, 0.5),

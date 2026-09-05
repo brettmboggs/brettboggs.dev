@@ -34,6 +34,7 @@ FILE_TYPES = {
     ".xcassets": "folder.assetcatalog",
     ".md": "net.daringfireball.markdown",
     ".png": "image.png",
+    ".m4a": "file",
 }
 
 
@@ -89,7 +90,12 @@ def build() -> str:
     ext_swift = swift_sources(Path(EXT_NAME))
     shared_swift = swift_sources(Path("Shared"))
 
-    resources = [Path("Hush/Assets.xcassets")]
+    # The asset catalog plus every bundled recording.
+    resources = [Path("Hush/Assets.xcassets")] + [
+        path.relative_to(ROOT)
+        for path in sorted((ROOT / "Hush/Resources").rglob("*"))
+        if path.is_file()
+    ]
     support = [
         Path("Hush/Info.plist"),
         Path("Hush/Hush.entitlements"),

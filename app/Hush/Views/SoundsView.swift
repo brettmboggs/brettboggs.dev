@@ -39,7 +39,7 @@ struct SoundsView: View {
             Text("Sounds")
                 .font(Typeface.display(32))
                 .foregroundStyle(Palette.ink)
-            Text("Every one of these is generated as it plays. Nothing loops.")
+            Text("Most of these are generated as they play. The rest are recordings.")
                 .font(Typeface.body(13))
                 .foregroundStyle(Palette.inkFaint)
         }

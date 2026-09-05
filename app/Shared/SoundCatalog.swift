@@ -1,11 +1,25 @@
 import Foundation
 
+/// Where a sound comes from. Recordings and synthesis are otherwise
+/// interchangeable: both end up as one voice in the same renderer.
+public enum SoundSource: Codable, Hashable, Sendable {
+    case synth
+    /// Bundled `.m4a`, streamed and looped with a crossfade.
+    case recording(resource: String)
+
+    public var isRecording: Bool {
+        if case .recording = self { return true }
+        return false
+    }
+}
+
 /// Which shelf a texture lives on in the library.
 public enum SoundFamily: String, Codable, CaseIterable, Sendable {
-    case rain, water, wind, fire, noise, night, machines
+    case recorded, rain, water, wind, fire, noise, night, machines
 
     public var title: String {
         switch self {
+        case .recorded: return "Recordings"
         case .rain: return "Rain"
         case .water: return "Water"
         case .wind: return "Wind"
@@ -20,13 +34,14 @@ public enum SoundFamily: String, Codable, CaseIterable, Sendable {
     /// does not silently reshuffle the shelves.
     public var rank: Int {
         switch self {
-        case .rain: return 0
-        case .water: return 1
-        case .wind: return 2
-        case .fire: return 3
-        case .night: return 4
-        case .machines: return 5
-        case .noise: return 6
+        case .recorded: return 0
+        case .rain: return 1
+        case .water: return 2
+        case .wind: return 3
+        case .fire: return 4
+        case .night: return 5
+        case .machines: return 6
+        case .noise: return 7
         }
     }
 }
@@ -49,6 +64,7 @@ public struct SoundKind: Identifiable, Codable, Hashable, Sendable {
     public let defaultTone: Double
     public let defaultMotion: Double
     public let defaultLevel: Double
+    public let source: SoundSource
 
     public init(
         id: String,
@@ -60,7 +76,8 @@ public struct SoundKind: Identifiable, Codable, Hashable, Sendable {
         motionLabel: String = "Motion",
         defaultTone: Double = 0.5,
         defaultMotion: Double = 0.5,
-        defaultLevel: Double = 0.7
+        defaultLevel: Double = 0.7,
+        source: SoundSource = .synth
     ) {
         self.id = id
         self.name = name
@@ -72,11 +89,30 @@ public struct SoundKind: Identifiable, Codable, Hashable, Sendable {
         self.defaultTone = defaultTone
         self.defaultMotion = defaultMotion
         self.defaultLevel = defaultLevel
+        self.source = source
     }
+
+    public var isRecording: Bool { source.isRecording }
 }
 
 public enum SoundCatalog {
     public static let all: [SoundKind] = [
+        SoundKind(
+            id: "rec.brown", name: "Brown Noise", family: .recorded,
+            blurb: "Recorded, not generated. Ten minutes, looped.",
+            symbol: "waveform.path",
+            toneLabel: "Tilt", motionLabel: "Drift",
+            defaultTone: 0.5, defaultMotion: 0.3, defaultLevel: 0.72,
+            source: .recording(resource: "brown-noise")
+        ),
+        SoundKind(
+            id: "rec.deep-brown", name: "Deep Brown", family: .recorded,
+            blurb: "The same room, lower and heavier.",
+            symbol: "waveform.path.ecg",
+            toneLabel: "Tilt", motionLabel: "Drift",
+            defaultTone: 0.44, defaultMotion: 0.3, defaultLevel: 0.78,
+            source: .recording(resource: "deep-brown")
+        ),
         SoundKind(
             id: "rain.light", name: "Light Rain", family: .rain,
             blurb: "Steady drizzle on a window.", symbol: "cloud.drizzle",
@@ -186,6 +222,9 @@ public enum SoundCatalog {
     }()
 
     public static func kind(for id: String) -> SoundKind? { index[id] }
+
+    /// Every sound backed by a bundled file.
+    public static var recordings: [SoundKind] { all.filter(\.isRecording) }
 
     /// Library shelves, ordered.
     public static var shelves: [(family: SoundFamily, sounds: [SoundKind])] {

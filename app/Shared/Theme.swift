@@ -21,6 +21,7 @@ public enum Palette {
     /// Accent for a sound family, used by the level meters and library rows.
     public static func tint(for family: SoundFamily) -> Color {
         switch family {
+        case .recorded: return Color(hex: 0xD9A05B)
         case .rain: return Color(hex: 0x7E93A6)
         case .water: return Color(hex: 0x6E8C86)
         case .wind: return Color(hex: 0x8D9478)

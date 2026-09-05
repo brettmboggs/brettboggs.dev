@@ -9,7 +9,10 @@
 			isa = PBXGroup;
 			children = (
 				6A1305AF7B14903CB18968A3 /* AudioEngine.swift */,
+				3419515AE69F591FB28A8ED4 /* AudioRingBuffer.swift */,
 				7F179F321DD7B92B692FF708 /* DSP.swift */,
+				3E09AB0FC8C8E4D0C00D1AB1 /* RecordingStream.swift */,
+				34B24C631228C8C968A5F9FB /* RecordingTexture.swift */,
 				93E144F05C3D750B0907690F /* Renderer.swift */,
 				73A3D596670CDEE40848A039 /* Textures.swift */,
 			);
@@ -42,6 +45,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		1839CF8ECCBD47EF27D45BE4 /* RecordingTexture.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 34B24C631228C8C968A5F9FB /* RecordingTexture.swift */; };
 		1B93A0FBAA8E4DFEFED7C0E0 /* SoundsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundsView.swift; sourceTree = "<group>"; };
 		244210E48437B6556980A702 /* Project object */ = {
 			isa = PBXProject;
@@ -80,6 +84,8 @@
 		2B885CA0C5A1E69BBB5BA409 /* BreathingBackdrop.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = BFA2132E02EE16E461E3A9DB /* BreathingBackdrop.swift */; };
 		2C0491586E17173B9AE989DC /* Haptics.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = AD7FFC6F7FF0B9A7C413F34B /* Haptics.swift */; };
 		2D35DC6DCCC1023D43F6533E /* Journal.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = E0616E7B6D876B1C9AB16482 /* Journal.swift */; };
+		3419515AE69F591FB28A8ED4 /* AudioRingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRingBuffer.swift; sourceTree = "<group>"; };
+		34B24C631228C8C968A5F9FB /* RecordingTexture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingTexture.swift; sourceTree = "<group>"; };
 		34B871794CDAC8D5E75472EB /* NowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowView.swift; sourceTree = "<group>"; };
 		3755B2052C616D9637FEB313 /* MixesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixesView.swift; sourceTree = "<group>"; };
 		38CC1EBAFEE0F6B477A61CB7 /* Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
@@ -109,6 +115,7 @@
 			path = Support;
 			sourceTree = "<group>";
 		};
+		3E09AB0FC8C8E4D0C00D1AB1 /* RecordingStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingStream.swift; sourceTree = "<group>"; };
 		48CC370140DB357E693A673D /* HushWidgetsBundle.swift in Sources-ext */ = {isa = PBXBuildFile; fileRef = 952934C5F561C757DC607802 /* HushWidgetsBundle.swift */; };
 		4A1EE5B27179FFD578D6B8BB /* AlarmOverlay.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = BD388B391D4830857411A0A4 /* AlarmOverlay.swift */; };
 		4B507E8DBBEA4624C081A08B /* Player */ = {
@@ -205,6 +212,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		600BDD3356485C6900D663CE /* AudioRingBuffer.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 3419515AE69F591FB28A8ED4 /* AudioRingBuffer.swift */; };
 		608FEB5D456BE9FDAB3CD9CB /* HushControl.swift in Sources-ext */ = {isa = PBXBuildFile; fileRef = BA5DB1BA33AFB48E746E13EA /* HushControl.swift */; };
 		60F468D274B2923D32C804DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		624116544C9B92EF77B83BA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -217,7 +225,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE0E3AC433F798FA382E5F48 /* AudioEngine.swift */,
+				600BDD3356485C6900D663CE /* AudioRingBuffer.swift */,
 				7BE912631F032D9F20BEC48D /* DSP.swift */,
+				BC0D924A89A7273C780FB60A /* RecordingStream.swift */,
+				1839CF8ECCBD47EF27D45BE4 /* RecordingTexture.swift */,
 				9A32CE149AE0285E057E1EE1 /* Renderer.swift */,
 				E44F3BF16671FCF66B60C52C /* Textures.swift */,
 				2548997D93F176A26D8E4E90 /* HushApp.swift */,
@@ -358,6 +369,7 @@
 		9FE9EE8FC431BD8BC231B5B6 /* HushIntents.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = B85900B251C489190ECB1EF4 /* HushIntents.swift */; };
 		A0DDBB7C7646AE61686A858A /* MixesView.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 3755B2052C616D9637FEB313 /* MixesView.swift */; };
 		A3243FE2E9566B7F03E4F342 /* Entitlements.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = BDCD7FBB8C00DBDDD0399ABF /* Entitlements.swift */; };
+		A49B633D18139BBA3F13F65F /* brown-noise.m4a in Resources-app */ = {isa = PBXBuildFile; fileRef = C036CA59C2C6064D4F1595CE /* brown-noise.m4a */; };
 		A4F26FAF97A8095E609EACFB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -402,6 +414,7 @@
 			target = 82F876CF2687B22D6A4DB42E /* HushWidgets */;
 			targetProxy = C158E9D2124632786092A592 /* PBXContainerItemProxy */;
 		};
+		B22328E252DC5D5859879628 /* deep-brown.m4a in Resources-app */ = {isa = PBXBuildFile; fileRef = BD3C3E552243778205CB3C4D /* deep-brown.m4a */; };
 		B7E3865CE43023A48CFED916 /* WakeView.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 7AA9FAD3E186F95F5ADB1961 /* WakeView.swift */; };
 		B85900B251C489190ECB1EF4 /* HushIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HushIntents.swift; sourceTree = "<group>"; };
 		B8A7C4C7C43B9A2F11EEEA63 /* Shared */ = {
@@ -422,7 +435,9 @@
 		B9A41D108B24B4F33025B881 /* Library.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 38CC1EBAFEE0F6B477A61CB7 /* Library.swift */; };
 		BA5DB1BA33AFB48E746E13EA /* HushControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HushControl.swift; sourceTree = "<group>"; };
 		BB24C74A95285E7427A5B78D /* SoundCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundCatalog.swift; sourceTree = "<group>"; };
+		BC0D924A89A7273C780FB60A /* RecordingStream.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 3E09AB0FC8C8E4D0C00D1AB1 /* RecordingStream.swift */; };
 		BD388B391D4830857411A0A4 /* AlarmOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmOverlay.swift; sourceTree = "<group>"; };
+		BD3C3E552243778205CB3C4D /* deep-brown.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "deep-brown.m4a"; sourceTree = "<group>"; };
 		BDCD7FBB8C00DBDDD0399ABF /* Entitlements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entitlements.swift; sourceTree = "<group>"; };
 		BE0E3AC433F798FA382E5F48 /* AudioEngine.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 6A1305AF7B14903CB18968A3 /* AudioEngine.swift */; };
 		BE20DE3A14213AA478796819 /* Intents */ = {
@@ -435,6 +450,7 @@
 			sourceTree = "<group>";
 		};
 		BFA2132E02EE16E461E3A9DB /* BreathingBackdrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathingBackdrop.swift; sourceTree = "<group>"; };
+		C036CA59C2C6064D4F1595CE /* brown-noise.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "brown-noise.m4a"; sourceTree = "<group>"; };
 		C158E9D2124632786092A592 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 244210E48437B6556980A702 /* Project object */;
@@ -498,6 +514,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A61F5ABD538D08CA64E4C8FB /* Assets.xcassets */,
+				A49B633D18139BBA3F13F65F /* brown-noise.m4a */,
+				B22328E252DC5D5859879628 /* deep-brown.m4a */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

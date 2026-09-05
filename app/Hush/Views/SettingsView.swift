@@ -199,9 +199,9 @@ struct SettingsView: View {
             SectionLabel("About")
 
             Text("""
-            Every sound in Hush is generated as it plays, a sample at a time. \
-            There are no recordings in the app and nothing to download, which is \
-            why it never loops and never repeats.
+            Most sounds in Hush are generated as they play, a sample at a time. \
+            Those never loop, because there is nothing to loop. The Recordings \
+            shelf is real audio, joined end to end with a crossfade.
 
             Nothing you do here leaves your phone.
             """)

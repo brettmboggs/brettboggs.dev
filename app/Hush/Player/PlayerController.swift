@@ -131,8 +131,6 @@ final class PlayerController {
         stopTask = nil
 
         engine.configureSession(mixWithOthers: settings.mixWithOtherAudio)
-        applyMix()
-        engine.renderer.tiltTarget = Float(settings.tilt)
 
         guard engine.start() else {
             engineFailed = true
@@ -143,6 +141,11 @@ final class PlayerController {
         let wasPlaying = isPlaying
         isPlaying = true
         if sessionStart == nil { sessionStart = Date() }
+
+        // After `isPlaying`, so file streams open, and after `start`, so the
+        // gains land on the renderer the engine actually built.
+        applyMix()
+        engine.renderer.tiltTarget = Float(settings.tilt)
 
         // A resume after a pause should not make the user wait out a fresh
         // six-second fade.
@@ -357,6 +360,13 @@ final class PlayerController {
     // MARK: - Engine parameters
 
     private func applyMix() {
+        // Streams must be open before their gains come up, but only while we
+        // are actually playing: decoding a paused mix is pure battery drain.
+        let active: Set<String> = isPlaying
+            ? Set(currentMix.layers.filter { !$0.isMuted }.map(\.soundID))
+            : []
+        engine.renderer.updateRecordings(active: active)
+
         for slot in engine.renderer.slots {
             if let layer = currentMix.layer(for: slot.soundID), !layer.isMuted {
                 slot.targetGain = perceptualGain(Float(layer.level)) * PlayerController.layerHeadroom
@@ -370,6 +380,13 @@ final class PlayerController {
 
     private func applyLayer(_ layer: Layer) {
         guard let slot = engine.renderer.slot(for: layer.soundID) else { return }
+        if let recording = slot.texture as? RecordingTexture {
+            if layer.isMuted || !isPlaying {
+                recording.deactivate()
+            } else if !recording.isActive {
+                recording.activate()
+            }
+        }
         slot.targetGain = layer.isMuted
             ? 0
             : perceptualGain(Float(layer.level)) * PlayerController.layerHeadroom

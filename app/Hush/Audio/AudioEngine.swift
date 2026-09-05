@@ -45,6 +45,10 @@ final class AudioEngine {
             // A long IO buffer is the single biggest power win for something
             // that runs for eight hours straight.
             try session.setPreferredIOBufferDuration(0.023)
+            // The bundled recordings are 44.1 kHz. If the route honours this,
+            // sample-rate conversion drops out entirely; if it does not, the
+            // converter handles it and nothing else changes.
+            try session.setPreferredSampleRate(44_100)
         } catch {
             NSLog("Hush: audio session configuration failed: \(error.localizedDescription)")
         }
@@ -160,6 +164,7 @@ final class AudioEngine {
         engine.stop()
         isRunning = false
         renderer.resetMaster()
+        renderer.releaseRecordings()
         deactivateSession()
     }
 
