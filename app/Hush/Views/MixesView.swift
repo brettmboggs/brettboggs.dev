@@ -73,6 +73,10 @@ struct MixesView: View {
                 systemImage: "square.and.arrow.down",
                 isProminent: true
             ) {
+                guard player.canSaveAnotherMix else {
+                    player.requestUpgrade(.mixes)
+                    return
+                }
                 saveName = player.currentMix.name
                 showSave = true
             }

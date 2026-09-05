@@ -239,6 +239,7 @@
 				B9A41D108B24B4F33025B881 /* Library.swift */,
 				6BFAC9ED23AC098A586D27E6 /* Persistence.swift */,
 				FEE94900C1F2C9E43903DA99 /* Settings.swift */,
+				FABDB2D86AD298078C20192E /* Store.swift */,
 				5894304C6621B4472120997A /* AlarmNotifications.swift */,
 				E52FFC8D1FB51E4EC59F11F8 /* HealthWriter.swift */,
 				CBF6B89D09D836B062977C26 /* LiveActivityController.swift */,
@@ -252,6 +253,7 @@
 				CE25C79B46D6F8FA4BBC53FB /* Components.swift */,
 				A0DDBB7C7646AE61686A858A /* MixesView.swift */,
 				E9E38C36129928ED180DE6CC /* NowView.swift */,
+				8CF8978E52EB1A990D8B4A3D /* PaywallView.swift */,
 				B20721493E0178DB8DB4491A /* RootView.swift */,
 				CA7346DBDEBF5C8F87744A72 /* SettingsView.swift */,
 				7E5FE49B08BC777604A7A5FC /* SoundsView.swift */,
@@ -348,6 +350,7 @@
 			productReference = 81F31879437340D5CD6ED968 /* Hush.app */;
 			productType = "com.apple.product-type.application";
 		};
+		8CF8978E52EB1A990D8B4A3D /* PaywallView.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = AE08F1DFDD0CC27741205483 /* PaywallView.swift */; };
 		8E36E15BE8A5E0B31D27B585 /* MixWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixWidget.swift; sourceTree = "<group>"; };
 		8E581C6107454561BD617358 /* SleepTimerActivity.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = 088A77B1655E183A232FF318 /* SleepTimerActivity.swift */; };
 		8E5E5443B815C0A9A8AF39A4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -406,6 +409,7 @@
 		};
 		ABF972E3FCA6FF3AC58AB102 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		AD7FFC6F7FF0B9A7C413F34B /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		AE08F1DFDD0CC27741205483 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		AEE923494A5113FA9ED857CF /* PlaybackActions.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = EFC69B270D39F2744C8C32B5 /* PlaybackActions.swift */; };
 		B197D265CA58090539549264 /* SharedState.swift in Sources-ext */ = {isa = PBXBuildFile; fileRef = 0676CFFDA5ADF25847BA6C86 /* SharedState.swift */; };
 		B20721493E0178DB8DB4491A /* RootView.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = ABF972E3FCA6FF3AC58AB102 /* RootView.swift */; };
@@ -584,6 +588,8 @@
 		F1786F3C126291DE09E478DD /* MixWidget.swift in Sources-ext */ = {isa = PBXBuildFile; fileRef = 8E36E15BE8A5E0B31D27B585 /* MixWidget.swift */; };
 		F2558D2A09D2C9B7366BF064 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		F3114644D59CB840B30C0F3B /* HushWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1369DD924D2F7341DF644FA1 /* HushWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		FABDB2D86AD298078C20192E /* Store.swift in Sources-app */ = {isa = PBXBuildFile; fileRef = FB36A1CC7C977BD661F5F616 /* Store.swift */; };
+		FB36A1CC7C977BD661F5F616 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		FC3E3BC4EF464435E69F6651 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -593,6 +599,7 @@
 				A72B39CE7694E88F0976C667 /* Components.swift */,
 				3755B2052C616D9637FEB313 /* MixesView.swift */,
 				34B871794CDAC8D5E75472EB /* NowView.swift */,
+				AE08F1DFDD0CC27741205483 /* PaywallView.swift */,
 				ABF972E3FCA6FF3AC58AB102 /* RootView.swift */,
 				74D830426764D86D1F1F1E5E /* SettingsView.swift */,
 				1B93A0FBAA8E4DFEFED7C0E0 /* SoundsView.swift */,
@@ -609,6 +616,7 @@
 				38CC1EBAFEE0F6B477A61CB7 /* Library.swift */,
 				DF017553050E99663AA260ED /* Persistence.swift */,
 				F2558D2A09D2C9B7366BF064 /* Settings.swift */,
+				FB36A1CC7C977BD661F5F616 /* Store.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";

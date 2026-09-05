@@ -106,8 +106,36 @@ struct NowView: View {
                 .foregroundStyle(Palette.inkFaint)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
+
+            if player.currentMixIsUnsaved {
+                Button {
+                    guard player.canSaveAnotherMix else {
+                        player.requestUpgrade(.mixes)
+                        return
+                    }
+                    saveName = player.currentMix.name
+                    showSave = true
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "square.and.arrow.down")
+                            .font(.system(size: 10, weight: .semibold))
+                        Text("Save")
+                            .font(Typeface.meta(11, weight: .medium))
+                    }
+                    .foregroundStyle(Palette.ember)
+                    .padding(.horizontal, 13)
+                    .padding(.vertical, 7)
+                    .background(
+                        Capsule().strokeBorder(Palette.ember.opacity(0.45), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 4)
+                .transition(.opacity.combined(with: .scale(scale: 0.92)))
+            }
         }
         .pageGutter()
+        .animation(.settle, value: player.currentMixIsUnsaved)
     }
 
     @ViewBuilder

@@ -8,11 +8,12 @@ struct HushApp: App {
     init() {
         HushApp.configureAppearance()
 
+        let store = Store()
         let controller = PlayerController(
             settings: Settings.load(),
             library: Library.load(),
             journal: Journal.load(),
-            entitlements: Entitlements()
+            entitlements: Entitlements(store: store)
         )
         // Intents fired from a widget or Control Center run inside this process
         // and must reach the same controller the UI is driving.

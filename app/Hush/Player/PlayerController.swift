@@ -47,6 +47,10 @@ final class PlayerController {
     /// of showing a play button that silently does nothing.
     private(set) var engineFailed = false
 
+    /// Non-nil while the upgrade sheet should be on screen. Set by whatever the
+    /// person was trying to do, so the ask always answers that.
+    var paywall: PaywallReason?
+
     // MARK: Internals
 
     @ObservationIgnored private var tick: Timer?
@@ -240,7 +244,10 @@ final class PlayerController {
 
     func add(_ kind: SoundKind) {
         guard !currentMix.contains(kind.id) else { return }
-        guard currentMix.layers.count < entitlements.maximumLayers else { return }
+        guard currentMix.layers.count < entitlements.maximumLayers else {
+            requestUpgrade(.layers)
+            return
+        }
         markAsEdited()
         currentMix.layers.append(Layer(kind: kind))
         applyMix()
@@ -300,6 +307,25 @@ final class PlayerController {
         applyMix()
         if isPlaying { pause(reason: .user) }
         publishSnapshot()
+    }
+
+    func requestUpgrade(_ reason: PaywallReason) {
+        guard !entitlements.isPro else { return }
+        paywall = reason
+        Haptics.tap(enabled: settings.hapticsEnabled)
+    }
+
+    /// True once the working mix has drifted from anything on the shelf.
+    var currentMixIsUnsaved: Bool {
+        guard !currentMix.isEmpty, !currentMix.isBuiltIn else { return false }
+        return library.mix(withID: currentMix.id) == nil
+    }
+
+    /// Overwriting a mix you already saved is always allowed; only a new one
+    /// counts against the free limit.
+    var canSaveAnotherMix: Bool {
+        if !currentMix.isBuiltIn, library.mix(withID: currentMix.id) != nil { return true }
+        return library.userMixes.count < entitlements.maximumSavedMixes
     }
 
     @discardableResult

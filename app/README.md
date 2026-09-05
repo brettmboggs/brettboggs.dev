@@ -223,10 +223,49 @@ for two files. If the git repository itself gets heavy, Git LFS is the fix.
 and the `HushControl()` line dropped from `HushWidgetsBundle` without touching
 anything else.
 
-**In-app purchases are not built, but the seam is.** Every gate-able feature
-already asks `Entitlements.isUnlocked(_:)`, which currently always says yes.
-Adding a purchase later means implementing that one method against StoreKit and
-building a paywall, not auditing the codebase for places that assumed free.
+**Testing a purchase costs nothing.** The scheme points at `Hush.storekit`, so
+buying, restoring and Ask-to-Buy all work in the simulator with no App Store
+Connect setup. To reset: Xcode → Debug → StoreKit → Manage Transactions.
+
+---
+
+## Pricing
+
+**$4.99 once. No subscription, ever.** Family-shareable, so one purchase covers
+a household. Product ID `dev.brettboggs.hush.pro`, a non-consumable.
+
+The category norm is fifty to seventy dollars a year for what amounts to noise.
+Undercutting that by an order of magnitude is the position, not a discount, and
+the free tier is built so that people recommend the app rather than resent it.
+
+| Free forever | Hush Pro |
+| --- | --- |
+| All 19 sounds, recordings included | Everything in Free |
+| Shaping controls on every sound | Up to 8 layers at once |
+| 3 layers at once | Unlimited saved mixes |
+| 3 saved mixes | Sunrise alarm and wind-down |
+| Sleep timer, fades, bedside mode | Full sleep journal |
+| Widgets, Control Center, Siri | |
+| Background and locked-screen audio | |
+
+Nothing that makes the app *work* is behind the wall. What you pay for is depth
+and waking up.
+
+Everything gate-able routes through `Entitlements`, and the paywall is raised by
+`PlayerController.requestUpgrade(_:)` with the reason the person hit it, so the
+headline always answers what they were actually trying to do. Changing where a
+line sits means editing one policy file, not hunting through views.
+
+### Before you ship
+
+1. App Store Connect → your app → **In-App Purchases** → new **Non-Consumable**
+   with product ID `dev.brettboggs.hush.pro`, price tier $4.99, Family Sharing
+   on.
+2. Paste the description from `Hush.storekit` so the two agree.
+3. Attach the IAP to your first review submission, or it will not be reviewed.
+4. Apple takes 30%, or 15% under the Small Business Program, which you qualify
+   for under a million a year in proceeds. Enrol; it is a form, and it is the
+   difference between $3.49 and $4.24 a sale.
 
 ---
 

@@ -83,6 +83,10 @@ struct WakeView: View {
                 Toggle("", isOn: Binding(
                     get: { player.settings.alarmEnabled },
                     set: { newValue in
+                        if newValue, !player.entitlements.isUnlocked(.sunriseAlarm) {
+                            player.requestUpgrade(.alarm)
+                            return
+                        }
                         player.settings.alarmEnabled = newValue
                         player.applyAlarmSettings()
                         if newValue {
@@ -196,8 +200,12 @@ struct WakeView: View {
             ) {
                 Toggle("", isOn: Binding(
                     get: { player.settings.windDownEnabled },
-                    set: {
-                        player.settings.windDownEnabled = $0
+                    set: { newValue in
+                        if newValue, !player.entitlements.isUnlocked(.sunriseAlarm) {
+                            player.requestUpgrade(.alarm)
+                            return
+                        }
+                        player.settings.windDownEnabled = newValue
                         player.settings.save()
                     }
                 ))
@@ -229,7 +237,7 @@ struct WakeView: View {
                 }
 
                 VStack(spacing: 0) {
-                    ForEach(player.journal.recent.prefix(6)) { session in
+                    ForEach(visibleNights) { session in
                         HStack {
                             Text(Format.dayAndTime(session.start))
                                 .font(Typeface.body(13))
@@ -247,9 +255,41 @@ struct WakeView: View {
                         .padding(.vertical, 10)
                         Hairline()
                     }
+
+                    if hiddenNightCount > 0 {
+                        Button {
+                            player.requestUpgrade(.journal)
+                        } label: {
+                            HStack {
+                                Text("\(hiddenNightCount) more \(hiddenNightCount == 1 ? "night" : "nights")")
+                                    .font(Typeface.body(13))
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.system(size: 11, weight: .semibold))
+                            }
+                            .foregroundStyle(Palette.ember)
+                            .padding(.vertical, 12)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
         }
+    }
+
+    /// Free shows the last week; Pro shows everything.
+    private var visibleNights: [SleepSession] {
+        let all = player.journal.recent
+        guard let limit = player.entitlements.journalNightLimit else {
+            return Array(all.prefix(12))
+        }
+        return Array(all.prefix(limit))
+    }
+
+    private var hiddenNightCount: Int {
+        guard player.entitlements.journalNightLimit != nil else { return 0 }
+        return max(player.journal.sessions.count - visibleNights.count, 0)
     }
 
     private func stat(_ label: String, _ value: String, _ unit: String) -> some View {

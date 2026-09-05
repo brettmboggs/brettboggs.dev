@@ -8,6 +8,7 @@ struct SettingsView: View {
     var body: some View {
         SheetShell(title: "Settings") {
             VStack(alignment: .leading, spacing: 30) {
+                proSection
                 soundSection
                 playbackSection
                 interfaceSection
@@ -20,6 +21,54 @@ struct SettingsView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Every recorded night is deleted. This cannot be undone.")
+        }
+    }
+
+    @ViewBuilder
+    private var proSection: some View {
+        if player.entitlements.isPro {
+            VStack(alignment: .leading, spacing: 0) {
+                SectionLabel("Hush Pro").padding(.bottom, 4)
+                SettingRow(
+                    title: "Unlocked",
+                    detail: "Thank you. Everything is open, on every device you sign in to."
+                ) {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(Palette.ember)
+                }
+                Hairline()
+            }
+        } else {
+            Button {
+                player.requestUpgrade(.direct)
+            } label: {
+                HStack(spacing: 14) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Hush Pro")
+                            .font(Typeface.display(21))
+                            .foregroundStyle(Palette.ink)
+                        Text("Eight layers, every mix, the sunrise alarm. One payment, no subscription.")
+                            .font(Typeface.body(12))
+                            .foregroundStyle(Palette.inkFaint)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer(minLength: 6)
+                    Text(player.entitlements.store.displayPrice)
+                        .font(Typeface.meta(13, weight: .semibold))
+                        .foregroundStyle(Palette.ground)
+                        .padding(.horizontal, 13)
+                        .padding(.vertical, 8)
+                        .background(Capsule().fill(Palette.ember))
+                }
+                .padding(15)
+                .background(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(Palette.raised)
+                )
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
         }
     }
 

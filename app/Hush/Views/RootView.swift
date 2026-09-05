@@ -10,7 +10,9 @@ struct RootView: View {
     }
 
     var body: some View {
-        ZStack {
+        @Bindable var player = player
+
+        return ZStack {
             TabView(selection: $tab) {
                 NowView()
                     .tabItem { Label("Now", systemImage: "waveform") }
@@ -37,6 +39,9 @@ struct RootView: View {
         }
         .preferredColorScheme(.dark)
         .animation(.settle, value: player.alarmRinging)
+        .sheet(item: $player.paywall) { reason in
+            PaywallView(reason: reason)
+        }
         .onChange(of: scenePhase) { _, phase in
             player.scenePhaseChanged(to: phase)
         }
