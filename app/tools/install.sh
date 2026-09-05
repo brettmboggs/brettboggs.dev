@@ -55,7 +55,10 @@ note "$DEVICE_NAME  ($UDID)"
 # --- 2. Signing -------------------------------------------------------------
 if [ ! -f Local.xcconfig ]; then
     say "No signing identity configured, looking one up"
-    TEAM="$(security find-identity -v -p codesigning 2>/dev/null \
+    # Prefer the team Xcode already saved into the project (set in its Signing
+    # pane), then fall back to the first development certificate on the Mac.
+    TEAM="$(grep -o 'DEVELOPMENT_TEAM = [A-Z0-9]*' Nightjar.xcodeproj/project.pbxproj 2>/dev/null | head -1 | awk '{print $3}')"
+    [ -n "$TEAM" ] || TEAM="$(security find-identity -v -p codesigning 2>/dev/null \
             | sed -n 's/.*"Apple Development: .*(\([A-Z0-9][A-Z0-9]*\))".*/\1/p' \
             | head -1)"
     if [ -z "$TEAM" ]; then
@@ -87,6 +90,9 @@ if [ $? -ne 0 ]; then
     printf '\n%sBuild failed. Everything below is what went wrong:%s\n\n' "$RED" "$OFF"
     grep -E "error:|error MT|Signing for|requires a development team|Provisioning profile|No profiles|not supported|Command .* failed" "$LOG" \
         | sed 's|'"$PWD"'/||g' | sort -u | head -40
+    if grep -q "No Account for Team" "$LOG"; then
+        printf '\n%sThe team in Local.xcconfig is not one Xcode is signed in to. Delete Local.xcconfig, open the project in Xcode, set Team under Signing & Capabilities, build once with ⌘R, then run this again.%s\n' "$DIM" "$OFF"
+    fi
     printf '\n%sFull log: %s%s\n' "$DIM" "$LOG" "$OFF"
     printf '%sPaste the lines above back into the conversation.%s\n' "$DIM" "$OFF"
     exit 1
