@@ -100,17 +100,37 @@ Everything below is free except the Apple Developer Program, which is
    the `.p8` once (it cannot be downloaded again) and note the **Key ID** and
    the **Issuer ID** at the top of that page.
 
-4. **Distribution certificate.** On the Mac: Xcode › Settings › Accounts ›
-   your Apple ID › Manage Certificates › + › **Apple Distribution**. Then open
-   Keychain Access › My Certificates, right-click "Apple Distribution: your
-   name" › Export, save as `.p12` with a password. Turn it into text:
+4. **Certificates.** Two of them. Automatic signing archives with a
+   development identity and only re-signs for distribution during the export,
+   so a runner holding just the distribution certificate fails the archive
+   with "No signing certificate iOS Development found".
+
+   The cheap way to get both without a Keychain Access export and its GUI
+   password prompt is to make the keys yourself:
 
    ```
-   base64 -i ~/Desktop/dist.p12 | pbcopy
+   openssl genrsa -out dist.key 2048
+   openssl req -new -key dist.key -out dist.csr \
+     -subj "/emailAddress=you@example.com/CN=Your Name/C=US"
    ```
+
+   Upload `dist.csr` at developer.apple.com › Certificates › + ›
+   **Apple Distribution**, download the `.cer`, then:
+
+   ```
+   curl -sfSL -o wwdr.cer https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer
+   openssl x509 -inform DER -in wwdr.cer -out wwdr.pem
+   openssl x509 -inform DER -in distribution.cer -out dist.pem
+   openssl pkcs12 -export -legacy -inkey dist.key -in dist.pem \
+     -certfile wwdr.pem -out dist.p12 -passout "pass:<password>"
+   base64 -i dist.p12 | tr -d '\n' | pbcopy
+   ```
+
+   Repeat the whole thing with a second key for **Apple Development**. Use the
+   same password for both.
 
 5. **Secrets.** GitHub › the repo › Settings › Secrets and variables › Actions
-   › New repository secret, six times:
+   › New repository secret, seven times:
 
    | Secret | Value |
    | --- | --- |
@@ -118,8 +138,9 @@ Everything below is free except the Apple Developer Program, which is
    | `ASC_KEY_ID` | the Key ID |
    | `ASC_ISSUER_ID` | the Issuer ID |
    | `ASC_KEY_P8` | the whole contents of the `.p8` file |
-   | `DIST_CERT_P12_BASE64` | what `pbcopy` holds after step 4 |
-   | `DIST_CERT_PASSWORD` | the `.p12` password |
+   | `DIST_CERT_P12_BASE64` | the base64 of the distribution `.p12` |
+   | `DEV_CERT_P12_BASE64` | the base64 of the development `.p12` |
+   | `DIST_CERT_PASSWORD` | the password, the same for both |
 
 6. **Run it.** Actions › TestFlight › Run workflow, or push anything under
    `app/` to `main`. The first run takes ten to fifteen minutes. The build
