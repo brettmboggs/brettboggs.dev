@@ -90,7 +90,7 @@ enum PaywallReason: Identifiable, Hashable, Sendable {
         case .wake: return "Wake up gently"
         case .journal: return "The whole record"
         case .firstNight: return "That was a night"
-        case .direct: return "Nightjar Plus"
+        case .direct: return "Slumbio Plus"
         }
     }
 

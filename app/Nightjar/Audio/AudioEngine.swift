@@ -50,7 +50,7 @@ final class AudioEngine {
             // converter handles it and nothing else changes.
             try session.setPreferredSampleRate(44_100)
         } catch {
-            NSLog("Nightjar: audio session configuration failed: \(error.localizedDescription)")
+            NSLog("Slumbio: audio session configuration failed: \(error.localizedDescription)")
         }
     }
 
@@ -58,7 +58,7 @@ final class AudioEngine {
         do {
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
-            NSLog("Nightjar: audio session activation failed: \(error.localizedDescription)")
+            NSLog("Slumbio: audio session activation failed: \(error.localizedDescription)")
         }
     }
 
@@ -90,7 +90,7 @@ final class AudioEngine {
         }
 
         guard let format = AVAudioFormat(standardFormatWithSampleRate: rate, channels: 2) else {
-            NSLog("Nightjar: could not create a render format at \(rate) Hz")
+            NSLog("Slumbio: could not create a render format at \(rate) Hz")
             return
         }
 
@@ -144,7 +144,7 @@ final class AudioEngine {
             isRunning = true
             return true
         } catch {
-            NSLog("Nightjar: engine start failed: \(error.localizedDescription)")
+            NSLog("Slumbio: engine start failed: \(error.localizedDescription)")
             // One retry after a full rebuild covers most transient route errors.
             rebuildGraph()
             do {
@@ -152,7 +152,7 @@ final class AudioEngine {
                 isRunning = true
                 return true
             } catch {
-                NSLog("Nightjar: engine restart failed: \(error.localizedDescription)")
+                NSLog("Slumbio: engine restart failed: \(error.localizedDescription)")
                 isRunning = false
                 return false
             }

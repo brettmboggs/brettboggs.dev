@@ -6,9 +6,9 @@ struct SettingsView: View {
 
     @State private var restoreMessage: String?
 
-    private let privacyURL = URL(string: "https://brettboggs.dev/nightjar/privacy/")!
-    private let termsURL = URL(string: "https://brettboggs.dev/nightjar/terms/")!
-    private let supportURL = URL(string: "https://brettboggs.dev/nightjar/")!
+    private let privacyURL = URL(string: "https://brettboggs.dev/slumbio/privacy/")!
+    private let termsURL = URL(string: "https://brettboggs.dev/slumbio/terms/")!
+    private let supportURL = URL(string: "https://brettboggs.dev/slumbio/")!
 
     var body: some View {
         @Bindable var settings = player.settings
@@ -149,7 +149,7 @@ struct SettingsView: View {
         let info = Bundle.main.infoDictionary ?? [:]
         let version = info["CFBundleShortVersionString"] as? String ?? "1.0"
         let build = info["CFBundleVersion"] as? String ?? "1"
-        return "Nightjar \(version) (\(build))"
+        return "Slumbio \(version) (\(build))"
     }
 
     private var tiltLabel: String {
@@ -165,7 +165,7 @@ struct SettingsView: View {
                 HStack(spacing: 12) {
                     OrbMark(size: 26, isLit: true)
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("Nightjar Plus")
+                        Text("Slumbio Plus")
                             .font(Typeface.body(16, weight: .medium))
                             .foregroundStyle(Palette.ink)
                         Text(store.isLifetime ? "Yours for good. Thank you." : "Manage or cancel in Settings › Apple Account › Subscriptions.")
@@ -191,7 +191,7 @@ struct SettingsView: View {
                     HStack(spacing: 12) {
                         OrbMark(size: 26, isLit: true)
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("Nightjar Plus")
+                            Text("Slumbio Plus")
                                 .font(Typeface.body(16, weight: .medium))
                                 .foregroundStyle(Palette.ink)
                             Text("Every sound, every pattern, and the mornings.")

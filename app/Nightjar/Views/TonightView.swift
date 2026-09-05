@@ -57,7 +57,7 @@ struct TonightView: View {
 
     private var header: some View {
         HStack(alignment: .center) {
-            Text("Nightjar")
+            Text("Slumbio")
                 .font(Typeface.display(20))
                 .foregroundStyle(Palette.inkSoft)
             Spacer()

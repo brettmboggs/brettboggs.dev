@@ -20,8 +20,8 @@ struct PaywallView: View {
 
     private var store: Store { player.store }
 
-    private let privacyURL = URL(string: "https://brettboggs.dev/nightjar/privacy/")!
-    private let termsURL = URL(string: "https://brettboggs.dev/nightjar/terms/")!
+    private let privacyURL = URL(string: "https://brettboggs.dev/slumbio/privacy/")!
+    private let termsURL = URL(string: "https://brettboggs.dev/slumbio/terms/")!
 
     var body: some View {
         ZStack {

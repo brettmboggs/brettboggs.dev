@@ -154,7 +154,7 @@ struct WakeView: View {
                 Hairline()
 
                 if notificationsDenied {
-                    Text("Notifications are off for Nightjar. Turn them on in Settings so the alarm and reminder can fire.")
+                    Text("Notifications are off for Slumbio. Turn them on in Settings so the alarm and reminder can fire.")
                         .font(Typeface.body(12))
                         .foregroundStyle(Palette.ember)
                         .fixedSize(horizontal: false, vertical: true)

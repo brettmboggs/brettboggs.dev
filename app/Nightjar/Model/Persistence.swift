@@ -35,7 +35,7 @@ enum Persistence {
             )
             try data.write(to: target, options: .atomic)
         } catch {
-            NSLog("Nightjar: could not save \(name): \(error.localizedDescription)")
+            NSLog("Slumbio: could not save \(name): \(error.localizedDescription)")
         }
     }
 }

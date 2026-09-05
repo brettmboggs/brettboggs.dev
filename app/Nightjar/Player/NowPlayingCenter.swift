@@ -72,8 +72,8 @@ final class NowPlayingCenter {
     ) {
         var info: [String: Any] = [
             MPMediaItemPropertyTitle: mixName,
-            MPMediaItemPropertyArtist: subtitle.isEmpty ? "Nightjar" : subtitle,
-            MPMediaItemPropertyAlbumTitle: "Nightjar",
+            MPMediaItemPropertyArtist: subtitle.isEmpty ? "Slumbio" : subtitle,
+            MPMediaItemPropertyAlbumTitle: "Slumbio",
             MPNowPlayingInfoPropertyPlaybackRate: isPlaying ? 1.0 : 0.0,
             MPNowPlayingInfoPropertyMediaType: MPNowPlayingInfoMediaType.audio.rawValue,
         ]

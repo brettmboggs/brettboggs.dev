@@ -104,7 +104,7 @@ enum Reminders {
 
         let content = UNMutableNotificationContent()
         content.title = "Your free week ends in two days"
-        content.body = "Nightjar Plus renews after that. Cancel any time in Settings if it is not for you."
+        content.body = "Slumbio Plus renews after that. Cancel any time in Settings if it is not for you."
         content.sound = nil
         content.interruptionLevel = .passive
 

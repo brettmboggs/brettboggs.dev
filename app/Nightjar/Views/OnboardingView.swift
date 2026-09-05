@@ -37,7 +37,7 @@ struct OnboardingView: View {
 
     private var welcome: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Nightjar")
+            Text("Slumbio")
                 .font(Typeface.display(46))
                 .foregroundStyle(Palette.ink)
             Text("Sound that never loops. Breathing you can see. Nothing to sign up for.")

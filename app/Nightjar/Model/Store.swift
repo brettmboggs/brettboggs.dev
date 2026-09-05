@@ -77,7 +77,7 @@ final class Store {
                 self.didLoad = true
             }
         } catch {
-            NSLog("Nightjar: could not load products: \(error.localizedDescription)")
+            NSLog("Slumbio: could not load products: \(error.localizedDescription)")
             await MainActor.run {
                 self.loadFailed = true
                 self.didLoad = true

@@ -36,21 +36,21 @@ final class RecordingStream {
     init?(resource: String, outputFormat: AVAudioFormat, ring: AudioRingBuffer) {
         self.ring = ring
         guard let url = Bundle.main.url(forResource: resource, withExtension: "m4a") else {
-            NSLog("Nightjar: recording '\(resource).m4a' is not in the bundle")
+            NSLog("Slumbio: recording '\(resource).m4a' is not in the bundle")
             return nil
         }
         do {
             body = try AVAudioFile(forReading: url, commonFormat: .pcmFormatFloat32, interleaved: false)
             head = try AVAudioFile(forReading: url, commonFormat: .pcmFormatFloat32, interleaved: false)
         } catch {
-            NSLog("Nightjar: could not open '\(resource).m4a': \(error.localizedDescription)")
+            NSLog("Slumbio: could not open '\(resource).m4a': \(error.localizedDescription)")
             return nil
         }
 
         let fileFormat = body.processingFormat
         totalFrames = body.length
         guard totalFrames > 4096 else {
-            NSLog("Nightjar: '\(resource).m4a' is too short to loop")
+            NSLog("Slumbio: '\(resource).m4a' is too short to loop")
             return nil
         }
 
@@ -65,7 +65,7 @@ final class RecordingStream {
             let headBuf = AVAudioPCMBuffer(pcmFormat: fileFormat, frameCapacity: inputChunk),
             let output = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: outputChunk)
         else {
-            NSLog("Nightjar: could not set up conversion for '\(resource).m4a'")
+            NSLog("Slumbio: could not set up conversion for '\(resource).m4a'")
             return nil
         }
         converter = conv
@@ -93,7 +93,7 @@ final class RecordingStream {
             }
 
             if status == .error {
-                NSLog("Nightjar: conversion failed: \(error?.localizedDescription ?? "unknown")")
+                NSLog("Slumbio: conversion failed: \(error?.localizedDescription ?? "unknown")")
                 return
             }
             let frames = Int(outputBuffer.frameLength)
@@ -152,7 +152,7 @@ final class RecordingStream {
             try body.read(into: inputBuffer, frameCount: frames)
             return Int(inputBuffer.frameLength)
         } catch {
-            NSLog("Nightjar: read failed: \(error.localizedDescription)")
+            NSLog("Slumbio: read failed: \(error.localizedDescription)")
             return 0
         }
     }
