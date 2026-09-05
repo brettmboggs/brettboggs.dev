@@ -429,7 +429,7 @@ SCHEME = """<?xml version="1.0" encoding="UTF-8"?>
          </BuildableReference>
       </BuildableProductRunnable>
       <StoreKitConfigurationFileReference
-         identifier = "../../../{app}.storekit">
+         identifier = "../../{app}.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction buildConfiguration = "Release" shouldUseLaunchSchemeArgsEnv = "YES" savedToolIdentifier = "" useCustomWorkingDirectory = "NO" debugDocumentVersioning = "YES">

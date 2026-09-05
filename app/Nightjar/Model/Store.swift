@@ -64,12 +64,16 @@ final class Store {
                subscription.introductoryOffer != nil {
                 trial = await subscription.isEligibleForIntroOffer
             }
+            let trialAvailable = trial
+            let monthlyProduct = byID[ProductID.monthly]
+            let lifetimeProduct = byID[ProductID.lifetime]
+            let nothingFound = found.isEmpty
             await MainActor.run {
-                self.monthly = byID[ProductID.monthly]
+                self.monthly = monthlyProduct
                 self.yearly = yearlyProduct
-                self.lifetime = byID[ProductID.lifetime]
-                self.yearlyTrialAvailable = trial
-                self.loadFailed = found.isEmpty
+                self.lifetime = lifetimeProduct
+                self.yearlyTrialAvailable = trialAvailable
+                self.loadFailed = nothingFound
                 self.didLoad = true
             }
         } catch {
@@ -96,9 +100,11 @@ final class Store {
                 owned = true
             }
         }
+        let plus = owned
+        let lifetime = lifetimeOwned
         await MainActor.run {
-            self.isPlus = owned
-            self.isLifetime = lifetimeOwned
+            self.isPlus = plus
+            self.isLifetime = lifetime
         }
     }
 

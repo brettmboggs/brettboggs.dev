@@ -182,7 +182,8 @@ final class HighwayTexture: Texture {
         if countdown <= 0 && passSamples == 0 {
             // A car every 2 to 20 seconds, depending on how busy the road is.
             let mean = 20 - motion * 17
-            countdown = max(Int(sampleRate * mean * (0.4 + passRNG.uniform() * 1.4)), sampleRate / 2)
+            let gap = Int(sampleRate * mean * (0.4 + passRNG.uniform() * 1.4))
+            countdown = max(gap, Int(sampleRate / 2))
             passSamples = Int(sampleRate * (1.6 + passRNG.uniform() * 2.6))
             passElapsed = 0
             passPan = passRNG.uniform() < 0.5 ? 0.15 : 0.85
