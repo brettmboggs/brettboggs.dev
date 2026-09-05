@@ -22,6 +22,7 @@ const only = arg('--only')?.split(',') ?? null;
 const scrollOverride = arg('--scroll') ? Number(arg('--scroll')) : null;
 
 const CHROME = [
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
   '/usr/bin/google-chrome',

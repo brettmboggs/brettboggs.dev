@@ -15,6 +15,12 @@ import Base from '../../layouts/Base.astro';
       </p>
     </header>
 
+    <figure class="shot">
+      <img src="/sprout-siege/shot-farm.webp" width="1600" height="782"
+           alt="The farm: low poly plots, windmills and a barn, with collect, new plot and defend across the bottom." />
+      <figcaption>The farm. It runs in real time, and nothing is lost while you are away.</figcaption>
+    </figure>
+
     <dl class="figures">
       <div>
         <dt>115</dt>
@@ -40,6 +46,12 @@ import Base from '../../layouts/Base.astro';
         core to know about the screen, the change is wrong.
       </p>
 
+      <figure class="shot">
+        <img src="/sprout-siege/shot-defense.webp" width="1600" height="782"
+             alt="The defense board: a winding lane across a field, four defenders placed, and the defender tray with prices." loading="lazy" />
+        <figcaption>SpriteKit draws the board. The package decides what happens on it.</figcaption>
+      </figure>
+
       <h2>Deterministic by construction</h2>
       <p>
         The simulation is tick based rather than frame based. It advances by an interval, and every
@@ -64,6 +76,12 @@ import Base from '../../layouts/Base.astro';
         makes sense.
       </p>
 
+      <figure class="shot">
+        <img src="/sprout-siege/shot-risk.webp" width="1600" height="782"
+             alt="The stake screen: four risk levels from Steady to Harvest Gamble, each with a payout multiplier and what it costs to lose." loading="lazy" />
+        <figcaption>You pick what you are risking before the run starts.</figcaption>
+      </figure>
+
       <p class="colophon">Swift 6, iOS 17 and up. Building clean, running in the simulator.</p>
     </div>
 
@@ -72,6 +90,27 @@ import Base from '../../layouts/Base.astro';
 </Base>
 
 <style>
+  .shot {
+    margin: 3rem 0 0;
+    padding: 0;
+  }
+  .prose .shot {
+    margin: 2.2rem 0;
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--ink);
+  }
+  .shot figcaption {
+    margin-top: 0.7rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+  }
   /* figures as editorial rows, matching the index. no tiles. */
   .figures {
     margin: 3rem 0 0;
