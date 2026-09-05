@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 import Observation
 import StoreKit
@@ -21,7 +22,14 @@ final class Store {
     private(set) var yearly: Product?
     private(set) var lifetime: Product?
 
-    private(set) var isPlus = false
+    /// Plus from an actual App Store transaction.
+    private(set) var isEntitled = false
+    /// Plus from the owner's unlock code. Kept apart from `isEntitled` so the
+    /// paywall, the receipts and the restore flow never confuse the two.
+    private(set) var isUnlocked = Store.loadUnlock()
+
+    var isPlus: Bool { isEntitled || isUnlocked }
+
     /// True when Plus came from a lifetime purchase rather than a subscription.
     private(set) var isLifetime = false
     /// True when the yearly plan has never been tried on this Apple Account.
@@ -103,9 +111,46 @@ final class Store {
         let plus = owned
         let lifetime = lifetimeOwned
         await MainActor.run {
-            self.isPlus = plus
+            self.isEntitled = plus
             self.isLifetime = lifetime
         }
+    }
+
+    // MARK: - Owner's unlock
+
+    /// Brett's own copy. The app is his; he should not have to buy it back on
+    /// every device, and comping himself through the store would mean paying
+    /// Apple's cut on his own work.
+    ///
+    /// Only the hash lives here because this repository is public. The code
+    /// itself is not written down in it.
+    private static let unlockSalt = "slumbio.unlock.v1"
+    private static let unlockDigest =
+        "4a7e67de40357b026e92c5d1d4c18901325967934f7c3ee467da3fb8a59118d1"
+    private static let unlockDefaultsKey = "plus.unlocked"
+
+    private static func loadUnlock() -> Bool {
+        UserDefaults.standard.bool(forKey: unlockDefaultsKey)
+    }
+
+    private static func digest(of code: String) -> String {
+        let normalised = code.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let data = Data((unlockSalt + normalised).utf8)
+        return SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    }
+
+    /// Returns true when the code was right. Wrong codes change nothing.
+    @discardableResult
+    func redeem(_ code: String) -> Bool {
+        guard Store.digest(of: code) == Store.unlockDigest else { return false }
+        UserDefaults.standard.set(true, forKey: Store.unlockDefaultsKey)
+        isUnlocked = true
+        return true
+    }
+
+    func revokeUnlock() {
+        UserDefaults.standard.set(false, forKey: Store.unlockDefaultsKey)
+        isUnlocked = false
     }
 
     // MARK: - Purchase
@@ -149,7 +194,9 @@ final class Store {
         do {
             try await AppStore.sync()
             await refresh()
-            return isPlus ? .unlocked : .failed("No previous purchase found on this Apple Account.")
+            // Deliberately isEntitled, not isPlus: an unlock code is not a
+            // purchase, and "restored" would be a lie.
+            return isEntitled ? .unlocked : .failed("No previous purchase found on this Apple Account.")
         } catch {
             return .failed(error.localizedDescription)
         }

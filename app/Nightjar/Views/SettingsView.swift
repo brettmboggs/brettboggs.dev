@@ -5,6 +5,9 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var restoreMessage: String?
+    @State private var isRedeeming = false
+    @State private var redeemField = ""
+    @State private var redeemFailed = false
 
     private let privacyURL = URL(string: "https://brettboggs.dev/slumbio/privacy/")!
     private let termsURL = URL(string: "https://brettboggs.dev/slumbio/terms/")!
@@ -132,10 +135,20 @@ struct SettingsView: View {
                 .buttonStyle(.plain)
                 Hairline()
 
+                // Long-press is the whole entry point. Deliberately invisible:
+                // it is the owner's key, not a feature, and nothing on screen
+                // should read as a way around paying.
                 Text(versionLine)
                     .font(Typeface.meta(11))
                     .foregroundStyle(Palette.inkFaint)
                     .padding(.top, 24)
+                    .onLongPressGesture(minimumDuration: 1.5) {
+                        guard !player.store.isUnlocked else { return }
+                        redeemField = ""
+                        redeemFailed = false
+                        isRedeeming = true
+                        Haptics.tap(enabled: player.settings.hapticsEnabled)
+                    }
 
                 Color.clear.frame(height: 30)
             }
@@ -143,6 +156,29 @@ struct SettingsView: View {
         }
         .sheetDressing()
         .paywallHost()
+        .alert("Unlock", isPresented: $isRedeeming) {
+            TextField("Code", text: $redeemField)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+            Button("Cancel", role: .cancel) { redeemField = "" }
+            Button("Unlock") {
+                if player.store.redeem(redeemField) {
+                    Haptics.success(enabled: player.settings.hapticsEnabled)
+                } else {
+                    redeemFailed = true
+                }
+                redeemField = ""
+            }
+        } message: {
+            Text(redeemFailed ? "That code did not work." : "")
+        }
+    }
+
+    private var plusDetail: String {
+        let store = player.store
+        if store.isUnlocked && !store.isEntitled { return "Unlocked on this phone." }
+        if store.isLifetime { return "Yours for good. Thank you." }
+        return "Manage or cancel in Settings › Apple Account › Subscriptions."
     }
 
     private var versionLine: String {
@@ -168,7 +204,7 @@ struct SettingsView: View {
                         Text("Slumbio Plus")
                             .font(Typeface.body(16, weight: .medium))
                             .foregroundStyle(Palette.ink)
-                        Text(store.isLifetime ? "Yours for good. Thank you." : "Manage or cancel in Settings › Apple Account › Subscriptions.")
+                        Text(plusDetail)
                             .font(Typeface.body(12))
                             .foregroundStyle(Palette.inkFaint)
                             .fixedSize(horizontal: false, vertical: true)
