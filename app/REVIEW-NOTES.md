@@ -194,12 +194,25 @@ Skip the alarm firing. It needs real time to pass and the notes explain it.
 
 ## Before replying
 
-- [ ] Build without the hidden unlock is on App Store Connect and is the build
-      attached to version 1.0.
+- [x] Build without the hidden unlock is on App Store Connect and is the build
+      attached to version 1.0. Build 16, attached 2026-09-06. The version went
+      from Rejected back to Prepare for Submission when it was swapped in, and
+      the submission now reads `1.0 (16)`.
 - [ ] That build installed from TestFlight on a real phone and actually used,
       end to end. Apple asked for this directly, and no build had been run on a
       device before the first submission.
-- [ ] Screenshots show the app in use, not the first-run screens. The four in
+- [x] Screenshots show the app in use, not the first-run screens. The four in
       `public/slumbio/` are the app in use.
-- [ ] Notes field filled in.
+- [x] Notes field filled in. `review-notes-field.txt`, 3991 characters of the
+      4000 allowed. It replaced a shorter 3408 character draft that predated
+      Apple's message and did not answer the user-generated content point.
 - [ ] Reply sent on the App Review page with the recording attached.
+      `review-reply.txt` is saved as a draft in App Store Connect already, 3988
+      characters. Open it with Continue Draft, use Attach File for the
+      recording, then Reply. Do not send it without the recording: it is the
+      first thing Apple asked for.
+- [ ] Resubmit to App Review after the reply goes out.
+
+The reply is the same seven answers as the Notes field, minus the
+`SLUMBIO, NOTES FOR APP REVIEW` header and plus `Screen recording attached.` on
+the first line. Both boxes cap at 4000 characters and neither renders markdown.
