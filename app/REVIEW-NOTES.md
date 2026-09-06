@@ -9,12 +9,18 @@ was rejected on its merits. They asked seven questions and a screen recording.
 Apple's own instruction: reply in App Store Connect **and** paste the same text
 into App Review Information › Notes, so future submissions already carry it.
 
-Two places to put it:
+Two places to put it, and the thing to paste in both is
+**`app/review-notes-field.txt`**, not the markdown below:
 
 1. App Store Connect › the app › the version › **App Review Information** ›
-   **Notes**. Paste everything under "Answers" below.
+   **Notes**.
 2. The **App Review page** for the submission, as a reply, with the screen
-   recording attached.
+   recording attached. Put "Screen recording attached." on the first line.
+
+That field caps at **4000 characters** and neither box renders markdown, so
+`review-notes-field.txt` is plain text trimmed to 3992. The longer version
+below is the working copy: it says the same things with more room, and is
+where to edit before regenerating the short one.
 
 No resubmission is required for the answers alone. A new build is, because the
 build that ships now is not the one that was submitted.
