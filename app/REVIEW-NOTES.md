@@ -206,12 +206,25 @@ Skip the alarm firing. It needs real time to pass and the notes explain it.
 - [x] Notes field filled in. `review-notes-field.txt`, 3991 characters of the
       4000 allowed. It replaced a shorter 3408 character draft that predated
       Apple's message and did not answer the user-generated content point.
-- [ ] Reply sent on the App Review page with the recording attached.
-      `review-reply.txt` is saved as a draft in App Store Connect already, 3988
-      characters. Open it with Continue Draft, use Attach File for the
-      recording, then Reply. Do not send it without the recording: it is the
-      first thing Apple asked for.
-- [ ] Resubmit to App Review after the reply goes out.
+- [x] Reply sent on the App Review page with the recording attached, 2026-09-06
+      at 2:52 PM. `review-reply.txt`, 3988 characters, plus
+      `Slumbio-App-Review-Recording.mp4`.
+- [x] Resubmit to App Review. Done the same afternoon. All five items, the app
+      version and the three purchases and the group, read Waiting for Review.
+
+## What went to Apple, 2026-09-06
+
+Build 16 on version 1.0. Build 17 existed by then, from a documentation-only
+push, so App Store Connect warned "Newer Build Available" on submit. 16 was
+kept on purpose: the two binaries are identical, and 16 is the one the notes,
+the reply and the recording all refer to.
+
+The recording Brett captured was 85 MB, 1126x2436, 62 seconds, and it does
+show the sandbox purchase. What was actually attached is an 8.6 MB re-encode
+(`avconvert --preset PresetAppleM4V480pSD`), because the upload path in use
+caps at 10 MB. App Store Connect itself has no size limit, so if Apple ever
+says the video is too small to read, attach the original from Downloads by
+hand and reply again. Both files are in `~/Downloads`.
 
 The reply is the same seven answers as the Notes field, minus the
 `SLUMBIO, NOTES FOR APP REVIEW` header and plus `Screen recording attached.` on
