@@ -2,7 +2,7 @@
 
 > Personal site of Brett Boggs: co-founder of Datum, an all-in-one construction management platform, and a photographer. This file is a curated, factual index for machine readers. If anything here conflicts with a page on the site, the page wins.
 
-Contact: brettmboggs@gmail.com · GitHub: https://github.com/brettmboggs
+Contact: hello@brettboggs.dev · GitHub: https://github.com/brettmboggs
 
 ## Datum
 
