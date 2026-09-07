@@ -115,6 +115,21 @@ for both, so the notes carry forward to later submissions.
 Apple also said, in as many words, to run the build through testing on a
 physical device first. Build 11 never was.
 
+### And came back again, 2026-09-07
+
+**Guideline 3.1.2 Business: Payments - Subscriptions**, on build 16, and this
+one was automated: the review never reached a person. The App Description had
+no link to the Terms of Use (EULA), which Apple requires on the product page of
+any app selling auto-renewable subscriptions. There is no Terms of Use field in
+App Store Connect, so on the standard EULA the link has to sit in the
+description text.
+
+Fixed the same day. The description now carries the subscription terms and
+links to the privacy policy and Apple's standard EULA, replied on the App
+Review page, resubmitted with build 16 still attached. The live description
+lives in `app/store-description.txt`, and `app/REVIEW-NOTES.md` carries the
+full 3.1.2 checklist to run before any future submission.
+
 ### The unlock code is gone
 
 The hidden long-press on the version line and the `redeem` path in `Store.swift`

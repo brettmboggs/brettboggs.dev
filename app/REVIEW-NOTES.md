@@ -1,5 +1,69 @@
 # App Review information
 
+## Round 2, rejected 2026-09-07: Guideline 3.1.2
+
+The second rejection was **3.1.2 Business: Payments - Subscriptions**, and it
+was automated. The message says so itself: "This is an automated message. The
+review of this submission cannot proceed." No human looked at the app. The
+seven answers below and the screen recording were never the problem either
+time.
+
+What it said:
+
+> The submission offers auto-renewable subscriptions, such as Plus Yearly,
+> Plus Monthly, but does not include a functional link to the Terms of Use
+> (EULA) in the app metadata that appears on the app's App Store product page.
+>
+> If you are using the standard Apple Terms of Use (EULA), include a link to
+> the Terms of Use in the App Description. If you are using a custom EULA, add
+> it in App Store Connect.
+
+The cause: the App Description had no EULA link. The App Store product page has
+a **Privacy Policy URL** field but no Terms of Use field, so for an app on the
+standard EULA the only place the link can live is inside the description text.
+Slumbio is on the standard EULA (App Information > License Agreement reads
+"Apple's Standard License Agreement"), so the description was the fix.
+
+Fixed 2026-09-07: the description now ends with a SLUMBIO PLUS block stating
+the subscription terms and these two lines.
+
+    Privacy Policy: https://brettboggs.dev/slumbio/privacy/
+    Terms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+
+The live description is kept in **`app/store-description.txt`**. Edit that file
+and paste it whole into App Store Connect, so the two never drift.
+
+Replied on the App Review page and resubmitted the same day. Build 16 stayed
+attached, and App Store Connect warned "Newer Build Available" again, which is
+expected and was dismissed with Submit.
+
+### The 3.1.2 checklist, so this does not happen a third time
+
+The automated gate checks all of these before a human sees anything. Every one
+is true as of 2026-09-07.
+
+- [x] Terms of Use (EULA) link in the **App Description**.
+      `https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`
+- [x] Privacy Policy URL set in App Store Connect and returning 200.
+      `https://brettboggs.dev/slumbio/privacy/`
+- [x] Subscription terms written out in the description: length, auto-renewal,
+      when the account is charged, how to cancel, what happens to a free trial.
+- [x] In the binary, the paywall shows each product's title, length, price and
+      price per month, plus the renewal terms in the fine print.
+      `app/Nightjar/Views/PaywallView.swift`
+- [x] In the binary, the paywall carries a Restore button and working Privacy
+      and Terms links.
+- [x] `/slumbio/privacy/` and `/slumbio/terms/` both return 200 on the live
+      site, and the terms page names Apple's standard EULA and links to it.
+      A dead link here fails the same gate. Check them before every submission.
+
+`/slumbio/support/` is a 404 and always has been. Nothing points at it. The
+Support URL in App Store Connect is `/slumbio/` and is live.
+
+---
+
+## Round 1, 2026-09-06: Guideline 2.1
+
 Apple's reply to the first submission (2026-09-06, submission
 `3b8d9695-6a55-430f-b321-68ddb599ae8b`) was **Guideline 2.1, Information
 Needed, New App Submission**. It is the questionnaire every developer account
