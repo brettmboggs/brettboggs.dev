@@ -21,14 +21,19 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 SERIF = "/System/Library/Fonts/NewYork.ttf"
 SANS = "/System/Library/Fonts/SFNS.ttf"
 
-INK      = (0xF1, 0xE7, 0xD9)
-INK_SOFT = (0xA8, 0x9A, 0x88)
-EMBER    = (0xE8, 0xA0, 0x4E)
-DEEP     = (0xC2, 0x70, 0x3A)
-ROSE     = (0xCB, 0x78, 0x70)
-DUSK     = (0x4A, 0x44, 0x5E)
-NIGHT_T  = (0x1C, 0x14, 0x0E)
-NIGHT_B  = (0x08, 0x07, 0x06)
+# The light half of the palette. The app is dark, the page it sits on is not.
+#
+# The first version put a dark app on a dark ground and the whole strip read as
+# one brown smudge at the size the App Store actually shows it. Oat paper with
+# espresso type is the same brand, and a dark phone on it separates at any
+# size.
+PAPER_TOP = (0xF7, 0xF0, 0xE3)
+PAPER_BOT = (0xE8, 0xDB, 0xC4)
+INK       = (0x2B, 0x22, 0x18)
+INK_SOFT  = (0x7A, 0x6B, 0x57)
+EMBER     = (0xE8, 0xA0, 0x4E)
+DEEP      = (0xC2, 0x70, 0x3A)
+ROSE      = (0xCB, 0x78, 0x70)
 
 SHOTS = [
     ("tonight",  "Sound that\nnever repeats.",      "Thirty-three of the thirty-five are made as they play."),
@@ -53,43 +58,44 @@ def font(path, size, weight=None):
 
 
 def background(index, total):
-    """One frame of a slow warm drift across the whole set."""
+    """Warm paper, with one slow bloom drifting across the whole set."""
     bg = Image.new("RGB", (W, H))
     px = bg.load()
     for y in range(H):
-        t = y / H
-        base = tuple(int(NIGHT_T[i] + (NIGHT_B[i] - NIGHT_T[i]) * (t ** 0.75)) for i in range(3))
+        t = (y / H) ** 0.9
+        base = tuple(int(PAPER_TOP[i] + (PAPER_BOT[i] - PAPER_TOP[i]) * t) for i in range(3))
         for x in range(W):
             px[x, y] = base
 
-    # The bloom walks left to right across the eight, so the strip is one field.
+    # The bloom walks left to right across the eight, so scrolling the strip
+    # reads as one field moving rather than eight unrelated cards.
     phase = index / max(total - 1, 1)
-    cx = W * (0.16 + 0.68 * phase)
-    cy = H * (0.30 + 0.10 * math.sin(phase * math.pi))
+    cx = W * (0.14 + 0.72 * phase)
+    cy = H * (0.20 + 0.08 * math.sin(phase * math.pi))
     glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     gp = glow.load()
-    radius = W * 1.05
+    radius = W * 1.15
     for y in range(0, H, 2):
         for x in range(0, W, 2):
-            d = math.hypot(x - cx, (y - cy) * 0.78) / radius
+            d = math.hypot(x - cx, (y - cy) * 0.82) / radius
             if d >= 1:
                 continue
-            a = (1 - d) ** 2.6
-            colour = EMBER if d < 0.35 else (DEEP if d < 0.6 else ROSE if d < 0.82 else DUSK)
-            v = (colour[0], colour[1], colour[2], int(a * 128))
+            a = (1 - d) ** 2.4
+            colour = EMBER if d < 0.4 else (DEEP if d < 0.68 else ROSE)
+            v = (colour[0], colour[1], colour[2], int(a * 74))
             for dy in (0, 1):
                 for dx in (0, 1):
                     if x + dx < W and y + dy < H:
                         gp[x + dx, y + dy] = v
-    glow = glow.filter(ImageFilter.GaussianBlur(9))
+    glow = glow.filter(ImageFilter.GaussianBlur(11))
     bg = Image.alpha_composite(bg.convert("RGBA"), glow).convert("RGB")
 
-    # Grain, the same 5% the site carries.
+    # Paper grain, the same five percent the site carries.
     random.seed(11 + index)
     noise = Image.new("L", (W // 2, H // 2))
-    noise.putdata([random.gauss(128, 4) for _ in range(noise.size[0] * noise.size[1])])
+    noise.putdata([random.gauss(128, 5) for _ in range(noise.size[0] * noise.size[1])])
     noise = noise.resize((W, H), Image.BILINEAR).convert("RGB")
-    return Image.blend(bg, Image.blend(bg, noise, 0.5), 0.10)
+    return Image.blend(bg, Image.blend(bg, noise, 0.5), 0.09)
 
 
 def rounded(im, radius):
@@ -115,40 +121,47 @@ def compose(index, name, headline, sub):
     bg = background(index, len(SHOTS))
     d = ImageDraw.Draw(bg)
 
-    head = font(SERIF, 92, 500)
-    small = font(SANS, 38)
+    # A headline, at headline size. The first pass set these at 92px in a light
+    # weight, which reads as a caption under a picture rather than as the thing
+    # you are supposed to read first.
+    head = font(SERIF, 112, 650)
+    small = font(SANS, 42)
 
-    y = centred(d, headline, 168, head, INK, 108)
+    y = centred(d, headline, 152, head, INK, 126)
     w = d.textbbox((0, 0), sub, font=small)[2]
-    if w > W - 150:
-        small = font(SANS, 34)
+    while w > W - 140 and small.size > 30:
+        small = font(SANS, small.size - 2)
         w = d.textbbox((0, 0), sub, font=small)[2]
-    d.text(((W - w) / 2, y + 26), sub, font=small, fill=INK_SOFT)
+    d.text(((W - w) / 2, y + 30), sub, font=small, fill=INK_SOFT)
 
     shot = Image.open(os.path.join(CAP, f"{name}.png")).convert("RGB")
-    scale = 0.755
+    scale = 0.78
     dw = int(W * scale)
     dh = int(dw * shot.height / shot.width)
     shot = shot.resize((dw, dh), Image.LANCZOS)
-    device = rounded(shot, int(165 * scale))
+    corner = int(165 * scale)
+    device = rounded(shot, corner)
 
-    top = 636
-    # A soft drop, so the phone sits in the field rather than on it.
+    top = H - dh - 46
+    left = (W - dw) // 2
+
+    # A real drop, so a dark phone reads as sitting above light paper rather
+    # than as a hole cut into it.
     shadow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     ImageDraw.Draw(shadow).rounded_rectangle(
-        [(W - dw) // 2, top + 18, (W - dw) // 2 + dw, top + dh],
-        radius=int(165 * scale), fill=(0, 0, 0, 150)
+        [left + 8, top + 26, left + dw - 8, top + dh],
+        radius=corner, fill=(0x3A, 0x2C, 0x1C, 120)
     )
-    bg = Image.alpha_composite(bg.convert("RGBA"), shadow.filter(ImageFilter.GaussianBlur(38)))
+    bg = Image.alpha_composite(bg.convert("RGBA"), shadow.filter(ImageFilter.GaussianBlur(44)))
 
     frame = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    frame.paste(device, ((W - dw) // 2, top), device)
+    frame.paste(device, (left, top), device)
     bg = Image.alpha_composite(bg, frame)
 
     edge = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     ImageDraw.Draw(edge).rounded_rectangle(
-        [(W - dw) // 2, top, (W - dw) // 2 + dw - 1, top + dh - 1],
-        radius=int(165 * scale), outline=(0x4A, 0x3B, 0x2E, 210), width=4
+        [left, top, left + dw - 1, top + dh - 1],
+        radius=corner, outline=(0x1A, 0x14, 0x0E, 235), width=5
     )
     bg = Image.alpha_composite(bg, edge)
 
