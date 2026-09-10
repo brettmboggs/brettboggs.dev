@@ -152,6 +152,43 @@ version 1.0 before the reply is sent. Pushing to `main` builds it.
   serves a feature the user switched on, which is the defence, but it is the
   next most likely thing to be asked about.
 
+## 1.1, built 2026-09-10, not yet pushed
+
+On branch `polish-1.1`. Five commits. Everything below builds clean in Debug
+and Release, and `check_swift.py` and `verify_project.py` both pass.
+
+**What changed.** The orb shader clipped to white and was erasing the text in
+front of it on four screens; it is tone mapped and dithered now, and every
+screen has a veil between the orb and its content. Breathe gained a live
+preview ring. Rest gained a two week chart. New icon, in three appearance
+variants. Five App Intents. HealthKit, write only. A widget target with two
+Control Centre buttons. `tools/shots` rebuilds the eight store screenshots and
+the app preview from one command.
+
+**Before this can go to main, in this order:**
+
+1. **developer.apple.com › Identifiers › `dev.brettboggs.nightjar` › enable
+   HealthKit.** This is the only step nothing can do for you, and CI fails at
+   the export without it. Automatic signing will not add a capability to an
+   App ID on its own.
+2. **Build it on a phone.** Nothing in this branch has run on hardware. The
+   widget, the Control Centre buttons, the deep links, the Siri phrases and
+   the Health write are all unverified: the simulator will confirm they build
+   and that iOS routes `slumbio://` to the app, and nothing past that.
+3. Push. The widget's own App ID, `dev.brettboggs.nightjar.widgets`,
+   automatic signing should create with the Admin key.
+
+**Then, in App Store Connect,** everything in `app/store-listing.md`: the
+name, subtitle and keywords, the promotional text, the eight screenshots and
+the preview from `app/tools/shots/out/`. **Paste the description last, after
+the build is approved.** It describes the chart and the breathing ring, and a
+product page claiming something the shipped binary does not do is a 2.3.1
+rejection.
+
+The preview video is silent, because simctl does not record simulator audio.
+Re-shooting the same 28 seconds on a phone with QuickTime is worth doing. It
+is the only asset on the page that can play the rain.
+
 ## Still open
 
 - Beta App Review on build 7. One-time, a day or so. The public link works
