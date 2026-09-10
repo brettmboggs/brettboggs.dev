@@ -69,22 +69,25 @@ struct TonightView: View {
 
     // MARK: - Pieces
 
+    /// The wordmark that used to sit here told you the name of the app you had
+    /// already opened. The streak is the only thing worth saying at the top of
+    /// this screen, and most nights there is nothing to say at all.
     private var header: some View {
-        HStack(alignment: .center) {
-            Text("Slumbio")
-                .font(Typeface.display(20))
-                .foregroundStyle(Palette.inkSoft)
-            Spacer()
+        HStack(alignment: .center, spacing: 10) {
             if let streak = streakLine {
                 Text(streak)
                     .font(Typeface.meta(11))
                     .foregroundStyle(Palette.inkFaint)
-                    .padding(.trailing, 10)
+                    .transition(.opacity)
             }
+            Spacer(minLength: 0)
             IconButton(systemImage: "moon.zzz") { showBedside = true }
+                .accessibilityLabel("Bedside clock")
             IconButton(systemImage: "slider.horizontal.3") { openSettings() }
+                .accessibilityLabel("Settings")
         }
         .padding(.top, 8)
+        .animation(.settle, value: streakLine)
     }
 
     private var streakLine: String? {
@@ -124,14 +127,23 @@ struct TonightView: View {
     private var subtitle: String {
         if player.currentMix.isEmpty { return "Pick a sound to begin" }
         if player.isWaking { return "Sunrise" }
-        if let remaining = player.timerRemaining, player.isPlaying {
-            return "\(player.currentMix.summary) · \(Format.clock(remaining))"
-        }
+        // The countdown lives on the timer control. It used to be here as
+        // well, so the same number ticked in two places on one screen.
         return player.currentMix.summary
     }
 
     private var transport: some View {
-        HStack(spacing: 14) {
+        VStack(spacing: 22) {
+            controls
+            volume
+        }
+    }
+
+    /// Timer, play and shuffle read as one cluster now. They used to be pushed
+    /// into three corners by spacers, at three different weights, which made
+    /// them look like three unrelated screens' worth of controls.
+    private var controls: some View {
+        HStack(spacing: 24) {
             Button {
                 showTimer = true
             } label: {
@@ -142,8 +154,7 @@ struct TonightView: View {
                 )
             }
             .buttonStyle(.plain)
-
-            Spacer()
+            .accessibilityLabel("Sleep timer, \(timerLabel)")
 
             Button {
                 player.toggle()
@@ -163,8 +174,7 @@ struct TonightView: View {
             .disabled(player.currentMix.isEmpty)
             .opacity(player.currentMix.isEmpty ? 0.5 : 1)
             .animation(.settle, value: player.isPlaying)
-
-            Spacer()
+            .accessibilityLabel(player.isPlaying ? "Pause" : "Play")
 
             Button {
                 if player.currentMixIsUnsaved {
@@ -185,7 +195,41 @@ struct TonightView: View {
             }
             .buttonStyle(.plain)
         }
+        .frame(maxWidth: .infinity)
         .animation(.settle, value: player.currentMixIsUnsaved)
+    }
+
+    /// The one control a sound app is expected to have within reach and this
+    /// one kept in Settings. It is the app's own gain, not the system's, so it
+    /// can be turned down to nothing while the phone stays loud enough for the
+    /// alarm in the morning.
+    private var volume: some View {
+        @Bindable var settings = player.settings
+
+        return HStack(spacing: 12) {
+            Image(systemName: "speaker.fill")
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(Palette.inkFaint)
+            FaderBar(value: settings.masterVolume, height: 4) { value in
+                settings.masterVolume = value
+                player.commitMasterVolume()
+            } onCommit: {
+                settings.save()
+            }
+            Image(systemName: "speaker.wave.3.fill")
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(Palette.inkFaint)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Volume")
+        .accessibilityValue("\(Int(settings.masterVolume * 100)) percent")
+        .accessibilityAdjustableAction { direction in
+            let step = 0.05
+            settings.masterVolume = (settings.masterVolume + (direction == .increment ? step : -step))
+                .clampedUnit
+            player.commitMasterVolume()
+            settings.save()
+        }
     }
 
     private var timerLabel: String {

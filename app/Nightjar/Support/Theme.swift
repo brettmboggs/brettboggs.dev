@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// The app is dark-only on purpose: it is looked at in a dark room by someone
 /// trying to fall asleep. Every accent is warm and low-blue for the same reason.
@@ -37,19 +38,36 @@ enum Palette {
 }
 
 enum Typeface {
+    /// Designed sizes, scaled by whatever text size the reader has set.
+    ///
+    /// Every font in the app is built here, which is the only reason honouring
+    /// Dynamic Type is a few lines rather than a rewrite. `UIFontMetrics`
+    /// scales a chosen point size the way the system scales its own text
+    /// styles, so a designed 16 moves with the slider instead of ignoring it.
+    ///
+    /// The cap is deliberate. These screens are compositions, not lists: a
+    /// breathing ring with a number inside it and a two column shelf of names
+    /// both stop being able to hold their shape somewhere past a third larger.
+    /// A screen that has collapsed is harder to read than one that scaled less
+    /// than it was asked to, and anyone who needs more than this has
+    /// VoiceOver, which every control here is labelled for.
+    private static func scaled(_ size: CGFloat, relativeTo style: UIFont.TextStyle) -> CGFloat {
+        min(UIFontMetrics(forTextStyle: style).scaledValue(for: size), size * 1.35)
+    }
+
     /// Serif display. The system serif, so there are no font files to ship
     /// and nothing to license.
     static func display(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .serif)
+        .system(size: scaled(size, relativeTo: .title2), weight: weight, design: .serif)
     }
 
     static func body(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
+        .system(size: scaled(size, relativeTo: .body), weight: weight, design: .default)
     }
 
     /// Metadata, counters, timers.
     static func meta(_ size: CGFloat, weight: Font.Weight = .medium) -> Font {
-        .system(size: size, weight: weight, design: .monospaced)
+        .system(size: scaled(size, relativeTo: .caption1), weight: weight, design: .monospaced)
     }
 }
 

@@ -94,6 +94,21 @@ enum PaywallReason: Identifiable, Hashable, Sendable {
         }
     }
 
+    /// The thing they just reached for, so the list can lead with it instead
+    /// of making them find it. `nil` where the ask is not about one feature.
+    var feature: PlusFeature? {
+        switch self {
+        case .sound: return .library
+        case .layers: return .layers
+        case .mixes: return .mixes
+        case .breath: return .breath
+        case .routine: return .routine
+        case .wake: return .wake
+        case .journal: return .journal
+        case .firstNight, .direct: return nil
+        }
+    }
+
     var line: String {
         switch self {
         case .sound:

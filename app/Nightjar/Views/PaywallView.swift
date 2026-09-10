@@ -66,29 +66,8 @@ struct PaywallView: View {
                     .padding(.top, 8)
                     .fixedSize(horizontal: false, vertical: true)
 
-                VStack(spacing: 0) {
-                    ForEach(PlusFeature.allCases) { feature in
-                        HStack(alignment: .top, spacing: 14) {
-                            Image(systemName: feature.symbol)
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundStyle(Palette.ember)
-                                .frame(width: 22)
-                                .padding(.top, 2)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(feature.title)
-                                    .font(Typeface.body(15, weight: .medium))
-                                    .foregroundStyle(Palette.ink)
-                                Text(feature.detail)
-                                    .font(Typeface.body(12))
-                                    .foregroundStyle(Palette.inkFaint)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            Spacer(minLength: 0)
-                        }
-                        .padding(.vertical, 9)
-                    }
-                }
-                .padding(.top, 24)
+                features
+                    .padding(.top, 26)
 
                 plans
                     .padding(.top, 24)
@@ -134,6 +113,44 @@ struct PaywallView: View {
                     .padding(.bottom, 30)
             }
             .pageGutter()
+        }
+    }
+
+    /// Seven features, each with a title and a line of its own, made a grey
+    /// wall directly under the headline that answered the same question. The
+    /// headline already says why this sheet is open, so the list underneath is
+    /// an inventory: one line each, and the thing they actually reached for
+    /// sits first and keeps its sentence.
+    private var features: some View {
+        let lead = reason.feature
+        let ordered = lead.map { first in [first] + PlusFeature.allCases.filter { $0 != first } }
+            ?? PlusFeature.allCases
+
+        return VStack(spacing: 0) {
+            ForEach(ordered) { feature in
+                let isLead = feature == lead
+                HStack(alignment: isLead ? .top : .center, spacing: 14) {
+                    Image(systemName: feature.symbol)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(isLead ? Palette.ember : Palette.ember.opacity(0.75))
+                        .frame(width: 22)
+                        .padding(.top, isLead ? 2 : 0)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(feature.title)
+                            .font(Typeface.body(15, weight: isLead ? .semibold : .regular))
+                            .foregroundStyle(Palette.ink)
+                        if isLead {
+                            Text(feature.detail)
+                                .font(Typeface.body(12))
+                                .foregroundStyle(Palette.inkSoft)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    Spacer(minLength: 0)
+                }
+                .padding(.vertical, isLead ? 9 : 7)
+                .accessibilityElement(children: .combine)
+            }
         }
     }
 
@@ -200,29 +217,44 @@ struct PaywallView: View {
                     .frame(width: 20, height: 20)
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 8) {
+                        // The plan's name outranks its rosette. At a large
+                        // text size something on this line has to give, and it
+                        // should never be the word Yearly.
                         Text(title)
                             .font(Typeface.body(16, weight: .medium))
                             .foregroundStyle(Palette.ink)
+                            .lineLimit(1)
+                            .layoutPriority(2)
                         if let badge {
                             Text(badge.uppercased())
                                 .font(Typeface.meta(9, weight: .semibold))
                                 .tracking(1)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                                .layoutPriority(0)
                                 .foregroundStyle(Palette.ground)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 3)
                                 .background(Capsule().fill(Palette.ember))
                         }
                     }
+                    // At a large text size this used to truncate to
+                    // "$1.67 a month · sav…", which hides the discount on the
+                    // plan the sheet is recommending. It wraps instead, and
+                    // the price keeps its width whatever else has to give.
                     Text(detail)
                         .font(Typeface.body(12))
                         .foregroundStyle(Palette.inkFaint)
-                        .lineLimit(2)
+                        .lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 8)
                 Text(price)
                     .font(Typeface.meta(13, weight: .medium))
                     .foregroundStyle(Palette.ink)
                     .multilineTextAlignment(.trailing)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .layoutPriority(1)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
