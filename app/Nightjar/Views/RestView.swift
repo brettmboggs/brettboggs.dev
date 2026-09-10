@@ -7,6 +7,7 @@ struct RestView: View {
     @State private var openTip: Tip?
     @State private var showWake = false
     @State private var showJournal = false
+    @State private var showNotes = false
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -22,24 +23,8 @@ struct RestView: View {
                 nights
                     .padding(.top, 26)
 
-                ForEach(Tips.grouped(), id: \.group) { section in
-                    SectionLabel(section.group.title)
-                        .padding(.top, 30)
-                        .padding(.bottom, 4)
-                    ForEach(section.tips) { tip in
-                        Button {
-                            openTip = tip
-                        } label: {
-                            IndexRow(title: tip.title, detail: tip.body) {
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 11, weight: .semibold))
-                                    .foregroundStyle(Palette.inkFaint)
-                            }
-                        }
-                        .buttonStyle(.plain)
-                        Hairline()
-                    }
-                }
+                notes
+                    .padding(.top, 30)
 
                 Text("General guidance, not medical advice. If sleep has been hard for weeks, talk to a doctor. It is very treatable.")
                     .font(Typeface.body(12))
@@ -63,6 +48,7 @@ struct RestView: View {
         .sheet(item: $openTip) { tip in TipSheet(tip: tip) }
         .sheet(isPresented: $showWake) { WakeView() }
         .sheet(isPresented: $showJournal) { JournalSheet() }
+        .sheet(isPresented: $showNotes) { NotesSheet(onOpen: { openTip = $0 }) }
     }
 
     // MARK: - Wake and bedtime
@@ -126,6 +112,51 @@ struct RestView: View {
         if player.settings.bedtimeReminderEnabled { parts.append("reminder") }
         if player.settings.windDownEnabled { parts.append("starts the routine") }
         return parts.count == 1 ? "\(time) · nothing scheduled" : parts.joined(separator: " · ")
+    }
+
+    // MARK: - Notes
+
+    /// One note, and a door to the other twenty-nine.
+    ///
+    /// All thirty used to be printed here, title and body each, which made
+    /// this the longest screen in the app by a distance and buried the two
+    /// things above it. They are worth reading one at a time anyway, which is
+    /// what the nightly one on the Tonight screen has always done.
+    private var notes: some View {
+        let tip = Tips.tonight()
+        return VStack(alignment: .leading, spacing: 0) {
+            SectionLabel("Tonight", trailing: tip.group.title)
+                .padding(.bottom, 10)
+            Button { openTip = tip } label: {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(tip.title)
+                        .font(Typeface.display(21))
+                        .foregroundStyle(Palette.ink)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(tip.body)
+                        .font(Typeface.body(14))
+                        .foregroundStyle(Palette.inkSoft)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            Hairline()
+                .padding(.top, 18)
+            Button { showNotes = true } label: {
+                IndexRow(title: "All \(Tips.all.count) notes", detail: "Short, practical, one at a time.") {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(Palette.inkFaint)
+                }
+            }
+            .buttonStyle(.plain)
+            Hairline()
+        }
     }
 
     // MARK: - Journal
@@ -393,5 +424,48 @@ struct JournalSheet: View {
                 .tracking(1.4)
                 .foregroundStyle(Palette.inkFaint)
         }
+    }
+}
+
+// MARK: - All the notes
+
+/// The full shelf, behind one tap instead of in front of everything.
+struct NotesSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    let onOpen: (Tip) -> Void
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(
+                    title: "Notes",
+                    subtitle: "Thirty short ones. Nothing you have to do tonight.",
+                    onClose: { dismiss() }
+                )
+                ForEach(Tips.grouped(), id: \.group) { section in
+                    SectionLabel(section.group.title)
+                        .padding(.top, 26)
+                        .padding(.bottom, 4)
+                    ForEach(section.tips) { tip in
+                        Button {
+                            dismiss()
+                            onOpen(tip)
+                        } label: {
+                            IndexRow(title: tip.title, detail: tip.body) {
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundStyle(Palette.inkFaint)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        Hairline()
+                    }
+                }
+                Spacer(minLength: 24)
+            }
+            .pageGutter()
+        }
+        .sheetDressing()
+        .presentationDetents([.large])
     }
 }

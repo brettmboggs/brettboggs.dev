@@ -72,6 +72,27 @@ struct SettingsView: View {
                 }
                 Hairline()
 
+                SectionLabel("Breathing")
+                    .padding(.top, 28)
+                SettingRow(title: "Breath sound", detail: "A soft tone under each turn of the breath.") {
+                    Toggle("", isOn: Binding(
+                        get: { settings.breathGuideSound },
+                        set: { player.setBreathGuide(enabled: $0) }
+                    ))
+                    .toggleStyle(WarmToggleStyle())
+                    .labelsHidden()
+                }
+                Hairline()
+                SettingRow(title: "Taps", detail: "A tap at the end of each inhale and exhale.") {
+                    Toggle("", isOn: Binding(
+                        get: { settings.breathHaptics },
+                        set: { settings.breathHaptics = $0; settings.save() }
+                    ))
+                    .toggleStyle(WarmToggleStyle())
+                    .labelsHidden()
+                }
+                Hairline()
+
                 SectionLabel("Screen")
                     .padding(.top, 28)
                 SettingRow(title: "Dim after a while", detail: "The screen settles down once you stop touching it.") {

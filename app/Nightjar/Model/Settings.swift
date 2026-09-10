@@ -65,7 +65,9 @@ final class Settings {
     var breathGuideSound: Bool = true
     var breathHaptics: Bool = true
     /// Last chosen session length in minutes.
-    var breathMinutes: Int = 4
+    /// One of the five choices the Breathe tab offers, so the row always has
+    /// something selected.
+    var breathMinutes: Int = 5
     /// The custom pattern, in seconds. Inhale, hold, exhale, hold.
     var customBreath: [Double] = [4, 4, 6, 2]
 

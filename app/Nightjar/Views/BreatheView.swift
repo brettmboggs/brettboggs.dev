@@ -1,133 +1,212 @@
 import SwiftUI
 
-/// Pick a pattern and a length. The session itself is full screen.
+/// Pick a pattern and a length, then begin.
+///
+/// One screen, one decision, and the decision is visible before it is made.
+/// The ring is the selected pattern actually running, so swiping from
+/// 4 · 7 · 8 to Box re-proportions it in front of you: the shape of a pattern
+/// is felt before any of its numbers are read. That is the whole argument of
+/// this tab, and it used to be buried under six list rows.
+///
+/// Everything that is not that decision has left. The breath sound and the
+/// taps are preferences, set once and forgotten, so they live in Settings.
 struct BreatheView: View {
     @Environment(PlayerController.self) private var player
 
-    @State private var selectedID: String = "478"
+    @State private var selectedID: String = BreathPattern.fourSevenEight.id
     @State private var showCustom = false
 
-    private let lengths = [2, 3, 5, 10, 15]
+    private let lengthOptions = [2, 3, 5, 10, 15]
 
-    var body: some View {
-        @Bindable var settings = player.settings
-
-        return VStack(spacing: 0) {
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
-                    ScreenTitle(title: "Breathe", subtitle: "The screen breathes with you.") {
-                        EmptyView()
-                    }
-                    .padding(.top, 8)
-
-                    BreathPreview(pattern: selectedPattern)
-                        .frame(maxWidth: .infinity)
-                        .padding(.top, 22)
-                        .padding(.bottom, 34)
-
-                    VStack(spacing: 0) {
-                        ForEach(BreathPattern.library) { pattern in
-                            patternRow(pattern)
-                            Hairline()
-                        }
-                        patternRow(BreathPattern.custom(settings.customBreath), isCustom: true)
-                    }
-
-                    SectionLabel("For")
-                        .padding(.top, 26)
-                    ChoiceRow(
-                        options: lengths.map { ($0, "\($0) min") },
-                        selection: settings.breathMinutes
-                    ) { choice in
-                        settings.breathMinutes = choice
-                        settings.save()
-                    }
-                    .padding(.top, 8)
-
-                    HStack(spacing: 22) {
-                        Toggle("", isOn: Binding(
-                            get: { settings.breathGuideSound },
-                            set: { player.setBreathGuide(enabled: $0) }
-                        ))
-                        .toggleStyle(WarmToggleStyle())
-                        .labelsHidden()
-                        Text("Breath sound")
-                            .font(Typeface.body(14))
-                            .foregroundStyle(Palette.inkSoft)
-                        Spacer()
-                        Toggle("", isOn: Binding(
-                            get: { settings.breathHaptics },
-                            set: { settings.breathHaptics = $0; settings.save() }
-                        ))
-                        .toggleStyle(WarmToggleStyle())
-                        .labelsHidden()
-                        Text("Taps")
-                            .font(Typeface.body(14))
-                            .foregroundStyle(Palette.inkSoft)
-                    }
-                    .padding(.top, 20)
-
-                    SoftButton(title: "Begin", systemImage: "wind", isProminent: true, isWide: true) {
-                        begin()
-                    }
-                    .padding(.top, 26)
-
-                // The notes are sleep hygiene, and the patterns are breathing
-                // exercises. Neither is medical advice, and one of them has a
-                // real contraindication, so say so where they are used rather
-                // than only in the terms.
-                Text("Breathing exercises are not medical advice. If you have a heart or breathing condition, talk to a doctor first.")
-                    .font(Typeface.body(11))
-                    .foregroundStyle(Palette.inkFaint)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 18)
-
-                    Color.clear.frame(height: 96)
-                }
-                .pageGutter()
-            }
-        }
-        .sheet(isPresented: $showCustom) { CustomBreathSheet() }
-        .onAppear { selectedID = player.routinePattern.id }
+    private var patterns: [BreathPattern] {
+        BreathPattern.library + [BreathPattern.custom(player.settings.customBreath)]
     }
 
     private var selectedPattern: BreathPattern {
         BreathPattern.named(selectedID, custom: player.settings.customBreath)
     }
 
-    private func patternRow(_ pattern: BreathPattern, isCustom: Bool = false) -> some View {
-        let isSelected = selectedID == pattern.id
-        let locked = !player.plan.allows(pattern)
-        return Button {
-            if locked {
-                player.requestUpgrade(.breath)
-                return
-            }
-            withAnimation(.settle) { selectedID = pattern.id }
-            if isCustom { showCustom = true }
-        } label: {
-            IndexRow(title: pattern.name, detail: "\(pattern.signature)   \(pattern.blurb)", isActive: isSelected) {
-                HStack(spacing: 10) {
-                    if locked { PlusMark() }
-                    if isSelected {
-                        OrbMark(size: 18, isLit: true)
-                    } else if isCustom {
-                        Image(systemName: "slider.horizontal.3")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(Palette.inkFaint)
+    var body: some View {
+        @Bindable var settings = player.settings
+
+        return GeometryReader { geo in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    ScreenTitle(title: "Breathe", subtitle: "Swipe to change the shape.") {
+                        EmptyView()
                     }
+                    .padding(.top, 8)
+
+                    Spacer(minLength: 20)
+
+                    BreathPreview(pattern: selectedPattern)
+                        .animation(.settleSlow, value: selectedID)
+
+                    pager
+                        .padding(.top, 6)
+
+                    Spacer(minLength: 24)
+
+                    length(settings)
+
+                    beginButton
+                        .padding(.top, 20)
+
+                    disclaimer
+                        .padding(.top, 18)
+                        .padding(.bottom, 96)
                 }
+                .pageGutter()
+                // Fills the screen so the spacers have slack to share out. The
+                // scroll view only actually scrolls when the content outgrows
+                // this, which is a small phone or a large text size.
+                .frame(minHeight: geo.size.height, alignment: .top)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            .sheet(isPresented: $showCustom) { CustomBreathSheet() }
+            .onAppear {
+                selectedID = player.routinePattern.id
+                snapLengthToAnOption()
+            }
+            .onChange(of: selectedID) { _, _ in
+                Haptics.tap(enabled: player.settings.hapticsEnabled)
             }
         }
-        .buttonStyle(.plain)
+    }
+
+    /// The stored default was four minutes, which is not one of the five
+    /// choices, so the row came up with nothing selected and the screen looked
+    /// broken before it was touched. Anything off the list moves to the
+    /// nearest thing on it, once, quietly.
+    private func snapLengthToAnOption() {
+        let current = player.settings.breathMinutes
+        guard !lengthOptions.contains(current) else { return }
+        let nearest = lengthOptions.min { abs($0 - current) < abs($1 - current) } ?? 5
+        player.settings.breathMinutes = nearest
+        player.settings.save()
+    }
+
+    // MARK: - Choosing
+
+    /// The system pager rather than a hand-rolled drag, so it carries the
+    /// rubber-banding and the momentum people already expect from one. Its own
+    /// dots are hidden and redrawn below in the app's colours; the built-in
+    /// ones can only be tinted through a global UIKit appearance proxy, which
+    /// is a large hammer for six small circles.
+    private var pager: some View {
+        VStack(spacing: 16) {
+            TabView(selection: $selectedID) {
+                ForEach(patterns) { pattern in
+                    card(for: pattern).tag(pattern.id)
+                }
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .frame(height: 116)
+
+            HStack(spacing: 7) {
+                ForEach(patterns) { pattern in
+                    Circle()
+                        .fill(pattern.id == selectedID ? Palette.ember : Palette.hairline)
+                        .frame(width: 5, height: 5)
+                }
+            }
+            .animation(.settle, value: selectedID)
+            .accessibilityHidden(true)
+        }
+    }
+
+    private func card(for pattern: BreathPattern) -> some View {
+        let locked = !player.plan.allows(pattern)
+        return VStack(spacing: 8) {
+            HStack(spacing: 10) {
+                Text(pattern.name)
+                    .font(Typeface.display(27))
+                    .foregroundStyle(locked ? Palette.inkSoft : Palette.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                if locked { PlusMark() }
+                if pattern.id == "custom", !locked {
+                    Button { showCustom = true } label: {
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(Palette.inkSoft)
+                            .frame(width: 30, height: 30)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Edit your pattern")
+                }
+            }
+            // 4 · 7 · 8 is its own signature, so printing both is stutter.
+            if pattern.name != pattern.signature {
+                Text(pattern.signature)
+                    .font(Typeface.meta(13))
+                    .foregroundStyle(Palette.ember.opacity(0.9))
+                    .monospacedDigit()
+            }
+            Text(pattern.blurb)
+                .font(Typeface.body(13))
+                .foregroundStyle(Palette.inkSoft)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .top)
+        .padding(.horizontal, 10)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(pattern.name), \(pattern.signature)")
+        .accessibilityHint(pattern.blurb)
+    }
+
+    // MARK: - Length and start
+
+    private func length(_ settings: Settings) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            SectionLabel("For")
+            ChoiceRow(
+                options: lengthOptions.map { ($0, "\($0) min") },
+                selection: settings.breathMinutes
+            ) { choice in
+                settings.breathMinutes = choice
+                settings.save()
+                Haptics.tap(enabled: settings.hapticsEnabled)
+            }
+        }
+    }
+
+    /// Says what it will do. A locked pattern used to make this button do
+    /// nothing at all, which reads as a bug rather than as a price.
+    private var beginButton: some View {
+        let locked = !player.plan.allows(selectedPattern)
+        return SoftButton(
+            title: locked ? "Unlock with Plus" : "Begin",
+            systemImage: locked ? "lock" : "wind",
+            isProminent: true,
+            isWide: true
+        ) {
+            if locked {
+                player.requestUpgrade(.breath)
+            } else {
+                begin()
+            }
+        }
+    }
+
+    // The notes are sleep hygiene, and the patterns are breathing exercises.
+    // Neither is medical advice, and one of them has a real contraindication,
+    // so say so where they are used rather than only in the terms.
+    private var disclaimer: some View {
+        Text("Breathing exercises are not medical advice. If you have a heart or breathing condition, talk to a doctor first.")
+            .font(Typeface.body(11))
+            .foregroundStyle(Palette.inkFaint)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     private func begin() {
-        let pattern = BreathPattern.named(selectedID, custom: player.settings.customBreath)
+        let pattern = selectedPattern
         // Remember the choice, so the tab and the routine come back to it.
-        if player.plan.allows(pattern) {
-            player.settings.routineBreathPatternID = pattern.id
-        }
+        player.settings.routineBreathPatternID = pattern.id
+        player.settings.save()
         player.startBreath(pattern, minutes: player.settings.breathMinutes)
     }
 }
@@ -297,12 +376,24 @@ struct BreathPreview: View {
     let pattern: BreathPattern
     var size: CGFloat = 178
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     /// A hair of space between arcs, as a fraction of the circle.
     private let gap = 0.006
 
+    /// Held at the top of the first inhale when motion is reduced: the arcs
+    /// still show the pattern's proportions and the disc is still full, so the
+    /// shape reads without anything moving. The timeline is slowed to match,
+    /// rather than redrawing thirty times a second to show the same frame.
+    private var frozenElapsed: Double {
+        (pattern.phases.first?.seconds ?? 1) * 0.999
+    }
+
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
-            let elapsed = timeline.date.timeIntervalSinceReferenceDate
+        TimelineView(.animation(minimumInterval: reduceMotion ? 10 : 1 / 30)) { timeline in
+            let elapsed = reduceMotion
+                ? frozenElapsed
+                : timeline.date.timeIntervalSinceReferenceDate
             let fullness = pattern.fullness(at: elapsed)
             let active = pattern.phase(at: elapsed)
             let phase = pattern.phases[min(active.index, pattern.phases.count - 1)]
