@@ -152,10 +152,11 @@ version 1.0 before the reply is sent. Pushing to `main` builds it.
   serves a feature the user switched on, which is the defence, but it is the
   next most likely thing to be asked about.
 
-## 1.1, built 2026-09-10, not yet pushed
+## 1.1, shipped to TestFlight 2026-09-10
 
-On branch `polish-1.1`. Five commits. Everything below builds clean in Debug
-and Release, and `check_swift.py` and `verify_project.py` both pass.
+Merged to `main` and uploaded. Build **1.1 (21)** is the first one carrying any
+of it. Automatic distribution puts it on the internal testers' phones once
+Apple finishes processing.
 
 **What changed.** The orb shader clipped to white and was erasing the text in
 front of it on four screens; it is tone mapped and dithered now, and every
@@ -165,29 +166,36 @@ variants. Five App Intents. HealthKit, write only. A widget target with two
 Control Centre buttons. `tools/shots` rebuilds the eight store screenshots and
 the app preview from one command.
 
-**Before this can go to main, in this order:**
+**What was set up to get it there.** Both are done and neither needs doing
+again:
 
-1. **developer.apple.com › Identifiers › `dev.brettboggs.nightjar` › enable
-   HealthKit.** This is the only step nothing can do for you, and CI fails at
-   the export without it. Automatic signing will not add a capability to an
-   App ID on its own.
-2. **Build it on a phone.** Nothing in this branch has run on hardware. The
-   widget, the Control Centre buttons, the deep links, the Siri phrases and
-   the Health write are all unverified: the simulator will confirm they build
-   and that iOS routes `slumbio://` to the app, and nothing past that.
-3. Push. The widget's own App ID, `dev.brettboggs.nightjar.widgets`,
-   automatic signing should create with the Admin key.
+- `dev.brettboggs.nightjar` has the **HealthKit** capability. Automatic
+  signing will not add a capability to an App ID on its own, and the export
+  fails without it.
+- `dev.brettboggs.nightjar.widgets` is registered as its own App ID, with no
+  capabilities. Cloud signing would probably have made it, but not certainly.
 
-**Then, in App Store Connect,** everything in `app/store-listing.md`: the
-name, subtitle and keywords, the promotional text, the eight screenshots and
-the preview from `app/tools/shots/out/`. **Paste the description last, after
-the build is approved.** It describes the chart and the breathing ring, and a
-product page claiming something the shipped binary does not do is a 2.3.1
-rejection.
+**The one that cost a build.** The first push archived and signed cleanly and
+then failed at `exportArchive` with "Missing purpose string in Info.plist".
+Apple's validator wants `NSHealthShareUsageDescription` as well as
+`NSHealthUpdateUsageDescription` the moment the entitlement is on the bundle,
+even though this app only ever writes. Both are in `Info.plist` now.
 
-The preview video is silent, because simctl does not record simulator audio.
-Re-shooting the same 28 seconds on a phone with QuickTime is worth doing. It
-is the only asset on the page that can play the rain.
+**Still unverified: everything that needs a thumb.** The widget, the Control
+Centre buttons, the deep links, the Siri phrases and the Health write all
+compile, and the simulator confirms iOS routes `slumbio://` to the app.
+Nothing past that has been exercised. Build 21 on a real phone is the test.
+
+**App Store Connect is already staged.** Version 1.1 exists and holds the new
+name, subtitle, keywords, promotional text, description and release notes,
+eight screenshots at 6.9 inch, and an app preview. The 6.5 inch set was
+deleted so the 6.9 inch one serves every size. Nothing is submitted: attach
+build 21 and press Add for Review when the app has been used on a phone.
+
+The preview's audio is rendered by `tools/shots/mixdown.swift`, which runs the
+app's own `Renderer` offline. It is the same rain the app makes, playing the
+same Long Rain preset the video shows. App Store Connect rejects a preview
+with no audio track, which is how that came up.
 
 ## Still open
 
