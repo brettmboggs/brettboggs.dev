@@ -28,13 +28,13 @@ A bedside clock at two percent brightness, with the controls hidden until you to
 
 Siri and Shortcuts run all of it: wind down, play a mix by name, start a breathing pattern, set the timer, stop.
 
-A home screen widget and a Control Centre button, so wind down is one tap from a screen that is already almost off.
+A home screen widget and a Control Center button, so wind down is one tap from a screen that is already almost off.
 
 Nights can be written to Apple Health as well, if you want them there. Write only. Slumbio never reads anything back out of Health.
 
 WHAT IS NOT IN HERE
 
-No account. No server. No analytics. No tracking. No ads. No network code of any kind. Nothing you do in Slumbio leaves your phone, because there is nowhere for it to go. It works in aeroplane mode and it always will.
+No account. No server. No analytics. No tracking. No ads. No network code of any kind. Nothing you do in Slumbio leaves your phone, because there is nowhere for it to go. It works in airplane mode and it always will.
 
 FREE, AND MEANT TO STAY USABLE
 

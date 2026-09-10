@@ -50,6 +50,11 @@ Task {
         }
         export.videoComposition = composition
         export.timeRange = CMTimeRange(start: .zero, duration: duration)
+        if CommandLine.arguments.count > 4, let cap = Int(CommandLine.arguments[4]) {
+            // App Store Connect takes files far larger than this; the cap is
+            // here so the result can be handed to an uploader that does not.
+            export.fileLengthLimit = Int64(cap)
+        }
         try? FileManager.default.removeItem(at: output)
         try await export.export(to: output, as: .mp4)
         print("wrote \(output.lastPathComponent)")
