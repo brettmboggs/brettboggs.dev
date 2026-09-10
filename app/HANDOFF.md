@@ -197,6 +197,35 @@ app's own `Renderer` offline. It is the same rain the app makes, playing the
 same Long Rain preset the video shows. App Store Connect rejects a preview
 with no audio track, which is how that came up.
 
+## Submitted 2026-09-10: version 1.1, build 24
+
+Waiting for Review. Release is automatic, so approval puts it straight on the
+App Store.
+
+**What went with it.** The name becomes `Slumbio: Sleep Sounds & Alarm`, the
+subtitle `White Noise, Breathing, Timer`, and Lifestyle joins Health & Fitness
+as the secondary category. New keyword field, promotional text, description,
+release notes, eight captioned screenshots at 6.9 inch and an app preview with
+audio rendered by the app's own engine. The in-app purchases were not part of
+the submission: they were approved with 1.0 and have not changed.
+
+**Checked before pressing it,** because the automated 3.1.2 gate fails without
+any of them: the EULA link is in the description, and
+`/slumbio/privacy/`, `/slumbio/terms/` and Apple's standard EULA all return
+200.
+
+**The App Review notes were rewritten,** because the ones carried over from 1.0
+described a UI that no longer exists. A reviewer following them would have gone
+looking for a list of breathing patterns that is now a carousel, which is how
+repro steps turn into rejections. `app/review-notes-field.txt` is the copy that
+went in, and it now covers Health, Siri and the widget as well.
+
+**The risk on this one.** The description claims the widget, the Control Centre
+buttons and Siri, and none of them have been exercised on hardware. They
+compile, the simulator confirms iOS routes `slumbio://` to the app, and nothing
+past that. If one of them is broken it is a Guideline 2.3.1 rejection. Install
+build 24 from TestFlight and try all three.
+
 ## Still open
 
 - Beta App Review on build 7. One-time, a day or so. The public link works
