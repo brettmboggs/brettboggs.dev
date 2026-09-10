@@ -38,7 +38,18 @@ struct TonightView: View {
             }
         }
         .onReceive(clock) { date in now = date }
-        .onAppear { offerIfDue(); askForReviewIfDue() }
+        .onAppear {
+            offerIfDue()
+            askForReviewIfDue()
+            #if DEBUG
+            switch Demo.sheet {
+            case "bedside": showBedside = true
+            case "timer": showTimer = true
+            case "routine": showRoutine = true
+            default: break
+            }
+            #endif
+        }
         .onChange(of: player.pendingFirstNightOffer) { _, _ in offerIfDue() }
         .onChange(of: player.pendingReviewRequest) { _, _ in askForReviewIfDue() }
         .sheet(isPresented: $showTimer) { TimerSheet() }
@@ -94,7 +105,7 @@ struct TonightView: View {
                 .contentTransition(.opacity)
             Text(subtitle)
                 .font(Typeface.body(13))
-                .foregroundStyle(Palette.inkSoft)
+                .foregroundStyle(Palette.ink.opacity(0.72))
                 .lineLimit(1)
             if let remaining = player.previewRemaining {
                 Chip(text: "Preview · \(Format.clock(remaining))", systemImage: "sparkles")
@@ -102,6 +113,11 @@ struct TonightView: View {
             }
         }
         .pageGutter()
+        // The orb is directly behind this and its brightness moves with the
+        // audio. A dark halo costs nothing and means the name is never a
+        // guess.
+        .shadow(color: Palette.ground.opacity(0.75), radius: 14)
+        .shadow(color: Palette.ground.opacity(0.45), radius: 3)
         .animation(.settle, value: player.currentMix.name)
     }
 

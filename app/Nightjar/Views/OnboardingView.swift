@@ -20,6 +20,9 @@ struct OnboardingView: View {
             )
             .animation(.settleSlow, value: step)
 
+            ContentVeil(start: step == 0 ? 0.48 : 0.24, end: step == 0 ? 0.68 : 0.42, strength: 0.9)
+                .animation(.settleSlow, value: step)
+
             VStack(alignment: .leading, spacing: 0) {
                 Spacer()
                 switch step {

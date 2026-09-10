@@ -24,7 +24,12 @@ final class Store {
     /// Plus from an actual App Store transaction. The only way in.
     private(set) var isEntitled = false
 
-    var isPlus: Bool { isEntitled }
+    var isPlus: Bool {
+        #if DEBUG
+        if Demo.forcePlus { return true }
+        #endif
+        return isEntitled
+    }
 
     /// True when Plus came from a lifetime purchase rather than a subscription.
     private(set) var isLifetime = false

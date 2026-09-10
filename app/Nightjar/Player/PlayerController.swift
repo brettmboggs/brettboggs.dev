@@ -34,6 +34,7 @@ final class PlayerController {
 
     @ObservationIgnored private let engine = AudioEngine()
     @ObservationIgnored private let nowPlaying = NowPlayingCenter()
+    let health: HealthMirror
 
     // MARK: Published state
 
@@ -90,11 +91,30 @@ final class PlayerController {
 
     // MARK: - Life cycle
 
+    /// The one controller for the process.
+    ///
+    /// It used to be built inside `NightjarApp.init`, which was fine while
+    /// SwiftUI was the only thing that needed it. App Intents run outside the
+    /// view tree, and Siri can launch the app straight into one, so there has
+    /// to be a way to reach the controller that does not go through a view.
+    /// Built lazily on first touch and never torn down, which is what it did
+    /// before under a different name.
+    static let shared: PlayerController = {
+        let store = Store()
+        return PlayerController(
+            settings: Settings.load(),
+            library: Library.load(),
+            journal: Journal.load(),
+            plan: Plan(store: store)
+        )
+    }()
+
     init(settings: Settings, library: Library, journal: Journal, plan: Plan) {
         self.settings = settings
         self.library = library
         self.journal = journal
         self.plan = plan
+        self.health = HealthMirror(enabled: settings.mirrorToHealth)
 
         if let id = settings.routineMixID, let saved = library.mix(withID: id) {
             self.currentMix = saved
@@ -247,6 +267,7 @@ final class PlayerController {
             endedAtAlarm: reason == .alarm
         )
         journal.record(session)
+        health.record(session)
 
         if session.duration >= PlayerController.nightSeconds {
             settings.nightsCompleted += 1

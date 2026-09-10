@@ -51,6 +51,15 @@ struct RestView: View {
             }
             .pageGutter()
         }
+        .onAppear {
+            #if DEBUG
+            switch Demo.sheet {
+            case "wake": showWake = true
+            case "journal": showJournal = true
+            default: break
+            }
+            #endif
+        }
         .sheet(item: $openTip) { tip in TipSheet(tip: tip) }
         .sheet(isPresented: $showWake) { WakeView() }
         .sheet(isPresented: $showJournal) { JournalSheet() }
@@ -128,29 +137,138 @@ struct RestView: View {
 
         return VStack(alignment: .leading, spacing: 0) {
             SectionLabel("Nights", trailing: journal.streak >= 2 ? "\(journal.streak) running" : nil)
-                .padding(.bottom, 4)
-            if visible.isEmpty {
-                Text("Nothing logged yet. A night is anything over twenty minutes.")
-                    .font(Typeface.body(13))
-                    .foregroundStyle(Palette.inkFaint)
-                    .padding(.vertical, 14)
-            } else {
-                Button {
-                    showJournal = true
-                } label: {
-                    IndexRow(
-                        title: "\(visible.count) night\(visible.count == 1 ? "" : "s")",
-                        detail: "Average \(Format.duration(journal.averageDuration))" + (journal.favouriteMix.map { " · usually \($0)" } ?? "")
-                    ) {
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 11, weight: .semibold))
+                .padding(.bottom, 10)
+
+            Button {
+                if visible.isEmpty { return }
+                showJournal = true
+            } label: {
+                VStack(alignment: .leading, spacing: 14) {
+                    // Free keeps the last seven nights, so the chart is
+                    // seven wide rather than fourteen with half of it greyed
+                    // out, which would read as nights the person missed.
+                    NightsChart(sessions: visible, nights: limit ?? 14)
+                    if visible.isEmpty {
+                        Text("Nothing logged yet. A night is anything over twenty minutes.")
+                            .font(Typeface.body(13))
                             .foregroundStyle(Palette.inkFaint)
+                            .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        HStack(alignment: .top, spacing: 0) {
+                            StatCell(value: Format.duration(journal.averageDuration), label: "Average")
+                            StatCell(value: "\(visible.count)", label: visible.count == 1 ? "Night" : "Nights")
+                            StatCell(
+                                value: journal.favouriteMix ?? "None",
+                                label: "Usually",
+                                isText: true
+                            )
+                        }
                     }
                 }
-                .buttonStyle(.plain)
+                .padding(.bottom, 16)
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
+            .disabled(visible.isEmpty)
+
             Hairline()
         }
+    }
+}
+
+// MARK: - Nights
+
+/// Two weeks of nights as bars.
+///
+/// The journal is the only number this app keeps, and it was a sentence. A
+/// column of bars says the same thing without being read, and an empty one
+/// still shows the shape of what is coming rather than a blank.
+struct NightsChart: View {
+    /// Most recent first, the way `Journal.recent` hands them over.
+    let sessions: [SleepSession]
+    var nights: Int = 14
+    var height: CGFloat = 78
+
+    var body: some View {
+        let buckets = self.buckets
+        let peak = max(buckets.map(\.seconds).max() ?? 0, 6 * 3600)
+        let logged = buckets.filter { $0.seconds > 0 }
+        let average = logged.isEmpty ? 0 : logged.reduce(0) { $0 + $1.seconds } / Double(logged.count)
+
+        VStack(alignment: .leading, spacing: 7) {
+            ZStack(alignment: .bottom) {
+                if average > 0 {
+                    // Where a usual night lands, so a short one is obvious.
+                    Rectangle()
+                        .fill(Palette.hairline)
+                        .frame(height: 1)
+                        .offset(y: -height * CGFloat(average / peak))
+                }
+                HStack(alignment: .bottom, spacing: 5) {
+                    ForEach(buckets, id: \.date) { bucket in
+                        let filled = bucket.seconds > 0
+                        RoundedRectangle(cornerRadius: 2.5, style: .continuous)
+                            .fill(filled ? Palette.ember.opacity(0.85) : Palette.raisedHigh)
+                            .frame(
+                                height: filled
+                                    ? max(height * CGFloat(bucket.seconds / peak), 4)
+                                    : 4
+                            )
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+            }
+            .frame(height: height, alignment: .bottom)
+
+            HStack {
+                Text(Format.shortDay(buckets.first?.date ?? Date()))
+                Spacer()
+                Text("Last night")
+            }
+            .font(Typeface.meta(10))
+            .foregroundStyle(Palette.inkFaint)
+        }
+        .accessibilityElement()
+        .accessibilityLabel(
+            logged.isEmpty
+                ? "No nights logged yet"
+                : "\(logged.count) nights in the last two weeks, averaging \(Format.duration(average))"
+        )
+    }
+
+    /// One entry per calendar day, oldest first, zero where nothing was played.
+    private var buckets: [(date: Date, seconds: TimeInterval)] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        return (0..<nights).reversed().map { offset in
+            let day = calendar.date(byAdding: .day, value: -offset, to: today) ?? today
+            let total = sessions
+                .filter { calendar.isDate($0.start, inSameDayAs: day) }
+                .reduce(0) { $0 + $1.duration }
+            return (day, total)
+        }
+    }
+}
+
+/// One number under one word. Three of them make a row.
+struct StatCell: View {
+    let value: String
+    let label: String
+    var isText: Bool = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(value)
+                .font(isText ? Typeface.body(15, weight: .medium) : Typeface.display(20))
+                .foregroundStyle(Palette.ink)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Text(label.uppercased())
+                .font(Typeface.meta(9, weight: .semibold))
+                .tracking(1.4)
+                .foregroundStyle(Palette.inkFaint)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

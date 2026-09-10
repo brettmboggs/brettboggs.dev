@@ -48,6 +48,21 @@
 	<string>UIStatusBarStyleLightContent</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>dev.brettboggs.nightjar</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>slumbio</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Slumbio can write each finished night into Health, so your sleep sits with the rest of it. It never reads anything back.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 </dict>

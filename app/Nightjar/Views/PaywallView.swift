@@ -25,7 +25,11 @@ struct PaywallView: View {
 
     var body: some View {
         ZStack {
-            LivingCanvas(energy: 0.15, intensity: 0.7, rim: 0.12, centerY: 0.12, frameRate: 24)
+            LivingCanvas(energy: 0.15, intensity: 0.55, rim: 0.12, centerY: 0.10, frameRate: 24)
+            // The headline and the first feature rows sit directly under the
+            // orb. This is the screen that has to be read, so the orb gives
+            // way to it.
+            ContentVeil(start: 0.13, end: 0.30, strength: 0.93)
 
             if didUnlock {
                 unlocked

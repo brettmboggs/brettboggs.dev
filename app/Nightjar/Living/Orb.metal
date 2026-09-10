@@ -9,6 +9,21 @@ using namespace metal;
 // warped value noise so it never sits still and never repeats. `rim` puts a
 // glow around the edge of the screen that thickens on the inhale, which is
 // the part that reads as the whole phone breathing.
+//
+// Three rules the body obeys, because breaking any of them is what makes a
+// glow look cheap:
+//
+//   1. Light is tone mapped, not added. It accumulates linearly and is then
+//      folded through 1 - exp(-x), so the middle of the body saturates into
+//      its own colour instead of clipping every channel to white. Added
+//      straight, the core is a white hole and text over it is unreadable.
+//   2. The result is composited over the ground colour with a screen blend,
+//      so where there is no light the pixel is exactly Palette.ground. The
+//      tab bar and the sheets are painted with that same constant, and any
+//      drift shows up as a seam.
+//   3. It is dithered. A warm falloff across a dark screen crosses hundreds
+//      of 8-bit steps, and on an OLED panel those steps read as rings. Half a
+//      step of static spatial noise costs nothing and removes them.
 
 static float hash21(float2 p) {
     float3 p3 = fract(float3(p.xyx) * 0.1031);
@@ -54,8 +69,15 @@ static float fbm(float2 p) {
 
     float radius = 0.13 + breath * 0.075 + energy * 0.03;
     float edge = d - radius + (n - 0.5) * 0.08;
+
+    // The body, and a halo that falls off fast enough to leave the rest of
+    // the screen to the text.
     float core = smoothstep(0.05, -0.09, edge);
-    float halo = exp(-max(edge, 0.0) * 6.0) * (0.42 + breath * 0.25 + energy * 0.3);
+    float halo = exp(-max(edge, 0.0) * 9.5) * (0.34 + breath * 0.20 + energy * 0.24);
+
+    // Depth: the middle of the body is hotter than its shoulders, which is
+    // what stops it reading as a flat disc.
+    float centre = exp(-d * 4.0);
 
     float3 ember = float3(0.89, 0.60, 0.29);
     float3 rose  = float3(0.80, 0.47, 0.44);
@@ -65,16 +87,25 @@ static float fbm(float2 p) {
     float band = fbm(p * 3.0 - q * 0.8 + t * 0.6);
     float3 body = mix(ember, rose, smoothstep(0.30, 0.70, band));
     body = mix(body, dusk, smoothstep(0.55, 0.85, band) * 0.55);
-    body = mix(body, cream, core * core * (0.25 + breath * 0.35));
+    body = mix(body, cream, core * core * centre * (0.30 + breath * 0.35));
+
+    float3 lit = body * (core * (0.62 + centre * 0.55) + halo) * intensity;
 
     float2 b = min(uv, 1.0 - uv);
     float border = min(b.x, b.y);
     float rimGlow = exp(-border * (34.0 - breath * 16.0)) * rim * (0.35 + breath * 0.65);
     float3 rimColor = mix(rose, ember, fbm(uv * 3.0 + t * 0.8));
+    lit += rimColor * rimGlow;
 
+    // Rule 1: fold the accumulated light so it saturates into its own colour.
+    lit = 1.0 - exp(-lit * 1.35);
+
+    // Rule 2: screen it over the ground, so lit == 0 lands on ground exactly.
     float3 ground = float3(0.051, 0.043, 0.035);
-    float3 out = ground;
-    out += body * (core * 0.9 + halo) * intensity;
-    out += rimColor * rimGlow;
+    float3 out = ground + lit * (1.0 - ground);
+
+    // Rule 3: half a step of noise, breaking the rings without being seen.
+    out += (hash21(position) - 0.5) / 255.0;
+
     return half4(half3(out), 1.0h);
 }

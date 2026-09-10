@@ -20,7 +20,10 @@ struct BreatheView: View {
                     }
                     .padding(.top, 8)
 
-                    Spacer().frame(height: 200)
+                    BreathPreview(pattern: selectedPattern)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 22)
+                        .padding(.bottom, 34)
 
                     VStack(spacing: 0) {
                         ForEach(BreathPattern.library) { pattern in
@@ -86,6 +89,10 @@ struct BreatheView: View {
         }
         .sheet(isPresented: $showCustom) { CustomBreathSheet() }
         .onAppear { selectedID = player.routinePattern.id }
+    }
+
+    private var selectedPattern: BreathPattern {
+        BreathPattern.named(selectedID, custom: player.settings.customBreath)
     }
 
     private func patternRow(_ pattern: BreathPattern, isCustom: Bool = false) -> some View {
@@ -274,5 +281,107 @@ struct BreathSessionView: View {
     private var phaseLabel: String {
         if session.isPaused { return "Paused" }
         return session.currentPhase?.kind.label ?? "Breathe"
+    }
+}
+
+
+// MARK: - The preview
+
+/// The selected pattern, breathing, before you commit to it.
+///
+/// The ring is the pattern's own shape: one arc per phase, each as long as
+/// that phase is, so 4 · 7 · 8 looks lopsided and Box looks square before you
+/// have read a single number. The arc you are in fills as it runs, and the
+/// disc in the middle is the lungs.
+struct BreathPreview: View {
+    let pattern: BreathPattern
+    var size: CGFloat = 178
+
+    /// A hair of space between arcs, as a fraction of the circle.
+    private let gap = 0.006
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
+            let elapsed = timeline.date.timeIntervalSinceReferenceDate
+            let fullness = pattern.fullness(at: elapsed)
+            let active = pattern.phase(at: elapsed)
+            let phase = pattern.phases[min(active.index, pattern.phases.count - 1)]
+
+            ZStack {
+                // A soft well under the ring. The orb is still behind all of
+                // this, and without somewhere dark to sit the numbers wash
+                // straight out into it.
+                Circle()
+                    .fill(Palette.ground.opacity(0.62))
+                    .frame(width: size * 0.98, height: size * 0.98)
+                    .blur(radius: 20)
+
+                ForEach(Array(spans.enumerated()), id: \.offset) { index, span in
+                    let isActive = index == active.index
+                    arc(from: span.start + gap, to: span.end - gap)
+                        .stroke(
+                            isActive ? Palette.ember.opacity(0.28) : Palette.hairline,
+                            style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                        )
+                    if isActive {
+                        let head = span.start + (span.end - span.start) * active.progress
+                        arc(from: span.start + gap, to: max(head - gap, span.start + gap))
+                            .stroke(
+                                Palette.ember,
+                                style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                            )
+                    }
+                }
+
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [
+                                Palette.ember.opacity(0.34),
+                                Palette.emberDeep.opacity(0.16),
+                                .clear,
+                            ],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: size * 0.42
+                        )
+                    )
+                    .frame(width: size * 0.82, height: size * 0.82)
+                    .scaleEffect(0.42 + fullness * 0.58)
+
+                VStack(spacing: 6) {
+                    Text(phase.kind.label)
+                        .font(Typeface.body(13))
+                        .foregroundStyle(Palette.inkSoft)
+                        .contentTransition(.opacity)
+                        .animation(.settle, value: phase.kind)
+                    Text(String(Int((phase.seconds * (1 - active.progress)).rounded(.up))))
+                        .font(Typeface.display(30))
+                        .foregroundStyle(Palette.ink)
+                        .monospacedDigit()
+                }
+            }
+            .frame(width: size, height: size)
+        }
+        .frame(height: size)
+        .accessibilityHidden(true)
+    }
+
+    /// Where each phase starts and ends around the circle, 0...1.
+    private var spans: [(start: Double, end: Double)] {
+        let total = max(pattern.cycleSeconds, 0.001)
+        var running = 0.0
+        return pattern.phases.map { phase in
+            let start = running / total
+            running += phase.seconds
+            return (start, running / total)
+        }
+    }
+
+    /// Trimmed circle, rotated so zero is at the top.
+    private func arc(from start: Double, to end: Double) -> some Shape {
+        Circle()
+            .trim(from: start, to: max(end, start))
+            .rotation(.degrees(-90))
     }
 }

@@ -8,23 +8,37 @@ BREATHING YOU CAN SEE
 
 A soft body of light sits behind every screen. In a breathing session it is the instruction: the screen fills on the inhale and empties on the exhale, with a tap at each turn and a breath sound under it.
 
-4-7-8, box, coherent, long exhale, the physiological sigh, or numbers you set yourself. Two to fifteen minutes. A session ends at the end of a cycle, never mid-breath.
+4-7-8, box, coherent, long exhale, the physiological sigh, or numbers you set yourself. The pattern you pick is drawn as a ring before you start, one arc per phase, so you can see its shape before you feel it. Two to fifteen minutes. A session ends at the end of a cycle, never mid-breath.
 
 ONE BUTTON FOR THE WHOLE NIGHT
 
 Wind down chains a breathing session into your mix and then the sleep timer. Press it on the couch and do not touch the phone again.
 
+MORNINGS
+
+A sunrise alarm that climbs out of silence over as much as forty-five minutes instead of stabbing at you. Pick the sound it wakes you with. Set a bedtime and the wind-down can start itself.
+
+YOUR NIGHTS
+
+Every night over twenty minutes is kept, and drawn as a chart with your average marked across it. Free keeps the last week of them; Plus keeps all of it. How long, how often, which mix. It stays on the phone.
+
 ALSO IN HERE
 
-A bedside clock at two percent brightness, with the controls hidden until you touch it. A sunrise alarm that climbs out of silence instead of stabbing. A sleep journal that stays on the phone. Thirty short, practical notes on sleep, one each night.
+A bedside clock at two percent brightness, with the controls hidden until you touch it. Lock screen, Control Center and headphone controls. A sleep timer with a fade you choose. Thirty short, practical notes on sleep, one each night.
+
+Siri and Shortcuts run all of it: wind down, play a mix by name, start a breathing pattern, set the timer, stop.
+
+A home screen widget and a Control Center button, so wind down is one tap from a screen that is already almost off.
+
+Nights can be written to Apple Health as well, if you want them there. Write only. Slumbio never reads anything back out of Health.
 
 WHAT IS NOT IN HERE
 
-No account. No server. No analytics. No tracking. No network code of any kind. Nothing you do in Slumbio leaves your phone, because there is nowhere for it to go.
+No account. No server. No analytics. No tracking. No ads. No network code of any kind. Nothing you do in Slumbio leaves your phone, because there is nowhere for it to go. It works in airplane mode and it always will.
 
 FREE, AND MEANT TO STAY USABLE
 
-Twelve sounds, two layers, two breathing patterns, the sleep timer, bedside mode and every note are free forever. Plus adds the rest: all thirty-five sounds, six layers, every pattern, wind-down routines, the sunrise alarm and your whole sleep history.
+Twelve sounds, two layers, two breathing patterns, the sleep timer, bedside mode, the last week of nights and every note are free forever. Plus adds the rest: all thirty-five sounds, six layers, every pattern, wind-down routines, the sunrise alarm and your whole sleep history.
 
 None of this is medical advice. If sleep has been a problem for weeks, or you have a heart or breathing condition, talk to a doctor.
 

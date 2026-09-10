@@ -39,6 +39,12 @@ that climbs from silence.
 **Bedside.** A clock at 2% brightness with the controls hidden until you touch
 it.
 
+**Off the app.** Five App Intents, so Siri and Shortcuts can run the whole
+thing without the screen being looked at. A widget and two Control Centre
+buttons, which reach the app through the `slumbio://` URL scheme rather than
+an App Group. Nights can be mirrored into Apple Health, write only, off until
+switched on.
+
 No account, no server, no analytics, no tracking, no network code of any kind.
 
 ---
@@ -53,8 +59,8 @@ cd app
 ```
 
 or open `app/Nightjar.xcodeproj`, pick your team under Signing & Capabilities,
-choose your iPhone and press ⌘R. There is one target and no entitlements, so
-a free Apple ID can sign it (it lasts seven days at a time on a free account).
+choose your iPhone and press ⌘R. There are two targets and one entitlement
+now, so a free Apple ID can no longer sign it: HealthKit needs a paid team.
 
 The simulator runs the app and the store (the scheme points at
 `Nightjar.storekit`, so buying and restoring work with no App Store Connect
@@ -265,16 +271,40 @@ crackle, cricket chirps and rail clatter.
 app/
 ├── Nightjar/
 │   ├── Audio/       DSP, textures, file streaming, renderer, AVAudioEngine
+│   ├── Intents/     the five App Intents and the Siri phrases
 │   ├── Living/      the orb: Metal shader and SwiftUI host
 │   ├── Model/       catalog, mixes, settings, plan, store, patterns, tips
 │   ├── Player/      the controller, breath sessions, lock screen, reminders
 │   ├── Views/       SwiftUI
-│   ├── Support/     theme, haptics, formatters
-│   └── Resources/   the two streamed audio files
+│   ├── Support/     theme, haptics, formatters, the debug screenshot flags
+│   ├── Resources/   the two streamed audio files
+│   └── Nightjar.entitlements   HealthKit, and nothing else
+├── SlumbioWidgets/     the widget and the Control Centre buttons
 ├── Nightjar.storekit   local store for the simulator
 ├── Signing.xcconfig    includes the gitignored Local.xcconfig
-└── tools/              project, verifier, installer, icon
+├── store-listing.md    every App Store Connect field, and why
+├── store-description.txt  the description, pasted whole
+└── tools/              project, verifier, installer, icon, store shots
 ```
+
+Two targets now. `SlumbioWidgets` is an app extension with no entitlements and
+no shared code: it reaches the app through the `slumbio://` scheme rather than
+an App Group, so there is nothing to provision for it beyond its own App ID.
+
+## The store assets
+
+```
+./tools/shots/capture.sh     # build, seed a fortnight, shoot 8 screens
+python3 tools/shots/compose.py   # caption them, 1320 x 2868
+./tools/shots/preview.sh     # the 28 second app preview, 886 x 1920
+```
+
+The app walks its own tabs under `-tour`, and `Nightjar/Support/Demo.swift`
+holds the `-tab`, `-sheet`, `-plus` and `-play` flags the capture uses. All of
+it is behind `#if DEBUG`, so none of it exists in the submitted binary, which
+is what keeps it clear of Guideline 2.3.1.
+
+`compose.py` needs Pillow. Everything else here is stdlib.
 
 ---
 
@@ -287,10 +317,15 @@ the alarm time, but there is no gradual wake-up. The Mornings sheet says this.
 
 **The bedtime schedule only runs while the app is open**, for the same reason.
 
-**No widgets, Live Activity, Siri or Health in this build.** An earlier
-version had all four. They need an App Group, which a free Apple ID cannot
-provision, and every one of them was a way for the first build to fail. They
-are in git history and can come back once the app is on TestFlight.
+**Siri, the widget and Health are in, Live Activity is not.** The first three
+arrived in 1.1. A Live Activity is the one that genuinely needs an App Group,
+so it is still out.
+
+**HealthKit is the only entitlement.** It has to be switched on for the App ID
+at developer.apple.com before a signed build will export, and the widget needs
+its own App ID for `dev.brettboggs.nightjar.widgets`. Automatic signing with an
+Admin key will usually create the second one on its own; it will not add the
+first.
 
 **Testing a purchase costs nothing.** The scheme points at `Nightjar.storekit`,
 so buying, restoring and the free week all work in the simulator. To reset:
