@@ -323,9 +323,13 @@ so it is still out.
 
 **HealthKit is the only entitlement.** It has to be switched on for the App ID
 at developer.apple.com before a signed build will export, and the widget needs
-its own App ID for `dev.brettboggs.nightjar.widgets`. Automatic signing with an
-Admin key will usually create the second one on its own; it will not add the
-first.
+its own App ID for `dev.brettboggs.nightjar.widgets`. Both are done.
+
+**Health needs two purpose strings, not one.** Apple's upload validator wants
+`NSHealthShareUsageDescription` as well as `NSHealthUpdateUsageDescription`
+the moment the entitlement is present, even though this app only ever writes
+and never reads. Shipping only the write one fails at `exportArchive`, after
+a clean archive, with "Missing purpose string in Info.plist".
 
 **Testing a purchase costs nothing.** The scheme points at `Nightjar.storekit`,
 so buying, restoring and the free week all work in the simulator. To reset:

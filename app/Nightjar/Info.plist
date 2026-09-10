@@ -61,6 +61,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Slumbio never reads anything from Health. iOS asks every app that can touch Health to explain both directions, so this is the other one.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Slumbio can write each finished night into Health, so your sleep sits with the rest of it. It never reads anything back.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
