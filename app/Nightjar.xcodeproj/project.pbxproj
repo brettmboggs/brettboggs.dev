@@ -13,6 +13,7 @@
 			isa = PBXGroup;
 			children = (
 				69A32930F66F9343DE454589 /* Audio */,
+				3B5E7C4A9ED5490A04C3E502 /* Intents */,
 				D3C70A8AA800FD01FDAB6A14 /* Living */,
 				C14F7B14CAF53FC9311C6E6E /* Model */,
 				FB1F6F709C9A8A08E301A51C /* Player */,
@@ -39,6 +40,7 @@
 		1554B2EC8E49416D46F6A999 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6661B41CBF2C2D88BEF6385 /* RootView.swift */; };
 		1831AB48B0115C2902C24132 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		1874DB904B8444F752DCDE00 /* BreathPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathPattern.swift; sourceTree = "<group>"; };
+		1A853422E41613D6EAB50801 /* SlumbioIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlumbioIntents.swift; sourceTree = "<group>"; };
 		1B9D9A532501A4CD5AD1386A /* TexturesRooms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TexturesRooms.swift; sourceTree = "<group>"; };
 		1C3F9853F94D19BE1BAA45A0 /* BreathSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathSession.swift; sourceTree = "<group>"; };
 		1D84F2ECF4030DBFB1A1EFD5 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1831AB48B0115C2902C24132 /* Persistence.swift */; };
@@ -111,11 +113,20 @@
 		};
 		35ED91583FEA1A24CEE498D1 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF44F609E3ECA54D887241 /* Library.swift */; };
 		3B2D6CBCB6FC8E164FDF3C19 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		3B5E7C4A9ED5490A04C3E502 /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				1A853422E41613D6EAB50801 /* SlumbioIntents.swift */,
+			);
+			path = Intents;
+			sourceTree = "<group>";
+		};
 		3BE7692E4A5785FE25AE7C3A /* Tips.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9732B84D181B4D654118B78 /* Tips.swift */; };
 		3C52B25FEE573F7C873D3AFB /* SoundsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC772C9018C0B0CE35C59DD0 /* SoundsView.swift */; };
 		441AB5FC6E8B40D87B6953E2 /* RestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120F411068910B9F085DC1C3 /* RestView.swift */; };
 		4638FDC305656144B646BF7C /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9C0C91AFD95AC5CA9E6826 /* PlayerController.swift */; };
 		47745F3D494FCC935558EAB1 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295B240C5570C4F2000C8156 /* Formatters.swift */; };
+		4B16E65A06226EE241D9755E /* HealthMirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB21B4D47FAAF4C906FA151A /* HealthMirror.swift */; };
 		4D496EE5CBFD6BA2BFCB2E40 /* TexturesLiving.swift in Sources */ = {isa = PBXBuildFile; fileRef = D25A2A1C23F662985FE17F26 /* TexturesLiving.swift */; };
 		4EC1348738B76ACAEF63D42B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C3D5F9F1316ADDD842E36B /* Settings.swift */; };
 		5680B823D8A135F1D22C2A94 /* Debug */ = {
@@ -231,9 +242,11 @@
 				4D496EE5CBFD6BA2BFCB2E40 /* TexturesLiving.swift */,
 				05322E852CF0580ACAA9F6E4 /* TexturesRooms.swift */,
 				917A660476E3DFFBD522B8A1 /* TexturesWeather.swift */,
+				D565CFA786D9C8EF9982073F /* SlumbioIntents.swift */,
 				9189E9E14ABCA13906F9F31E /* LivingCanvas.swift */,
 				8154C75456E7616279991869 /* Orb.metal */,
 				B7CE6F69D12CBD0115DA58FF /* BreathPattern.swift */,
+				4B16E65A06226EE241D9755E /* HealthMirror.swift */,
 				C780F488825C552D150555C1 /* Journal.swift */,
 				35ED91583FEA1A24CEE498D1 /* Library.swift */,
 				D90492E0A9A6A3C91C3919C7 /* Mix.swift */,
@@ -349,6 +362,7 @@
 			);
 			sourceTree = "<group>";
 		};
+		AB21B4D47FAAF4C906FA151A /* HealthMirror.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthMirror.swift; sourceTree = "<group>"; };
 		AF608D890441965320368D3D /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		AFFAAE92897EA93777014824 /* AudioRingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRingBuffer.swift; sourceTree = "<group>"; };
 		B1E76BE844991F1087B2C592 /* AudioRingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFAAE92897EA93777014824 /* AudioRingBuffer.swift */; };
@@ -362,6 +376,7 @@
 			isa = PBXGroup;
 			children = (
 				1874DB904B8444F752DCDE00 /* BreathPattern.swift */,
+				AB21B4D47FAAF4C906FA151A /* HealthMirror.swift */,
 				F8BC709482218E6ACF06627D /* Journal.swift */,
 				0FCF44F609E3ECA54D887241 /* Library.swift */,
 				0B939E85D0C19479543B165B /* Mix.swift */,
@@ -393,6 +408,7 @@
 			path = Living;
 			sourceTree = "<group>";
 		};
+		D565CFA786D9C8EF9982073F /* SlumbioIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A853422E41613D6EAB50801 /* SlumbioIntents.swift */; };
 		D6AE61AB5B6148032AEECFBF /* BreathGuideTexture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathGuideTexture.swift; sourceTree = "<group>"; };
 		D90492E0A9A6A3C91C3919C7 /* Mix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B939E85D0C19479543B165B /* Mix.swift */; };
 		E1671FB013C512F033B2E76F /* NightjarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NightjarApp.swift; sourceTree = "<group>"; };
@@ -415,6 +431,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Nightjar/Nightjar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = NFA8C67SQ8;
@@ -441,6 +458,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Nightjar/Nightjar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = NFA8C67SQ8;

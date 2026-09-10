@@ -7,7 +7,9 @@ under Nightjar/ and re-run this; membership follows the folder.
 
     python3 tools/make_project.py
 
-One app target, no extensions, no entitlements. A free Apple ID can sign and
+One app target and no extensions. The only entitlement is HealthKit, which
+needs to be switched on for the App ID in the developer portal before a
+signed build will export. A free Apple ID can no longer sign this. It can
 install it; a paid one can ship it. UUIDs are derived from a hash of each
 object's role, so regenerating produces a byte-identical file and the project
 does not churn in git.
@@ -293,6 +295,7 @@ def build() -> str:
         "CODE_SIGN_STYLE": "Automatic",
         "CURRENT_PROJECT_VERSION": PROJECT_VERSION,
         "ENABLE_PREVIEWS": "YES",
+        "CODE_SIGN_ENTITLEMENTS": f"{APP_NAME}/Nightjar.entitlements",
         "GENERATE_INFOPLIST_FILE": "NO",
         "INFOPLIST_FILE": f"{APP_NAME}/Info.plist",
         "LD_RUNPATH_SEARCH_PATHS": '(\n\t\t\t\t\t"$(inherited)",\n\t\t\t\t\t"@executable_path/Frameworks",\n\t\t\t\t)',

@@ -99,6 +99,9 @@ final class Settings {
     var hapticsEnabled: Bool = true
     var reduceGlow: Bool = false
 
+    /// Mirror finished nights into Apple Health. Off until asked for.
+    var mirrorToHealth: Bool = false
+
     /// Sound ids the person starred.
     var favouriteSoundIDs: Set<String> = []
 

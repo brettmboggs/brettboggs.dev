@@ -102,6 +102,24 @@ struct SettingsView: View {
                 }
                 Hairline()
 
+                if player.health.isAvailable {
+                    SectionLabel("Health")
+                        .padding(.top, 28)
+                    SettingRow(title: "Write nights to Health", detail: healthDetail) {
+                        Toggle("", isOn: Binding(
+                            get: { settings.mirrorToHealth },
+                            set: { wanted in
+                                settings.mirrorToHealth = wanted
+                                settings.save()
+                                Task { await player.health.setEnabled(wanted) }
+                            }
+                        ))
+                        .toggleStyle(WarmToggleStyle())
+                        .labelsHidden()
+                    }
+                    Hairline()
+                }
+
                 SectionLabel("About")
                     .padding(.top, 28)
                 Link(destination: privacyURL) {
@@ -156,6 +174,17 @@ struct SettingsView: View {
         let version = info["CFBundleShortVersionString"] as? String ?? "1.0"
         let build = info["CFBundleVersion"] as? String ?? "1"
         return "Slumbio \(version) (\(build))"
+    }
+
+    private var healthDetail: String {
+        switch player.health.state {
+        case .denied:
+            return "Health is not letting Slumbio write. Turn Slumbio on under Sources in the Health app."
+        case .on:
+            return "Each finished night, as one asleep entry. Nothing is ever read back."
+        default:
+            return "Each finished night, as one asleep entry. Nothing is ever read back, and nothing already in the journal is sent."
+        }
     }
 
     private var tiltLabel: String {
