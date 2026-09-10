@@ -8,6 +8,30 @@
 		05322E852CF0580ACAA9F6E4 /* TexturesRooms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9D9A532501A4CD5AD1386A /* TexturesRooms.swift */; };
 		08EF185EEDD05C3CCB370796 /* Textures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C04EBADB650B6369E5FC62E /* Textures.swift */; };
 		090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		0B3E32B07519E86AA2B8EA53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NFA8C67SQ8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SlumbioWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.brettboggs.nightjar.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
 		0B939E85D0C19479543B165B /* Mix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mix.swift; sourceTree = "<group>"; };
 		0D99C5434182E9BF12D32F71 /* Nightjar */ = {
 			isa = PBXGroup;
@@ -37,6 +61,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		13EFC646831384DEB0FD710B /* Build configuration list for widget */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B3E32B07519E86AA2B8EA53 /* Debug */,
+				209E395F3B2A4C90E54CDEAD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1554B2EC8E49416D46F6A999 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6661B41CBF2C2D88BEF6385 /* RootView.swift */; };
 		1831AB48B0115C2902C24132 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		1874DB904B8444F752DCDE00 /* BreathPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathPattern.swift; sourceTree = "<group>"; };
@@ -51,6 +84,30 @@
 			);
 			path = Resources;
 			sourceTree = "<group>";
+		};
+		209E395F3B2A4C90E54CDEAD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NFA8C67SQ8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SlumbioWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.brettboggs.nightjar.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
 		};
 		224DF3AD85741C03EABDF8A3 /* Views */ = {
 			isa = PBXGroup;
@@ -70,6 +127,13 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		23E24782FF38DEF6E346B1A4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		244210E48437B6556980A702 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
@@ -78,6 +142,9 @@
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					8C1A045E96B998B40533C7FF = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					314DC4CF3D401B5A7CB470DF = {
 						CreatedOnToolsVersion = 16.2;
 					};
 				};
@@ -97,10 +164,39 @@
 			projectRoot = "";
 			targets = (
 				8C1A045E96B998B40533C7FF /* Nightjar */,
+				314DC4CF3D401B5A7CB470DF /* SlumbioWidgets */,
 			);
 		};
 		24E558AF705BB82F81B941E3 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF608D890441965320368D3D /* Haptics.swift */; };
+		25DA75058054CE9BB38AA1A5 /* SlumbioWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				278260364E562CE2469D970D /* Info.plist */,
+				77C371E737E0B49B3FEAAEDA /* SlumbioWidgets.swift */,
+			);
+			path = SlumbioWidgets;
+			sourceTree = "<group>";
+		};
+		278260364E562CE2469D970D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		295B240C5570C4F2000C8156 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
+		29DE13C62517843D78FD688C /* SlumbioWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8FA98A24CDE63370537457A9 /* SlumbioWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		314DC4CF3D401B5A7CB470DF /* SlumbioWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13EFC646831384DEB0FD710B;
+			buildPhases = (
+				9AC1924D5EF0342E4710968C /* Sources */,
+				4C25D40685BB9E20936B63B4 /* Frameworks */,
+				23E24782FF38DEF6E346B1A4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SlumbioWidgets;
+			productName = SlumbioWidgets;
+			productReference = 8FA98A24CDE63370537457A9 /* SlumbioWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		33A9A89B29F413EE2B2C7778 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		357A48CF36CB69C5AEE1582B /* Recordings */ = {
 			isa = PBXGroup;
@@ -123,10 +219,18 @@
 		};
 		3BE7692E4A5785FE25AE7C3A /* Tips.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9732B84D181B4D654118B78 /* Tips.swift */; };
 		3C52B25FEE573F7C873D3AFB /* SoundsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC772C9018C0B0CE35C59DD0 /* SoundsView.swift */; };
+		3EF47BF79BA64F54C49168E4 /* SlumbioWidgets.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 77C371E737E0B49B3FEAAEDA /* SlumbioWidgets.swift */; };
 		441AB5FC6E8B40D87B6953E2 /* RestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120F411068910B9F085DC1C3 /* RestView.swift */; };
 		4638FDC305656144B646BF7C /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9C0C91AFD95AC5CA9E6826 /* PlayerController.swift */; };
 		47745F3D494FCC935558EAB1 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295B240C5570C4F2000C8156 /* Formatters.swift */; };
 		4B16E65A06226EE241D9755E /* HealthMirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB21B4D47FAAF4C906FA151A /* HealthMirror.swift */; };
+		4C25D40685BB9E20936B63B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4D496EE5CBFD6BA2BFCB2E40 /* TexturesLiving.swift in Sources */ = {isa = PBXBuildFile; fileRef = D25A2A1C23F662985FE17F26 /* TexturesLiving.swift */; };
 		4EC1348738B76ACAEF63D42B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C3D5F9F1316ADDD842E36B /* Settings.swift */; };
 		5680B823D8A135F1D22C2A94 /* Debug */ = {
@@ -163,6 +267,11 @@
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
+		};
+		584C342C1866B10AB5FF7DA3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 314DC4CF3D401B5A7CB470DF /* SlumbioWidgets */;
+			targetProxy = 82D3F98C29F6712177415044 /* PBXContainerItemProxy */;
 		};
 		5883D90B9A7020B847AEA4AD /* Nightjar.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Nightjar.storekit; sourceTree = "<group>"; };
 		58FBB177C49860E43AD7E92A /* Release */ = {
@@ -284,6 +393,7 @@
 			isa = PBXGroup;
 			children = (
 				81F31879437340D5CD6ED968 /* Nightjar.app */,
+				8FA98A24CDE63370537457A9 /* SlumbioWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -292,11 +402,19 @@
 		73C3D5F9F1316ADDD842E36B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		73E1C93B882E1AEC2C355845 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		746E1D68281DCC8162F58CFA /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5837730C968D35C3DDCC3CE /* AudioEngine.swift */; };
+		77C371E737E0B49B3FEAAEDA /* SlumbioWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlumbioWidgets.swift; sourceTree = "<group>"; };
 		7AE738137F97929FE167718A /* SoundCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC07E850C45EB0217C25E5AC /* SoundCatalog.swift */; };
 		7E19694B337C100B6326CDD0 /* TonightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99447CAB4AB74B2BB7A52628 /* TonightView.swift */; };
 		7E6E2B1ACF15FD97B87DB6DE /* Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D243432FFAF6030614F2E9 /* Reminders.swift */; };
 		8154C75456E7616279991869 /* Orb.metal in Sources */ = {isa = PBXBuildFile; fileRef = B4859996B2C1592C52439675 /* Orb.metal */; };
 		81F31879437340D5CD6ED968 /* Nightjar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nightjar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		82D3F98C29F6712177415044 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 244210E48437B6556980A702 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 314DC4CF3D401B5A7CB470DF;
+			remoteInfo = SlumbioWidgets;
+		};
 		8639F54C6430FF428EA79ADC /* LivingCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivingCanvas.swift; sourceTree = "<group>"; };
 		88AEE8575543B9F2E78CEFFE /* Plan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB36AD5EF7FCCAB3A7AC8F1 /* Plan.swift */; };
 		89D243432FFAF6030614F2E9 /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
@@ -307,10 +425,12 @@
 				6ACE7BC297BF23705D4E5F56 /* Sources */,
 				13D58F750C9F7A867F986420 /* Frameworks */,
 				EB12F685944315C425ABFF58 /* Resources */,
+				C5F63ED2112A984EE448547F /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				584C342C1866B10AB5FF7DA3 /* PBXTargetDependency */,
 			);
 			name = Nightjar;
 			productName = Nightjar;
@@ -329,6 +449,7 @@
 			path = Support;
 			sourceTree = "<group>";
 		};
+		8FA98A24CDE63370537457A9 /* SlumbioWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SlumbioWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		917A660476E3DFFBD522B8A1 /* TexturesWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A7507B52B6CC33DB54C464 /* TexturesWeather.swift */; };
 		9189E9E14ABCA13906F9F31E /* LivingCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8639F54C6430FF428EA79ADC /* LivingCanvas.swift */; };
 		9367CF2633512A8D5AE43B15 /* BreatheView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreatheView.swift; sourceTree = "<group>"; };
@@ -336,6 +457,14 @@
 		9803CCF06EC6AAA90A5CEDA4 /* WakeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91358D8D0D33C981D3312A6 /* WakeView.swift */; };
 		99447CAB4AB74B2BB7A52628 /* TonightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightView.swift; sourceTree = "<group>"; };
 		9A7624389BC557CE55D7E8AB /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24ED276FA8CFAB2E289ECF1 /* Store.swift */; };
+		9AC1924D5EF0342E4710968C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3EF47BF79BA64F54C49168E4 /* SlumbioWidgets.swift */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9D3CACC7A719189454DB16F0 /* Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo.swift; sourceTree = "<group>"; };
 		9EF730F0083E6C86F3214A3E /* BedsideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BedsideView.swift; sourceTree = "<group>"; };
 		9F6B1A7BCFF26D263B843F95 /* Build configuration list for project */ = {
@@ -356,6 +485,7 @@
 			isa = PBXGroup;
 			children = (
 				0D99C5434182E9BF12D32F71 /* Nightjar */,
+				25DA75058054CE9BB38AA1A5 /* SlumbioWidgets */,
 				090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */,
 				5883D90B9A7020B847AEA4AD /* Nightjar.storekit */,
 				6F7199ED7B63CDA338A0FB82 /* Products */,
@@ -391,6 +521,17 @@
 			sourceTree = "<group>";
 		};
 		C2336C48B368771D937AFFEB /* DSP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F701CD455C16AA1DF5D2F /* DSP.swift */; };
+		C5F63ED2112A984EE448547F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				29DE13C62517843D78FD688C /* SlumbioWidgets.appex */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C6661B41CBF2C2D88BEF6385 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		C75C491464FA14810E8A6E8A /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		C780F488825C552D150555C1 /* Journal.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BC709482218E6ACF06627D /* Journal.swift */; };

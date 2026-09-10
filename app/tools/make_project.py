@@ -24,6 +24,8 @@ PROJECT = ROOT / "Nightjar.xcodeproj"
 
 APP_NAME = "Nightjar"
 BUNDLE_ID = "dev.brettboggs.nightjar"
+WIDGET_NAME = "SlumbioWidgets"
+WIDGET_BUNDLE_ID = f"{BUNDLE_ID}.widgets"
 DEPLOYMENT_TARGET = "18.0"
 SWIFT_VERSION = "5.0"
 MARKETING_VERSION = "1.0"
@@ -131,7 +133,10 @@ def build() -> str:
         Path(f"{APP_NAME}.storekit"),
     ]
 
-    all_files = app_sources + resources + support
+    widget_sources = sources(Path(WIDGET_NAME))
+    widget_support = [Path(f"{WIDGET_NAME}/Info.plist")]
+
+    all_files = app_sources + resources + support + widget_sources + widget_support
 
     # ---- PBXFileReference -------------------------------------------------
     file_refs: dict[str, str] = {}
@@ -155,6 +160,15 @@ def build() -> str:
         % quote(f"{APP_NAME}.app"),
     )
 
+    widget_product = uuid_for("product:widget")
+    project.add(
+        widget_product,
+        f"{WIDGET_NAME}.appex",
+        '{isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; '
+        'includeInIndex = 0; path = %s; sourceTree = BUILT_PRODUCTS_DIR; }'
+        % quote(f"{WIDGET_NAME}.appex"),
+    )
+
     # ---- PBXBuildFile -----------------------------------------------------
     def build_files(paths, target: str) -> list[tuple[str, str]]:
         entries = []
@@ -171,6 +185,17 @@ def build() -> str:
 
     source_entries = build_files(app_sources, "Sources")
     resource_entries = build_files(resources, "Resources")
+    widget_source_entries = build_files(widget_sources, "WidgetSources")
+
+    # The extension, copied into the app's PlugIns folder.
+    embed_entry = uuid_for("buildfile:embed:widget")
+    project.add(
+        embed_entry,
+        f"{WIDGET_NAME}.appex in Embed Foundation Extensions",
+        "{isa = PBXBuildFile; fileRef = %s /* %s.appex */; "
+        "settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; }"
+        % (widget_product, WIDGET_NAME),
+    )
 
     # ---- Groups -----------------------------------------------------------
     def file_list(entries) -> str:
@@ -216,12 +241,18 @@ def build() -> str:
     app_files = app_sources + resources + [Path(f"{APP_NAME}/Info.plist")]
     app_group, _ = group_tree(Path(APP_NAME), app_files)
 
+    widget_group, _ = group_tree(Path(WIDGET_NAME), widget_sources + widget_support)
+
     products_group = uuid_for("group:products")
-    make_group(products_group, "Products", None, [(app_product, f"{APP_NAME}.app")])
+    make_group(products_group, "Products", None, [
+        (app_product, f"{APP_NAME}.app"),
+        (widget_product, f"{WIDGET_NAME}.appex"),
+    ])
 
     main_group = uuid_for("group:main")
     make_group(main_group, "", None, [
         (app_group, APP_NAME),
+        (widget_group, WIDGET_NAME),
         (file_refs["Signing.xcconfig"], "Signing.xcconfig"),
         (file_refs[f"{APP_NAME}.storekit"], f"{APP_NAME}.storekit"),
         (products_group, "Products"),
@@ -245,6 +276,27 @@ def build() -> str:
     phase(sources_phase, "PBXSourcesBuildPhase", "Sources", source_entries)
     phase(frameworks_phase, "PBXFrameworksBuildPhase", "Frameworks", [])
     phase(resources_phase, "PBXResourcesBuildPhase", "Resources", resource_entries)
+
+    widget_sources_phase = uuid_for("phase:widget:sources")
+    widget_frameworks_phase = uuid_for("phase:widget:frameworks")
+    widget_resources_phase = uuid_for("phase:widget:resources")
+    phase(widget_sources_phase, "PBXSourcesBuildPhase", "Sources", widget_source_entries)
+    phase(widget_frameworks_phase, "PBXFrameworksBuildPhase", "Frameworks", [])
+    phase(widget_resources_phase, "PBXResourcesBuildPhase", "Resources", [])
+
+    embed_phase = uuid_for("phase:app:embed")
+    project.add(
+        embed_phase,
+        "Embed Foundation Extensions",
+        "{\n\t\t\tisa = PBXCopyFilesBuildPhase;\n"
+        "\t\t\tbuildActionMask = 2147483647;\n"
+        '\t\t\tdstPath = "";\n'
+        "\t\t\tdstSubfolderSpec = 13;\n"
+        "\t\t\tfiles = %s;\n"
+        '\t\t\tname = "Embed Foundation Extensions";\n'
+        "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n\t\t}"
+        % file_list([(embed_entry, f"{WIDGET_NAME}.appex")]),
+    )
 
     # ---- Build configurations --------------------------------------------
     def settings_block(pairs: dict[str, str]) -> str:
@@ -308,12 +360,34 @@ def build() -> str:
     if team:
         app_common["DEVELOPMENT_TEAM"] = team
 
+    # The extension carries no entitlements of its own: it holds no data and
+    # reaches the app through the slumbio:// URL scheme rather than an App
+    # Group, so there is nothing for it to be entitled to.
+    widget_common = {
+        "CODE_SIGN_STYLE": "Automatic",
+        "CURRENT_PROJECT_VERSION": PROJECT_VERSION,
+        "ENABLE_PREVIEWS": "YES",
+        "GENERATE_INFOPLIST_FILE": "NO",
+        "INFOPLIST_FILE": f"{WIDGET_NAME}/Info.plist",
+        "LD_RUNPATH_SEARCH_PATHS": '(\n\t\t\t\t\t"$(inherited)",\n\t\t\t\t\t"@executable_path/Frameworks",\n\t\t\t\t\t"@executable_path/../../Frameworks",\n\t\t\t\t)',
+        "MARKETING_VERSION": MARKETING_VERSION,
+        "PRODUCT_BUNDLE_IDENTIFIER": WIDGET_BUNDLE_ID,
+        "PRODUCT_NAME": '"$(TARGET_NAME)"',
+        "SKIP_INSTALL": "YES",
+        "SWIFT_EMIT_LOC_STRINGS": "YES",
+        "TARGETED_DEVICE_FAMILY": "1",
+    }
+    if team:
+        widget_common["DEVELOPMENT_TEAM"] = team
+
     signing_ref = file_refs["Signing.xcconfig"]
     configs = {
         "project:Debug": debug,
         "project:Release": release,
         "app:Debug": app_common,
         "app:Release": app_common,
+        "widget:Debug": widget_common,
+        "widget:Release": widget_common,
     }
     config_uuids = {}
     for key, values in configs.items():
@@ -321,7 +395,7 @@ def build() -> str:
         uuid = uuid_for(f"buildconfig:{key}")
         config_uuids[key] = uuid
         base_line = ""
-        if key.startswith("app:"):
+        if key.startswith(("app:", "widget:")):
             base_line = f"\t\t\tbaseConfigurationReference = {signing_ref} /* Signing.xcconfig */;\n"
         project.add(
             uuid,
@@ -349,10 +423,51 @@ def build() -> str:
 
     project_config_list = config_list("project")
     app_config_list = config_list("app")
+    widget_config_list = config_list("widget")
 
-    # ---- Target -----------------------------------------------------------
+    # ---- Targets ----------------------------------------------------------
     project_uuid = uuid_for("project")
     app_target = uuid_for("target:app")
+    widget_target = uuid_for("target:widget")
+
+    project.add(
+        widget_target,
+        WIDGET_NAME,
+        "{\n\t\t\tisa = PBXNativeTarget;\n"
+        f"\t\t\tbuildConfigurationList = {widget_config_list};\n"
+        "\t\t\tbuildPhases = (\n"
+        f"\t\t\t\t{widget_sources_phase} /* Sources */,\n"
+        f"\t\t\t\t{widget_frameworks_phase} /* Frameworks */,\n"
+        f"\t\t\t\t{widget_resources_phase} /* Resources */,\n"
+        "\t\t\t);\n"
+        "\t\t\tbuildRules = (\n\t\t\t);\n"
+        "\t\t\tdependencies = (\n\t\t\t);\n"
+        f"\t\t\tname = {WIDGET_NAME};\n"
+        f"\t\t\tproductName = {WIDGET_NAME};\n"
+        f"\t\t\tproductReference = {widget_product} /* {WIDGET_NAME}.appex */;\n"
+        '\t\t\tproductType = "com.apple.product-type.app-extension";\n\t\t}',
+    )
+
+    widget_proxy = uuid_for("proxy:widget")
+    project.add(
+        widget_proxy,
+        "PBXContainerItemProxy",
+        "{\n\t\t\tisa = PBXContainerItemProxy;\n"
+        f"\t\t\tcontainerPortal = {project_uuid} /* Project object */;\n"
+        "\t\t\tproxyType = 1;\n"
+        f"\t\t\tremoteGlobalIDString = {widget_target};\n"
+        f"\t\t\tremoteInfo = {WIDGET_NAME};\n\t\t}}",
+    )
+
+    widget_dependency = uuid_for("dependency:widget")
+    project.add(
+        widget_dependency,
+        "PBXTargetDependency",
+        "{\n\t\t\tisa = PBXTargetDependency;\n"
+        f"\t\t\ttarget = {widget_target} /* {WIDGET_NAME} */;\n"
+        f"\t\t\ttargetProxy = {widget_proxy} /* PBXContainerItemProxy */;\n\t\t}}",
+    )
+
     project.add(
         app_target,
         APP_NAME,
@@ -362,9 +477,10 @@ def build() -> str:
         f"\t\t\t\t{sources_phase} /* Sources */,\n"
         f"\t\t\t\t{frameworks_phase} /* Frameworks */,\n"
         f"\t\t\t\t{resources_phase} /* Resources */,\n"
+        f"\t\t\t\t{embed_phase} /* Embed Foundation Extensions */,\n"
         "\t\t\t);\n"
         "\t\t\tbuildRules = (\n\t\t\t);\n"
-        "\t\t\tdependencies = (\n\t\t\t);\n"
+        f"\t\t\tdependencies = (\n\t\t\t\t{widget_dependency} /* PBXTargetDependency */,\n\t\t\t);\n"
         f"\t\t\tname = {APP_NAME};\n"
         f"\t\t\tproductName = {APP_NAME};\n"
         f"\t\t\tproductReference = {app_product} /* {APP_NAME}.app */;\n"
@@ -382,6 +498,7 @@ def build() -> str:
         "\t\t\t\tLastUpgradeCheck = 1620;\n"
         "\t\t\t\tTargetAttributes = {\n"
         f"\t\t\t\t\t{app_target} = {{\n\t\t\t\t\t\tCreatedOnToolsVersion = 16.2;\n\t\t\t\t\t}};\n"
+        f"\t\t\t\t\t{widget_target} = {{\n\t\t\t\t\t\tCreatedOnToolsVersion = 16.2;\n\t\t\t\t\t}};\n"
         "\t\t\t\t};\n"
         "\t\t\t};\n"
         f"\t\t\tbuildConfigurationList = {project_config_list};\n"
@@ -396,6 +513,7 @@ def build() -> str:
         '\t\t\tprojectRoot = "";\n'
         "\t\t\ttargets = (\n"
         f"\t\t\t\t{app_target} /* {APP_NAME} */,\n"
+        f"\t\t\t\t{widget_target} /* {WIDGET_NAME} */,\n"
         "\t\t\t);\n\t\t}",
     )
 

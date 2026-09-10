@@ -11,6 +11,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 APP = "Nightjar"
+WIDGET = "SlumbioWidgets"
+SOURCE_ROOTS = (APP, WIDGET)
 PBXPROJ = ROOT / f"{APP}.xcodeproj/project.pbxproj"
 
 text = PBXPROJ.read_text()
@@ -73,35 +75,46 @@ else:
     walk(main_group.group(1), ROOT)
 
 for uuid, path in resolved.items():
-    if path.name.endswith(".app"):
+    # Products live in BUILT_PRODUCTS_DIR, not on disk until something builds.
+    if path.name.endswith((".app", ".appex")):
         continue
     if not path.exists():
         problems.append(f"file reference does not exist on disk: {path.relative_to(ROOT)}")
 
-# --- The Sources phase must hold exactly the sources in the folder ------------
-sources_phase = re.search(
+# --- Every source on disk belongs to exactly one target ----------------------
+# Two targets now, so this is the union of both Sources phases against the union
+# of both folders. A file that lands in neither, or in both, is the bug this
+# catches.
+phases = re.findall(
     r"isa = PBXSourcesBuildPhase;\n\t\t\tbuildActionMask = \d+;\n\t\t\tfiles = \(((?:[^)]*?))\n\t\t\t\);",
     text,
 )
-in_phase: set[str] = set()
-if sources_phase:
-    for build_file in re.findall(r"([0-9A-F]{24})", sources_phase.group(1)):
+if len(phases) != len(SOURCE_ROOTS):
+    problems.append(f"expected {len(SOURCE_ROOTS)} Sources build phases, found {len(phases)}")
+
+in_phase: list[str] = []
+for block in phases:
+    for build_file in re.findall(r"([0-9A-F]{24})", block):
         ref = re.search(rf"^\t\t{build_file}[^=]*= \{{isa = PBXBuildFile; fileRef = ([0-9A-F]{{24}})", text, re.MULTILINE)
         if ref and ref.group(1) in resolved:
-            in_phase.add(str(resolved[ref.group(1)].relative_to(ROOT)))
-else:
-    problems.append("no Sources build phase")
+            in_phase.append(str(resolved[ref.group(1)].relative_to(ROOT)))
+
+duplicated = {name for name in in_phase if in_phase.count(name) > 1}
+if duplicated:
+    problems.append(f"sources compiled into more than one target: {sorted(duplicated)}")
+in_phase: set[str] = set(in_phase)
 
 on_disk = set()
 for pattern in ("*.swift", "*.metal"):
-    on_disk |= {str(p.relative_to(ROOT)) for p in (ROOT / APP).rglob(pattern)}
+    for root in SOURCE_ROOTS:
+        on_disk |= {str(p.relative_to(ROOT)) for p in (ROOT / root).rglob(pattern)}
 
 missing = on_disk - in_phase
 extra = in_phase - on_disk
 if missing:
-    problems.append(f"sources on disk but not in the target: {sorted(missing)}")
+    problems.append(f"sources on disk but in no target: {sorted(missing)}")
 if extra:
-    problems.append(f"sources in the target but not on disk: {sorted(extra)}")
+    problems.append(f"sources in a target but not on disk: {sorted(extra)}")
 
 if problems:
     for problem in problems:

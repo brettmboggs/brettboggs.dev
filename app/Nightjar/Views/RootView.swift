@@ -174,6 +174,7 @@ struct RootView: View {
             if phase == .active { wake() }
         }
         .onAppear { applyDemoStateIfNeeded() }
+        .onOpenURL { url in open(url) }
         .environment(\.openSettings, OpenSettingsAction { showSettings = true })
     }
 
@@ -219,6 +220,33 @@ struct RootView: View {
             }
         }
         #endif
+    }
+
+    /// The widget and the Control Centre control both arrive here.
+    ///
+    /// They are deep links rather than shared App Intents on purpose: a
+    /// widget extension is its own module, and giving it the intents would
+    /// mean giving it the player, the catalogue and the store along with
+    /// them. A URL costs one line at each end and keeps the extension empty.
+    private func open(_ url: URL) {
+        guard url.scheme == "slumbio" else { return }
+        switch url.host {
+        case "winddown":
+            tab = .tonight
+            player.startRoutine()
+        case "play":
+            tab = .tonight
+            if !player.isPlaying { player.play() }
+        case "breathe":
+            tab = .breathe
+        case "sounds":
+            tab = .sounds
+        case "rest":
+            tab = .rest
+        default:
+            break
+        }
+        wake()
     }
 
     #if DEBUG
