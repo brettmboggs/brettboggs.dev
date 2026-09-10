@@ -17,6 +17,10 @@ enum Demo {
     /// `-play` starts the saved mix, so the meter and the orb are alive.
     static var shouldPlay: Bool { arguments.contains("-play") }
 
+    /// `-plus` reports the entitlement as held, so the store screenshots show
+    /// the app the way a subscriber sees it rather than under a row of badges.
+    static var forcePlus: Bool { arguments.contains("-plus") }
+
     /// `-sheet mixes` opens one sheet over the tab.
     static var sheet: String? { value(for: "-sheet") }
 

@@ -51,6 +51,15 @@ struct RestView: View {
             }
             .pageGutter()
         }
+        .onAppear {
+            #if DEBUG
+            switch Demo.sheet {
+            case "wake": showWake = true
+            case "journal": showJournal = true
+            default: break
+            }
+            #endif
+        }
         .sheet(item: $openTip) { tip in TipSheet(tip: tip) }
         .sheet(isPresented: $showWake) { WakeView() }
         .sheet(isPresented: $showJournal) { JournalSheet() }

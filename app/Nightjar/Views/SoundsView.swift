@@ -32,6 +32,11 @@ struct SoundsView: View {
             }
             .pageGutter()
         }
+        .onAppear {
+            #if DEBUG
+            if Demo.sheet == "mixes" { showMixes = true }
+            #endif
+        }
         .sheet(item: $shapingSound) { kind in ShapingSheet(kind: kind) }
         .sheet(isPresented: $showMixes) { MixesSheet() }
         .alert("Name this mix", isPresented: $showSave) {

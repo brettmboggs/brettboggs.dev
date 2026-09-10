@@ -38,7 +38,18 @@ struct TonightView: View {
             }
         }
         .onReceive(clock) { date in now = date }
-        .onAppear { offerIfDue(); askForReviewIfDue() }
+        .onAppear {
+            offerIfDue()
+            askForReviewIfDue()
+            #if DEBUG
+            switch Demo.sheet {
+            case "bedside": showBedside = true
+            case "timer": showTimer = true
+            case "routine": showRoutine = true
+            default: break
+            }
+            #endif
+        }
         .onChange(of: player.pendingFirstNightOffer) { _, _ in offerIfDue() }
         .onChange(of: player.pendingReviewRequest) { _, _ in askForReviewIfDue() }
         .sheet(isPresented: $showTimer) { TimerSheet() }
