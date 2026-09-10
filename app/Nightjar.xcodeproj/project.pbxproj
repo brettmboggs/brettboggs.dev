@@ -248,6 +248,7 @@
 				A26561DA534C68B962316881 /* NowPlayingCenter.swift */,
 				4638FDC305656144B646BF7C /* PlayerController.swift */,
 				7E6E2B1ACF15FD97B87DB6DE /* Reminders.swift */,
+				A9CE6A1F3032286075645C9B /* Demo.swift */,
 				47745F3D494FCC935558EAB1 /* Formatters.swift */,
 				24E558AF705BB82F81B941E3 /* Haptics.swift */,
 				A73C7486095D57E1A3FB57CD /* Theme.swift */,
@@ -307,6 +308,7 @@
 		8CC45497448C520446D2DCFF /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				9D3CACC7A719189454DB16F0 /* Demo.swift */,
 				295B240C5570C4F2000C8156 /* Formatters.swift */,
 				AF608D890441965320368D3D /* Haptics.swift */,
 				973FEABE8207E921B4A2AB79 /* Theme.swift */,
@@ -321,6 +323,7 @@
 		9803CCF06EC6AAA90A5CEDA4 /* WakeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91358D8D0D33C981D3312A6 /* WakeView.swift */; };
 		99447CAB4AB74B2BB7A52628 /* TonightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightView.swift; sourceTree = "<group>"; };
 		9A7624389BC557CE55D7E8AB /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24ED276FA8CFAB2E289ECF1 /* Store.swift */; };
+		9D3CACC7A719189454DB16F0 /* Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo.swift; sourceTree = "<group>"; };
 		9EF730F0083E6C86F3214A3E /* BedsideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BedsideView.swift; sourceTree = "<group>"; };
 		9F6B1A7BCFF26D263B843F95 /* Build configuration list for project */ = {
 			isa = XCConfigurationList;
@@ -335,6 +338,7 @@
 		A2A7507B52B6CC33DB54C464 /* TexturesWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TexturesWeather.swift; sourceTree = "<group>"; };
 		A73C7486095D57E1A3FB57CD /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 973FEABE8207E921B4A2AB79 /* Theme.swift */; };
 		A91358D8D0D33C981D3312A6 /* WakeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeView.swift; sourceTree = "<group>"; };
+		A9CE6A1F3032286075645C9B /* Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3CACC7A719189454DB16F0 /* Demo.swift */; };
 		AA0596BBDB4DCC95D5D4F10C = {
 			isa = PBXGroup;
 			children = (

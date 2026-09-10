@@ -40,7 +40,7 @@ enum Tab: String, CaseIterable, Identifiable {
         switch self {
         case .tonight: return 1.0
         case .sounds: return 0.55
-        case .breathe: return 0.9
+        case .breathe: return 0.42
         case .rest: return 0.45
         }
     }
@@ -49,9 +49,47 @@ enum Tab: String, CaseIterable, Identifiable {
         switch self {
         case .tonight: return 0.16
         case .sounds: return 0.08
-        case .breathe: return 0.22
+        case .breathe: return 0.14
         case .rest: return 0.06
         }
+    }
+
+    /// Where the screen stops being atmosphere and starts being text.
+    ///
+    /// Content wins over the orb, always. Below `start` the orb is veiled
+    /// back towards the ground colour, reaching `strength` at `end` and
+    /// holding it to the bottom of the screen. Without this the halo sits
+    /// behind body copy at whatever brightness it feels like, and no amount
+    /// of tone mapping makes 12pt grey on a moving glow readable.
+    var veil: (start: Double, end: Double, strength: Double) {
+        switch self {
+        case .tonight: return (0.46, 0.64, 0.82)
+        case .sounds: return (0.26, 0.46, 0.90)
+        case .breathe: return (0.30, 0.42, 0.94)
+        case .rest: return (0.20, 0.40, 0.92)
+        }
+    }
+}
+
+/// The layer between the orb and the words.
+struct ContentVeil: View {
+    var start: Double
+    var end: Double
+    var strength: Double
+
+    var body: some View {
+        LinearGradient(
+            stops: [
+                .init(color: Palette.ground.opacity(0), location: 0),
+                .init(color: Palette.ground.opacity(0), location: start),
+                .init(color: Palette.ground.opacity(strength), location: end),
+                .init(color: Palette.ground.opacity(strength), location: 1),
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
     }
 }
 
@@ -84,6 +122,14 @@ struct RootView: View {
                     rim: isDimmed ? 0.04 : tab.orbRim,
                     centerY: tab.orbCenterY,
                     frameRate: isDimmed ? 10 : 30
+                )
+                .animation(.settleSlow, value: tab)
+                .animation(.settleSlow, value: isDimmed)
+
+                ContentVeil(
+                    start: tab.veil.start,
+                    end: tab.veil.end,
+                    strength: isDimmed ? tab.veil.strength * 0.7 : tab.veil.strength
                 )
                 .animation(.settleSlow, value: tab)
                 .animation(.settleSlow, value: isDimmed)
@@ -127,6 +173,7 @@ struct RootView: View {
             player.scenePhaseChanged(to: phase)
             if phase == .active { wake() }
         }
+        .onAppear { applyDemoStateIfNeeded() }
         .environment(\.openSettings, OpenSettingsAction { showSettings = true })
     }
 
@@ -152,6 +199,25 @@ struct RootView: View {
                 if newValue == nil { player.cancelBreath() }
             }
         )
+    }
+
+    /// Debug only. Puts the app on a known screen for the store screenshots.
+    private func applyDemoStateIfNeeded() {
+        #if DEBUG
+        if let name = Demo.tab, let requested = Tab(rawValue: name) { tab = requested }
+        if Demo.shouldPlay, !player.isPlaying { player.play() }
+        if let sheet = Demo.sheet {
+            // Presenting straight out of onAppear races the window becoming
+            // key and the sheet never arrives.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                switch sheet {
+                case "paywall": player.requestUpgrade(.sound("thunderstorm"))
+                case "settings": showSettings = true
+                default: break
+                }
+            }
+        }
+        #endif
     }
 
     // MARK: - Dimming
@@ -206,10 +272,23 @@ struct TabBar: View {
         .padding(.top, 2)
         .background(
             Rectangle()
-                .fill(Palette.ground.opacity(0.88))
+                .fill(Palette.ground)
                 .overlay(alignment: .top) { Hairline() }
                 .ignoresSafeArea(edges: .bottom)
         )
+        // A list scrolled to the bottom used to slide under a translucent bar
+        // and turn to mush. It now passes under a fade into the ground colour
+        // and disappears cleanly.
+        .background(alignment: .top) {
+            LinearGradient(
+                colors: [Palette.ground.opacity(0), Palette.ground],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 34)
+            .offset(y: -34)
+            .allowsHitTesting(false)
+        }
     }
 }
 

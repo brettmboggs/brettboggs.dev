@@ -240,15 +240,18 @@ struct AlarmOverlay: View {
 
     var body: some View {
         ZStack {
-            LivingCanvas(energy: 0.6, intensity: 1.3, rim: 0.5, centerY: 0.4, frameRate: 30)
+            LivingCanvas(energy: 0.6, intensity: 1.15, rim: 0.5, centerY: 0.4, frameRate: 30)
             VStack(spacing: 18) {
                 Spacer()
-                Text(Format.timeOfDay(now))
+                Group {
+                    Text(Format.timeOfDay(now))
                     .font(Typeface.display(64))
                     .foregroundStyle(Palette.ink)
                 Text("Morning")
                     .font(Typeface.body(16))
-                    .foregroundStyle(Palette.inkSoft)
+                    .foregroundStyle(Palette.ink.opacity(0.75))
+                }
+                .shadow(color: Palette.ground.opacity(0.7), radius: 16)
                 Spacer()
                 HStack(spacing: 14) {
                     SoftButton(title: "Snooze 9 min", systemImage: "zzz", isWide: true) {

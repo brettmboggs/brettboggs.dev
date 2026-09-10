@@ -94,7 +94,7 @@ struct TonightView: View {
                 .contentTransition(.opacity)
             Text(subtitle)
                 .font(Typeface.body(13))
-                .foregroundStyle(Palette.inkSoft)
+                .foregroundStyle(Palette.ink.opacity(0.72))
                 .lineLimit(1)
             if let remaining = player.previewRemaining {
                 Chip(text: "Preview · \(Format.clock(remaining))", systemImage: "sparkles")
@@ -102,6 +102,11 @@ struct TonightView: View {
             }
         }
         .pageGutter()
+        // The orb is directly behind this and its brightness moves with the
+        // audio. A dark halo costs nothing and means the name is never a
+        // guess.
+        .shadow(color: Palette.ground.opacity(0.75), radius: 14)
+        .shadow(color: Palette.ground.opacity(0.45), radius: 3)
         .animation(.settle, value: player.currentMix.name)
     }
 
