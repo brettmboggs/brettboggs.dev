@@ -21,6 +21,11 @@ enum Demo {
     /// the app the way a subscriber sees it rather than under a row of badges.
     static var forcePlus: Bool { arguments.contains("-plus") }
 
+    /// `-tour` walks the tabs on a timer, for the App Store preview video.
+    /// Everything on screen is the real app running; the only thing this does
+    /// is press the tabs so nobody has to film it by hand.
+    static var tour: Bool { arguments.contains("-tour") }
+
     /// `-sheet mixes` opens one sheet over the tab.
     static var sheet: String? { value(for: "-sheet") }
 

@@ -206,6 +206,7 @@ struct RootView: View {
         #if DEBUG
         if let name = Demo.tab, let requested = Tab(rawValue: name) { tab = requested }
         if Demo.shouldPlay, !player.isPlaying { player.play() }
+        if Demo.tour { runTour() }
         if let sheet = Demo.sheet {
             // Presenting straight out of onAppear races the window becoming
             // key and the sheet never arrives.
@@ -219,6 +220,21 @@ struct RootView: View {
         }
         #endif
     }
+
+    #if DEBUG
+    /// The preview video, pressed by a timer instead of a thumb.
+    private func runTour() {
+        Task { @MainActor in
+            let beats: [(Double, Tab)] = [(6.5, .breathe), (6.5, .sounds), (6.0, .rest)]
+            for (wait, next) in beats {
+                try? await Task.sleep(for: .seconds(wait))
+                withAnimation(.settleSlow) { tab = next }
+            }
+            try? await Task.sleep(for: .seconds(5.5))
+            withAnimation(.settleSlow) { tab = .tonight }
+        }
+    }
+    #endif
 
     // MARK: - Dimming
 

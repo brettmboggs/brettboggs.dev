@@ -88,11 +88,23 @@ three in search results, so those three carry the argument.
 A 6.9 inch set is enough: App Store Connect scales it down for every smaller
 iPhone. There is no iPad build, so there is no iPad set.
 
+## App preview
+
+`tools/shots/preview.sh` records one: 886 x 1920, 28 seconds, H.264, which is
+the 6.9 inch slot. The app walks its own tabs under the `-tour` flag, so the
+footage is the app actually running, and recording only starts once it is
+already on screen, because a preview that opens on the iOS home screen is
+rejected.
+
+It is silent. `simctl` does not capture simulator audio. Apple accepts a
+silent preview, but this is an app about sound, and the preview is the only
+asset on the whole product page that could play the rain. Re-shooting the same
+28 seconds on a device with QuickTime, with the audio, is worth doing before
+this goes up.
+
 ## Still missing, in order of what it would be worth
 
-1. **An app preview video.** Every app above us in the category has one, and
-   it is the only asset that can show sound being shaped or the orb
-   breathing. 15 to 30 seconds, portrait, captured on a device.
+1. **Sound on the preview.** See above. A device capture, once.
 2. **Ratings.** Zero of them is the single biggest gap against ShutEye's
    350,000. The prompt already fires after a good night; it needs volume, not
    more code.
