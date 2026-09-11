@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import Spread from '../../../components/Spread.astro';
+import { useSpread } from '../../../data/layout';
+
+const ended = (e: { data: { date: Date; dateEnd?: Date } }) => e.data.dateEnd ?? e.data.date;
+const entries = (
+  await getCollection('work', ({ data }) => !data.draft && data.group === 'websites')
+).sort((a, b) => ended(b).valueOf() - ended(a).valueOf());
+
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+function when(date: Date, dateEnd?: Date): string {
+  if (!dateEnd) return fmt(date);
+  const a = date.getFullYear();
+  const b = dateEnd.getFullYear();
+  return a === b ? String(a) : `${a} to ${b}`;
+}
+---
+
+<Base
+  title="Websites · Brett Boggs"
+  description="Sites built for small businesses that were being let down by a template."
+>
+  <header class="page-head">
+    <p class="eyebrow">Work · Websites</p>
+    <h1>Websites</h1>
+    <p class="lede">
+      Sites for small businesses, usually replacing a template that was quietly costing them work.
+      Built to be fast, owned outright, and editable by the person who runs the place.
+    </p>
+  </header>
+  {
+    useSpread(entries.length) && (
+      <Spread
+        items={entries.map((entry) => ({
+          href: `/work/websites/${entry.id}/`,
+          title: entry.data.title,
+          desc: entry.data.description,
+          meta: when(entry.data.date, entry.data.dateEnd),
+          datetime: entry.data.date.toISOString(),
+          image: `/peek/${entry.id}-lg.webp`,
+        }))}
+      />
+    )
+  }
+  {
+    !useSpread(entries.length) && (
+      <ul class="entry-list">
+        {entries.map((entry) => (
+          <li>
+            <a class="entry-row" href={`/work/websites/${entry.id}/`} data-peek={`/peek/${entry.id}.webp`}>
+              <span>
+                <span class="entry-title">{entry.data.title}</span>
+                <span class="entry-desc">{entry.data.description}</span>
+              </span>
+              <time class="entry-meta" datetime={entry.data.date.toISOString()}>
+                {when(entry.data.date, entry.data.dateEnd)}
+              </time>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  <a class="back-link" href="/work/">All work</a>
+</Base>

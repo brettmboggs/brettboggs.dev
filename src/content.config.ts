@@ -13,7 +13,7 @@ const work = defineCollection({
     draft: z.boolean().default(false),
     // grouped entries are collapsed into a single row on /work and listed
     // on their own index at /work/<group>/
-    group: z.enum(['photography']).optional(),
+    group: z.enum(['photography', 'websites']).optional(),
     // bespoke entries have a hand-built page at src/pages/work/<id>.astro;
     // they appear in the index but are excluded from the generic [slug] template
     bespoke: z.boolean().default(false),

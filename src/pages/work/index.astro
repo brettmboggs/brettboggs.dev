@@ -16,6 +16,7 @@ function when(date: Date, dateEnd?: Date): string {
 const ended = (e: { data: { date: Date; dateEnd?: Date } }) => e.data.dateEnd ?? e.data.date;
 const all = await getCollection('work', ({ data }) => !data.draft);
 const photo = all.filter((e) => e.data.group === 'photography');
+const sites = all.filter((e) => e.data.group === 'websites');
 
 interface Row {
   href: string;
@@ -51,6 +52,21 @@ if (photo.length) {
     datetime: opened.toISOString(),
     sort: closed.valueOf(),
     peek: '/peek/photography.webp',
+  });
+}
+
+// the site builds collapse the same way the photo sets do
+if (sites.length) {
+  const opened = sites.reduce((a, b) => (a.data.date < b.data.date ? a : b)).data.date;
+  const closed = sites.map(ended).reduce((a, b) => (a > b ? a : b));
+  rows.push({
+    href: '/work/websites/',
+    title: 'Websites',
+    desc: `Sites for small businesses. ${sites.map((e) => e.data.title).join(', ')}.`,
+    when: when(opened, closed),
+    datetime: opened.toISOString(),
+    sort: closed.valueOf(),
+    peek: '/peek/websites.webp',
   });
 }
 
