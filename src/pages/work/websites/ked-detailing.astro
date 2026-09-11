@@ -13,22 +13,22 @@ import Base from '../../../layouts/Base.astro';
       <p class="lede">Off a Squarespace template and onto something that sells the work.</p>
     </header>
 
-    <figure
-      class="bleed"
-      data-plate
-      data-title="Knock Em' Down Detailing"
-      tabindex="0"
-      role="button"
-      aria-label="Open the picture at full size"
-    >
+    <!-- The point of this page is the build itself, so the way in comes first. -->
+    <a class="launch" href="/ked/">
+      <span class="launch-go">Open the site <span aria-hidden="true">&rarr;</span></span>
+      <span class="launch-meta">The full build · home, packages, work, reviews, notes, store</span>
+    </a>
+
+    <a class="shot" href="/ked/" aria-label="Open the Knock Em' Down site">
       <img
         src="/peek/ked-detailing-lg.webp"
-        alt="The Knock Em Down wordmark over a foam-covered Porsche badge."
+        alt="The Knock Em Down wordmark on the site's black ground."
         width="1440"
         height="960"
         loading="eager"
       />
-    </figure>
+      <span class="shot-chip">Live build</span>
+    </a>
 
     <div class="prose">
       <p>
@@ -48,20 +48,102 @@ import Base from '../../../layouts/Base.astro';
         So the rebuild was mostly about getting real material in front of people. The hero is his
         own 4K footage. The reviews are his actual ones, with names, linked back to where they
         live. The type is a condensed grotesque that can carry the brand at poster scale, and
-        because the business is called Knock Em Down, the wordmark gets knocked over as you
-        scroll past it.
+        because the business is called Knock Em Down, the wordmark gets knocked over as you scroll
+        past it.
       </p>
       <p>
         Built in Astro and hosted for nothing. Every URL the old site published still resolves, so
-        the blog posts he already ranks for did not go dark. He can add merch and write posts
-        himself through a visual editor that commits to the repo, so nothing routine needs me.
+        the posts he already ranks for did not go dark. He can add merch and write posts himself
+        through a visual editor that commits to the repo, so nothing routine needs me.
+      </p>
+      <p class="note">
+        Running here while the domain moves across. It will live at kedservice.com.
       </p>
     </div>
 
-    <p class="prose">
-      <a href="/ked/">Open the site</a> — the full build, running here while the domain moves.
-    </p>
-
-    <a class="back-link" href="/work/websites/">All websites</a>
+    <a class="back-link" href="/work/websites/">&larr; All websites</a>
   </article>
 </Base>
+
+<style>
+  .launch {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1.5rem;
+    margin: 2.5rem 0 1.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 2px solid var(--ink);
+    text-decoration: none;
+  }
+  .launch-go {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 60, 'SOFT' 50, 'WONK' 0;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    line-height: 1.05;
+    color: var(--sienna);
+  }
+  .launch-go span {
+    display: inline-block;
+    transition: translate 0.4s var(--ease-warm);
+  }
+  .launch:hover .launch-go span,
+  .launch:focus-visible .launch-go span {
+    translate: 0.35rem 0;
+  }
+  .launch-meta {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+  }
+
+  /* The screenshot is a second, larger target for the same link. */
+  .shot {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border: 2px solid var(--ink);
+    line-height: 0;
+  }
+  .shot img {
+    width: 100%;
+    height: auto;
+    transition: scale 0.7s var(--ease-warm);
+  }
+  .shot:hover img,
+  .shot:focus-visible img {
+    scale: 1.02;
+  }
+  .shot-chip {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 0.5rem 0.9rem;
+    background: var(--paper);
+    border-top: 2px solid var(--ink);
+    border-right: 2px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .prose {
+    margin-top: 2.75rem;
+  }
+  .note {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .launch-go span,
+    .shot img {
+      transition: none;
+    }
+  }
+</style>
