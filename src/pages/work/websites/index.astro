@@ -5,9 +5,18 @@ import Spread from '../../../components/Spread.astro';
 import { useSpread } from '../../../data/layout';
 
 const ended = (e: { data: { date: Date; dateEnd?: Date } }) => e.data.dateEnd ?? e.data.date;
+// the sites filed here, plus any entry that stands on its own elsewhere and is
+// a site too (see alsoIn in src/content.config.ts). A crossed entry keeps one
+// page, at its own group, and is linked to from here
 const entries = (
-  await getCollection('work', ({ data }) => !data.draft && data.group === 'websites')
+  await getCollection(
+    'work',
+    ({ data }) => !data.draft && (data.group === 'websites' || data.alsoIn.includes('websites')),
+  )
 ).sort((a, b) => ended(b).valueOf() - ended(a).valueOf());
+
+const href = (entry: (typeof entries)[number]) =>
+  entry.data.group ? `/work/${entry.data.group}/${entry.id}/` : `/work/${entry.id}/`;
 
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 function when(date: Date, dateEnd?: Date): string {
@@ -34,7 +43,7 @@ function when(date: Date, dateEnd?: Date): string {
     useSpread(entries.length) && (
       <Spread
         items={entries.map((entry) => ({
-          href: `/work/websites/${entry.id}/`,
+          href: href(entry),
           title: entry.data.title,
           desc: entry.data.description,
           meta: when(entry.data.date, entry.data.dateEnd),
@@ -49,7 +58,7 @@ function when(date: Date, dateEnd?: Date): string {
       <ul class="entry-list">
         {entries.map((entry) => (
           <li>
-            <a class="entry-row" href={`/work/websites/${entry.id}/`} data-peek={`/peek/${entry.id}.webp`}>
+            <a class="entry-row" href={href(entry)} data-peek={`/peek/${entry.id}.webp`}>
               <span>
                 <span class="entry-title">{entry.data.title}</span>
                 <span class="entry-desc">{entry.data.description}</span>

@@ -5,6 +5,7 @@ date: 2026-08-25
 tags: ['startup']
 draft: false
 bespoke: true
+alsoIn: ['websites']
 ---
 
 Bespoke page lives at src/pages/work/datum.astro. Un-draft this entry to list it on the Work index.
