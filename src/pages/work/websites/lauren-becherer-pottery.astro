@@ -1,0 +1,142 @@
+---
+import Base from '../../../layouts/Base.astro';
+---
+
+<Base
+  title="Lauren Becherer Pottery · Brett Boggs"
+  description="Handmade ceramics, photographed all the way around."
+>
+  <article>
+    <header class="page-head">
+      <p class="eyebrow">Websites · 2026</p>
+      <h1>Lauren Becherer Pottery</h1>
+      <p class="lede">Handmade ceramics, photographed all the way around.</p>
+    </header>
+
+    <!-- The point of this page is the build itself, so the way in comes first. -->
+    <a class="launch" href="https://laurenbechererpottery.com">
+      <span class="launch-go">Open the site <span aria-hidden="true">&rarr;</span></span>
+      <span class="launch-meta">Live · work, shop, journal, commissions, client pages</span>
+    </a>
+
+    <a class="shot" href="https://laurenbechererpottery.com" aria-label="Open laurenbechererpottery.com">
+      <img
+        src="/peek/lauren-becherer-pottery-lg.webp"
+        alt="The home page of laurenbechererpottery.com, a celadon cup beside the line No two are alike."
+        width="1440"
+        height="960"
+        loading="eager"
+      />
+      <span class="shot-chip">laurenbechererpottery.com</span>
+    </a>
+
+    <div class="prose">
+      <p>
+        Lauren throws and hand-builds in small batches, and glazes in small batches too, which
+        means no two pieces come out the same. One photograph of a pot flattens exactly the thing
+        that makes it worth buying. So the site is built around turning the piece instead.
+      </p>
+      <p>
+        Every piece is shot on a turntable and served as a spin you can drag. Thirteen so far.
+        Every frame is a real photograph, shot in raw and focus stacked, and the import refuses
+        anything else. One early set came back with thirty-four interpolated in-between frames and
+        the build stops rather than publish them. A steppy honest turn beats a smooth fake one.
+      </p>
+      <p>
+        She runs it without me. There is a studio login on the site: she signs in with one click,
+        edits the page she happens to be looking at, and the site rebuilds itself in about a
+        minute. Pieces marked for sale get a Stripe button. Commission requests come in through a
+        form, and each commission gets a private progress page reached by a code, so a client can
+        watch their piece without anybody else finding it.
+      </p>
+      <p>
+        Astro, static, hosted on GitHub Pages. The domain is the only line item.
+      </p>
+    </div>
+
+    <a class="back-link" href="/work/websites/">&larr; All websites</a>
+  </article>
+</Base>
+
+<style>
+  .launch {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1.5rem;
+    margin: 2.5rem 0 1.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 2px solid var(--ink);
+    text-decoration: none;
+  }
+  .launch-go {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 60, 'SOFT' 50, 'WONK' 0;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    line-height: 1.05;
+    color: var(--sienna);
+  }
+  .launch-go span {
+    display: inline-block;
+    transition: translate 0.4s var(--ease-warm);
+  }
+  .launch:hover .launch-go span,
+  .launch:focus-visible .launch-go span {
+    translate: 0.35rem 0;
+  }
+  .launch-meta {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+  }
+
+  /* The screenshot is a second, larger target for the same link. */
+  .shot {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border: 2px solid var(--ink);
+    line-height: 0;
+  }
+  .shot img {
+    width: 100%;
+    height: auto;
+    transition: scale 0.7s var(--ease-warm);
+  }
+  .shot:hover img,
+  .shot:focus-visible img {
+    scale: 1.02;
+  }
+  .shot-chip {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 0.5rem 0.9rem;
+    background: var(--paper);
+    border-top: 2px solid var(--ink);
+    border-right: 2px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .prose {
+    margin-top: 2.75rem;
+  }
+  .note {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .launch-go span,
+    .shot img {
+      transition: none;
+    }
+  }
+</style>

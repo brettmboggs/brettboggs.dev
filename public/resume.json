@@ -91,6 +91,16 @@
   ],
   "projects": [
     {
+      "name": "Lauren Becherer Pottery",
+      "description": "A site for a ceramicist, built around 360 degree turntable photography of the real pieces so the glaze reads true. Astro, static, with a no-code studio admin she runs herself, Stripe checkout, and private progress pages for commission clients.",
+      "url": "https://laurenbechererpottery.com"
+    },
+    {
+      "name": "Knock Em' Down Detailing",
+      "description": "A rebuild for a mobile auto and marine detailer, off an unfinished Squarespace template and onto an Astro site carrying his own 4K footage, his real reviews, and a store he can stock himself.",
+      "url": "https://brettboggs.dev/work/websites/ked-detailing/"
+    },
+    {
       "name": "brettboggs.dev",
       "description": "This site. Astro, static, hand-built design system, a Blender-rendered scroll film on the front page, and a build that measures and logs itself.",
       "url": "https://brettboggs.dev"

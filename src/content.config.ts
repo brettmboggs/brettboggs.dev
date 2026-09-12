@@ -14,6 +14,9 @@ const work = defineCollection({
     // grouped entries are collapsed into a single row on /work and listed
     // on their own index at /work/<group>/
     group: z.enum(['photography', 'websites']).optional(),
+    // an entry that belongs on a second index as well. It keeps one page, at
+    // its own group, and is listed from the other index too
+    alsoIn: z.array(z.enum(['photography', 'websites'])).default([]),
     // bespoke entries have a hand-built page at src/pages/work/<id>.astro;
     // they appear in the index but are excluded from the generic [slug] template
     bespoke: z.boolean().default(false),

@@ -52,6 +52,9 @@ const shots = {
   underground: { url: '/lab/underground/', top: 420 },
   bridge: { url: '/lab/bridge/', top: 250, scroll: 3400 },
   'drafting-film': { url: '/lab/drafting-film/', top: 250, scroll: 8000 },
+  // the client sites are captured from where they live:
+  //   node tools/peek.mjs --base https://laurenbechererpottery.com --only lauren-becherer-pottery
+  'lauren-becherer-pottery': { url: '/', top: 30, left: 70, width: 1300 },
 };
 
 async function chrome() {
