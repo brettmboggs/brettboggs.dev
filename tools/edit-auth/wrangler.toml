@@ -13,7 +13,10 @@ name = "brettboggs-edit-auth"
 main = "src/index.js"
 compatibility_date = "2026-01-01"
 workers_dev = true
+# Pinned so a deploy can never land in a client account wrangler also sees
+account_id = "1f435e17138d9f15d0edb7d13103c245"
 
 [vars]
 ALLOWED_DOMAINS = "brettboggs.dev"
-# GITHUB_CLIENT_ID = ""   # from the OAuth app, filled in at setup
+# OAuth app "brettboggs.dev editor" under brettmboggs, github.com/settings/applications/3855484
+GITHUB_CLIENT_ID = "Ov23lii8RNCeZHjxmAfm"

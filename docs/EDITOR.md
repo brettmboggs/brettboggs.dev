@@ -40,7 +40,10 @@ labels), date formatting, and the navigation labels in `src/layouts/Base.astro`.
    `brettboggs.dev`, permission **Contents: Read and write**, nothing else.
 2. Open `/edit/` → **Sign In Using Access Token** → paste. The browser keeps it.
 
-**Sign in with GitHub (one click).** Needs the small Worker in
+**Sign in with GitHub (one click, set up).** OAuth app `brettboggs.dev editor`
+(github.com/settings/applications/3855484), Worker
+`https://brettboggs-edit-auth.brettmboggs.workers.dev`. How it was built, for a
+rebuild: it needs the small Worker in
 `tools/edit-auth/`, because GitHub's OAuth flow needs a server to swap a code
 for a token.
 1. <https://github.com/settings/developers> → New OAuth App. Name

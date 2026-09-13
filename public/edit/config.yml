@@ -13,6 +13,10 @@ backend:
   name: github
   repo: brettmboggs/brettboggs.dev
   branch: main
+  # "Sign in with GitHub" goes through this Worker (tools/edit-auth, personal
+  # Cloudflare account). It holds the client id and secret; nothing sensitive
+  # lives in this repo.
+  base_url: https://brettboggs-edit-auth.brettmboggs.workers.dev
   commit_messages:
     create: "Add {{collection}} {{slug}}"
     update: "Edit {{collection}} {{slug}}"
