@@ -57,8 +57,11 @@ for a token.
 4. Add `base_url: https://brettboggs-edit-auth.<subdomain>.workers.dev` under
    `backend:` in `public/edit/config.yml` and push.
 
-If the secret ever leaks: generate a new one in the OAuth app, delete the old,
-and `wrangler secret put` it again. Nothing else changes.
+If the secret ever leaks: generate a new one in the OAuth app and delete the
+old. Then in the Cloudflare dashboard, Workers & Pages → brettboggs-edit-auth →
+Settings → the Secret row → edit → Rotate, paste, Deploy. Use the dashboard,
+not `wrangler secret put` from a non-interactive shell: that cannot prompt and
+saves a blank secret while reporting success. Nothing else changes.
 
 ## Editing without signing in
 
