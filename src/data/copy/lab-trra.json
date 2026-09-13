@@ -1,0 +1,126 @@
+{
+  "title": "The MacArthur · Lab · Brett Boggs",
+  "description": "A rail bridge approach in St. Louis, rebuilt to scale from public data so a job could be shown instead of described.",
+  "ogImage": "/lab/trra/hero-1200.webp",
+  "eyebrow": "Lab · Sep 2026",
+  "heading": "The MacArthur",
+  "lede": "A retaining wall and bridge approach on the Terminal Railroad's MacArthur crossing, built to scale inside a copy of the site.",
+  "hero": {
+    "image": "/lab/trra/hero.webp",
+    "alt": "The precast retaining wall and the double track on it running away toward the downtown St. Louis skyline, the truss bridge and the river on the left.",
+    "caption": "Off the west end of the truss, along the top of the wall, downtown ahead."
+  },
+  "intro": "My brother had a job to price. Plans describe what gets built. They are not much use for showing someone what it is. So the site got rebuilt: the river, the floodplain, the bridge, the yard, downtown, all of it to scale, with the job standing in the middle of it.\n\nNothing here is invented. Alignments, roads, buildings and tree cover come from OpenStreetMap, the ground photography from the USGS National Map, which is public domain. Where the drawings and the map disagreed, the drawings won and the difference got written down.",
+  "viewer": {
+    "ariaLabel": "Interactive model",
+    "heading": "The model",
+    "hintPointer": "Drag to orbit. Right drag to pan. Scroll to zoom.",
+    "hintTouch": "One finger orbits. Two pan and pinch.",
+    "loading": "Loading",
+    "extentLabel": "Extent",
+    "extentJob": "Job scope",
+    "extentNetwork": "Full network",
+    "groundLabel": "Ground",
+    "groundOff": "Off",
+    "groundOn": "World",
+    "viewLabel": "View",
+    "recenter": "Recenter",
+    "fullscreen": "Fullscreen",
+    "systemLabel": "System",
+    "systems": [
+      { "key": "", "label": "All" },
+      { "key": "steel", "label": "Steel" },
+      { "key": "concrete", "label": "Concrete" },
+      { "key": "panel", "label": "MSE panels" },
+      { "key": "ballast", "label": "Ballast" },
+      { "key": "rail", "label": "Rail" },
+      { "key": "tie", "label": "Ties" }
+    ],
+    "caption": "Six meshes, one per material system, exported from the same file the renders come out of. Isolating a system is the question anyone actually asks in front of a render. The eight thousand bolts and the rivets are left out of this copy: they are a million triangles that nobody can see at this distance. Turning the ground on brings in the rest of the scene: the terrain, downtown and the built context as real geometry, with the ground itself carrying a Cycles render of the world shot straight down, trees and all. That is another megabyte, so it is only fetched if you ask for it."
+  },
+  "whereHeading": "Where this is",
+  "whereBody": "The scene sits on a validated transform between the model and the real world. Feeding the anchors through it lands the Gateway Arch within 19 m of its published position and Busch Stadium within 8 m, which is inside the accuracy of the aerial itself. So the job can be drawn straight onto the photograph rather than pointed at.",
+  "locator": {
+    "image": "/lab/trra/locator.webp",
+    "alt": "Aerial photograph of the Mississippi at St. Louis with the MacArthur crossing marked, the Gateway Arch and Busch Stadium labelled for orientation.",
+    "archLabel": "Gateway Arch",
+    "stadiumLabel": "Busch Stadium",
+    "scaleLabel": "500 m",
+    "northLabel": "N",
+    "caption": "Bridge and wall in sienna, the rebuilt Illinois approach in ochre. Base imagery USGS National Map, public domain, 1.45 m per pixel."
+  },
+  "wallHeading": "The wall",
+  "wallBody": "3,380 precast panels at five feet square, 19 mm joints, set 55 mm proud in running bond. Courses are level on one datum across every face. Grade trims the bottom of the stack and the coping closes the top, which is how the real thing goes up and the only way the joint lines stay straight in a render.",
+  "wallPhoto": {
+    "image": "/lab/trra/wall.webp",
+    "alt": "The precast panel face of the retaining wall running to a limestone bridge pier, with the open deck approach carrying on behind it.",
+    "caption": "The wall face into the limestone pier. Panel courses stay level across the whole run."
+  },
+  "bridgeHeading": "The bridge",
+  "bridgeBody": "The crossing started as an envelope and is now built off the sheets. The two new ballast deck spans, the truss floor, the open deck approaches and the bents under them follow the plan and steel drawings down to the bolted field splices at the third points of the girders and the bent connection plates that hang each stringer off its floorbeam. Around 8,300 bolts are modelled as bolts. Where a detail is not on a drawing it is written down as an assumption rather than quietly drawn.\n\nTrack came with it. Both mains now run dead straight off the east truss, every turnout and crossover is a No. 12 on a 365 m curve, and the approaches carry open deck beyond the fill the way the existing structure does.",
+  "spanPhoto": {
+    "image": "/lab/trra/span.webp",
+    "alt": "Looking along the bridge deck from above the wall, both tracks converging through the turnout, the truss and downtown ahead.",
+    "caption": "Off the end of the wall, through the turnout, onto the crossing."
+  },
+  "deckPhoto": {
+    "image": "/lab/trra/deck.webp",
+    "alt": "Standing on the bridge deck between the truss verticals, two ballasted tracks running away between the walkways and handrails.",
+    "caption": "Inside the truss. Stringers, curbs, walkway and rail sit where the steel sheets put them."
+  },
+  "trackHeading": "Track that would actually run",
+  "trackBody": "Every approach is one continuous swept mesh along a faired alignment, so stepping is impossible by construction. The joints were checked with numbers rather than eyes. Worst gap across the whole build is 5.27 mm, and the railhead never steps more than a tenth of a millimetre. Grades stay under two percent and the tightest curve is 151 m.",
+  "runsTable": {
+    "headRun": "Run",
+    "headLength": "Length",
+    "headRadius": "Tightest R",
+    "headGrade": "Max grade",
+    "rows": [
+      { "run": "Wye, Illinois", "length": "1,250 m", "radius": "280 m", "grade": "1.90%" },
+      { "run": "Main east", "length": "1,274 m", "radius": "straight", "grade": "0.97%" },
+      { "run": "West approach", "length": "997 m", "radius": "151 m", "grade": "1.50%" },
+      { "run": "Missouri branch", "length": "800 m", "radius": "502 m", "grade": "1.80%" },
+      { "run": "Illinois highway", "length": "1,633 m", "radius": "297 m", "grade": "0.66%" }
+    ]
+  },
+  "passesHeading": "Three passes at the same frame",
+  "passesBody": "Ground was the whole problem. Procedural tiles cannot hold up at 800 m because a three metre tile is a few pixels. Real aerial photography on real terrain is what makes it read.",
+  "progression": [
+    {
+      "image": "/lab/trra/prog-clay.webp",
+      "alt": "The same wide frame with untextured grey and green geometry.",
+      "step": "01",
+      "note": "Geometry only. Ground cover, roads and buildings pulled from the map, still flat colour."
+    },
+    {
+      "image": "/lab/trra/prog-ortho.webp",
+      "alt": "The same frame with aerial photography draped over a single continuous terrain.",
+      "step": "02",
+      "note": "One continuous terrain, public domain USGS aerial draped on it by world position."
+    },
+    {
+      "image": "/lab/trra/prog-final.webp",
+      "alt": "The same frame with vegetation, warm morning light and finished materials.",
+      "step": "03",
+      "note": "Real vegetation, building facades, mid morning sun at 40 degrees."
+    }
+  ],
+  "yardPhoto": {
+    "image": "/lab/trra/yard.webp",
+    "alt": "The steel truss on the left, the retaining wall and its limestone pier in the middle, and the approach trestle running off through the floodplain trees.",
+    "caption": "Truss, wall, trestle. Trees sit only inside real wood polygons, cleared off every road and track."
+  },
+  "sceneHeading": "What is in the scene",
+  "sceneTable": [
+    { "item": "Trees and scrub", "detail": "12,185, scattered inside 194 ha of mapped wood" },
+    { "item": "Buildings", "detail": "2,629 footprints at surveyed height, tallest 192 m" },
+    { "item": "Roads", "detail": "1,609 polylines by class, plus 44 floodplain tracks" },
+    { "item": "Terrain", "detail": "One heightfield, 12 m grid, 131k vertices" },
+    { "item": "Aerial", "detail": "0.61 m per pixel over 5 km, 0.31 m over the job" },
+    { "item": "Arch", "detail": "The published weighted catenary. 630.0 ft, checked" },
+    { "item": "Render", "detail": "Cycles on GPU, 400 adaptive samples, 2560 by 1440" }
+  ],
+  "openHeading": "Still open",
+  "openBody": "The wye bents are concrete columns where the original are braced lattice towers, so the styles clash at that joint. Guardrails match the envelope of the original, not its post and rail detail. The west approach is a clean arc that departs on the right tangent and lands on the right point, but wanders up to 40 m off the traced line in between. None of it is job scope. All of it is written down.",
+  "backLink": "Back to Lab"
+}

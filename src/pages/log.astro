@@ -1,6 +1,7 @@
 ---
 import { execSync } from 'node:child_process';
 import Base from '../layouts/Base.astro';
+import copy from '../data/copy/log.json';
 
 // The build log: every commit to this site, read out of git while the site is
 // being built. Nothing is fetched at view time and nothing is curated after
@@ -51,24 +52,21 @@ const fmtShort = (iso: string) =>
 const repo = 'https://github.com/brettmboggs/brettboggs.dev';
 ---
 
-<Base title="Log · Brett Boggs" description="Every commit to this site, one line each, read out of git at build time.">
+<Base title={copy.title} description={copy.description} edit="pages/log">
   <header class="page-head">
-    <p class="eyebrow">Log</p>
-    <h1>The build log.</h1>
-    <p class="lede">
-      Every commit to this site, one line each, written as the work landed and read straight out
-      of git when the site is built. Nothing here is fetched, and nothing is tidied afterwards.
-    </p>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
   </header>
 
   {
     commits.length > 0 ? (
       <>
         <p class="tally">
-          <span>{commits.length} commits</span>
-          <span>{days.size} days</span>
-          {first && <span>since {fmtShort(first)}</span>}
-          <a href={repo} rel="noopener">source</a>
+          <span>{commits.length} {copy.commits}</span>
+          <span>{days.size} {copy.days}</span>
+          {first && <span>{copy.since} {fmtShort(first)}</span>}
+          <a href={repo} rel="noopener">{copy.source}</a>
         </p>
         <div class="days">
           {[...days].map(([date, list]) => (
@@ -92,11 +90,11 @@ const repo = 'https://github.com/brettmboggs/brettboggs.dev';
         </div>
       </>
     ) : (
-      <p class="empty-note">The log could not be read at build time.</p>
+      <p class="empty-note">{copy.empty}</p>
     )
   }
 
-  <a class="back-link" href="/">&larr; Home</a>
+  <a class="back-link" href="/">{copy.backLink}</a>
 </Base>
 
 <style>

@@ -5,13 +5,10 @@
 // landing had a standing rule against literal construction imagery, and a
 // bridge is as literal as it gets. The film itself did nothing wrong.
 import Base from '../../layouts/Base.astro';
+import copy from '../../data/copy/lab-drafting-film.json';
 import {
-  BEATS,
-  TURN_BEAT,
-  MARK_TAG,
   SHEETS,
   CONFLICTS,
-  CHAPTERS,
   PATHS,
   TEXTS,
   DATUM_LINE_D,
@@ -22,26 +19,19 @@ import {
 ---
 
 <Base
-  title="The Drafting Film · Lab · Brett Boggs"
-  description="A highway underpass you draft by scrolling. Datum's landing film for one night."
+  title={copy.title}
+  description={copy.description}
+  edit="lab-pages/lab-drafting-film"
 >
   <header class="page-head">
-    <p class="eyebrow">Lab · Jul 2026</p>
-    <h1>The Drafting Film</h1>
-    <p class="lede">
-      A highway underpass you draft by scrolling. It ran Datum's landing page for one night.
-    </p>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
   </header>
 
   <section class="film-bleed">
     <!-- The film is decorative to a screen reader; the story itself is not. -->
-    <p class="cin5-sr">
-      Scattered data means nobody sees the same picture. Six systems, six logins, six bills. Each
-      one holds a piece and none of them holds the project. Your best people leave and the process
-      leaves with them. The same data gets re-entered at every handoff until nobody knows which
-      number is true. Your tools hold data; none of them think. Datum sets one reference, one
-      living record, that every number, drawing, and dollar measures from.
-    </p>
+    <p class="cin5-sr">{copy.screenReaderStory}</p>
 
     <div class="cin5" data-film>
       <div class="cin5-stage">
@@ -95,8 +85,8 @@ import {
         </svg>
 
         <div class="cin5-overlay" aria-hidden="true">
-          {[...BEATS, TURN_BEAT].map((b, i) => (
-            <div class:list={['cin5-beat', { 'cin5-beat--turn': i === BEATS.length }]}>
+          {copy.beats.map((b, i) => (
+            <div class:list={['cin5-beat', { 'cin5-beat--turn': i === copy.beats.length - 1 }]}>
               <div class="cin5-kicker">{b.kicker}</div>
               <div class="cin5-head">
                 {b.head.map((line) => (
@@ -108,27 +98,27 @@ import {
           ))}
 
           <div class="cin5-mark">
-            <div class="cin5-mark-word">DATUM</div>
-            <div class="cin5-mark-tag">{MARK_TAG}</div>
+            <div class="cin5-mark-word">{copy.markWord}</div>
+            <div class="cin5-mark-tag">{copy.markTag}</div>
           </div>
 
           <div class="cin5-hint">
-            <span>Scroll</span>
+            <span>{copy.scrollHint}</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
           </div>
         </div>
 
         <!-- Chapter rail: jump anywhere in the film. -->
-        <div class="cin5-rail" role="group" aria-label="Film chapters">
-          {CHAPTERS.map((c) => (
-            <button type="button" class="cin5-rail-stop" aria-label={c.label}>
+        <div class="cin5-rail" role="group" aria-label={copy.chaptersLabel}>
+          {copy.chapters.map((label) => (
+            <button type="button" class="cin5-rail-stop" aria-label={label}>
               <span class="cin5-rail-tick"></span>
-              <span class="cin5-rail-label">{c.label}</span>
+              <span class="cin5-rail-label">{label}</span>
             </button>
           ))}
         </div>
 
-        <button type="button" class="cin5-skip">Skip film</button>
+        <button type="button" class="cin5-skip">{copy.skipButton}</button>
 
         <!-- Veil blends the last frame back into the page's paper. -->
         <div class="cin5-veil" aria-hidden="true"></div>
@@ -166,7 +156,7 @@ import {
           </g>
         </svg>
       </div>
-      {[...BEATS, TURN_BEAT].map((b) => (
+      {copy.beats.map((b) => (
         <section class="cin5-still">
           <div class="cin5-kicker">{b.kicker}</div>
           <div class="cin5-head">
@@ -178,33 +168,19 @@ import {
         </section>
       ))}
       <section class="cin5-still cin5-still--mark">
-        <div class="cin5-mark-word">DATUM</div>
-        <div class="cin5-mark-tag">{MARK_TAG}</div>
+        <div class="cin5-mark-word">{copy.markWord}</div>
+        <div class="cin5-mark-tag">{copy.markTag}</div>
       </section>
     </div>
   </section>
 
   <div class="colophon">
-    <p>
-      This was v5 of the opening film for datumci.com, one night in July. Scroll conducts a
-      highway underpass elevation through five failures: the linework explodes and never
-      composes, regroups into six partial sheets that each hold only their slice, the richest
-      sheet flares warm and walks off the table, the same span stamps four conflicting values,
-      and everything grays into a dead archive. Then a datum line draws across the stage and the
-      whole drawing registers on it, in construction order. It merged on a Sunday night and came
-      out the next day: the landing had a standing rule against literal construction imagery,
-      and the medium that made the film work is the reason it could not stay.
-    </p>
-    <p>
-      SVG linework, spring physics, one requestAnimationFrame loop. No WebGL, no animation
-      library, no raster assets. Scroll is the clock but never the motion: each beat only moves
-      the targets, springs do the rest, so scrubbing either direction always settles. The
-      exploded layout is seeded, identical for every visitor. Reduced motion gets the finished
-      drawing and the story as stills.
-    </p>
+    {copy.colophon.map((para) => (
+      <p>{para}</p>
+    ))}
   </div>
 
-  <a class="back-link" href="/lab/">Back to Lab</a>
+  <a class="back-link" href="/lab/">{copy.backLink}</a>
 </Base>
 
 <script>

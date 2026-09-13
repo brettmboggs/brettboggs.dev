@@ -1,0 +1,46 @@
+{
+  "title": "Slumbio · Sleep sound, made as it plays",
+  "description": "An iPhone sleep app. Thirty-five sounds, and most of them are generated as they play, so they never repeat.",
+  "eyebrow": "iPhone",
+  "heading": "Slumbio",
+  "lede": "Sound that is made as it plays, breathing you can see, and one button from the couch to the sleep timer.",
+  "intro": "Most sleep apps play a recording on a loop. Given long enough you start hearing the seam, and once you have heard it you cannot stop hearing it.\n\nSlumbio has thirty-five sounds and thirty-three of them are built as they play, from noise and filters, one frame at a time. Rain that never falls the same way twice. A fire that crackles when it feels like it. Wind that gusts and settles on its own schedule. There is no loop, because there is no recording to loop. Two of the sounds are pre-rendered files and those two do repeat; they are labelled.\n\nLayer up to six at once. Each has a level and two controls that reach into the sound itself, so a light rain becomes a downpour and a room becomes a bigger room.",
+  "shots": [
+    {
+      "image": "/slumbio/shot-tonight.webp",
+      "alt": "The Tonight screen: a mix called Long Rain, a play button, the wind-down routine and a note on sleep."
+    },
+    {
+      "image": "/slumbio/shot-sounds.webp",
+      "alt": "The Sounds screen: two sounds playing and layered, with the rest of the library below."
+    },
+    {
+      "image": "/slumbio/shot-breathe.webp",
+      "alt": "The Breathe screen: six breathing patterns and a session length."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Breathing you can see",
+      "body": "A soft body of light sits behind every screen. In a breathing session it is the instruction: the screen fills on the inhale and empties on the exhale, with a tap at each turn and a breath sound underneath. Six patterns, two to fifteen minutes, and a session always ends at the end of a cycle rather than mid-breath."
+    },
+    {
+      "heading": "Nothing leaves the phone",
+      "body": "No account, no server, no analytics, no tracking. There is no network code in the app at all, which is why the App Store privacy label reads Data Not Collected. The sleep journal, the mixes and the settings live on the device and nowhere else."
+    },
+    {
+      "heading": "Free, and meant to stay usable",
+      "body": "Twelve sounds, two layers, two breathing patterns, the sleep timer, bedside mode and every note are free for good. Plus adds the rest."
+    }
+  ],
+  "cta": {
+    "text": "Get Slumbio on the App Store",
+    "url": "https://apps.apple.com/app/id6808987732"
+  },
+  "fine": "Something wrong, or an idea? Write to [support@brettboggs.dev](mailto:support@brettboggs.dev). I read all of it.",
+  "links": [
+    { "text": "Privacy", "url": "/slumbio/privacy/" },
+    { "text": "Terms", "url": "/slumbio/terms/" }
+  ],
+  "backLink": "← Home"
+}

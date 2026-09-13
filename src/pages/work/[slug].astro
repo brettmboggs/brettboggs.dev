@@ -15,7 +15,7 @@ const { Content } = await render(entry);
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 ---
 
-<Base title={`${entry.data.title} · Brett Boggs`} description={entry.data.description}>
+<Base title={`${entry.data.title} · Brett Boggs`} description={entry.data.description} edit={`work/${entry.id}`}>
   <article>
     <header class="page-head">
       <p class="eyebrow">Work · {fmt(entry.data.date)}</p>

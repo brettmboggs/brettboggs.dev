@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import copy from '../../data/copy/store-checkout.json';
+import { inline } from '../../data/copy';
 
 const STORE_API =
   import.meta.env.PUBLIC_STORE_API ?? 'https://brettboggs-store.brettmboggs.workers.dev';
@@ -28,27 +30,23 @@ const csp = [
 ].join('; ');
 ---
 
-<Base title="Checkout · Brett Boggs" description="Checkout." noindex={true} puck={false} noServiceWorker={true}>
+<Base title={copy.title} description={copy.description} noindex={true} puck={false} noServiceWorker={true}>
   <meta slot="head" http-equiv="Content-Security-Policy" content={csp} />
   <script slot="head" is:inline src="https://js.stripe.com/v3/"></script>
 
   <header class="page-head">
-    <p class="eyebrow">Store</p>
-    <h1>Checkout</h1>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
   </header>
 
-  <div id="unavailable" class="empty-note" hidden>
-    Checkout is not configured yet.
-  </div>
+  <div id="unavailable" class="empty-note" hidden>{copy.unavailable}</div>
 
-  <div id="empty" class="empty-note" hidden>
-    Nothing in the cart. <a href="/store/">Back to the store</a>.
-  </div>
+  <div id="empty" class="empty-note" hidden set:html={inline(copy.empty)} />
 
   <form id="checkout" class="checkout" hidden novalidate>
     <!-- 1. What is being bought, priced by the server, not by this page. -->
     <section class="panel" aria-labelledby="h-order">
-      <h2 class="panel-title" id="h-order"><span class="panel-num">01</span> Order</h2>
+      <h2 class="panel-title" id="h-order"><span class="panel-num">01</span> {copy.orderHeading}</h2>
       <ul class="lines" id="lines"></ul>
       <dl class="totals" id="totals"></dl>
     </section>
@@ -56,10 +54,10 @@ const csp = [
     <!-- 2. Where it goes. Every field carries the autocomplete token the
          browser expects, so a saved address fills the whole block at once. -->
     <section class="panel" aria-labelledby="h-details">
-      <h2 class="panel-title" id="h-details"><span class="panel-num">02</span> Details</h2>
+      <h2 class="panel-title" id="h-details"><span class="panel-num">02</span> {copy.detailsHeading}</h2>
 
       <div class="field">
-        <label for="email">Email</label>
+        <label for="email">{copy.emailLabel}</label>
         <input
           id="email"
           name="email"
@@ -68,21 +66,21 @@ const csp = [
           inputmode="email"
           spellcheck="false"
           required
-          placeholder="you@example.com"
+          placeholder={copy.emailPlaceholder}
         />
-        <p class="hint">Your receipt and any download links go here.</p>
+        <p class="hint">{copy.emailHint}</p>
       </div>
 
       <fieldset class="ship" id="ship" hidden>
-        <legend>Shipping</legend>
+        <legend>{copy.shippingLegend}</legend>
 
         <div class="field">
-          <label for="ship-name">Name</label>
+          <label for="ship-name">{copy.nameLabel}</label>
           <input id="ship-name" name="name" type="text" autocomplete="shipping name" required />
         </div>
 
         <div class="field">
-          <label for="ship-line1">Address</label>
+          <label for="ship-line1">{copy.addressLabel}</label>
           <input
             id="ship-line1"
             name="line1"
@@ -93,13 +91,13 @@ const csp = [
         </div>
 
         <div class="field">
-          <label for="ship-line2">Apartment, suite, etc. <span class="opt">optional</span></label>
+          <label for="ship-line2">{copy.address2Label} <span class="opt">{copy.optional}</span></label>
           <input id="ship-line2" name="line2" type="text" autocomplete="shipping address-line2" />
         </div>
 
         <div class="field-row">
           <div class="field">
-            <label for="ship-city">City</label>
+            <label for="ship-city">{copy.cityLabel}</label>
             <input
               id="ship-city"
               name="city"
@@ -109,7 +107,7 @@ const csp = [
             />
           </div>
           <div class="field">
-            <label for="ship-state">State</label>
+            <label for="ship-state">{copy.stateLabel}</label>
             <input
               id="ship-state"
               name="state"
@@ -119,7 +117,7 @@ const csp = [
             />
           </div>
           <div class="field">
-            <label for="ship-postal">ZIP</label>
+            <label for="ship-postal">{copy.zipLabel}</label>
             <input
               id="ship-postal"
               name="postal_code"
@@ -138,24 +136,22 @@ const csp = [
     <!-- 3. Card fields. This is Stripe's iframe. The number never reaches this
          page, this origin, or the Worker. -->
     <section class="panel" aria-labelledby="h-pay">
-      <h2 class="panel-title" id="h-pay"><span class="panel-num">03</span> Payment</h2>
+      <h2 class="panel-title" id="h-pay"><span class="panel-num">03</span> {copy.paymentHeading}</h2>
       <div id="payment-element" class="payment-slot">
-        <p class="hint" id="payment-placeholder">Fill in your details and the card fields appear.</p>
+        <p class="hint" id="payment-placeholder">{copy.paymentPlaceholder}</p>
       </div>
     </section>
 
     <p class="err" id="err" role="alert" hidden></p>
 
     <button class="pay" id="pay" type="submit" disabled>
-      <span id="pay-label">Enter your details</span>
+      <span id="pay-label">{copy.payButton}</span>
     </button>
 
-    <p class="fineprint">
-      Card details go straight to Stripe. They never touch this site.
-    </p>
+    <p class="fineprint">{copy.fineprint}</p>
   </form>
 
-  <a class="back-link" href="/store/">&larr; Store</a>
+  <a class="back-link" href="/store/">{copy.backLink}</a>
 </Base>
 
 <!-- The order lines and totals rows are built in JS, so they never receive

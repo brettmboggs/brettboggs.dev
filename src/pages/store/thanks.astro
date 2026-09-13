@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import copy from '../../data/copy/store-thanks.json';
 
 // This page reports, it does not decide. Stripe sends the buyer here after a
 // payment attempt, and the outcome is read back from the PaymentIntent rather
@@ -7,18 +8,18 @@ import Base from '../../layouts/Base.astro';
 // the webhook's job and has very likely already run by the time this loads.
 ---
 
-<Base title="Thank you · Brett Boggs" description="Order received." noindex={true} puck={false} noServiceWorker={true}>
+<Base title={copy.title} description={copy.description} noindex={true} puck={false} noServiceWorker={true} edit="pages/store-thanks">
   <script slot="head" is:inline src="https://js.stripe.com/v3/"></script>
 
   <header class="page-head">
-    <p class="eyebrow">Store</p>
-    <h1 id="headline">Checking</h1>
-    <p class="lede" id="detail">One moment.</p>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1 id="headline">{copy.headline}</h1>
+    <p class="lede" id="detail">{copy.detail}</p>
   </header>
 
   <p class="next" id="next" hidden></p>
 
-  <a class="back-link" href="/store/">&larr; Store</a>
+  <a class="back-link" href="/store/">{copy.backLink}</a>
 </Base>
 
 <style>
@@ -33,6 +34,7 @@ import Base from '../../layouts/Base.astro';
 
 <script>
   import { clearCart, STRIPE_PK } from '../../scripts/store';
+  import copy from '../../data/copy/store-thanks.json';
 
   const headline = document.getElementById('headline')!;
   const detail = document.getElementById('detail')!;
@@ -51,9 +53,9 @@ import Base from '../../layouts/Base.astro';
   const secret = new URLSearchParams(window.location.search).get('payment_intent_client_secret');
 
   if (!secret) {
-    say('Nothing to show', 'This page is where Stripe sends you after a payment.');
+    say(copy.noSecret.title, copy.noSecret.body);
   } else if (!pk || !(window as any).Stripe) {
-    say('Order received', 'Your receipt is on its way by email.');
+    say(copy.received.title, copy.received.body);
   } else {
     (window as any)
       .Stripe(pk)
@@ -62,31 +64,19 @@ import Base from '../../layouts/Base.astro';
         switch (paymentIntent?.status) {
           case 'succeeded':
             clearCart();
-            say(
-              'Thank you',
-              'The payment went through and the order is in.',
-              'Stripe has emailed your receipt. Anything printed is sent to the printer automatically, and download links follow by email.',
-            );
+            say(copy.succeeded.title, copy.succeeded.body, copy.succeeded.footer);
             break;
           case 'processing':
             clearCart();
-            say(
-              'Payment processing',
-              'Your bank is still working on it. Nothing more is needed from you.',
-              'You will get an email once it settles.',
-            );
+            say(copy.processing.title, copy.processing.body, copy.processing.footer);
             break;
           case 'requires_payment_method':
-            say(
-              'Payment not completed',
-              'The card was not charged. Nothing has been sent.',
-              'You can try again from the store with the same cart.',
-            );
+            say(copy.failed.title, copy.failed.body, copy.failed.footer);
             break;
           default:
-            say('Order received', 'Your receipt is on its way by email.');
+            say(copy.received.title, copy.received.body);
         }
       })
-      .catch(() => say('Order received', 'Your receipt is on its way by email.'));
+      .catch(() => say(copy.received.title, copy.received.body));
   }
 </script>

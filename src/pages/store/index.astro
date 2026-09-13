@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import copy from '../../data/copy/store.json';
 
 // The shelf, led by the pictures.
 //
@@ -12,19 +13,17 @@ import Base from '../../layouts/Base.astro';
 // never says where a picture lives, and the site never says what one costs.
 ---
 
-<Base title="Store · Brett Boggs" description="Prints and files." noindex={true}>
+<Base title={copy.title} description={copy.description} noindex={true} edit="pages/store">
   <header class="page-head">
-    <p class="eyebrow">Store</p>
-    <h1>Store</h1>
-    <p class="lede">
-      Printed to order on heavyweight matte art paper. Free shipping in the United States.
-    </p>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
   </header>
 
   <p class="notice" id="notice" hidden></p>
 
   <div id="shelf" class="shelf" aria-live="polite" aria-busy="true">
-    <p class="empty-note">Loading the shelf.</p>
+    <p class="empty-note">{copy.loading}</p>
   </div>
 
   <aside class="till" id="till" hidden>
@@ -32,10 +31,10 @@ import Base from '../../layouts/Base.astro';
       <p class="till-count" id="till-count"></p>
       <p class="till-total" id="till-total"></p>
     </div>
-    <a class="till-go" href="/store/checkout/">Checkout</a>
+    <a class="till-go" href="/store/checkout/">{copy.checkout}</a>
   </aside>
 
-  <a class="back-link" href="/">&larr; Home</a>
+  <a class="back-link" href="/">{copy.backLink}</a>
 </Base>
 
 <!-- Global, not scoped, and namespaced under #shelf / #till instead. Rows are
@@ -330,6 +329,7 @@ import Base from '../../layouts/Base.astro';
 <script>
   import { fetchCatalog, readCart, setQty, cartCount, money, mediaUrl, STORE_API, type Product } from '../../scripts/store';
   import { scaleFigure } from '../../scripts/scaleFigure';
+  import copy from '../../data/copy/store.json';
 
   const shelf = document.getElementById('shelf')!;
   const till = document.getElementById('till')!;
@@ -379,7 +379,11 @@ import Base from '../../layouts/Base.astro';
   function buildShelf() {
     const groups = group(products);
     if (groups.length === 0) {
-      shelf.innerHTML = '<p class="empty-note">Nothing on the shelf yet.</p>';
+      shelf.innerHTML = '';
+      const none = document.createElement('p');
+      none.className = 'empty-note';
+      none.textContent = copy.emptyShelf;
+      shelf.appendChild(none);
       shelf.setAttribute('aria-busy', 'false');
       return;
     }
@@ -405,7 +409,7 @@ import Base from '../../layouts/Base.astro';
         // image, so adding one later does not reflow the page.
         img.addEventListener('error', () => {
           fig.classList.add('is-empty');
-          fig.dataset.note = 'picture to come';
+          fig.dataset.note = copy.pictureToCome;
           img.remove();
         });
         fig.appendChild(img);
@@ -501,7 +505,7 @@ import Base from '../../layouts/Base.astro';
       const add = document.createElement('button');
       add.type = 'button';
       add.className = 'item-add';
-      add.textContent = 'Add';
+      add.textContent = copy.add;
       add.addEventListener('click', () => change(1));
       action.appendChild(add);
     }
@@ -541,8 +545,7 @@ import Base from '../../layouts/Base.astro';
     .then((h) => {
       if (h.mode === 'test') {
         const notice = document.getElementById('notice')!;
-        notice.textContent =
-          'The store is not open yet. Everything here works, but payments run in test mode, so a real card will be declined and nothing will be printed or posted.';
+        notice.textContent = copy.testNotice;
         notice.hidden = false;
       }
     })
@@ -562,7 +565,11 @@ import Base from '../../layouts/Base.astro';
       buildShelf();
     })
     .catch(() => {
-      shelf.innerHTML = '<p class="empty-note">The shelf is not reachable right now.</p>';
+      shelf.innerHTML = '';
+      const down = document.createElement('p');
+      down.className = 'empty-note';
+      down.textContent = copy.unreachable;
+      shelf.appendChild(down);
       shelf.setAttribute('aria-busy', 'false');
     });
 </script>

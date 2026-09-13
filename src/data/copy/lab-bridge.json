@@ -1,0 +1,74 @@
+{
+  "title": "The Bridge · Lab · Brett Boggs",
+  "description": "A cable-stayed bridge that builds itself as you scroll. Datum's first landing film.",
+  "eyebrow": "Lab · Jul 2026",
+  "heading": "The Bridge",
+  "lede": "A river crossing that surveys, drafts, builds, and lights up as you scroll. Datum’s first landing film.",
+  "screenReaderStory": "A night survey circles a glowing datum monument above a river valley. Blueprint lines draw a cable-stayed bridge in the air. Over a time-lapse day the field makes it real: pylons pour, deck segments hoist from the river, stay cables tension in. At dusk the lamps ignite, traffic crosses, and live project records pulse along the structure. Dawn blooms to white. Every build starts from a single point; Datum keeps every beam, dollar, and decision on one living record.",
+  "beats": [
+    {
+      "kicker": "Construction Intelligence",
+      "lines": [
+        "Every build starts",
+        "from a single point."
+      ]
+    },
+    {
+      "kicker": "Plan",
+      "lines": [
+        "First, it's lines on paper."
+      ]
+    },
+    {
+      "kicker": "Build",
+      "lines": [
+        "Then the field makes it real."
+      ]
+    },
+    {
+      "kicker": "Connect",
+      "lines": [
+        "Datum keeps every beam, dollar,",
+        "and decision on one living record."
+      ]
+    },
+    {
+      "kicker": "Datum",
+      "lines": [
+        "One company. One record."
+      ]
+    }
+  ],
+  "chips": [
+    {
+      "label": "Daily report filed",
+      "meta": "Crew 12 · 5:58 AM"
+    },
+    {
+      "label": "RFI #214 answered",
+      "meta": "Ball in court · 2h"
+    },
+    {
+      "label": "Deck pour scheduled",
+      "meta": "Span B3 · Thursday"
+    },
+    {
+      "label": "Pay app #7 approved",
+      "meta": "$1.2M released"
+    }
+  ],
+  "wordmark": "Datum",
+  "scrollHint": "Scroll",
+  "skipButton": "Skip film",
+  "fallbackKicker": "Construction Intelligence",
+  "fallbackLines": [
+    "Every build starts",
+    "from a single point."
+  ],
+  "fallbackNote": "The film needs WebGL2 and motion. This browser gets the title card instead.",
+  "colophon": [
+    "This was the very first opening film for datumci.com, v1 of what became a ten-version lineage. A night survey circles a glowing datum monument, blueprint lines draft a cable-stayed crossing in mid-air, and then a time-lapse day builds it for real: pylons slip-form upward, deck segments hoist off the river on lift lines, stay cables tension in, tower cranes work and dissolve. At dusk the lamps ignite and live project records pulse along the structure; dawn blooms to white. It lasted two days on the landing before the standing rule arrived that shaped every version after it: nothing literal, no construction imagery. The drafting film next door died on the same rule a few versions later.",
+    "Pure three.js, and every mesh and texture is procedural; nothing is downloaded. PBR materials under an image-based environment, an animated sun with soft shadows, planar water reflections, ACES tone mapping, bloom, depth of field, and a film grade of grain, vignette, and chromatic aberration. The whole scene is a deterministic function of scroll progress, so scrolling back up un-builds the bridge. Phones get a lighter tier; browsers without WebGL2, or with reduced motion set, get the title card."
+  ],
+  "backLink": "Back to Lab"
+}

@@ -1,0 +1,41 @@
+{
+  "title": "The Underground · Lab · Brett Boggs",
+  "description": "A six metre soil profile you descend by scrolling, rendered in Blender. Roots grow as you go.",
+  "eyebrow": "Lab · Aug 2026",
+  "heading": "The Underground",
+  "lede": "The Ridge looks at the grass. This is the same ground from the side, cut open six metres down to rock. Scroll and the roots grow with you.",
+  "intro": "A real soil profile has five horizons, and only the top one is ever visible. The rest is ordinary, universal and completely hidden, which seemed worth six metres of scroll.",
+  "bedNote": "Bedrock. Nothing grows through that.",
+  "profileHeading": "The profile",
+  "profileBody": "Nothing here is stylised. The colour arc is real reflectance: dry topsoil sits near 0.10 to 0.15 albedo, and mineral horizons get paler with depth because they carry less organic matter. An early pass used 0.06 for topsoil and the whole face went to mud.",
+  "horizons": [
+    { "key": "O", "name": "Litter", "depth": "0 to 6 cm", "note": "Leaf duff, not yet soil. The only horizon you ever see." },
+    { "key": "A", "name": "Topsoil", "depth": "6 to 56 cm", "note": "Dark umber. Organic matter mixed down into mineral grain." },
+    { "key": "B", "name": "Subsoil", "depth": "56 cm to 2.3 m", "note": "Red clay. Everything washed out of A has accumulated here." },
+    { "key": "C", "name": "Regolith", "depth": "2.3 to 4.7 m", "note": "Pale ochre. Parent rock, broken but not yet moved." },
+    { "key": "R", "name": "Bedrock", "depth": "below 4.7 m", "note": "Cool grey. Roots stop at 2.7 m, well short of it." }
+  ],
+  "sections": [
+    {
+      "heading": "Growth without a video",
+      "body": "Roots are not a frame sequence. Each root layer ships as a colour plate plus a data plate whose red channel holds the time that pixel was born, baked out of the growth simulation. The shader draws everything born before the current scroll depth and feathers the edge, so growth is continuous at any scroll speed, has no loop to seam, and costs two images instead of a film.\n\nThe data plate has to be read raw. It is written as non colour data, so the byte is the value. Letting the browser apply an sRGB decode bent the timeline badly enough that half the growth landed in the first fifth of the scroll."
+    },
+    {
+      "heading": "The lag is the trick",
+      "body": "Driving growth straight off scroll position pins the growing front to one line of the screen, because birth time is depth and the wall scrolls exactly one metre per tile. Nothing ever changes where you are looking. Chasing the target instead of matching it means every scroll leaves the tips behind and you watch them catch up."
+    },
+    {
+      "heading": "What moves, and what does not",
+      "body": "There are no worms. Roots, mycelium, water and rock only, which leaves very little honest movement in a static face. Roots growing works because roots grow. Loose crumbs work because you are the disturbance: they spawn against scroll distance, live in document coordinates so they fall down the wall they came out of, and land under real gravity.\n\nMoisture does not move, deliberately. Four attempts at animating the damp patches, drifting sheen, per patch pulse, specular glint, all read as a film laid over the wall rather than as wet ground, and none of them were perceptible to the person looking. A ten second moisture pulse was invented. The patches are baked into the plates and stay put."
+    },
+    {
+      "heading": "Light",
+      "body": "One number does the lighting. The cut is a slot 1.6 m wide with camera invisible blockers, so the open sky above is the only source. Sky visibility falls with the width of that opening, which is what makes the descent go dark on its own, and 1.6 m puts the shadow line about a third of the way down."
+    },
+    {
+      "heading": "Still open",
+      "body": "Roots stop at 2.7 m, so the bottom two tiles carry nothing but rock and are the least interesting scroll on the page. Mycelium is one tile where it should probably be three. The wall is a single column, so a wide monitor gets a tall thin strip of soil with a lot of paper either side."
+    }
+  ],
+  "backLink": "Back to Lab"
+}

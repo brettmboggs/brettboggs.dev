@@ -1,0 +1,13 @@
+{
+  "title": "Log · Brett Boggs",
+  "description": "Every commit to this site, one line each, read out of git at build time.",
+  "eyebrow": "Log",
+  "heading": "The build log.",
+  "lede": "Every commit to this site, one line each, written as the work landed and read straight out of git when the site is built. Nothing here is fetched, and nothing is tidied afterwards.",
+  "commits": "commits",
+  "days": "days",
+  "since": "since",
+  "source": "source",
+  "empty": "The log could not be read at build time.",
+  "backLink": "← Home"
+}

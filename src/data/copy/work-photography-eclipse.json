@@ -1,0 +1,61 @@
+{
+  "title": "The Copper Hour · Brett Boggs",
+  "description": "The moon going into the earth's shadow on 27 August 2026, and two aeroplanes that crossed it.",
+  "eyebrow": "Photography · 27 August 2026",
+  "heading": "The Copper Hour",
+  "lede": "The moon going into the earth's shadow, and two aeroplanes that crossed it on the way.",
+  "transit": {
+    "time": "22:42:06",
+    "viewerNote": "An airliner across the bright edge",
+    "openLabel": "Open the airliner transit at full size",
+    "alt": "An airliner in silhouette against the bright edge of a partly eclipsed copper moon, its navigation lights showing as red and white dashes above.",
+    "caption": "An airliner crossing the bright edge. The wings and tail come through as a black outline against the last of the direct sun, and its navigation lights sit just above, red on one side and white on the other."
+  },
+  "arc": {
+    "heading": "The arc",
+    "toggleLabel": "Arc brightness",
+    "evenButton": "Evened out",
+    "trueButton": "As it looked",
+    "evenTitle": "The arc, evened out",
+    "trueTitle": "The arc, as it looked",
+    "time": "21:40 to 23:10",
+    "openLabel": "Open the progression arc at full size",
+    "alt": "Twenty one moons in a shallow arc, running from a full white moon on the left through a shadow crossing the disc to a deep copper moon on the right.",
+    "evenCaption": "Twenty one moons in a row, left to right. It starts full and white, the shadow comes in from the lower left, and by the right hand end the disc is copper with only a thin bright edge left along the top. Drag it sideways.",
+    "trueCaption": "The same twenty one moons with the brightness left where it was. The white moon at the start is the brightest thing in the row by a long way, and the copper ones at the end really are that dark."
+  },
+  "stages": {
+    "heading": "Twenty one moons",
+    "hint": "Every stage on its own. Click any of them.",
+    "phases": {
+      "full": "full and white, before the shadow",
+      "bite": "a bite taken out of one limb",
+      "half": "the shadow across half the disc",
+      "most": "most of the disc copper, a bright rind left",
+      "nearly": "nearly all copper, a thin sunlit edge at the top"
+    }
+  },
+  "ring": {
+    "time": "22:44",
+    "viewerNote": "The bright rim and the shadowed disc",
+    "openLabel": "Open the eclipse ring at full size",
+    "alt": "The partly eclipsed moon with a brilliant white and gold rim along the upper right edge and the rest of the disc a dim copper, with maria visible through the shadow.",
+    "caption": "A white and gold rim along the top right edge, and the rest of the moon a dim copper. The dark maria still show through the shadowed part."
+  },
+  "trackA": {
+    "time": "22:42",
+    "viewerNote": "The pass that went across",
+    "openLabel": "Open the 22:42 aircraft track at full size",
+    "alt": "A copper eclipsed moon with a diagonal trail of red and white aircraft navigation lights running up across it from lower left to upper right.",
+    "caption": "The same aircraft as the first picture, with its lights laid out across the whole pass. It comes in from the lower left and goes straight over the top of the moon."
+  },
+  "trackB": {
+    "time": "22:36",
+    "viewerNote": "The pass that missed",
+    "openLabel": "Open the 22:36 aircraft track at full size",
+    "alt": "The same eclipsed moon lower in the frame, with a line of coloured navigation lights arcing above and to the left of it.",
+    "caption": "An earlier one, six minutes before, that went over the top left and never touched the moon. Its lights arc away to the upper right."
+  },
+  "credit": "Canon EOS R6, RF 70-200mm f/2.8. 27 August 2026.",
+  "backLink": "All photography"
+}

@@ -1,116 +1,76 @@
 ---
 import Base from '../../layouts/Base.astro';
+import copy from '../../data/copy/lab-trra.json';
+import { md } from '../../data/copy';
 
-const systems = [
-  { key: '', label: 'All' },
-  { key: 'steel', label: 'Steel' },
-  { key: 'concrete', label: 'Concrete' },
-  { key: 'panel', label: 'MSE panels' },
-  { key: 'ballast', label: 'Ballast' },
-  { key: 'rail', label: 'Rail' },
-  { key: 'tie', label: 'Ties' },
-];
-
-const progression = [
-  {
-    src: '/lab/trra/prog-clay.webp',
-    alt: 'The same wide frame with untextured grey and green geometry.',
-    step: '01',
-    note: 'Geometry only. Ground cover, roads and buildings pulled from the map, still flat colour.',
-  },
-  {
-    src: '/lab/trra/prog-ortho.webp',
-    alt: 'The same frame with aerial photography draped over a single continuous terrain.',
-    step: '02',
-    note: 'One continuous terrain, public domain USGS aerial draped on it by world position.',
-  },
-  {
-    src: '/lab/trra/prog-final.webp',
-    alt: 'The same frame with vegetation, warm morning light and finished materials.',
-    step: '03',
-    note: 'Real vegetation, building facades, mid morning sun at 40 degrees.',
-  },
-];
+const v = copy.viewer;
 ---
 
 <Base
-  title="The MacArthur · Lab · Brett Boggs"
-  description="A rail bridge approach in St. Louis, rebuilt to scale from public data so a job could be shown instead of described."
-  ogImage="/lab/trra/hero-1200.webp"
+  title={copy.title}
+  description={copy.description}
+  ogImage={copy.ogImage}
+  edit="lab-pages/lab-trra"
 >
   <article>
     <header class="page-head">
-      <p class="eyebrow">Lab · Sep 2026</p>
-      <h1>The MacArthur</h1>
-      <p class="lede">
-        A retaining wall and bridge approach on the Terminal Railroad's MacArthur crossing, built to
-        scale inside a copy of the site.
-      </p>
+      <p class="eyebrow">{copy.eyebrow}</p>
+      <h1>{copy.heading}</h1>
+      <p class="lede">{copy.lede}</p>
     </header>
 
     <figure class="shot">
       <img
-        src="/lab/trra/hero.webp"
-        alt="The precast retaining wall and the double track on it running away toward the downtown St. Louis skyline, the truss bridge and the river on the left."
+        src={copy.hero.image}
+        alt={copy.hero.alt}
         width="1920"
         height="1033"
         loading="eager"
         fetchpriority="high"
       />
-      <figcaption>Off the west end of the truss, along the top of the wall, downtown ahead.</figcaption>
+      <figcaption>{copy.hero.caption}</figcaption>
     </figure>
 
-    <div class="prose">
-      <p>
-        My brother had a job to price. Plans describe what gets built. They are not much use for
-        showing someone what it is. So the site got rebuilt: the river, the floodplain, the bridge,
-        the yard, downtown, all of it to scale, with the job standing in the middle of it.
-      </p>
-      <p>
-        Nothing here is invented. Alignments, roads, buildings and tree cover come from OpenStreetMap,
-        the ground photography from the USGS National Map, which is public domain. Where the drawings
-        and the map disagreed, the drawings won and the difference got written down.
-      </p>
-    </div>
+    <div class="prose" set:html={md(copy.intro)} />
 
-    <section class="viewer" aria-label="Interactive model">
+    <section class="viewer" aria-label={v.ariaLabel}>
       <div class="viewer-head">
-        <h2>The model</h2>
-        <p class="viewer-hint"><span class="hint-pointer">Drag to orbit. Right drag to pan. Scroll to zoom.</span><span class="hint-touch">One finger orbits. Two pan and pinch.</span></p>
+        <h2>{v.heading}</h2>
+        <p class="viewer-hint"><span class="hint-pointer">{v.hintPointer}</span><span class="hint-touch">{v.hintTouch}</span></p>
       </div>
 
       <div class="stage">
         <canvas id="trra-canvas"></canvas>
-        <p class="stage-note" id="trra-status">Loading</p>
+        <p class="stage-note" id="trra-status">{v.loading}</p>
       </div>
 
       <div class="controls">
-        <div class="control-group" role="group" aria-label="Extent">
-          <span class="control-label">Extent</span>
+        <div class="control-group" role="group" aria-label={v.extentLabel}>
+          <span class="control-label">{v.extentLabel}</span>
           <div class="control-row" id="trra-extent">
-            <button type="button" data-url="/lab/trra/job.glb" class="is-on">Job scope</button>
-            <button type="button" data-url="/lab/trra/network.glb">Full network</button>
+            <button type="button" data-url="/lab/trra/job.glb" class="is-on">{v.extentJob}</button>
+            <button type="button" data-url="/lab/trra/network.glb">{v.extentNetwork}</button>
           </div>
         </div>
-        <div class="control-group" role="group" aria-label="Ground">
-          <span class="control-label">Ground</span>
+        <div class="control-group" role="group" aria-label={v.groundLabel}>
+          <span class="control-label">{v.groundLabel}</span>
           <div class="control-row" id="trra-ground">
-            <button type="button" data-ground="off" class="is-on">Off</button>
-            <button type="button" data-ground="on">World</button>
+            <button type="button" data-ground="off" class="is-on">{v.groundOff}</button>
+            <button type="button" data-ground="on">{v.groundOn}</button>
           </div>
         </div>
         <div class="control-group">
-          <span class="control-label">View</span>
+          <span class="control-label">{v.viewLabel}</span>
           <div class="control-row">
-            <button type="button" id="trra-recenter">Recenter</button>
-            <button type="button" id="trra-fullscreen" hidden>Fullscreen</button>
+            <button type="button" id="trra-recenter">{v.recenter}</button>
+            <button type="button" id="trra-fullscreen" hidden>{v.fullscreen}</button>
           </div>
         </div>
-        <div class="control-group" role="group" aria-label="System">
-          <span class="control-label">System</span>
+        <div class="control-group" role="group" aria-label={v.systemLabel}>
+          <span class="control-label">{v.systemLabel}</span>
           <div class="control-row" id="trra-systems">
             {
-              systems.map((s) => (
+              v.systems.map((s) => (
                 <button type="button" data-system={s.key} class={s.key === '' ? 'is-on' : ''}>
                   {s.label}
                 </button>
@@ -120,32 +80,19 @@ const progression = [
         </div>
       </div>
 
-      <p class="viewer-caption">
-        Six meshes, one per material system, exported from the same file the renders come out of.
-        Isolating a system is the question anyone actually asks in front of a render. The eight
-        thousand bolts and the rivets are left out of this copy: they are a million triangles that
-        nobody can see at this distance. Turning the ground on brings in the rest of the scene: the
-        terrain, downtown and the built context as real geometry, with the ground itself carrying a
-        Cycles render of the world shot straight down, trees and all. That is another megabyte, so
-        it is only fetched if you ask for it.
-      </p>
+      <p class="viewer-caption">{v.caption}</p>
     </section>
 
     <div class="prose">
-      <h2>Where this is</h2>
-      <p>
-        The scene sits on a validated transform between the model and the real world. Feeding the
-        anchors through it lands the Gateway Arch within 19 m of its published position and Busch
-        Stadium within 8 m, which is inside the accuracy of the aerial itself. So the job can be
-        drawn straight onto the photograph rather than pointed at.
-      </p>
+      <h2>{copy.whereHeading}</h2>
+      <Fragment set:html={md(copy.whereBody)} />
     </div>
 
     <figure class="locator">
       <div class="locator-frame">
         <img
-          src="/lab/trra/locator.webp"
-          alt="Aerial photograph of the Mississippi at St. Louis with the MacArthur crossing marked, the Gateway Arch and Busch Stadium labelled for orientation."
+          src={copy.locator.image}
+          alt={copy.locator.alt}
           width="1400"
           height="1400"
           loading="lazy"
@@ -155,115 +102,87 @@ const progression = [
           <line class="job" x1="388.2" y1="504.4" x2="592.0" y2="574.5" />
           <circle class="pin" cx="592.0" cy="574.5" r="9" />
           <circle class="dot" cx="459.5" cy="171.4" r="5" />
-          <text class="tag" x="474" y="176">Gateway Arch</text>
+          <text class="tag" x="474" y="176">{copy.locator.archLabel}</text>
           <circle class="dot" cx="228.3" cy="248.0" r="5" />
-          <text class="tag" x="243" y="253">Busch Stadium</text>
+          <text class="tag" x="243" y="253">{copy.locator.stadiumLabel}</text>
           <line class="rule" x1="60" y1="946" x2="228.4" y2="946" />
-          <text class="tag" x="60" y="932">500 m</text>
+          <text class="tag" x="60" y="932">{copy.locator.scaleLabel}</text>
           <line class="rule" x1="946" y1="946" x2="946" y2="898" />
-          <text class="tag" x="939" y="884">N</text>
+          <text class="tag" x="939" y="884">{copy.locator.northLabel}</text>
         </svg>
       </div>
-      <figcaption>
-        Bridge and wall in sienna, the rebuilt Illinois approach in ochre. Base imagery USGS National
-        Map, public domain, 1.45 m per pixel.
-      </figcaption>
+      <figcaption>{copy.locator.caption}</figcaption>
     </figure>
 
     <div class="prose">
-      <h2>The wall</h2>
-      <p>
-        3,380 precast panels at five feet square, 19 mm joints, set 55 mm proud in running bond.
-        Courses are level on one datum across every face. Grade trims the bottom of the stack and the
-        coping closes the top, which is how the real thing goes up and the only way the joint lines
-        stay straight in a render.
-      </p>
+      <h2>{copy.wallHeading}</h2>
+      <Fragment set:html={md(copy.wallBody)} />
     </div>
 
     <figure class="shot">
       <img
-        src="/lab/trra/wall.webp"
-        alt="The precast panel face of the retaining wall running to a limestone bridge pier, with the open deck approach carrying on behind it."
+        src={copy.wallPhoto.image}
+        alt={copy.wallPhoto.alt}
         width="1800"
         height="968"
         loading="lazy"
       />
-      <figcaption>The wall face into the limestone pier. Panel courses stay level across the whole run.</figcaption>
+      <figcaption>{copy.wallPhoto.caption}</figcaption>
     </figure>
 
     <div class="prose">
-      <h2>The bridge</h2>
-      <p>
-        The crossing started as an envelope and is now built off the sheets. The two new ballast
-        deck spans, the truss floor, the open deck approaches and the bents under them follow the
-        plan and steel drawings down to the bolted field splices at the third points of the
-        girders and the bent connection plates that hang each stringer off its floorbeam. Around
-        8,300 bolts are modelled as bolts. Where a detail is not on a drawing it is written down
-        as an assumption rather than quietly drawn.
-      </p>
-      <p>
-        Track came with it. Both mains now run dead straight off the east truss, every turnout and
-        crossover is a No. 12 on a 365 m curve, and the approaches carry open deck beyond the fill
-        the way the existing structure does.
-      </p>
+      <h2>{copy.bridgeHeading}</h2>
+      <Fragment set:html={md(copy.bridgeBody)} />
     </div>
 
     <figure class="shot">
       <img
-        src="/lab/trra/span.webp"
-        alt="Looking along the bridge deck from above the wall, both tracks converging through the turnout, the truss and downtown ahead."
+        src={copy.spanPhoto.image}
+        alt={copy.spanPhoto.alt}
         width="1600"
         height="861"
         loading="lazy"
       />
-      <figcaption>Off the end of the wall, through the turnout, onto the crossing.</figcaption>
+      <figcaption>{copy.spanPhoto.caption}</figcaption>
     </figure>
 
     <figure class="shot">
       <img
-        src="/lab/trra/deck.webp"
-        alt="Standing on the bridge deck between the truss verticals, two ballasted tracks running away between the walkways and handrails."
+        src={copy.deckPhoto.image}
+        alt={copy.deckPhoto.alt}
         width="1600"
         height="861"
         loading="lazy"
       />
-      <figcaption>Inside the truss. Stringers, curbs, walkway and rail sit where the steel sheets put them.</figcaption>
+      <figcaption>{copy.deckPhoto.caption}</figcaption>
     </figure>
 
     <div class="prose">
-      <h2>Track that would actually run</h2>
-      <p>
-        Every approach is one continuous swept mesh along a faired alignment, so stepping is
-        impossible by construction. The joints were checked with numbers rather than eyes. Worst gap
-        across the whole build is 5.27 mm, and the railhead never steps more than a tenth of a
-        millimetre. Grades stay under two percent and the tightest curve is 151 m.
-      </p>
+      <h2>{copy.trackHeading}</h2>
+      <Fragment set:html={md(copy.trackBody)} />
 
       <table>
         <thead>
-          <tr><th>Run</th><th>Length</th><th>Tightest R</th><th>Max grade</th></tr>
+          <tr><th>{copy.runsTable.headRun}</th><th>{copy.runsTable.headLength}</th><th>{copy.runsTable.headRadius}</th><th>{copy.runsTable.headGrade}</th></tr>
         </thead>
         <tbody>
-          <tr><td>Wye, Illinois</td><td>1,250 m</td><td>280 m</td><td>1.90%</td></tr>
-          <tr><td>Main east</td><td>1,274 m</td><td>straight</td><td>0.97%</td></tr>
-          <tr><td>West approach</td><td>997 m</td><td>151 m</td><td>1.50%</td></tr>
-          <tr><td>Missouri branch</td><td>800 m</td><td>502 m</td><td>1.80%</td></tr>
-          <tr><td>Illinois highway</td><td>1,633 m</td><td>297 m</td><td>0.66%</td></tr>
+          {
+            copy.runsTable.rows.map((r) => (
+              <tr><td>{r.run}</td><td>{r.length}</td><td>{r.radius}</td><td>{r.grade}</td></tr>
+            ))
+          }
         </tbody>
       </table>
 
-      <h2>Three passes at the same frame</h2>
-      <p>
-        Ground was the whole problem. Procedural tiles cannot hold up at 800 m because a three metre
-        tile is a few pixels. Real aerial photography on real terrain is what makes it read.
-      </p>
+      <h2>{copy.passesHeading}</h2>
+      <Fragment set:html={md(copy.passesBody)} />
     </div>
 
     <ol class="progression">
       {
-        progression.map((p) => (
+        copy.progression.map((p) => (
           <li>
-            <img src={p.src} alt={p.alt} width="1200" height="675" loading="lazy" />
+            <img src={p.image} alt={p.alt} width="1200" height="675" loading="lazy" />
             <div class="progression-note">
               <span class="progression-step">{p.step}</span>
               <span>{p.note}</span>
@@ -275,40 +194,32 @@ const progression = [
 
     <figure class="shot">
       <img
-        src="/lab/trra/yard.webp"
-        alt="The steel truss on the left, the retaining wall and its limestone pier in the middle, and the approach trestle running off through the floodplain trees."
+        src={copy.yardPhoto.image}
+        alt={copy.yardPhoto.alt}
         width="1600"
         height="861"
         loading="lazy"
       />
-      <figcaption>Truss, wall, trestle. Trees sit only inside real wood polygons, cleared off every road and track.</figcaption>
+      <figcaption>{copy.yardPhoto.caption}</figcaption>
     </figure>
 
     <div class="prose">
-      <h2>What is in the scene</h2>
+      <h2>{copy.sceneHeading}</h2>
       <table>
         <tbody>
-          <tr><td>Trees and scrub</td><td>12,185, scattered inside 194 ha of mapped wood</td></tr>
-          <tr><td>Buildings</td><td>2,629 footprints at surveyed height, tallest 192 m</td></tr>
-          <tr><td>Roads</td><td>1,609 polylines by class, plus 44 floodplain tracks</td></tr>
-          <tr><td>Terrain</td><td>One heightfield, 12 m grid, 131k vertices</td></tr>
-          <tr><td>Aerial</td><td>0.61 m per pixel over 5 km, 0.31 m over the job</td></tr>
-          <tr><td>Arch</td><td>The published weighted catenary. 630.0 ft, checked</td></tr>
-          <tr><td>Render</td><td>Cycles on GPU, 400 adaptive samples, 2560 by 1440</td></tr>
+          {
+            copy.sceneTable.map((r) => (
+              <tr><td>{r.item}</td><td>{r.detail}</td></tr>
+            ))
+          }
         </tbody>
       </table>
 
-      <h2>Still open</h2>
-      <p>
-        The wye bents are concrete columns where the original are braced lattice towers, so the styles
-        clash at that joint. Guardrails match the envelope of the original, not its post and rail
-        detail. The west approach is a clean arc that departs on the right tangent and lands on the
-        right point, but wanders up to 40 m off the traced line in between. None of it is job scope.
-        All of it is written down.
-      </p>
+      <h2>{copy.openHeading}</h2>
+      <Fragment set:html={md(copy.openBody)} />
     </div>
 
-    <a class="back-link" href="/lab/">Back to Lab</a>
+    <a class="back-link" href="/lab/">{copy.backLink}</a>
   </article>
 </Base>
 

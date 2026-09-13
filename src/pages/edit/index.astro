@@ -1,0 +1,22 @@
+---
+// The editor (Sveltia CMS). Every word on the site lives in src/content/work
+// or src/data/copy, and this edits those files by committing to the repo; the
+// deploy workflow publishes the change about a minute later. Configuration is
+// public/edit/config.yml. Setup and sign-in: docs/EDITOR.md.
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Edit · Brett Boggs</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="cms-config-url" type="application/yaml" href="/edit/config.yml" />
+    <!-- Pinned on purpose: an upstream release should never change the editor
+         under you. Bump deliberately, then check /edit/ still loads. -->
+    <script is:inline src="https://unpkg.com/@sveltia/cms@0.211.4/dist/sveltia-cms.js"></script>
+  </head>
+  <body></body>
+</html>

@@ -1,0 +1,65 @@
+---
+// A shortcut from the real page into the editor form behind it. It appears only
+// while an editor session exists in this browser: the editor is on the same
+// domain, so the page can see the session key. Only its presence is read, never
+// its value, which holds the GitHub token. Visitors see nothing, and nothing
+// here grants access.
+interface Props {
+  /** "pages/<file>" for page copy, "work/<id>" for a work entry */
+  target: string;
+}
+const [collection, entry] = Astro.props.target.split('/');
+const href = `/edit/#/collections/${collection}/entries/${entry}`;
+---
+
+<a class="edit-link" href={href} data-edit-link hidden>Edit</a>
+
+<style>
+  .edit-link {
+    position: fixed;
+    left: clamp(0.75rem, 2vw, 1.5rem);
+    bottom: clamp(0.75rem, 2vw, 1.5rem);
+    z-index: 60;
+    padding: 0.45rem 0.8rem;
+    background: var(--paper);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .edit-link[hidden] {
+    display: none !important;
+  }
+  .edit-link:hover,
+  .edit-link:focus-visible {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  @media print {
+    .edit-link {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  const SESSION_KEY = 'sveltia-cms.user';
+  const reveal = () => {
+    let signedIn = false;
+    try {
+      signedIn = localStorage.getItem(SESSION_KEY) !== null;
+    } catch {
+      return;
+    }
+    document.querySelectorAll<HTMLElement>('[data-edit-link]').forEach((el) => {
+      el.hidden = !signedIn;
+    });
+  };
+  reveal();
+  window.addEventListener('storage', reveal);
+  window.addEventListener('pageshow', reveal);
+  window.addEventListener('focus', reveal);
+</script>

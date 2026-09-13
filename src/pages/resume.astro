@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import resume from '../../public/resume.json';
+import copy from '../data/copy/resume.json';
+import { inline } from '../data/copy';
 
 // The resume, rendered from the same JSON Resume file that machines read at
 // /resume.json. One source; the page and the file cannot disagree. Print it
@@ -30,10 +32,10 @@ const updated = new Date(`${resume.meta.lastModified}T12:00:00Z`).toLocaleDateSt
 });
 ---
 
-<Base title="Resume · Brett Boggs" description={b.summary} puck={false}>
+<Base title={copy.title} description={b.summary} puck={false} edit="pages/resume">
   <article class="cv">
     <header class="page-head cv-head">
-      <p class="eyebrow">Resume</p>
+      <p class="eyebrow">{copy.eyebrow}</p>
       <h1>{b.name}</h1>
       <p class="lede">{b.label} · {city}</p>
       <ul class="cv-contact">
@@ -47,7 +49,7 @@ const updated = new Date(`${resume.meta.lastModified}T12:00:00Z`).toLocaleDateSt
     <p class="cv-summary">{b.summary}</p>
 
     <section class="cv-sec">
-      <h2>Work</h2>
+      <h2>{copy.workHeading}</h2>
       {
         resume.work.map((w) => (
           <div class="cv-item">
@@ -79,7 +81,7 @@ const updated = new Date(`${resume.meta.lastModified}T12:00:00Z`).toLocaleDateSt
 
     <div class="cv-cols">
       <section class="cv-sec">
-        <h2>Projects</h2>
+        <h2>{copy.projectsHeading}</h2>
         {
           resume.projects.map((p) => (
             <div class="cv-item">
@@ -97,7 +99,7 @@ const updated = new Date(`${resume.meta.lastModified}T12:00:00Z`).toLocaleDateSt
 
       <div class="cv-side">
         <section class="cv-sec">
-          <h2>Skills</h2>
+          <h2>{copy.skillsHeading}</h2>
           <dl class="cv-skills">
             {
               resume.skills.map((s) => (
@@ -111,7 +113,7 @@ const updated = new Date(`${resume.meta.lastModified}T12:00:00Z`).toLocaleDateSt
         </section>
 
         <section class="cv-sec">
-          <h2>Education</h2>
+          <h2>{copy.educationHeading}</h2>
           {
             resume.education.map((e) => (
               <div class="cv-item">
@@ -129,10 +131,8 @@ const updated = new Date(`${resume.meta.lastModified}T12:00:00Z`).toLocaleDateSt
     </div>
 
     <footer class="cv-foot">
-      <p class="cv-meta">
-        Updated {updated}. The same data as <a href="/resume.json">JSON Resume</a>.
-      </p>
-      <button class="cv-print" id="cv-print" type="button">Print, or save as PDF</button>
+      <p class="cv-meta" set:html={inline(copy.meta.replace('{date}', updated))} />
+      <button class="cv-print" id="cv-print" type="button">{copy.printButton}</button>
     </footer>
   </article>
 </Base>

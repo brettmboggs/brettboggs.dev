@@ -1,0 +1,87 @@
+{
+  "title": "Commercial · Brett Boggs",
+  "description": "Detailing, a car wash chain, and the people running them.",
+  "eyebrow": "Photography · 2021 to 2023",
+  "heading": "Commercial",
+  "lede": "Detailing, a car wash chain, and the people running them.",
+  "openLabel": "Open the picture at full size",
+  "hero": {
+    "image": "/photo/ked/estate.webp",
+    "alt": "A black G-Wagon on a brick drive before a stone estate, headlights on, pink sky behind."
+  },
+  "intro": "Knock Em Down details cars where they sit, in driveways instead of a shop. Tidal Wave runs tunnels. Both of them sell a finish, so the pictures have to make the finish look worth paying for.\n\nOn location either way, on their schedule, working around customers.",
+  "select1": {
+    "image": "/photo/ked/flare.webp",
+    "alt": "A white Panamera being rinsed into the low sun, spray hanging in the light."
+  },
+  "sheet1": {
+    "label": "Knock Em Down · 2021 to 2022",
+    "frames": [
+      {
+        "src": "/photo/ked/k01.webp",
+        "alt": "The front quarter of a Panamera under a thick coat of white foam."
+      },
+      {
+        "src": "/photo/ked/k02.webp",
+        "alt": "Foam running off a pair of polished exhaust tips."
+      },
+      {
+        "src": "/photo/ked/k03.webp",
+        "alt": "Hands working a red cloth over a yellow brake caliper."
+      },
+      {
+        "src": "/photo/ked/k04.webp",
+        "alt": "Water beading across a dark hood while the detailer rinses behind."
+      },
+      {
+        "src": "/photo/ked/k05.webp",
+        "alt": "A clean Panamera headlight, the lens catching an iridescent sheen."
+      },
+      {
+        "src": "/photo/ked/k06.webp",
+        "alt": "The grille and star of a finished G-Wagon against warm stone."
+      }
+    ]
+  },
+  "select2": {
+    "image": "/photo/tidal/sel.webp",
+    "alt": "A Bentley grille emerging from grey cloth brushes."
+  },
+  "sheet2": {
+    "label": "Tidal Wave Auto Spa · May 2023",
+    "frames": [
+      {
+        "src": "/photo/tidal/t01.webp",
+        "alt": "A car nosing through blue tunnel brushes, headlights lit."
+      },
+      {
+        "src": "/photo/tidal/t02.webp",
+        "alt": "A red pickup coming out of the wash tunnel into daylight."
+      },
+      {
+        "src": "/photo/tidal/t03.webp",
+        "alt": "Two staff drying a dark sedan by hand at the vacuum bays."
+      },
+      {
+        "src": "/photo/tidal/t04.webp",
+        "alt": "A staff portrait in the forecourt, sunglasses pushed up."
+      },
+      {
+        "src": "/photo/tidal/t05.webp",
+        "alt": "A Cadillac under grey cloth brushes mid wash."
+      },
+      {
+        "src": "/photo/tidal/t06.webp",
+        "alt": "An attendant towelling down the back of a Bentley."
+      }
+    ]
+  },
+  "siteNote": {
+    "before": "I also built and ran",
+    "linkText": "the Knock Em Down site",
+    "url": "https://www.kedservice.com",
+    "after": "."
+  },
+  "storeNote": "Prints of anything here are made to order in [the store](/store/).",
+  "backLink": "All photography"
+}

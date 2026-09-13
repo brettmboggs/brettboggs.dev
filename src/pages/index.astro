@@ -1,14 +1,15 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import copy from '../data/copy/home.json';
 
 const work = (await getCollection('work', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
-const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
+const workNote = work[0] ? `${copy.work.notePrefix}${work[0].data.title}` : copy.work.noteFallback;
 ---
 
-<Base title="Brett Boggs" description="Brett Boggs. Work and experiments." home>
+<Base title={copy.title} description={copy.description} home edit="pages/home">
   <section class="film full-bleed" id="film">
     <div class="film-stage" id="film-stage">
       <picture>
@@ -26,8 +27,8 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
     <canvas class="birds" id="birds" aria-hidden="true"></canvas>
 
     <div class="hero-copy" id="hero-copy">
-      <h1 class="hero-title">Walk through the&nbsp;work.</h1>
-      <p class="hero-id">Brett Boggs &middot; co-founder and full-stack engineer, Datum &middot; St.&nbsp;Louis</p>
+      <h1 class="hero-title">{copy.heroTitle}</h1>
+      <p class="hero-id">{copy.heroId}</p>
     </div>
 
     <!-- the station: the film's final movement plants a benchmark on the
@@ -49,21 +50,21 @@ const workNote = work[0] ? `latest · ${work[0].data.title}` : 'case studies';
       </svg>
     </div>
     <svg class="leaders" id="leaders" aria-hidden="true"></svg>
-    <nav class="plate" id="plate" aria-label="Site sections">
+    <nav class="plate" id="plate" aria-label={copy.navLabel}>
       <a class="anno" id="anno-work" href="/work/" data-scene="work">
         <span class="anno-num">01</span>
-        <span class="anno-title">Work</span>
+        <span class="anno-title">{copy.work.title}</span>
         <span class="anno-note">{workNote}</span>
       </a>
       <a class="anno" id="anno-lab" href="/lab/" data-scene="lab">
         <span class="anno-num">02</span>
-        <span class="anno-title">Lab</span>
-        <span class="anno-note">experiments</span>
+        <span class="anno-title">{copy.lab.title}</span>
+        <span class="anno-note">{copy.lab.note}</span>
       </a>
       <a class="anno" id="anno-about" href="/about/" data-scene="about">
         <span class="anno-num">03</span>
-        <span class="anno-title">About</span>
-        <span class="anno-note">who is behind it</span>
+        <span class="anno-title">{copy.about.title}</span>
+        <span class="anno-note">{copy.about.note}</span>
       </a>
     </nav>
 

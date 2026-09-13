@@ -1,0 +1,18 @@
+{
+  "title": "The Ridge · Lab · Brett Boggs",
+  "description": "A golden hour flyover, rendered in Blender and scrubbed by scroll.",
+  "eyebrow": "Lab · Aug 2026",
+  "heading": "The Ridge",
+  "lede": "The flyover on the front page. Built in Blender, scrubbed by scroll.",
+  "still": {
+    "image": "/lab/ridge/still.webp",
+    "alt": "A timber frame standing alone on a grass ridge at golden hour."
+  },
+  "body": "## Build\n\n192 frames of Cycles at 2560 by 1440. Terrain, grass and timber from Poly Haven CC0 sets, lit by a single golden hour HDRI. The camera holds one fixed aim point, so the structure sits in the centre of frame for the whole flight.\n\n## Frames, not video\n\nSafari will not scrub video smoothly, so the browser gets a WebP sequence on a canvas instead. 96 frames, loaded in four passes, every eighth first, so the shot can be scrubbed before it finishes arriving. Each frame is decoded ahead of the scroll position, because a first draw on an undecoded frame stalls the main thread.\n\n## Phones\n\nCover filling a 16:9 frame on a 9:19.5 screen scales to the height. That stretched a quarter of the frame by 3.45x, which looked like mush on any handset. The fixed aim point turned out to be the way out: with the subject always centred, a vertical crop of the master keeps the entire shot. Phones get their own tier, cut 664 by 1440 straight out of the 1440p render. It covers at 1.30x.",
+  "framing": {
+    "image": "/lab/ridge/framing.webp",
+    "alt": "The 16:9 master frame with the narrower vertical phone crop marked on it.",
+    "caption": "The phone tier is a crop of the master, not a resize."
+  },
+  "backLink": "Back to Lab"
+}

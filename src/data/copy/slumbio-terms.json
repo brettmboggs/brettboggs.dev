@@ -1,0 +1,39 @@
+{
+  "title": "Terms · Slumbio",
+  "description": "Terms of use for the Slumbio app.",
+  "eyebrow": "Slumbio · updated",
+  "updated": "September 2026",
+  "heading": "Terms",
+  "lede": "Short, because there is not much to say.",
+  "sections": [
+    {
+      "heading": "The app",
+      "body": "Slumbio is provided by Brett Boggs. Your download is governed by Apple's [standard licensed application end user license agreement](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/)."
+    },
+    {
+      "heading": "Not medical advice",
+      "body": "Slumbio plays sound, guides breathing and shares general notes on sleep. None of it is medical advice, diagnosis or treatment. If sleep has been a problem for weeks, or you have a heart or breathing condition, talk to a doctor before using breathing exercises. Do not use the app while driving or doing anything that needs your attention."
+    },
+    {
+      "heading": "Slumbio Plus",
+      "body": "Plus is available as a yearly subscription, a monthly subscription, or a one-time lifetime purchase, all through Apple's in-app purchase system at the prices shown in the app. Subscriptions renew automatically unless cancelled at least 24 hours before the end of the current period, and your Apple Account is charged for renewal within 24 hours before the period ends. The yearly plan may include a free introductory week; if you do not cancel before it ends, the subscription begins and you are charged. Manage or cancel any time in Settings › Apple Account › Subscriptions on your phone. Refunds are handled by Apple under Apple's policies."
+    },
+    {
+      "heading": "Alarms",
+      "body": "The sunrise alarm depends on the app running and playing sound. iOS can stop a background app at any time. A backup notification is scheduled, but do not rely on Slumbio as your only alarm for anything that matters."
+    },
+    {
+      "heading": "Warranty and liability",
+      "body": "The app is provided as is, without warranties of any kind. To the extent the law allows, Brett Boggs is not liable for any loss arising from your use of the app."
+    },
+    {
+      "heading": "Changes",
+      "body": "These terms may change. The date at the top is the current version."
+    },
+    {
+      "heading": "Contact",
+      "body": "[support@brettboggs.dev](mailto:support@brettboggs.dev)"
+    }
+  ],
+  "backLink": "← Slumbio"
+}

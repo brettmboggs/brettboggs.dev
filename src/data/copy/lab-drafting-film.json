@@ -1,0 +1,75 @@
+{
+  "title": "The Drafting Film · Lab · Brett Boggs",
+  "description": "A highway underpass you draft by scrolling. Datum's landing film for one night.",
+  "eyebrow": "Lab · Jul 2026",
+  "heading": "The Drafting Film",
+  "lede": "A highway underpass you draft by scrolling. It ran Datum's landing page for one night.",
+  "screenReaderStory": "Scattered data means nobody sees the same picture. Six systems, six logins, six bills. Each one holds a piece and none of them holds the project. Your best people leave and the process leaves with them. The same data gets re-entered at every handoff until nobody knows which number is true. Your tools hold data; none of them think. Datum sets one reference, one living record, that every number, drawing, and dollar measures from.",
+  "beats": [
+    {
+      "kicker": "Fragmented truth",
+      "head": [
+        "Scattered data.",
+        "Nobody sees the same picture."
+      ],
+      "sup": ""
+    },
+    {
+      "kicker": "Paying for the silos",
+      "head": [
+        "Six systems. Six logins.",
+        "Six bills."
+      ],
+      "sup": "Each one holds a piece. None of them holds the project."
+    },
+    {
+      "kicker": "Knowledge walks out the door",
+      "head": [
+        "Your best people leave.",
+        "The process leaves with them."
+      ],
+      "sup": ""
+    },
+    {
+      "kicker": "Re-typing the same number",
+      "head": [
+        "Same data,",
+        "re-entered at every handoff."
+      ],
+      "sup": "Until nobody knows which number is true."
+    },
+    {
+      "kicker": "Storage, not intelligence",
+      "head": [
+        "Your tools hold data.",
+        "None of them think."
+      ],
+      "sup": ""
+    },
+    {
+      "kicker": "Every measurement needs a reference",
+      "head": [
+        "Set the datum."
+      ],
+      "sup": "One reference every number, drawing, and dollar measures from."
+    }
+  ],
+  "markWord": "DATUM",
+  "markTag": "One living record.",
+  "scrollHint": "Scroll",
+  "chaptersLabel": "Film chapters",
+  "chapters": [
+    "Scattered",
+    "Six systems",
+    "Turnover",
+    "Re-entry",
+    "Dead storage",
+    "The datum"
+  ],
+  "skipButton": "Skip film",
+  "colophon": [
+    "This was v5 of the opening film for datumci.com, one night in July. Scroll conducts a highway underpass elevation through five failures: the linework explodes and never composes, regroups into six partial sheets that each hold only their slice, the richest sheet flares warm and walks off the table, the same span stamps four conflicting values, and everything grays into a dead archive. Then a datum line draws across the stage and the whole drawing registers on it, in construction order. It merged on a Sunday night and came out the next day: the landing had a standing rule against literal construction imagery, and the medium that made the film work is the reason it could not stay.",
+    "SVG linework, spring physics, one requestAnimationFrame loop. No WebGL, no animation library, no raster assets. Scroll is the clock but never the motion: each beat only moves the targets, springs do the rest, so scrubbing either direction always settles. The exploded layout is seeded, identical for every visitor. Reduced motion gets the finished drawing and the story as stills."
+  ],
+  "backLink": "Back to Lab"
+}

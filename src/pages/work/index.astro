@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import copy from '../../data/copy/work.json';
 import Spread from '../../components/Spread.astro';
 import { useSpread } from '../../data/layout';
 
@@ -46,8 +47,8 @@ if (photo.length) {
   const closed = photo.map(ended).reduce((a, b) => (a > b ? a : b));
   rows.push({
     href: '/work/photography/',
-    title: 'Photography',
-    desc: `Sets shot on location. ${photo.map((e) => e.data.title).join(', ')}.`,
+    title: copy.photography.title,
+    desc: `${copy.photography.descPrefix}${photo.map((e) => e.data.title).join(', ')}.`,
     when: when(opened, closed),
     datetime: opened.toISOString(),
     sort: closed.valueOf(),
@@ -61,8 +62,8 @@ if (sites.length) {
   const closed = sites.map(ended).reduce((a, b) => (a > b ? a : b));
   rows.push({
     href: '/work/websites/',
-    title: 'Websites',
-    desc: `Sites for small businesses. ${sites.map((e) => e.data.title).join(', ')}.`,
+    title: copy.websites.title,
+    desc: `${copy.websites.descPrefix}${sites.map((e) => e.data.title).join(', ')}.`,
     when: when(opened, closed),
     datetime: opened.toISOString(),
     sort: closed.valueOf(),
@@ -73,11 +74,11 @@ if (sites.length) {
 rows.sort((a, b) => b.sort - a.sort);
 ---
 
-<Base title="Work · Brett Boggs" description="Case studies and shipped things." scene="work">
+<Base title={copy.title} description={copy.description} scene="work" edit="pages/work">
   <header class="page-head">
-    <p class="eyebrow">01</p>
-    <h1>Work</h1>
-    <p class="lede">Case studies. The problem, the build, and what came of it.</p>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
   </header>
   {
     useSpread(rows.length) ? (
@@ -108,7 +109,7 @@ rows.sort((a, b) => b.sort - a.sort);
         ))}
       </ul>
     ) : (
-      <p class="empty-note">First case study is being written. Datum is up first.</p>
+      <p class="empty-note">{copy.empty}</p>
     )
   }
 </Base>

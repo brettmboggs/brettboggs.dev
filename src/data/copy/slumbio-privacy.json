@@ -1,0 +1,43 @@
+{
+  "title": "Privacy · Slumbio",
+  "description": "What Slumbio does with your data. Nothing.",
+  "eyebrow": "Slumbio · updated",
+  "updated": "September 2026",
+  "heading": "Privacy",
+  "lede": "Slumbio has no account, no server and no analytics. Nothing you do in it leaves your phone.",
+  "sections": [
+    {
+      "heading": "What the app stores",
+      "body": "Your settings, saved mixes, breathing preferences and the sleep journal are written to the app's own folder on your phone. They are included in your iCloud or iTunes device backup like any other app data. Deleting the app deletes them."
+    },
+    {
+      "heading": "What the app sends",
+      "body": "Nothing. The app makes no network requests. There is no crash reporting, no usage tracking, no advertising identifier, and no third-party code that phones home."
+    },
+    {
+      "heading": "Purchases",
+      "body": "Slumbio Plus is sold through Apple's in-app purchase system. Apple handles payment and knows what you bought; I receive aggregate sales figures from Apple and nothing about you personally. Subscriptions can be managed or cancelled in Settings › Apple Account › Subscriptions on your phone."
+    },
+    {
+      "heading": "Notifications",
+      "body": "If you turn on the sunrise alarm, the bedtime reminder, or start a free week, the app schedules local notifications on your phone. They are created and delivered by iOS on the device. No notification server is involved."
+    },
+    {
+      "heading": "Health",
+      "body": "Slumbio does not read or write Health data."
+    },
+    {
+      "heading": "Children",
+      "body": "Slumbio is not directed at children under 13 and collects no data from anyone."
+    },
+    {
+      "heading": "Changes",
+      "body": "If any of this changes, the date at the top will, and the app will say so before it does anything new."
+    },
+    {
+      "heading": "Contact",
+      "body": "Brett Boggs, [support@brettboggs.dev](mailto:support@brettboggs.dev)."
+    }
+  ],
+  "backLink": "← Slumbio"
+}

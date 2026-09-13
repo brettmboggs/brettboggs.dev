@@ -1,0 +1,20 @@
+{
+  "title": "Brett Boggs",
+  "description": "Brett Boggs. Work and experiments.",
+  "heroTitle": "Walk through the work.",
+  "heroId": "Brett Boggs · co-founder and full-stack engineer, Datum · St. Louis",
+  "navLabel": "Site sections",
+  "work": {
+    "title": "Work",
+    "notePrefix": "latest · ",
+    "noteFallback": "case studies"
+  },
+  "lab": {
+    "title": "Lab",
+    "note": "experiments"
+  },
+  "about": {
+    "title": "About",
+    "note": "who is behind it"
+  }
+}

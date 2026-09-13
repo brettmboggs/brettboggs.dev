@@ -1,0 +1,33 @@
+{
+  "title": "Not found · Brett Boggs",
+  "description": "That page is not here.",
+  "canvasLabel": "A bird gliding over prairie hills at golden hour.",
+  "hudBest": "Best",
+  "hint": "Hold to climb. Let go to fall.",
+  "eyebrow": "404",
+  "heading": "Nothing here.",
+  "body": "This page moved, or it never existed. The records disagree, and the person responsible is me.",
+  "offer": "Sorry about the walk. Here is a bird, by way of apology.",
+  "playButton": "Fly it",
+  "homeLink": "Take me home",
+  "overEyebrow": "Down",
+  "againButton": "Again",
+  "navLabel": "Site sections",
+  "sections": [
+    {
+      "title": "Home",
+      "note": "Start over",
+      "url": "/"
+    },
+    {
+      "title": "Work",
+      "note": "Case studies",
+      "url": "/work/"
+    },
+    {
+      "title": "Lab",
+      "note": "Experiments",
+      "url": "/lab/"
+    }
+  ]
+}

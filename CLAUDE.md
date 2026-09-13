@@ -25,6 +25,14 @@ construction management, datumci.com), and a playground for experiments.
 - `/work` — case studies, Markdown in `src/content/work/`
 - `/lab` — experiments; allowed to be rough. Each experiment is a page under `src/pages/lab/`
 - `/writing` — posts, Markdown in `src/content/writing/`
+- `/edit/` — the editor (Sveltia CMS, config in `public/edit/config.yml`), see `docs/EDITOR.md`
+
+**Copy lives in data, not templates.** Every page's words are in
+`src/data/copy/<page>.json` and the template reads them (`md()`/`inline()` from
+`src/data/copy.ts` for Markdown fields). New or changed copy goes in the JSON,
+and every JSON key needs a matching field in `public/edit/config.yml`, or the
+editor cannot reach it. Pages pass `edit="<collection>/<file>"` to Base for the
+signed-in Edit button (never on store/checkout: strict CSP).
 
 Content frontmatter supports `draft: true` — drafts are filtered out of listings
 and never get pages built.

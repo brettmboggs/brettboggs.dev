@@ -1,0 +1,259 @@
+{
+  "title": "Datum · Brett Boggs",
+  "description": "One system for running a construction company.",
+  "hero": {
+    "heading": "Datum",
+    "tagline": "One system for running a construction company.",
+    "meta": "Co-founder · product, design & engineering"
+  },
+  "statement": {
+    "heading": "The office and the field, finally in one place.",
+    "text": "Construction runs on handoffs, and handoffs are where things get lost. Datum keeps the projects, the people, the equipment, the safety paperwork, and the money in one place, so nothing has to survive being passed between five different tools."
+  },
+  "field": {
+    "heading": "Built for boots on the ground.",
+    "text": "The field isn't an afterthought here. Daily reports, hazards, timecards, concrete pours. It all gets captured on site, while it's happening.",
+    "image": "/datum/field-job-day.png",
+    "alt": "Datum's field view of a job day",
+    "caption": "The field's job day"
+  },
+  "yourWork": {
+    "heading": "Your day, already sorted.",
+    "text": "Everyone opens Datum to their own work: what needs action, what's coming up, and what's running late.",
+    "image": "/datum/your-work-home.png",
+    "alt": "Datum's personal work home screen",
+    "caption": "Your work, in one place"
+  },
+  "deptHeading": "Every department. One Datum.",
+  "departments": [
+    {
+      "image": "/datum/estimating-bid-analysis.png",
+      "alt": "Estimating and bid analysis in Datum",
+      "caption": "Estimating"
+    },
+    {
+      "image": "/datum/finance-overview.png",
+      "alt": "Finance overview in Datum",
+      "caption": "Finance"
+    },
+    {
+      "image": "/datum/safety-dashboard.png",
+      "alt": "Safety dashboard in Datum",
+      "caption": "Safety"
+    },
+    {
+      "image": "/datum/people-dashboard.png",
+      "alt": "People dashboard in Datum",
+      "caption": "People"
+    },
+    {
+      "image": "/datum/equipment-command-center.png",
+      "alt": "Equipment command center in Datum",
+      "caption": "Equipment"
+    },
+    {
+      "image": "/datum/strategy-hub.png",
+      "alt": "Strategy hub in Datum",
+      "caption": "Strategy"
+    }
+  ],
+  "film": {
+    "heading": "The short version.",
+    "note": "The brand film. 28 seconds."
+  },
+  "building": {
+    "heading": "Building it.",
+    "text": "I co-founded Datum and build the product end to end: design, frontend, backend, and the AI that runs underneath it."
+  },
+  "shipped": {
+    "heading": "What is shipped.",
+    "lede": "Full-stack engineer. Architecture, security, infrastructure and release, end to end.",
+    "figures": [
+      {
+        "number": "2,122",
+        "label": "HTTP endpoints across 338 backend services"
+      },
+      {
+        "number": "908",
+        "label": "tables in Azure SQL, behind 507 tracked migrations"
+      },
+      {
+        "number": "300",
+        "label": "screens and 338 shared components in React"
+      },
+      {
+        "number": "132",
+        "label": "standard operating procedures, automated end to end"
+      }
+    ],
+    "notes": [
+      {
+        "text": "Tenant isolation is enforced at the query layer rather than trusted to callers, with role based access through Entra ID. The agent layer runs inside that same boundary: a tool registry and persistent memory fenced by SQL guardrails and data policy, so an agent cannot reach across tenants."
+      },
+      {
+        "text": "An ERP adapter framework with a durable writeback queue, normalizing phase codes and cost types, so the platform talks to the accounting systems contractors already run. GDPR deletion and data subject export, which meant resolving one person across three identity systems that had never been connected."
+      },
+      {
+        "text": "A React Native app through TestFlight, an Outlook add-in deployed across the organization, and CI/CD into Azure with health checks and uptime monitoring."
+      }
+    ]
+  },
+  "system": {
+    "heading": "How it is put together",
+    "note": "A request passes down through these layers. Rest on a plate, or tap one, and it explains itself. Nothing here is a number the page does not already count.",
+    "insideLabel": "one tenant boundary, three layers deep",
+    "groups": [
+      {
+        "inside": false,
+        "layers": [
+          {
+            "label": "Clients",
+            "nodes": [
+              {
+                "name": "Web app",
+                "fig": "300 screens · 338 components",
+                "text": "React. Everyone opens Datum to their own work: what needs action, what is coming up, and what is running late."
+              },
+              {
+                "name": "Field app",
+                "fig": "React Native · TestFlight",
+                "text": "Daily reports, hazards, timecards and concrete pours, captured on site while they are happening."
+              },
+              {
+                "name": "Outlook add-in",
+                "fig": "across the organization",
+                "text": "An add-in deployed across the organization, so the office side of the work reaches Datum without leaving the mailbox."
+              }
+            ]
+          },
+          {
+            "label": "Identity",
+            "nodes": [
+              {
+                "name": "Entra ID",
+                "fig": "the verified principal",
+                "text": "Every request carries the tenant and the role of a principal the directory has verified. Nothing about either is taken from the caller, and later, nothing is taken from a model."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "inside": true,
+        "layers": [
+          {
+            "label": "Services",
+            "nodes": [
+              {
+                "name": "338 services",
+                "fig": "2,122 HTTP endpoints",
+                "text": "Every handler runs inside a tenant scope and the pool primes that context on every query, so a call site cannot forget it. Twenty-nine background timers are wrapped the same way."
+              },
+              {
+                "name": "132 SOPs",
+                "fig": "automated end to end",
+                "text": "Standard operating procedures, automated end to end."
+              },
+              {
+                "name": "Agent layer",
+                "fig": "registry · tool grants · memory",
+                "text": "Agents run from a registry with per-agent tool grants and persistent, tenant-scoped memory. An agent inherits the clearance of the person asking and never has one of its own."
+              }
+            ]
+          },
+          {
+            "label": "Guards",
+            "nodes": [
+              {
+                "name": "SQL guard",
+                "fig": "cannot write · cannot cross",
+                "text": "Model-authored SQL is proven read-only and tenant-bound in code, never in the prompt. Unknown tables count as tenant-keyed, so a table added tomorrow is protected before anyone updates a list."
+              },
+              {
+                "name": "Data policy",
+                "fig": "read-only is not need-to-know",
+                "text": "A foreman asking a colleague’s salary is refused, the way he would be at the HR office. Craft rates stay open to anyone who prices work."
+              },
+              {
+                "name": "Spend and kill switch",
+                "fig": "per tenant, inside the provider",
+                "text": "A per-tenant kill switch, a monthly spend cap and role gating, enforced where background jobs cannot go around them. Every statement runs with a five second lock timeout, because a foreman may be waiting on that row."
+              }
+            ]
+          },
+          {
+            "label": "Data",
+            "nodes": [
+              {
+                "name": "Azure SQL",
+                "fig": "908 tables · 507 migrations",
+                "text": "One shared platform. Tenant columns are NOT NULL with no default, so an unstamped insert refuses instead of quietly landing in someone else’s company."
+              },
+              {
+                "name": "Row-level security",
+                "fig": "852 tables · fail closed",
+                "text": "FILTER and BLOCK policies keyed to session context. A query that never set its tenant sees zero rows and writes none, however clever the SQL above it."
+              },
+              {
+                "name": "Tenancy lint",
+                "fig": "the build refuses",
+                "text": "Any new table that has not declared its tenancy fails the build. It caught an unregistered table within weeks, with no human memory involved."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "inside": false,
+        "layers": [
+          {
+            "label": "Edges",
+            "nodes": [
+              {
+                "name": "ERP adapter",
+                "fig": "durable writeback queue",
+                "text": "The accounting system contractors already run owns actuals; Datum owns creation, estimates and projections. Verified intents queue in SQL with backoff, idempotent enqueue and an append-only sync log. Phase codes and cost types normalize per tenant."
+              },
+              {
+                "name": "GDPR",
+                "fig": "deletion · subject export",
+                "text": "Deletion and data subject export, which meant resolving one person across three identity systems that had never been connected."
+              },
+              {
+                "name": "Azure CI/CD",
+                "fig": "health checks · uptime",
+                "text": "Release into Azure with health checks and uptime monitoring."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "logs": {
+    "heading": "Decision logs",
+    "note": "The engineering behind three of those claims: what was chosen, what it cost, what broke.",
+    "items": [
+      {
+        "label": "Tenant isolation",
+        "url": "/work/tenant-isolation/",
+        "summary": "App-layer scoping, an adversarial audit, and the day RLS went under all of it."
+      },
+      {
+        "label": "Session prompting",
+        "url": "/work/session-prompting/",
+        "summary": "An agent that inherits the clearance of the person asking, and never has one of its own."
+      },
+      {
+        "label": "ERP writeback",
+        "url": "/work/erp-writeback/",
+        "summary": "The decision was who owns the money. The queue is just the consequence."
+      }
+    ]
+  },
+  "cta": {
+    "label": "See it live · datumci.com",
+    "url": "https://datumci.com"
+  },
+  "backLink": "← All work"
+}

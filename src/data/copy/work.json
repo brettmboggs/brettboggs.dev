@@ -1,0 +1,16 @@
+{
+  "title": "Work · Brett Boggs",
+  "description": "Case studies and shipped things.",
+  "eyebrow": "01",
+  "heading": "Work",
+  "lede": "Case studies. The problem, the build, and what came of it.",
+  "photography": {
+    "title": "Photography",
+    "descPrefix": "Sets shot on location. "
+  },
+  "websites": {
+    "title": "Websites",
+    "descPrefix": "Sites for small businesses. "
+  },
+  "empty": "First case study is being written. Datum is up first."
+}

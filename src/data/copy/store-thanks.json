@@ -1,0 +1,31 @@
+{
+  "title": "Thank you · Brett Boggs",
+  "description": "Order received.",
+  "eyebrow": "Store",
+  "headline": "Checking",
+  "detail": "One moment.",
+  "backLink": "← Store",
+  "noSecret": {
+    "title": "Nothing to show",
+    "body": "This page is where Stripe sends you after a payment."
+  },
+  "received": {
+    "title": "Order received",
+    "body": "Your receipt is on its way by email."
+  },
+  "succeeded": {
+    "title": "Thank you",
+    "body": "The payment went through and the order is in.",
+    "footer": "Stripe has emailed your receipt. Anything printed is sent to the printer automatically, and download links follow by email."
+  },
+  "processing": {
+    "title": "Payment processing",
+    "body": "Your bank is still working on it. Nothing more is needed from you.",
+    "footer": "You will get an email once it settles."
+  },
+  "failed": {
+    "title": "Payment not completed",
+    "body": "The card was not charged. Nothing has been sent.",
+    "footer": "You can try again from the store with the same cart."
+  }
+}

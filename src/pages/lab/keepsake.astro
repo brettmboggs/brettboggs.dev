@@ -1,34 +1,33 @@
 ---
 import Base from '../../layouts/Base.astro';
+import copy from '../../data/copy/lab-keepsake.json';
 
 // A seeded drawing of a field. Deterministic: the seed in the URL always
 // draws the same picture, so a keepsake can be kept, shared, and re-drawn.
 ---
 
 <Base
-  title="Keepsake · Brett Boggs"
-  description="A seeded drawing, different for every visitor. Yours to keep."
+  title={copy.title}
+  description={copy.description}
+  edit="lab-pages/lab-keepsake"
 >
   <header class="page-head">
-    <p class="eyebrow">Lab</p>
-    <h1>Keepsake</h1>
-    <p class="lede">
-      Every visit draws a different field. The same seed always draws the same field. This one is
-      yours.
-    </p>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
   </header>
 
-  <figure class="keepsake-frame" id="keepsake-frame" aria-label="Your generated field drawing"></figure>
+  <figure class="keepsake-frame" id="keepsake-frame" aria-label={copy.frameLabel}></figure>
 
   <div class="keepsake-bar">
     <p class="keepsake-seed" id="keepsake-seed" aria-live="polite"></p>
     <div class="keepsake-actions">
-      <button class="keepsake-btn" id="keepsake-again" type="button">Draw another</button>
-      <button class="keepsake-btn" id="keepsake-save" type="button">Keep it · SVG</button>
+      <button class="keepsake-btn" id="keepsake-again" type="button">{copy.againButton}</button>
+      <button class="keepsake-btn" id="keepsake-save" type="button">{copy.saveButton}</button>
     </div>
   </div>
 
-  <a class="back-link" href="/lab/">&larr; Lab</a>
+  <a class="back-link" href="/lab/">{copy.backLink}</a>
 </Base>
 
 <style>

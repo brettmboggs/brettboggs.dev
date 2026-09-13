@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
+import copy from '../../../data/copy/work-photography.json';
 import Spread from '../../../components/Spread.astro';
 import { useSpread } from '../../../data/layout';
 
@@ -28,11 +29,11 @@ function when(date: Date, dateEnd?: Date): string {
 }
 ---
 
-<Base title="Photography · Brett Boggs" description="Sets shot on location.">
+<Base title={copy.title} description={copy.description} edit="pages/work-photography">
   <header class="page-head">
-    <p class="eyebrow">Work · Photography</p>
-    <h1>Photography</h1>
-    <p class="lede">Sets shot on location, mostly in whatever light was already there.</p>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
   </header>
   {
     useSpread(entries.length) && (
@@ -69,5 +70,5 @@ function when(date: Date, dateEnd?: Date): string {
       </ul>
     )
   }
-  <a class="back-link" href="/work/">All work</a>
+  <a class="back-link" href="/work/">{copy.backLink}</a>
 </Base>

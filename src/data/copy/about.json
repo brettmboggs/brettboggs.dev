@@ -1,0 +1,38 @@
+{
+  "title": "About · Brett Boggs",
+  "description": "Operator turned builder. St. Louis.",
+  "eyebrow": "03",
+  "heading": "About",
+  "lede": "Operator turned builder. St. Louis.",
+  "opener": "I spent a decade running physical operations before I ever shipped software. Service lane at a Honda dealership. General manager of a car wash, then a group of them, then a district. Operations for a real estate investment company. Years of schedules, payroll, equipment that breaks on the coldest day of the year, and customers standing in front of you expecting an answer.\n\nThat decade is the point. Most software for real-world businesses is built by people who have never run one, and it shows: tools that demand data entry nobody has time for, reports that answer questions nobody asked, five systems where one should be. I got tired of being the operator those tools were inflicted on, so I became the person who builds them instead.",
+  "portrait": {
+    "image": "/about/brett.jpg",
+    "alt": "Brett Boggs",
+    "caption": "For once, the wrong side of the camera"
+  },
+  "body": "Now I co-found and build [Datum](/work/datum/), one system for running a construction company. I am the full-stack engineer: design, frontend, backend, security, infrastructure, and the AI underneath, end to end. The [case study](/work/datum/) has the numbers, and the decision logs under it have the honest version: what was chosen, what it cost, what broke.\n\nThe same instinct runs through everything here. [Apparent Low](/work/apparent-low/) exists because extraction you can't measure is extraction you can't trust. The [photography](/work/photography/) is the same discipline pointed at light instead of systems. The [Lab](/lab/) is where things get tried before they earn a place.\n\nI work best on problems where the software has to survive contact with a real operation: a foreman's morning, a month-end close, a bid due at 10 a.m. If that is the kind of problem you have, I want to hear about it.",
+  "reachHeading": "Reach me",
+  "reach": [
+    {
+      "label": "Email",
+      "text": "hello@brettboggs.dev",
+      "url": "mailto:hello@brettboggs.dev"
+    },
+    {
+      "label": "LinkedIn",
+      "text": "linkedin.com/in/brettmboggs",
+      "url": "https://www.linkedin.com/in/brettmboggs/"
+    },
+    {
+      "label": "GitHub",
+      "text": "github.com/brettmboggs",
+      "url": "https://github.com/brettmboggs"
+    },
+    {
+      "label": "Datum",
+      "text": "datumci.com",
+      "url": "https://datumci.com"
+    }
+  ],
+  "backLink": "← Home"
+}

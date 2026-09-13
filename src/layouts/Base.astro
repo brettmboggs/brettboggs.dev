@@ -7,6 +7,7 @@ import '@fontsource/spline-sans-mono/400.css';
 import '@fontsource/spline-sans-mono/500.css';
 import '../styles/global.css';
 import { ogFor } from '../data/og';
+import EditLink from '../components/EditLink.astro';
 
 interface Props {
   title: string;
@@ -25,6 +26,8 @@ interface Props {
   /** payment pages: a strict CSP forbids inline scripts, and production builds
    *  inline this one. A service worker has no business on a checkout anyway. */
   noServiceWorker?: boolean;
+  /** the editor entry behind this page's words: "pages/<file>" or "work/<id>" */
+  edit?: string;
 }
 
 const {
@@ -37,6 +40,7 @@ const {
   scene,
   puck = true,
   noServiceWorker = false,
+  edit,
 } = Astro.props;
 
 // which section the visitor is in, for the puck's needle and current mark
@@ -190,6 +194,7 @@ const schema = home
         </nav>
       )}
     </footer>
+    {edit && <EditLink target={edit} />}
     {puck && (
       <nav class="puck" id="puck" aria-label="Quick navigation" data-here={here} data-home={home ? '1' : ''}>
         <button class="puck-face" id="puck-face" type="button" aria-expanded="false" aria-controls="puck-menu">

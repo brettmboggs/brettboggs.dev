@@ -1,17 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
+import copy from '../data/copy/offline.json';
 
 // Served by the service worker when a page is not cached and there is no
 // connection. Kept out of the sitemap and search results.
 ---
 
-<Base title="Offline · Brett Boggs" description="No connection." noindex>
+<Base title={copy.title} description={copy.description} noindex edit="pages/offline">
   <header class="page-head">
-    <p class="eyebrow">No connection</p>
-    <h1>Offline</h1>
-    <p class="lede">
-      This page needs a connection. Anything you have already visited should still open.
-    </p>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
   </header>
-  <a class="back-link" href="/">&larr; Home</a>
+  <a class="back-link" href="/">{copy.backLink}</a>
 </Base>

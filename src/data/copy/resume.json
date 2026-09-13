@@ -1,0 +1,10 @@
+{
+  "title": "Resume · Brett Boggs",
+  "eyebrow": "Resume",
+  "workHeading": "Work",
+  "projectsHeading": "Projects",
+  "skillsHeading": "Skills",
+  "educationHeading": "Education",
+  "meta": "Updated {date}. The same data as [JSON Resume](/resume.json).",
+  "printButton": "Print, or save as PDF"
+}

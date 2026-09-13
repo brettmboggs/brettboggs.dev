@@ -5,175 +5,25 @@
 // it. Every figure and claim here is already on this page or in the decision
 // logs it links; the drawing adds no number the site does not state elsewhere.
 
-type Node = { id: string; name: string; fig: string; text: string };
-type Layer = { key: string; label: string; nodes: Node[] };
-type Group = { inside: boolean; layers: Layer[] };
+import copy from '../data/copy/work-datum.json';
 
-const groups: Group[] = [
-  {
-    inside: false,
-    layers: [
-      {
-        key: 'clients',
-        label: 'Clients',
-        nodes: [
-          {
-            id: 'web',
-            name: 'Web app',
-            fig: '300 screens · 338 components',
-            text: 'React. Everyone opens Datum to their own work: what needs action, what is coming up, and what is running late.',
-          },
-          {
-            id: 'field',
-            name: 'Field app',
-            fig: 'React Native · TestFlight',
-            text: 'Daily reports, hazards, timecards and concrete pours, captured on site while they are happening.',
-          },
-          {
-            id: 'outlook',
-            name: 'Outlook add-in',
-            fig: 'across the organization',
-            text: 'An add-in deployed across the organization, so the office side of the work reaches Datum without leaving the mailbox.',
-          },
-        ],
-      },
-      {
-        key: 'identity',
-        label: 'Identity',
-        nodes: [
-          {
-            id: 'entra',
-            name: 'Entra ID',
-            fig: 'the verified principal',
-            text: 'Every request carries the tenant and the role of a principal the directory has verified. Nothing about either is taken from the caller, and later, nothing is taken from a model.',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    inside: true,
-    layers: [
-      {
-        key: 'services',
-        label: 'Services',
-        nodes: [
-          {
-            id: 'api',
-            name: '338 services',
-            fig: '2,122 HTTP endpoints',
-            text: 'Every handler runs inside a tenant scope and the pool primes that context on every query, so a call site cannot forget it. Twenty-nine background timers are wrapped the same way.',
-          },
-          {
-            id: 'sops',
-            name: '132 SOPs',
-            fig: 'automated end to end',
-            text: 'Standard operating procedures, automated end to end.',
-          },
-          {
-            id: 'agents',
-            name: 'Agent layer',
-            fig: 'registry · tool grants · memory',
-            text: 'Agents run from a registry with per-agent tool grants and persistent, tenant-scoped memory. An agent inherits the clearance of the person asking and never has one of its own.',
-          },
-        ],
-      },
-      {
-        key: 'guards',
-        label: 'Guards',
-        nodes: [
-          {
-            id: 'sqlguard',
-            name: 'SQL guard',
-            fig: 'cannot write · cannot cross',
-            text: 'Model-authored SQL is proven read-only and tenant-bound in code, never in the prompt. Unknown tables count as tenant-keyed, so a table added tomorrow is protected before anyone updates a list.',
-          },
-          {
-            id: 'policy',
-            name: 'Data policy',
-            fig: 'read-only is not need-to-know',
-            text: 'A foreman asking a colleague’s salary is refused, the way he would be at the HR office. Craft rates stay open to anyone who prices work.',
-          },
-          {
-            id: 'spend',
-            name: 'Spend and kill switch',
-            fig: 'per tenant, inside the provider',
-            text: 'A per-tenant kill switch, a monthly spend cap and role gating, enforced where background jobs cannot go around them. Every statement runs with a five second lock timeout, because a foreman may be waiting on that row.',
-          },
-        ],
-      },
-      {
-        key: 'data',
-        label: 'Data',
-        nodes: [
-          {
-            id: 'sql',
-            name: 'Azure SQL',
-            fig: '908 tables · 507 migrations',
-            text: 'One shared platform. Tenant columns are NOT NULL with no default, so an unstamped insert refuses instead of quietly landing in someone else’s company.',
-          },
-          {
-            id: 'rls',
-            name: 'Row-level security',
-            fig: '852 tables · fail closed',
-            text: 'FILTER and BLOCK policies keyed to session context. A query that never set its tenant sees zero rows and writes none, however clever the SQL above it.',
-          },
-          {
-            id: 'lint',
-            name: 'Tenancy lint',
-            fig: 'the build refuses',
-            text: 'Any new table that has not declared its tenancy fails the build. It caught an unregistered table within weeks, with no human memory involved.',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    inside: false,
-    layers: [
-      {
-        key: 'edges',
-        label: 'Edges',
-        nodes: [
-          {
-            id: 'erp',
-            name: 'ERP adapter',
-            fig: 'durable writeback queue',
-            text: 'The accounting system contractors already run owns actuals; Datum owns creation, estimates and projections. Verified intents queue in SQL with backoff, idempotent enqueue and an append-only sync log. Phase codes and cost types normalize per tenant.',
-          },
-          {
-            id: 'gdpr',
-            name: 'GDPR',
-            fig: 'deletion · subject export',
-            text: 'Deletion and data subject export, which meant resolving one person across three identity systems that had never been connected.',
-          },
-          {
-            id: 'ops',
-            name: 'Azure CI/CD',
-            fig: 'health checks · uptime',
-            text: 'Release into Azure with health checks and uptime monitoring.',
-          },
-        ],
-      },
-    ],
-  },
-];
+// the words live in work-datum.json under "system"
+const groups = copy.system.groups;
 
 const first = groups[0].layers[0].nodes[0];
 ---
 
 <div class="sys" id="sys">
-  <p class="sys-head">How it is put together</p>
+  <p class="sys-head">{copy.system.heading}</p>
   <p class="sys-note">
-    A request passes down through these layers. Rest on a plate, or tap one, and it explains
-    itself. Nothing here is a number the page does not already count.
+    {copy.system.note}
   </p>
 
   <div class="sys-body">
     {
       groups.map((g) => (
         <div class:list={['sys-group', { 'sys-inside': g.inside }]}>
-          {g.inside && <span class="sys-inside-label">one tenant boundary, three layers deep</span>}
+          {g.inside && <span class="sys-inside-label">{copy.system.insideLabel}</span>}
           {g.layers.map((layer) => (
             <div class="sys-layer">
               <span class="sys-key">{layer.label}</span>
@@ -181,7 +31,7 @@ const first = groups[0].layers[0].nodes[0];
                 {layer.nodes.map((n) => (
                   <button
                     type="button"
-                    class:list={['sys-plate', { 'is-on': n.id === first.id }]}
+                    class:list={['sys-plate', { 'is-on': n === first }]}
                     data-name={n.name}
                     data-text={n.text}
                   >

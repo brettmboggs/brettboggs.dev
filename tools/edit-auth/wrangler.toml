@@ -1,0 +1,19 @@
+# Sign-in for the editor at /edit/. GitHub's OAuth flow needs a server to swap
+# a code for a token, and this Worker is that server. The source is Sveltia CMS
+# Authenticator (MIT, github.com/sveltia/sveltia-cms-auth @ f3beae3), vendored
+# unchanged so a deploy never pulls code nobody read.
+#
+# Deploy from this folder: npx wrangler deploy
+# Personal Cloudflare account (the one with brettboggs-store), never a client's.
+#
+# The client secret is NOT here. It goes in once with
+#   npx wrangler secret put GITHUB_CLIENT_SECRET
+# and lives only in Cloudflare.
+name = "brettboggs-edit-auth"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+workers_dev = true
+
+[vars]
+ALLOWED_DOMAINS = "brettboggs.dev"
+# GITHUB_CLIENT_ID = ""   # from the OAuth app, filled in at setup

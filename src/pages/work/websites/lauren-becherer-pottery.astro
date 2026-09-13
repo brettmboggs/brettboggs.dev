@@ -1,60 +1,43 @@
 ---
 import Base from '../../../layouts/Base.astro';
+import copy from '../../../data/copy/work-websites-lauren-becherer-pottery.json';
+import { md } from '../../../data/copy';
 ---
 
 <Base
-  title="Lauren Becherer Pottery · Brett Boggs"
-  description="Handmade ceramics, photographed all the way around."
+  title={copy.title}
+  description={copy.description}
+  edit="work-pages/work-websites-lauren-becherer-pottery"
 >
   <article>
     <header class="page-head">
-      <p class="eyebrow">Websites · 2026</p>
-      <h1>Lauren Becherer Pottery</h1>
-      <p class="lede">Handmade ceramics, photographed all the way around.</p>
+      <p class="eyebrow">{copy.eyebrow}</p>
+      <h1>{copy.heading}</h1>
+      <p class="lede">{copy.lede}</p>
     </header>
 
     <!-- The point of this page is the build itself, so the way in comes first. -->
-    <a class="launch" href="https://laurenbechererpottery.com">
-      <span class="launch-go">Open the site <span aria-hidden="true">&rarr;</span></span>
-      <span class="launch-meta">Live · work, shop, journal, commissions, client pages</span>
+    <a class="launch" href={copy.launch.url}>
+      <span class="launch-go">{copy.launch.label} <span aria-hidden="true">&rarr;</span></span>
+      <span class="launch-meta">{copy.launch.meta}</span>
     </a>
 
-    <a class="shot" href="https://laurenbechererpottery.com" aria-label="Open laurenbechererpottery.com">
+    <a class="shot" href={copy.launch.url} aria-label={copy.shot.ariaLabel}>
       <img
-        src="/peek/lauren-becherer-pottery-lg.webp"
-        alt="The home page of laurenbechererpottery.com, a celadon cup beside the line No two are alike."
+        src={copy.shot.image}
+        alt={copy.shot.alt}
         width="1440"
         height="960"
         loading="eager"
       />
-      <span class="shot-chip">laurenbechererpottery.com</span>
+      <span class="shot-chip">{copy.shot.chip}</span>
     </a>
 
     <div class="prose">
-      <p>
-        Lauren throws and hand-builds in small batches, and glazes in small batches too, which
-        means no two pieces come out the same. One photograph of a pot flattens exactly the thing
-        that makes it worth buying. So the site is built around turning the piece instead.
-      </p>
-      <p>
-        Every piece is shot on a turntable and served as a spin you can drag. Thirteen so far.
-        Every frame is a real photograph, shot in raw and focus stacked, and the import refuses
-        anything else. One early set came back with thirty-four interpolated in-between frames and
-        the build stops rather than publish them. A steppy honest turn beats a smooth fake one.
-      </p>
-      <p>
-        She runs it without me. There is a studio login on the site: she signs in with one click,
-        edits the page she happens to be looking at, and the site rebuilds itself in about a
-        minute. Pieces marked for sale get a Stripe button. Commission requests come in through a
-        form, and each commission gets a private progress page reached by a code, so a client can
-        watch their piece without anybody else finding it.
-      </p>
-      <p>
-        Astro, static, hosted on GitHub Pages. The domain is the only line item.
-      </p>
+      <Fragment set:html={md(copy.body)} />
     </div>
 
-    <a class="back-link" href="/work/websites/">&larr; All websites</a>
+    <a class="back-link" href="/work/websites/">{copy.backLink}</a>
   </article>
 </Base>
 

@@ -1,63 +1,55 @@
 ---
 import Base from '../layouts/Base.astro';
+import copy from '../data/copy/404.json';
 ---
 
-<Base title="Not found · Brett Boggs" description="That page is not here." puck={false}>
+<Base title={copy.title} description={copy.description} puck={false} edit="pages/404">
   <div class="glide" data-glide>
     <canvas
       class="glide-canvas"
       data-glide-canvas
       tabindex="-1"
       role="img"
-      aria-label="A bird gliding over prairie hills at golden hour."></canvas>
+      aria-label={copy.canvasLabel}></canvas>
 
     <div class="glide-hud" data-glide-hud hidden>
       <p class="glide-dist"><span data-glide-dist>0</span> m</p>
-      <p class="glide-best">Best <span data-glide-best>0</span> m</p>
+      <p class="glide-best">{copy.hudBest} <span data-glide-best>0</span> m</p>
     </div>
 
     <p class="glide-stage" data-glide-stage aria-hidden="true"></p>
-    <p class="glide-hint" data-glide-hint hidden>Hold to climb. Let go to fall.</p>
+    <p class="glide-hint" data-glide-hint hidden>{copy.hint}</p>
 
     <div class="glide-card" data-glide-intro>
-      <p class="eyebrow">404</p>
-      <h1>Nothing here.</h1>
-      <p>
-        This page moved, or it never existed. The records disagree, and the person responsible
-        is me.
-      </p>
-      <p class="glide-offer">Sorry about the walk. Here is a bird, by way of apology.</p>
+      <p class="eyebrow">{copy.eyebrow}</p>
+      <h1>{copy.heading}</h1>
+      <p>{copy.body}</p>
+      <p class="glide-offer">{copy.offer}</p>
       <div class="glide-actions">
-        <button type="button" class="glide-button" data-glide-play>Fly it</button>
-        <a href="/">Take me home</a>
+        <button type="button" class="glide-button" data-glide-play>{copy.playButton}</button>
+        <a href="/">{copy.homeLink}</a>
       </div>
     </div>
 
     <div class="glide-card glide-card--over" data-glide-over hidden aria-live="polite">
-      <p class="eyebrow">Down</p>
+      <p class="eyebrow">{copy.overEyebrow}</p>
       <p class="glide-score" data-glide-over-dist>0 m</p>
-      <p class="glide-sub">Best <span data-glide-over-best>0 m</span></p>
+      <p class="glide-sub">{copy.hudBest} <span data-glide-over-best>0 m</span></p>
       <p class="glide-note" data-glide-over-note></p>
       <div class="glide-actions">
-        <button type="button" class="glide-button" data-glide-again>Again</button>
-        <a href="/">Take me home</a>
+        <button type="button" class="glide-button" data-glide-again>{copy.againButton}</button>
+        <a href="/">{copy.homeLink}</a>
       </div>
     </div>
   </div>
 
-  <nav class="entry-list" aria-label="Site sections">
-    <a class="entry-row" href="/">
-      <span class="entry-title">Home</span>
-      <span class="entry-meta">Start over</span>
-    </a>
-    <a class="entry-row" href="/work/">
-      <span class="entry-title">Work</span>
-      <span class="entry-meta">Case studies</span>
-    </a>
-    <a class="entry-row" href="/lab/">
-      <span class="entry-title">Lab</span>
-      <span class="entry-meta">Experiments</span>
-    </a>
+  <nav class="entry-list" aria-label={copy.navLabel}>
+    {copy.sections.map((s) => (
+      <a class="entry-row" href={s.url}>
+        <span class="entry-title">{s.title}</span>
+        <span class="entry-meta">{s.note}</span>
+      </a>
+    ))}
   </nav>
 </Base>
 

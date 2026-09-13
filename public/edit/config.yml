@@ -1,0 +1,2521 @@
+# ------------------------------------------------------------------
+# Editor (Sveltia CMS) at /edit/. Docs: https://github.com/sveltia/sveltia-cms
+#
+# Every save is a commit to main, and the deploy workflow publishes it in about
+# a minute. Only GitHub accounts with write access to the repo can save, which
+# is Brett alone. Setup and sign-in: docs/EDITOR.md.
+#
+# Page copy lives in src/data/copy/<page>.json, one file per page, and each
+# page template reads its file. A new page gets a JSON file, a template that
+# reads it, and an entry below.
+# ------------------------------------------------------------------
+backend:
+  name: github
+  repo: brettmboggs/brettboggs.dev
+  branch: main
+  commit_messages:
+    create: "Add {{collection}} {{slug}}"
+    update: "Edit {{collection}} {{slug}}"
+    delete: "Remove {{collection}} {{slug}}"
+    uploadMedia: "Upload {{path}}"
+    deleteMedia: "Delete {{path}}"
+
+site_url: https://brettboggs.dev
+display_url: https://brettboggs.dev
+logo_url: /favicon.svg
+
+media_folder: public/uploads
+public_folder: /uploads
+
+media_libraries:
+  default:
+    config:
+      max_file_size: 20000000
+      transformations:
+        raster_image:
+          format: webp
+          quality: 85
+          width: 2400
+          height: 2400
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  # ---------------------------------------------------------------- Work
+  - name: work
+    label: Work entries
+    label_singular: Work entry
+    description: The rows on /work and its indexes. Bespoke pages (Datum, the photo sets, the websites) take their words from Work pages; this sets the title, description and dates they are listed under.
+    folder: src/content/work
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    summary: "{{title}}{{draft | ternary(' · draft', '')}}"
+    sortable_fields: [date, title]
+    preview_path: /work/{{slug}}/
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Description, widget: text }
+      - { name: date, label: Date, widget: datetime, time_format: false, format: YYYY-MM-DD }
+      - { name: dateEnd, label: End date (for a span), widget: datetime, time_format: false, format: YYYY-MM-DD, required: false }
+      - { name: tags, label: Tags, widget: list, required: false }
+      - { name: draft, label: Draft (hidden everywhere), widget: boolean, default: false }
+      - name: group
+        label: Filed under
+        widget: select
+        required: false
+        options: [photography, websites]
+      - name: alsoIn
+        label: Also listed in
+        widget: select
+        multiple: true
+        required: false
+        options: [photography, websites]
+      - { name: bespoke, label: Has a hand-built page, widget: boolean, default: false, hint: Leave as it is. On means the page is not built from the body below. }
+      - { name: unlisted, label: Unlisted (page exists, off the index), widget: boolean, default: false }
+      - { name: body, label: Body, widget: markdown, required: false }
+
+  # ---------------------------------------------------------------- Page copy
+  - name: pages
+    label: Pages
+    description: The front door, section indexes, colophon, store and the rest.
+    files:
+    - name: home
+      label: Home
+      file: src/data/copy/home.json
+      preview_path: /
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: heroTitle
+        label: Hero headline
+        widget: string
+      - name: heroId
+        label: Line under the headline
+        widget: string
+      - name: navLabel
+        label: Section links label (screen readers)
+        widget: string
+      - name: work
+        label: Flag 1 (Work)
+        widget: object
+        fields:
+        - name: title
+          label: Title
+          widget: string
+        - name: notePrefix
+          label: Note before the latest project name
+          widget: string
+        - name: noteFallback
+          label: Note when there is no project
+          widget: string
+      - name: lab
+        label: Flag 2 (Lab)
+        widget: object
+        fields:
+        - name: title
+          label: Title
+          widget: string
+        - name: note
+          label: Note
+          widget: string
+      - name: about
+        label: Flag 3 (About)
+        widget: object
+        fields:
+        - name: title
+          label: Title
+          widget: string
+        - name: note
+          label: Note
+          widget: string
+    - name: about
+      label: About
+      file: src/data/copy/about.json
+      preview_path: /about/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: opener
+        label: Opening paragraphs (beside the portrait)
+        widget: markdown
+      - name: portrait
+        label: Portrait
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+        - name: caption
+          label: Caption
+          widget: string
+      - name: body
+        label: Body
+        widget: markdown
+      - name: reachHeading
+        label: Contact heading
+        widget: string
+      - name: reach
+        label: Contact links
+        widget: list
+        summary: '{{label}}: {{text}}'
+        fields:
+        - name: label
+          label: Label
+          widget: string
+        - name: text
+          label: Shown as
+          widget: string
+        - name: url
+          label: Link
+          widget: string
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: work
+      label: Work
+      file: src/data/copy/work.json
+      preview_path: /work/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: photography
+        label: Photography row
+        widget: object
+        fields:
+        - name: title
+          label: Title
+          widget: string
+        - name: descPrefix
+          label: Description before the set names
+          widget: string
+      - name: websites
+        label: Websites row
+        widget: object
+        fields:
+        - name: title
+          label: Title
+          widget: string
+        - name: descPrefix
+          label: Description before the site names
+          widget: string
+      - name: empty
+        label: Note when there is no work
+        widget: string
+    - name: work-photography
+      label: Work · Photography
+      file: src/data/copy/work-photography.json
+      preview_path: /work/photography/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: work-websites
+      label: Work · Websites
+      file: src/data/copy/work-websites.json
+      preview_path: /work/websites/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: lab
+      label: Lab
+      file: src/data/copy/lab.json
+      preview_path: /lab/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: entries
+        label: Experiments (top to bottom)
+        widget: list
+        summary: '{{title}} · {{meta}}'
+        fields:
+        - name: title
+          label: Title
+          widget: string
+        - name: desc
+          label: Description
+          widget: text
+        - name: meta
+          label: Date shown
+          widget: string
+        - name: href
+          label: Link
+          widget: string
+        - name: peek
+          label: Hover preview image
+          widget: image
+      - name: empty
+        label: Note when the list is empty
+        widget: string
+    - name: colophon
+      label: Colophon
+      file: src/data/copy/colophon.json
+      preview_path: /colophon/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: stampBuild
+        label: Build stamp label (before the commit)
+        widget: string
+      - name: stampSource
+        label: Source code link label
+        widget: string
+      - name: sections
+        label: Sections
+        widget: list
+        summary: '{{heading}}'
+        fields:
+        - name: heading
+          label: Section heading
+          widget: string
+        - name: body
+          label: Section text
+          widget: markdown
+      - name: weightHeading
+        label: Page weight heading
+        widget: string
+      - name: weightBody
+        label: Page weight text (above the table)
+        widget: markdown
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: log
+      label: Build log
+      file: src/data/copy/log.json
+      preview_path: /log/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: commits
+        label: Tally word after the commit count
+        widget: string
+      - name: days
+        label: Tally word after the day count
+        widget: string
+      - name: since
+        label: Tally word before the first date
+        widget: string
+      - name: source
+        label: Source link
+        widget: string
+      - name: empty
+        label: Note when git cannot be read
+        widget: string
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: resume
+      label: Resume (page labels)
+      file: src/data/copy/resume.json
+      preview_path: /resume/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: workHeading
+        label: Work heading
+        widget: string
+      - name: projectsHeading
+        label: Projects heading
+        widget: string
+      - name: skillsHeading
+        label: Skills heading
+        widget: string
+      - name: educationHeading
+        label: Education heading
+        widget: string
+      - name: meta
+        label: Footer line ({date} becomes the updated date)
+        widget: markdown
+        buttons:
+        - bold
+        - italic
+        - link
+        - code
+        editor_components: []
+      - name: printButton
+        label: Print button
+        widget: string
+    - name: store
+      label: Store
+      file: src/data/copy/store.json
+      preview_path: /store/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: loading
+        label: Loading note
+        widget: string
+      - name: checkout
+        label: Checkout button
+        widget: string
+      - name: backLink
+        label: Back link
+        widget: string
+      - name: emptyShelf
+        label: Note when nothing is for sale
+        widget: string
+      - name: unreachable
+        label: Note when the store cannot be reached
+        widget: string
+      - name: add
+        label: Add to cart button
+        widget: string
+      - name: pictureToCome
+        label: Placeholder when a picture is missing
+        widget: string
+      - name: testNotice
+        label: Test mode notice
+        widget: text
+    - name: store-thanks
+      label: Store · Thank you
+      file: src/data/copy/store-thanks.json
+      preview_path: /store/thanks/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: headline
+        label: Headline while checking
+        widget: string
+      - name: detail
+        label: Detail while checking
+        widget: string
+      - name: backLink
+        label: Back link
+        widget: string
+      - name: noSecret
+        label: Message when opened directly
+        widget: object
+        fields:
+        - name: title
+          label: Headline
+          widget: string
+        - name: body
+          label: Detail
+          widget: text
+      - name: received
+        label: Message when the result is unknown
+        widget: object
+        fields:
+        - name: title
+          label: Headline
+          widget: string
+        - name: body
+          label: Detail
+          widget: text
+      - name: succeeded
+        label: Message when paid
+        widget: object
+        fields:
+        - name: title
+          label: Headline
+          widget: string
+        - name: body
+          label: Detail
+          widget: text
+        - name: footer
+          label: Follow-up line
+          widget: text
+      - name: processing
+        label: Message when still processing
+        widget: object
+        fields:
+        - name: title
+          label: Headline
+          widget: string
+        - name: body
+          label: Detail
+          widget: text
+        - name: footer
+          label: Follow-up line
+          widget: text
+      - name: failed
+        label: Message when not paid
+        widget: object
+        fields:
+        - name: title
+          label: Headline
+          widget: string
+        - name: body
+          label: Detail
+          widget: text
+        - name: footer
+          label: Follow-up line
+          widget: text
+    - name: store-checkout
+      label: Store · Checkout
+      file: src/data/copy/store-checkout.json
+      preview_path: /store/checkout/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: unavailable
+        label: Note when checkout is off
+        widget: string
+      - name: empty
+        label: Note when the cart is empty
+        widget: markdown
+        buttons:
+        - bold
+        - italic
+        - link
+        - code
+        editor_components: []
+      - name: orderHeading
+        label: Section 1 heading
+        widget: string
+      - name: detailsHeading
+        label: Section 2 heading
+        widget: string
+      - name: emailLabel
+        label: Email label
+        widget: string
+      - name: emailPlaceholder
+        label: Email placeholder
+        widget: string
+      - name: emailHint
+        label: Email hint
+        widget: string
+      - name: shippingLegend
+        label: Shipping heading
+        widget: string
+      - name: nameLabel
+        label: Name label
+        widget: string
+      - name: addressLabel
+        label: Address label
+        widget: string
+      - name: address2Label
+        label: Address line 2 label
+        widget: string
+      - name: optional
+        label: Optional tag
+        widget: string
+      - name: cityLabel
+        label: City label
+        widget: string
+      - name: stateLabel
+        label: State label
+        widget: string
+      - name: zipLabel
+        label: ZIP label
+        widget: string
+      - name: paymentHeading
+        label: Section 3 heading
+        widget: string
+      - name: paymentPlaceholder
+        label: Note before card fields appear
+        widget: string
+      - name: payButton
+        label: Pay button before details
+        widget: string
+      - name: fineprint
+        label: Fine print
+        widget: string
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: '404'
+      label: Not found (404)
+      file: src/data/copy/404.json
+      preview_path: /404.html
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: canvasLabel
+        label: Game description (screen readers)
+        widget: string
+      - name: hudBest
+        label: Word before the best distance
+        widget: string
+      - name: hint
+        label: Controls hint
+        widget: string
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: body
+        label: Apology
+        widget: text
+      - name: offer
+        label: Bird offer line
+        widget: string
+      - name: playButton
+        label: Play button
+        widget: string
+      - name: homeLink
+        label: Home link
+        widget: string
+      - name: overEyebrow
+        label: Game over eyebrow
+        widget: string
+      - name: againButton
+        label: Play again button
+        widget: string
+      - name: navLabel
+        label: Section links label (screen readers)
+        widget: string
+      - name: sections
+        label: Section links
+        widget: list
+        summary: '{{title}} · {{note}}'
+        fields:
+        - name: title
+          label: Title
+          widget: string
+        - name: note
+          label: Note
+          widget: string
+        - name: url
+          label: Link
+          widget: string
+    - name: offline
+      label: Offline page
+      file: src/data/copy/offline.json
+      preview_path: /offline/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: backLink
+        label: Back link
+        widget: string
+  - name: work-pages
+    label: Work pages
+    description: 'The hand-built case study pages: Datum, the photo sets, the websites.'
+    files:
+    - name: work-datum
+      label: Work · Datum
+      file: src/data/copy/work-datum.json
+      preview_path: /work/datum/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: hero
+        label: Dark opening band
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: tagline
+          label: Tagline
+          widget: string
+        - name: meta
+          label: Role line
+          widget: string
+      - name: statement
+        label: Section 1 (office and field)
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: text
+          label: Paragraph
+          widget: text
+      - name: field
+        label: Section 2 (field, screenshot right)
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: text
+          label: Paragraph
+          widget: text
+        - name: image
+          label: Screenshot
+          widget: image
+        - name: alt
+          label: Screenshot alt text
+          widget: string
+        - name: caption
+          label: Screenshot caption
+          widget: string
+      - name: yourWork
+        label: Section 3 (your day, screenshot left)
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: text
+          label: Paragraph
+          widget: text
+        - name: image
+          label: Screenshot
+          widget: image
+        - name: alt
+          label: Screenshot alt text
+          widget: string
+        - name: caption
+          label: Screenshot caption
+          widget: string
+      - name: deptHeading
+        label: Departments heading
+        widget: string
+      - name: departments
+        label: Department screenshots (keep six, in this order)
+        widget: list
+        summary: '{{caption}}'
+        fields:
+        - name: image
+          label: Screenshot
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+        - name: caption
+          label: Caption
+          widget: string
+      - name: film
+        label: Brand film band
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: note
+          label: Note under heading
+          widget: string
+      - name: building
+        label: Section 4 (building it)
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: text
+          label: Paragraph
+          widget: text
+      - name: shipped
+        label: What is shipped (dark band)
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: lede
+          label: Lede
+          widget: text
+        - name: figures
+          label: Big numbers
+          widget: list
+          summary: '{{number}} {{label}}'
+          fields:
+          - name: number
+            label: Number
+            widget: string
+          - name: label
+            label: What it counts
+            widget: string
+        - name: notes
+          label: Engineering paragraphs
+          widget: list
+          summary: '{{text}}'
+          fields:
+          - name: text
+            label: Paragraph
+            widget: text
+      - name: system
+        label: System diagram
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: note
+          label: Intro
+          widget: text
+        - name: insideLabel
+          label: Tenant boundary label
+          widget: string
+        - name: groups
+          label: Diagram groups (top to bottom)
+          widget: list
+          summary: 'Inside tenant boundary: {{inside}}'
+          fields:
+          - name: inside
+            label: Draw the tenant boundary around this group
+            widget: boolean
+            required: false
+          - name: layers
+            label: Layers
+            widget: list
+            summary: '{{label}}'
+            fields:
+            - name: label
+              label: Layer name
+              widget: string
+            - name: nodes
+              label: Plates
+              widget: list
+              summary: '{{name}}'
+              fields:
+              - name: name
+                label: Plate name
+                widget: string
+              - name: fig
+                label: Small line on the plate
+                widget: string
+              - name: text
+                label: Caption shown when selected
+                widget: text
+      - name: logs
+        label: Decision logs
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: note
+          label: Intro
+          widget: text
+        - name: items
+          label: Logs
+          widget: list
+          summary: '{{label}}'
+          fields:
+          - name: label
+            label: Title
+            widget: string
+          - name: url
+            label: Link
+            widget: string
+          - name: summary
+            label: One-line summary
+            widget: string
+      - name: cta
+        label: See it live link
+        widget: object
+        fields:
+        - name: label
+          label: Shown as
+          widget: string
+        - name: url
+          label: Link
+          widget: string
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: work-photography-commercial
+      label: Photography · Commercial
+      file: src/data/copy/work-photography-commercial.json
+      preview_path: /work/photography/commercial/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: openLabel
+        label: Screen reader label for opening a photo
+        widget: string
+      - name: hero
+        label: Lead photo (full width)
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+      - name: intro
+        label: Intro paragraphs
+        widget: markdown
+      - name: select1
+        label: Feature photo 1
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+      - name: sheet1
+        label: Contact sheet 1 (Knock Em Down)
+        widget: object
+        fields:
+        - name: label
+          label: Sheet label
+          widget: string
+        - name: frames
+          label: Frames
+          widget: list
+          summary: '{{alt}}'
+          fields:
+          - name: src
+            label: Photo
+            widget: image
+          - name: alt
+            label: Alt text
+            widget: string
+      - name: select2
+        label: Feature photo 2
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+      - name: sheet2
+        label: Contact sheet 2 (Tidal Wave)
+        widget: object
+        fields:
+        - name: label
+          label: Sheet label
+          widget: string
+        - name: frames
+          label: Frames
+          widget: list
+          summary: '{{alt}}'
+          fields:
+          - name: src
+            label: Photo
+            widget: image
+          - name: alt
+            label: Alt text
+            widget: string
+      - name: siteNote
+        label: Knock Em Down site note
+        widget: object
+        fields:
+        - name: before
+          label: Text before the link
+          widget: string
+        - name: linkText
+          label: Link text
+          widget: string
+        - name: url
+          label: Link
+          widget: string
+        - name: after
+          label: Text after the link
+          widget: string
+          required: false
+      - name: storeNote
+        label: Store note
+        widget: markdown
+        buttons:
+        - bold
+        - italic
+        - link
+        - code
+        editor_components: []
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: work-photography-eclipse
+      label: Photography · The Copper Hour
+      file: src/data/copy/work-photography-eclipse.json
+      preview_path: /work/photography/eclipse/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: transit
+        label: Lead photo (airliner transit)
+        widget: object
+        fields:
+        - name: time
+          label: Time
+          widget: string
+        - name: viewerNote
+          label: Note shown in the full size viewer
+          widget: string
+        - name: openLabel
+          label: Screen reader label for opening it
+          widget: string
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: text
+      - name: arc
+        label: The arc
+        widget: object
+        fields:
+        - name: heading
+          label: Section heading
+          widget: string
+        - name: toggleLabel
+          label: Screen reader label for the brightness buttons
+          widget: string
+        - name: evenButton
+          label: Button 1 (evened out)
+          widget: string
+        - name: trueButton
+          label: Button 2 (as it looked)
+          widget: string
+        - name: evenTitle
+          label: Viewer title (evened out)
+          widget: string
+        - name: trueTitle
+          label: Viewer title (as it looked)
+          widget: string
+        - name: time
+          label: Time range
+          widget: string
+        - name: openLabel
+          label: Screen reader label for opening it
+          widget: string
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: evenCaption
+          label: Caption (evened out)
+          widget: text
+        - name: trueCaption
+          label: Caption (as it looked)
+          widget: text
+      - name: stages
+        label: Twenty one moons
+        widget: object
+        fields:
+        - name: heading
+          label: Section heading
+          widget: string
+        - name: hint
+          label: Hint beside the heading
+          widget: string
+        - name: phases
+          label: Moon alt text phrases (by stage of the eclipse)
+          widget: object
+          fields:
+          - name: full
+            label: First moon
+            widget: string
+          - name: bite
+            label: Early stages
+            widget: string
+          - name: half
+            label: Middle stages
+            widget: string
+          - name: most
+            label: Later stages
+            widget: string
+          - name: nearly
+            label: Final stages
+            widget: string
+      - name: ring
+        label: Ring photo
+        widget: object
+        fields:
+        - name: time
+          label: Time
+          widget: string
+        - name: viewerNote
+          label: Note shown in the full size viewer
+          widget: string
+        - name: openLabel
+          label: Screen reader label for opening it
+          widget: string
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: text
+      - name: trackA
+        label: Aircraft track 1 (22:42)
+        widget: object
+        fields:
+        - name: time
+          label: Time
+          widget: string
+        - name: viewerNote
+          label: Note shown in the full size viewer
+          widget: string
+        - name: openLabel
+          label: Screen reader label for opening it
+          widget: string
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: text
+      - name: trackB
+        label: Aircraft track 2 (22:36)
+        widget: object
+        fields:
+        - name: time
+          label: Time
+          widget: string
+        - name: viewerNote
+          label: Note shown in the full size viewer
+          widget: string
+        - name: openLabel
+          label: Screen reader label for opening it
+          widget: string
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: text
+      - name: credit
+        label: Camera credit
+        widget: string
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: work-photography-live-music
+      label: Photography · Live Music
+      file: src/data/copy/work-photography-live-music.json
+      preview_path: /work/photography/live-music/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: openLabel
+        label: Screen reader label for opening a photo
+        widget: string
+      - name: hero
+        label: Lead photo (full width)
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+      - name: intro
+        label: Intro paragraphs
+        widget: markdown
+      - name: select1
+        label: Feature photo 1
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+      - name: sheet1
+        label: Contact sheet 1 (Stone Sugar)
+        widget: object
+        fields:
+        - name: label
+          label: Sheet label
+          widget: string
+        - name: frames
+          label: Frames
+          widget: list
+          summary: '{{alt}}'
+          fields:
+          - name: src
+            label: Photo
+            widget: image
+          - name: alt
+            label: Alt text
+            widget: string
+      - name: select2
+        label: Feature photo 2
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+      - name: sheet2
+        label: Contact sheet 2 (Sawhorse Studio)
+        widget: object
+        fields:
+        - name: label
+          label: Sheet label
+          widget: string
+        - name: frames
+          label: Frames
+          widget: list
+          summary: '{{alt}}'
+          fields:
+          - name: src
+            label: Photo
+            widget: image
+          - name: alt
+            label: Alt text
+            widget: string
+      - name: sheet3
+        label: Contact sheet 3 (Solis Armada)
+        widget: object
+        fields:
+        - name: label
+          label: Sheet label
+          widget: string
+        - name: frames
+          label: Frames
+          widget: list
+          summary: '{{alt}}'
+          fields:
+          - name: src
+            label: Photo
+            widget: image
+          - name: alt
+            label: Alt text
+            widget: string
+      - name: storeNote
+        label: Store note
+        widget: markdown
+        buttons:
+        - bold
+        - italic
+        - link
+        - code
+        editor_components: []
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: work-photography-product
+      label: Photography · Product
+      file: src/data/copy/work-photography-product.json
+      preview_path: /work/photography/product/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: openLabel
+        label: Screen reader label for opening a photo
+        widget: string
+      - name: hero
+        label: Lead photo (full width)
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+      - name: intro
+        label: Intro paragraphs
+        widget: markdown
+      - name: select1
+        label: Feature photo 1
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+      - name: sheet1
+        label: Contact sheet 1 (Drinks)
+        widget: object
+        fields:
+        - name: label
+          label: Sheet label
+          widget: string
+        - name: frames
+          label: Frames
+          widget: list
+          summary: '{{alt}}'
+          fields:
+          - name: src
+            label: Photo
+            widget: image
+          - name: alt
+            label: Alt text
+            widget: string
+      - name: select2
+        label: Feature photo 2
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+      - name: sheet2
+        label: Contact sheet 2 (Goods)
+        widget: object
+        fields:
+        - name: label
+          label: Sheet label
+          widget: string
+        - name: frames
+          label: Frames
+          widget: list
+          summary: '{{alt}}'
+          fields:
+          - name: src
+            label: Photo
+            widget: image
+          - name: alt
+            label: Alt text
+            widget: string
+      - name: storeNote
+        label: Store note
+        widget: markdown
+        buttons:
+        - bold
+        - italic
+        - link
+        - code
+        editor_components: []
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: work-websites-ked-detailing
+      label: Websites · Knock Em' Down Detailing
+      file: src/data/copy/work-websites-ked-detailing.json
+      preview_path: /work/websites/ked-detailing/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: launch
+        label: Open the site link
+        widget: object
+        fields:
+        - name: label
+          label: Big link text
+          widget: string
+        - name: meta
+          label: Small line beside it
+          widget: string
+        - name: url
+          label: Link
+          widget: string
+      - name: shot
+        label: Screenshot
+        widget: object
+        fields:
+        - name: image
+          label: Screenshot
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+        - name: ariaLabel
+          label: Screen reader label for the screenshot link
+          widget: string
+        - name: chip
+          label: Tag on the screenshot
+          widget: string
+      - name: body
+        label: Body
+        widget: markdown
+      - name: note
+        label: Small note after the body
+        widget: text
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: work-websites-lauren-becherer-pottery
+      label: Websites · Lauren Becherer Pottery
+      file: src/data/copy/work-websites-lauren-becherer-pottery.json
+      preview_path: /work/websites/lauren-becherer-pottery/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: launch
+        label: Open the site link
+        widget: object
+        fields:
+        - name: label
+          label: Big link text
+          widget: string
+        - name: meta
+          label: Small line beside it
+          widget: string
+        - name: url
+          label: Link
+          widget: string
+      - name: shot
+        label: Screenshot
+        widget: object
+        fields:
+        - name: image
+          label: Screenshot
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+        - name: ariaLabel
+          label: Screen reader label for the screenshot link
+          widget: string
+        - name: chip
+          label: Tag on the screenshot
+          widget: string
+      - name: body
+        label: Body
+        widget: markdown
+      - name: backLink
+        label: Back link
+        widget: string
+  - name: lab-pages
+    label: Lab pages
+    description: The words on each experiment.
+    files:
+    - name: lab-bridge
+      label: Lab · The Bridge
+      file: src/data/copy/lab-bridge.json
+      preview_path: /lab/bridge/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: screenReaderStory
+        label: Film story for screen readers
+        widget: text
+      - name: beats
+        label: Film captions (keep 5, the last one is centered)
+        widget: list
+        summary: '{{kicker}}'
+        fields:
+        - name: kicker
+          label: Small label
+          widget: string
+        - name: lines
+          label: Headline lines
+          widget: list
+          field:
+            name: line
+            label: Line
+            widget: string
+      - name: chips
+        label: Floating record chips (keep 4, in order)
+        widget: list
+        summary: '{{label}}'
+        fields:
+        - name: label
+          label: Label
+          widget: string
+        - name: meta
+          label: Detail line
+          widget: string
+      - name: wordmark
+        label: Wordmark in the film corner
+        widget: string
+      - name: scrollHint
+        label: Scroll hint
+        widget: string
+      - name: skipButton
+        label: Skip button
+        widget: string
+      - name: fallbackKicker
+        label: Title card small label (no WebGL)
+        widget: string
+      - name: fallbackLines
+        label: Title card lines (no WebGL)
+        widget: list
+        field:
+          name: line
+          label: Line
+          widget: string
+      - name: fallbackNote
+        label: Title card note (no WebGL)
+        widget: string
+      - name: colophon
+        label: About the film (paragraphs)
+        widget: list
+        field:
+          name: paragraph
+          label: Paragraph
+          widget: text
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: lab-drafting-film
+      label: Lab · The Drafting Film
+      file: src/data/copy/lab-drafting-film.json
+      preview_path: /lab/drafting-film/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: screenReaderStory
+        label: Film story for screen readers
+        widget: text
+      - name: beats
+        label: Film captions (keep 6, the last is the turn)
+        widget: list
+        summary: '{{kicker}}'
+        fields:
+        - name: kicker
+          label: Small label
+          widget: string
+        - name: head
+          label: Headline lines
+          widget: list
+          field:
+            name: line
+            label: Line
+            widget: string
+        - name: sup
+          label: Supporting line (optional)
+          widget: string
+          required: false
+      - name: markWord
+        label: Closing wordmark
+        widget: string
+      - name: markTag
+        label: Closing tagline
+        widget: string
+      - name: scrollHint
+        label: Scroll hint
+        widget: string
+      - name: chaptersLabel
+        label: Chapter rail name for screen readers
+        widget: string
+      - name: chapters
+        label: Chapter rail labels (keep 6, in order)
+        widget: list
+        field:
+          name: label
+          label: Label
+          widget: string
+      - name: skipButton
+        label: Skip button
+        widget: string
+      - name: colophon
+        label: About the film (paragraphs)
+        widget: list
+        field:
+          name: paragraph
+          label: Paragraph
+          widget: text
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: lab-field
+      label: Lab · The Field
+      file: src/data/copy/lab-field.json
+      preview_path: /lab/field/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: colophon
+        label: How it works (paragraph under the field)
+        widget: text
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: lab-keepsake
+      label: Lab · Keepsake
+      file: src/data/copy/lab-keepsake.json
+      preview_path: /lab/keepsake/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: frameLabel
+        label: Drawing description for screen readers
+        widget: string
+      - name: againButton
+        label: Draw another button
+        widget: string
+      - name: saveButton
+        label: Save button
+        widget: string
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: lab-ridge
+      label: Lab · The Ridge
+      file: src/data/copy/lab-ridge.json
+      preview_path: /lab/ridge/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: still
+        label: Top image
+        widget: object
+        fields:
+        - name: image
+          label: Image
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+      - name: body
+        label: Body (Build, Frames, Phones sections)
+        widget: markdown
+      - name: framing
+        label: Bottom image
+        widget: object
+        fields:
+        - name: image
+          label: Image
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+        - name: caption
+          label: Caption
+          widget: string
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: lab-sprout-siege
+      label: Lab · Sprout Siege
+      file: src/data/copy/lab-sprout-siege.json
+      preview_path: /lab/sprout-siege/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: farmShot
+        label: Screenshot 1 (the farm)
+        widget: object
+        fields:
+        - name: image
+          label: Image
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: string
+      - name: figures
+        label: Numbers
+        widget: list
+        summary: '{{value}} {{label}}'
+        fields:
+        - name: value
+          label: Number
+          widget: string
+        - name: label
+          label: What it counts
+          widget: string
+      - name: rule
+        label: Section 1 (One rule)
+        widget: markdown
+      - name: defenseShot
+        label: Screenshot 2 (defense board)
+        widget: object
+        fields:
+        - name: image
+          label: Image
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: string
+      - name: body
+        label: Sections 2 and 3 (Deterministic, What that caught)
+        widget: markdown
+      - name: riskShot
+        label: Screenshot 3 (stake screen)
+        widget: object
+        fields:
+        - name: image
+          label: Image
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: string
+      - name: colophon
+        label: Closing note
+        widget: string
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: lab-trra
+      label: Lab · The MacArthur
+      file: src/data/copy/lab-trra.json
+      preview_path: /lab/trra/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: ogImage
+        label: Share preview image
+        widget: image
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: hero
+        label: Top photo
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: string
+      - name: intro
+        label: Intro paragraphs
+        widget: markdown
+      - name: viewer
+        label: 3D model viewer
+        widget: object
+        fields:
+        - name: ariaLabel
+          label: Screen reader label for the viewer
+          widget: string
+        - name: heading
+          label: Heading
+          widget: string
+        - name: hintPointer
+          label: Hint (mouse)
+          widget: string
+        - name: hintTouch
+          label: Hint (touch)
+          widget: string
+        - name: loading
+          label: Loading message
+          widget: string
+        - name: extentLabel
+          label: Extent label
+          widget: string
+        - name: extentJob
+          label: Extent button 1 (job)
+          widget: string
+        - name: extentNetwork
+          label: Extent button 2 (network)
+          widget: string
+        - name: groundLabel
+          label: Ground label
+          widget: string
+        - name: groundOff
+          label: Ground button off
+          widget: string
+        - name: groundOn
+          label: Ground button on
+          widget: string
+        - name: viewLabel
+          label: View label
+          widget: string
+        - name: recenter
+          label: Recenter button
+          widget: string
+        - name: fullscreen
+          label: Fullscreen button
+          widget: string
+        - name: systemLabel
+          label: System label
+          widget: string
+        - name: systems
+          label: System buttons
+          widget: list
+          summary: '{{label}}'
+          fields:
+          - name: key
+            label: Internal key (do not change)
+            widget: string
+            required: false
+          - name: label
+            label: Button label
+            widget: string
+        - name: caption
+          label: Caption under the viewer
+          widget: text
+      - name: whereHeading
+        label: Section "where" heading
+        widget: string
+      - name: whereBody
+        label: Section "where" body
+        widget: markdown
+      - name: locator
+        label: Locator map
+        widget: object
+        fields:
+        - name: image
+          label: Aerial photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: archLabel
+          label: Map label 1 (Arch)
+          widget: string
+        - name: stadiumLabel
+          label: Map label 2 (Stadium)
+          widget: string
+        - name: scaleLabel
+          label: Scale bar label
+          widget: string
+        - name: northLabel
+          label: North arrow label
+          widget: string
+        - name: caption
+          label: Caption
+          widget: text
+      - name: wallHeading
+        label: Wall section heading
+        widget: string
+      - name: wallBody
+        label: Wall section body
+        widget: markdown
+      - name: wallPhoto
+        label: Wall photo
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: string
+      - name: bridgeHeading
+        label: Bridge section heading
+        widget: string
+      - name: bridgeBody
+        label: Bridge section body
+        widget: markdown
+      - name: spanPhoto
+        label: Span photo
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: string
+      - name: deckPhoto
+        label: Deck photo
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: string
+      - name: trackHeading
+        label: Track section heading
+        widget: string
+      - name: trackBody
+        label: Track section body
+        widget: markdown
+      - name: runsTable
+        label: Track runs table
+        widget: object
+        fields:
+        - name: headRun
+          label: Column 1 heading
+          widget: string
+        - name: headLength
+          label: Column 2 heading
+          widget: string
+        - name: headRadius
+          label: Column 3 heading
+          widget: string
+        - name: headGrade
+          label: Column 4 heading
+          widget: string
+        - name: rows
+          label: Rows
+          widget: list
+          summary: '{{run}}'
+          fields:
+          - name: run
+            label: Run
+            widget: string
+          - name: length
+            label: Length
+            widget: string
+          - name: radius
+            label: Tightest radius
+            widget: string
+          - name: grade
+            label: Max grade
+            widget: string
+      - name: passesHeading
+        label: Three passes heading
+        widget: string
+      - name: passesBody
+        label: Three passes body
+        widget: markdown
+      - name: progression
+        label: Three passes images
+        widget: list
+        summary: '{{step}}: {{note}}'
+        fields:
+        - name: image
+          label: Image
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: step
+          label: Step number
+          widget: string
+        - name: note
+          label: Note
+          widget: text
+      - name: yardPhoto
+        label: Yard photo
+        widget: object
+        fields:
+        - name: image
+          label: Photo
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: text
+        - name: caption
+          label: Caption
+          widget: string
+      - name: sceneHeading
+        label: Scene contents heading
+        widget: string
+      - name: sceneTable
+        label: Scene contents table
+        widget: list
+        summary: '{{item}}'
+        fields:
+        - name: item
+          label: Item
+          widget: string
+        - name: detail
+          label: Detail
+          widget: string
+      - name: openHeading
+        label: Still open heading
+        widget: string
+      - name: openBody
+        label: Still open body
+        widget: markdown
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: lab-underground
+      label: Lab · The Underground
+      file: src/data/copy/lab-underground.json
+      preview_path: /lab/underground/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: intro
+        label: Intro paragraph
+        widget: markdown
+      - name: bedNote
+        label: Note at the bottom of the wall
+        widget: string
+      - name: profileHeading
+        label: Profile heading
+        widget: string
+      - name: profileBody
+        label: Profile body
+        widget: markdown
+      - name: horizons
+        label: Soil horizons
+        widget: list
+        summary: '{{key}} · {{name}}'
+        fields:
+        - name: key
+          label: Letter
+          widget: string
+        - name: name
+          label: Name
+          widget: string
+        - name: depth
+          label: Depth
+          widget: string
+        - name: note
+          label: Note
+          widget: text
+      - name: sections
+        label: Sections after the horizons
+        widget: list
+        summary: '{{heading}}'
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: body
+          label: Body
+          widget: markdown
+      - name: backLink
+        label: Back link
+        widget: string
+  - name: slumbio
+    label: Slumbio
+    description: The app page, privacy policy and terms. The App Store links to these, so keep them live.
+    files:
+    - name: slumbio-privacy
+      label: Slumbio Privacy
+      file: src/data/copy/slumbio-privacy.json
+      preview_path: /slumbio/privacy/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow (before the date)
+        widget: string
+      - name: updated
+        label: Last updated date
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: sections
+        label: Sections
+        widget: list
+        summary: '{{heading}}'
+        fields:
+        - name: heading
+          label: Section heading
+          widget: string
+        - name: body
+          label: Section text
+          widget: markdown
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: slumbio-terms
+      label: Slumbio Terms
+      file: src/data/copy/slumbio-terms.json
+      preview_path: /slumbio/terms/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow (before the date)
+        widget: string
+      - name: updated
+        label: Last updated date
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: sections
+        label: Sections
+        widget: list
+        summary: '{{heading}}'
+        fields:
+        - name: heading
+          label: Section heading
+          widget: string
+        - name: body
+          label: Section text
+          widget: markdown
+      - name: backLink
+        label: Back link
+        widget: string
+    - name: slumbio
+      label: Slumbio (app page)
+      file: src/data/copy/slumbio.json
+      preview_path: /slumbio/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: intro
+        label: Intro paragraphs (above the screenshots)
+        widget: markdown
+      - name: shots
+        label: Screenshots
+        widget: list
+        summary: '{{alt}}'
+        fields:
+        - name: image
+          label: Screenshot
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: string
+      - name: sections
+        label: Sections (below the screenshots)
+        widget: list
+        summary: '{{heading}}'
+        fields:
+        - name: heading
+          label: Section heading
+          widget: string
+        - name: body
+          label: Section text
+          widget: markdown
+      - name: cta
+        label: App Store button
+        widget: object
+        fields:
+        - name: text
+          label: Button text
+          widget: string
+        - name: url
+          label: App Store link
+          widget: string
+      - name: fine
+        label: Support note
+        widget: markdown
+        buttons:
+        - bold
+        - italic
+        - link
+        - code
+        editor_components: []
+      - name: links
+        label: Footer links
+        widget: list
+        summary: '{{text}}'
+        fields:
+        - name: text
+          label: Label
+          widget: string
+        - name: url
+          label: Link
+          widget: string
+      - name: backLink
+        label: Back link
+        widget: string
+
+  # ---------------------------------------------------------------- Resume
+  - name: resume
+    label: Resume
+    description: The resume at /resume/ and the machine-readable /resume.json are the same file. Keep it factual.
+    files:
+      - name: resume
+        label: Resume
+        file: public/resume.json
+        preview_path: /resume/
+        fields:
+          - { name: $schema, label: Schema, widget: string, readonly: true }
+          - name: basics
+            label: Basics
+            widget: object
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: label, label: Title line, widget: string }
+              - { name: email, label: Email, widget: string }
+              - { name: url, label: Website, widget: string }
+              - { name: summary, label: Summary, widget: text }
+              - name: location
+                label: Location
+                widget: object
+                fields:
+                  - { name: city, label: City, widget: string }
+                  - { name: region, label: Region, widget: string }
+                  - { name: countryCode, label: Country code, widget: string }
+              - name: profiles
+                label: Profiles
+                widget: list
+                summary: "{{network}}"
+                fields:
+                  - { name: network, label: Network, widget: string }
+                  - { name: username, label: Username, widget: string }
+                  - { name: url, label: Link, widget: string }
+          - name: work
+            label: Work history
+            widget: list
+            summary: "{{position}} · {{name}}"
+            fields:
+              - { name: name, label: Organisation, widget: string }
+              - { name: position, label: Position, widget: string }
+              - { name: url, label: Link, widget: string, required: false }
+              - { name: startDate, label: Start (YYYY-MM), widget: string }
+              - { name: endDate, label: End (YYYY-MM, blank for now), widget: string, required: false }
+              - { name: summary, label: Summary, widget: text }
+              - { name: highlights, label: Highlights, widget: list, required: false }
+          - name: projects
+            label: Projects
+            widget: list
+            summary: "{{name}}"
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: description, label: Description, widget: text }
+              - { name: url, label: Link, widget: string, required: false }
+              - { name: entity, label: Organisation (shown when there is no link), widget: string, required: false }
+          - name: skills
+            label: Skills
+            widget: list
+            summary: "{{name}}"
+            fields:
+              - { name: name, label: Group, widget: string }
+              - { name: keywords, label: Skills, widget: list }
+          - name: education
+            label: Education
+            widget: list
+            summary: "{{studyType}}, {{institution}}"
+            fields:
+              - { name: institution, label: Institution, widget: string }
+              - { name: area, label: Area, widget: string }
+              - { name: studyType, label: Degree, widget: string }
+          - name: meta
+            label: Meta
+            widget: object
+            fields:
+              - { name: canonical, label: Canonical URL, widget: string, readonly: true }
+              - { name: lastModified, label: Last updated (YYYY-MM-DD), widget: string }

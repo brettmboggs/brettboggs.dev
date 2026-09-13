@@ -1,0 +1,110 @@
+{
+  "title": "Live Music · Brett Boggs",
+  "description": "Bands on festival stages, in bar rooms, and one afternoon in a studio.",
+  "eyebrow": "Photography · 2021 to 2023",
+  "heading": "Live Music",
+  "lede": "Bands on festival stages, in bar rooms, and one afternoon in a studio.",
+  "openLabel": "Open the picture at full size",
+  "hero": {
+    "image": "/photo/stone-sugar/hero.webp",
+    "alt": "Stone Sugar standing in a field by the water, black and white."
+  },
+  "intro": "Two years with Stone Sugar, plus nights with Solis Armada. Festivals, bar stages, and the occasional open field.\n\nAlmost all of it is available light, which on a stage means whatever the wash happens to be doing that second. You learn the rig, then you wait.",
+  "select1": {
+    "image": "/photo/stone-sugar/lights.webp",
+    "alt": "A drummer silhouetted against red and green light bars."
+  },
+  "sheet1": {
+    "label": "Stone Sugar · 2021 to 2022",
+    "frames": [
+      {
+        "src": "/photo/stone-sugar/f01.webp",
+        "alt": "The Big Top marquee for Circus Flora against a bright sky."
+      },
+      {
+        "src": "/photo/stone-sugar/f02.webp",
+        "alt": "A club stage washed in blue and green beams over a silhouetted crowd."
+      },
+      {
+        "src": "/photo/stone-sugar/f03.webp",
+        "alt": "A quonset stage lit deep pink at night, a fire performer out front."
+      },
+      {
+        "src": "/photo/stone-sugar/f04.webp",
+        "alt": "A guitarist under teal light, head down over the neck."
+      },
+      {
+        "src": "/photo/stone-sugar/f05.webp",
+        "alt": "A guitarist lit hard teal and green, mid phrase."
+      },
+      {
+        "src": "/photo/stone-sugar/f06.webp",
+        "alt": "Two players in warm smoke, one in a cowboy hat."
+      },
+      {
+        "src": "/photo/stone-sugar/f07.webp",
+        "alt": "A bassist in a tie dye shirt under red stage light."
+      },
+      {
+        "src": "/photo/stone-sugar/f08.webp",
+        "alt": "An outdoor stage set under a steel bridge in daylight."
+      },
+      {
+        "src": "/photo/stone-sugar/f09.webp",
+        "alt": "A fire dancer working in front of a festival banner."
+      }
+    ]
+  },
+  "select2": {
+    "image": "/photo/stone-sugar/case.webp",
+    "alt": "A sticker covered hard case propped against an amplifier."
+  },
+  "sheet2": {
+    "label": "Sawhorse Studio · May 2022",
+    "frames": [
+      {
+        "src": "/photo/stone-sugar/s01.webp",
+        "alt": "A large analogue mixing console raking away in shallow focus."
+      },
+      {
+        "src": "/photo/stone-sugar/s02.webp",
+        "alt": "A red condenser microphone in a shock mount, warm light behind."
+      },
+      {
+        "src": "/photo/stone-sugar/s03.webp",
+        "alt": "Warm light across the strings and frame of an open piano."
+      }
+    ]
+  },
+  "sheet3": {
+    "label": "Solis Armada · 2022 to 2023",
+    "frames": [
+      {
+        "src": "/photo/solis/a01.webp",
+        "alt": "A fiddle player lit from behind on a dark stage."
+      },
+      {
+        "src": "/photo/solis/a02.webp",
+        "alt": "A guitarist under deep purple light."
+      },
+      {
+        "src": "/photo/solis/a03.webp",
+        "alt": "A player in a gold brocade jacket bent over the strings."
+      },
+      {
+        "src": "/photo/solis/a04.webp",
+        "alt": "A drummer seen through blue smoke and cymbals."
+      },
+      {
+        "src": "/photo/solis/a05.webp",
+        "alt": "A drummer singing under a green and blue wash."
+      },
+      {
+        "src": "/photo/solis/a06.webp",
+        "alt": "The band smeared into green light on a long exposure."
+      }
+    ]
+  },
+  "storeNote": "Prints of anything here are made to order in [the store](/store/).",
+  "backLink": "All photography"
+}

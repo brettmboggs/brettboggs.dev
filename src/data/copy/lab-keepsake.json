@@ -1,0 +1,11 @@
+{
+  "title": "Keepsake · Brett Boggs",
+  "description": "A seeded drawing, different for every visitor. Yours to keep.",
+  "eyebrow": "Lab",
+  "heading": "Keepsake",
+  "lede": "Every visit draws a different field. The same seed always draws the same field. This one is yours.",
+  "frameLabel": "Your generated field drawing",
+  "againButton": "Draw another",
+  "saveButton": "Keep it · SVG",
+  "backLink": "← Lab"
+}

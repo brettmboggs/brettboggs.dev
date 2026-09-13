@@ -1,84 +1,41 @@
 ---
 import Base from '../layouts/Base.astro';
+import copy from '../data/copy/about.json';
+import { md } from '../data/copy';
 ---
 
-<Base title="About · Brett Boggs" description="Operator turned builder. St. Louis." scene="about">
+<Base title={copy.title} description={copy.description} scene="about" edit="pages/about">
   <header class="page-head">
-    <p class="eyebrow">03</p>
-    <h1>About</h1>
-    <p class="lede">Operator turned builder. St.&nbsp;Louis.</p>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
   </header>
 
   <div class="opener">
-    <div class="prose opener-copy">
-      <p>
-        I spent a decade running physical operations before I ever shipped software. Service
-        lane at a Honda dealership. General manager of a car wash, then a group of them, then a
-        district. Operations for a real estate investment company. Years of schedules, payroll,
-        equipment that breaks on the coldest day of the year, and customers standing in front of
-        you expecting an answer.
-      </p>
-      <p>
-        That decade is the point. Most software for real-world businesses is built by people who
-        have never run one, and it shows: tools that demand data entry nobody has time for,
-        reports that answer questions nobody asked, five systems where one should be. I got
-        tired of being the operator those tools were inflicted on, so I became the person who
-        builds them instead.
-      </p>
-    </div>
+    <div class="prose opener-copy" set:html={md(copy.opener)} />
     <figure class="portrait">
       <span class="portrait-plate">
-        <img src="/about/brett.jpg" alt="Brett Boggs" width="880" height="1121" loading="eager" />
+        <img src={copy.portrait.image} alt={copy.portrait.alt} width="880" height="1121" loading="eager" />
       </span>
-      <figcaption>For once, the wrong side of the camera</figcaption>
+      <figcaption>{copy.portrait.caption}</figcaption>
     </figure>
   </div>
 
-  <div class="prose">
-    <p>
-      Now I co-found and build <a href="/work/datum/">Datum</a>, one system for running a
-      construction company. I am the full-stack engineer: design, frontend, backend, security,
-      infrastructure, and the AI underneath, end to end. The
-      <a href="/work/datum/">case study</a> has the numbers, and the decision logs under it
-      have the honest version: what was chosen, what it cost, what broke.
-    </p>
-    <p>
-      The same instinct runs through everything here. <a href="/work/apparent-low/">Apparent
-      Low</a> exists because extraction you can't measure is extraction you can't trust. The
-      <a href="/work/photography/">photography</a> is the same discipline pointed at light
-      instead of systems. The <a href="/lab/">Lab</a> is where things get tried before they
-      earn a place.
-    </p>
-    <p>
-      I work best on problems where the software has to survive contact with a real operation:
-      a foreman's morning, a month-end close, a bid due at 10 a.m. If that is the kind of
-      problem you have, I want to hear about it.
-    </p>
-  </div>
+  <div class="prose" set:html={md(copy.body)} />
 
   <section class="reach">
-    <p class="reach-head">Reach me</p>
+    <p class="reach-head">{copy.reachHeading}</p>
     <ul>
-      <li>
-        <span class="reach-label">Email</span>
-        <a href="mailto:hello@brettboggs.dev">hello@brettboggs.dev</a>
-      </li>
-      <li>
-        <span class="reach-label">LinkedIn</span>
-        <a href="https://www.linkedin.com/in/brettmboggs/" rel="noopener">linkedin.com/in/brettmboggs</a>
-      </li>
-      <li>
-        <span class="reach-label">GitHub</span>
-        <a href="https://github.com/brettmboggs" rel="noopener">github.com/brettmboggs</a>
-      </li>
-      <li>
-        <span class="reach-label">Datum</span>
-        <a href="https://datumci.com" rel="noopener">datumci.com</a>
-      </li>
+      {copy.reach.map((r) => (
+        <li>
+          <span class="reach-label">{r.label}</span>
+          <a href={r.url} rel={r.url.startsWith('http') ? 'noopener' : undefined}>{r.text}</a>
+        </li>
+      ))}
     </ul>
   </section>
 
-  <a class="back-link" href="/">&larr; Home</a>
+  <a class="back-link" href="/">{copy.backLink}</a>
 </Base>
 
 <style>

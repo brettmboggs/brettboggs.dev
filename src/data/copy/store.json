@@ -1,0 +1,15 @@
+{
+  "title": "Store · Brett Boggs",
+  "description": "Prints and files.",
+  "eyebrow": "Store",
+  "heading": "Store",
+  "lede": "Printed to order on heavyweight matte art paper. Free shipping in the United States.",
+  "loading": "Loading the shelf.",
+  "checkout": "Checkout",
+  "backLink": "← Home",
+  "emptyShelf": "Nothing on the shelf yet.",
+  "unreachable": "The shelf is not reachable right now.",
+  "add": "Add",
+  "pictureToCome": "picture to come",
+  "testNotice": "The store is not open yet. Everything here works, but payments run in test mode, so a real card will be declined and nothing will be printed or posted."
+}

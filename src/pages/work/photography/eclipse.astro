@@ -2,20 +2,22 @@
 import Base from '../../../layouts/Base.astro';
 import Viewer from '../../../components/Viewer.astro';
 import data from '../../../data/eclipse.json';
+import copy from '../../../data/copy/work-photography-eclipse.json';
 
 const A = '/photo/eclipse';
 
 // how the shadow reads at each stage, so the alt text says something true
+const ph = copy.stages.phases;
 const phase = (i: number, n: number) =>
   i === 0
-    ? 'full and white, before the shadow'
+    ? ph.full
     : i < n * 0.3
-      ? 'a bite taken out of one limb'
+      ? ph.bite
       : i < n * 0.55
-        ? 'the shadow across half the disc'
+        ? ph.half
         : i < n * 0.8
-          ? 'most of the disc copper, a bright rind left'
-          : 'nearly all copper, a thin sunlit edge at the top';
+          ? ph.most
+          : ph.nearly;
 
 const stages = data.stages.map((s, i) => ({
   ...s,
@@ -24,18 +26,17 @@ const stages = data.stages.map((s, i) => ({
 ---
 
 <Base
-  title="The Copper Hour · Brett Boggs"
-  description="The moon going into the earth's shadow on 27 August 2026, and two aeroplanes that crossed it."
+  title={copy.title}
+  description={copy.description}
   ogImage="/photo/eclipse/plane-transit-760.webp"
   article={{ published: new Date('2026-08-27') }}
+  edit="work-pages/work-photography-eclipse"
 >
   <article>
     <header class="page-head">
-      <p class="eyebrow">Photography · 27 August 2026</p>
-      <h1>The Copper Hour</h1>
-      <p class="lede">
-        The moon going into the earth's shadow, and two aeroplanes that crossed it on the way.
-      </p>
+      <p class="eyebrow">{copy.eyebrow}</p>
+      <h1>{copy.heading}</h1>
+      <p class="lede">{copy.lede}</p>
     </header>
 
     <figure
@@ -44,17 +45,17 @@ const stages = data.stages.map((s, i) => ({
       data-full={`${A}/plane-transit-1536.webp`}
       data-w="1536"
       data-h="1536"
-      data-title="22:42:06"
-      data-meta="An airliner across the bright edge"
+      data-title={copy.transit.time}
+      data-meta={copy.transit.viewerNote}
       tabindex="0"
       role="button"
-      aria-label="Open the airliner transit at full size"
+      aria-label={copy.transit.openLabel}
     >
       <img
         src={`${A}/plane-transit-760.webp`}
         srcset={`${A}/plane-transit-760.webp 760w, ${A}/plane-transit-1536.webp 1536w`}
         sizes="(min-width: 52rem) 46rem, 100vw"
-        alt="An airliner in silhouette against the bright edge of a partly eclipsed copper moon, its navigation lights showing as red and white dashes above."
+        alt={copy.transit.alt}
         width="1536"
         height="1536"
         loading="eager"
@@ -62,25 +63,21 @@ const stages = data.stages.map((s, i) => ({
         decoding="async"
       />
       <figcaption>
-        <span class="cap-time">22:42:06</span>
-        <span>
-          An airliner crossing the bright edge. The wings and tail come through as a black outline
-          against the last of the direct sun, and its navigation lights sit just above, red on one
-          side and white on the other.
-        </span>
+        <span class="cap-time">{copy.transit.time}</span>
+        <span>{copy.transit.caption}</span>
       </figcaption>
     </figure>
 
     <section class="band night-bleed arc-band" aria-labelledby="arc-h">
       <div class="band-head wrap">
-        <h2 id="arc-h">The arc</h2>
+        <h2 id="arc-h">{copy.arc.heading}</h2>
         <div
           class="arc-toggle"
           role="group"
-          aria-label="Arc brightness"
+          aria-label={copy.arc.toggleLabel}
         >
-          <button type="button" data-arc="even" class="is-on">Evened out</button>
-          <button type="button" data-arc="true">As it looked</button>
+          <button type="button" data-arc="even" class="is-on">{copy.arc.evenButton}</button>
+          <button type="button" data-arc="true">{copy.arc.trueButton}</button>
         </div>
       </div>
 
@@ -91,11 +88,11 @@ const stages = data.stages.map((s, i) => ({
         data-full={`${A}/arc-even-6000.webp`}
         data-w="6000"
         data-h="983"
-        data-title="The arc, evened out"
-        data-meta="21:40 to 23:10"
+        data-title={copy.arc.evenTitle}
+        data-meta={copy.arc.time}
         tabindex="0"
         role="button"
-        aria-label="Open the progression arc at full size"
+        aria-label={copy.arc.openLabel}
       >
         <div class="arc-scroll">
           <img
@@ -103,7 +100,7 @@ const stages = data.stages.map((s, i) => ({
             src={`${A}/arc-even-2400.webp`}
             srcset={`${A}/arc-even-1200.webp 1200w, ${A}/arc-even-2400.webp 2400w, ${A}/arc-even-6000.webp 6000w`}
             sizes="2320px"
-            alt="Twenty one moons in a shallow arc, running from a full white moon on the left through a shadow crossing the disc to a deep copper moon on the right."
+            alt={copy.arc.alt}
             width="6000"
             height="983"
             loading="lazy"
@@ -111,25 +108,17 @@ const stages = data.stages.map((s, i) => ({
           />
         </div>
         <figcaption class="wrap arc-cap">
-          <span class="cap-time">21:40 to 23:10</span>
-          <span class="arc-caption-even">
-            Twenty one moons in a row, left to right. It starts full and white, the shadow comes in
-            from the lower left, and by the right hand end the disc is copper with only a thin
-            bright edge left along the top. Drag it sideways.
-          </span>
-          <span class="arc-caption-true" hidden>
-            The same twenty one moons with the brightness left where it was. The white moon at the
-            start is the brightest thing in the row by a long way, and the copper ones at the end
-            really are that dark.
-          </span>
+          <span class="cap-time">{copy.arc.time}</span>
+          <span class="arc-caption-even">{copy.arc.evenCaption}</span>
+          <span class="arc-caption-true" hidden>{copy.arc.trueCaption}</span>
         </figcaption>
       </figure>
     </section>
 
     <section class="band night-bleed sheet-band" aria-labelledby="sheet-h">
       <div class="band-head wrap">
-        <h2 id="sheet-h">Twenty one moons</h2>
-        <p class="band-hint">Every stage on its own. Click any of them.</p>
+        <h2 id="sheet-h">{copy.stages.heading}</h2>
+        <p class="band-hint">{copy.stages.hint}</p>
       </div>
       <div class="wrap">
         <ol class="sheet">
@@ -176,28 +165,25 @@ const stages = data.stages.map((s, i) => ({
       data-full={`${A}/ring-2040.webp`}
       data-w="2040"
       data-h="2040"
-      data-title="22:44"
-      data-meta="The bright rim and the shadowed disc"
+      data-title={copy.ring.time}
+      data-meta={copy.ring.viewerNote}
       tabindex="0"
       role="button"
-      aria-label="Open the eclipse ring at full size"
+      aria-label={copy.ring.openLabel}
     >
       <img
         src={`${A}/ring-1020.webp`}
         srcset={`${A}/ring-1020.webp 1020w, ${A}/ring-2040.webp 2040w`}
         sizes="(min-width: 52rem) 48rem, 100vw"
-        alt="The partly eclipsed moon with a brilliant white and gold rim along the upper right edge and the rest of the disc a dim copper, with maria visible through the shadow."
+        alt={copy.ring.alt}
         width="2040"
         height="2040"
         loading="lazy"
         decoding="async"
       />
       <figcaption>
-        <span class="cap-time">22:44</span>
-        <span>
-          A white and gold rim along the top right edge, and the rest of the moon a dim copper. The
-          dark maria still show through the shadowed part.
-        </span>
+        <span class="cap-time">{copy.ring.time}</span>
+        <span>{copy.ring.caption}</span>
       </figcaption>
     </figure>
 
@@ -208,28 +194,25 @@ const stages = data.stages.map((s, i) => ({
         data-full={`${A}/plane-track-a-3200.webp`}
         data-w="3200"
         data-h="3200"
-        data-title="22:42"
-        data-meta="The pass that went across"
+        data-title={copy.trackA.time}
+        data-meta={copy.trackA.viewerNote}
         tabindex="0"
         role="button"
-        aria-label="Open the 22:42 aircraft track at full size"
+        aria-label={copy.trackA.openLabel}
       >
         <img
           src={`${A}/plane-track-a-1200.webp`}
           srcset={`${A}/plane-track-a-1200.webp 1200w, ${A}/plane-track-a-2400.webp 2400w`}
           sizes="(min-width: 760px) 24rem, 100vw"
-          alt="A copper eclipsed moon with a diagonal trail of red and white aircraft navigation lights running up across it from lower left to upper right."
+          alt={copy.trackA.alt}
           width="1200"
           height="1200"
           loading="lazy"
           decoding="async"
         />
         <figcaption>
-          <span class="cap-time">22:42</span>
-          <span>
-            The same aircraft as the first picture, with its lights laid out across the whole pass.
-            It comes in from the lower left and goes straight over the top of the moon.
-          </span>
+          <span class="cap-time">{copy.trackA.time}</span>
+          <span>{copy.trackA.caption}</span>
         </figcaption>
       </figure>
 
@@ -239,41 +222,38 @@ const stages = data.stages.map((s, i) => ({
         data-full={`${A}/plane-track-b-3200.webp`}
         data-w="3200"
         data-h="3200"
-        data-title="22:36"
-        data-meta="The pass that missed"
+        data-title={copy.trackB.time}
+        data-meta={copy.trackB.viewerNote}
         tabindex="0"
         role="button"
-        aria-label="Open the 22:36 aircraft track at full size"
+        aria-label={copy.trackB.openLabel}
       >
         <img
           src={`${A}/plane-track-b-1200.webp`}
           srcset={`${A}/plane-track-b-1200.webp 1200w, ${A}/plane-track-b-2400.webp 2400w`}
           sizes="(min-width: 760px) 24rem, 100vw"
-          alt="The same eclipsed moon lower in the frame, with a line of coloured navigation lights arcing above and to the left of it."
+          alt={copy.trackB.alt}
           width="1200"
           height="1200"
           loading="lazy"
           decoding="async"
         />
         <figcaption>
-          <span class="cap-time">22:36</span>
-          <span>
-            An earlier one, six minutes before, that went over the top left and never touched the
-            moon. Its lights arc away to the upper right.
-          </span>
+          <span class="cap-time">{copy.trackB.time}</span>
+          <span>{copy.trackB.caption}</span>
         </figcaption>
       </figure>
     </div>
 
-    <p class="credit">Canon EOS R6, RF 70-200mm f/2.8. 27 August 2026.</p>
+    <p class="credit">{copy.credit}</p>
 
-    <a class="back-link" href="/work/photography/">All photography</a>
+    <a class="back-link" href="/work/photography/">{copy.backLink}</a>
   </article>
   <Viewer />
 </Base>
 
 <script>
-
+  import { arc as arcCopy } from '../../../data/copy/work-photography-eclipse.json';
 
   // the arc has two cuts of the same picture: evened out, and left alone
   const arcPlate = document.getElementById('arc-plate');
@@ -293,7 +273,7 @@ const stages = data.stages.map((s, i) => ({
       arcImg.srcset = `/photo/eclipse/arc-${key}-1200.webp 1200w, /photo/eclipse/arc-${key}-2400.webp 2400w, /photo/eclipse/arc-${key}-6000.webp 6000w`;
       arcImg.src = `/photo/eclipse/arc-${key}-2400.webp`;
       arcPlate.dataset.full = `/photo/eclipse/arc-${key}-6000.webp`;
-      arcPlate.dataset.title = key === 'true' ? 'The arc, as it looked' : 'The arc, evened out';
+      arcPlate.dataset.title = key === 'true' ? arcCopy.trueTitle : arcCopy.evenTitle;
       copy.even.hidden = key === 'true';
       copy.true.hidden = key !== 'true';
     });

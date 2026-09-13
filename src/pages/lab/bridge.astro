@@ -5,52 +5,33 @@
 // dissolves into dawn. Retired two days later by the landing's rule against
 // literal construction imagery. The film itself did nothing wrong.
 import Base from '../../layouts/Base.astro';
+import copy from '../../data/copy/lab-bridge.json';
 
-const beats = [
-  { kicker: 'Construction Intelligence', lines: ['Every build starts', 'from a single point.'] },
-  { kicker: 'Plan', lines: ["First, it's lines on paper."] },
-  { kicker: 'Build', lines: ['Then the field makes it real.'] },
-  { kicker: 'Connect', lines: ['Datum keeps every beam, dollar,', 'and decision on one living record.'] },
-  { kicker: 'Datum', lines: ['One company. One record.'], center: true },
-];
-
-const chips = [
-  { id: 'report', label: 'Daily report filed', meta: 'Crew 12 · 5:58 AM' },
-  { id: 'rfi', label: 'RFI #214 answered', meta: 'Ball in court · 2h' },
-  { id: 'pour', label: 'Deck pour scheduled', meta: 'Span B3 · Thursday' },
-  { id: 'payapp', label: 'Pay app #7 approved', meta: '$1.2M released' },
-];
+// Chip ids and the centered last beat are plumbing the film script reads by
+// DOM order; the words live in the JSON.
+const chipIds = ['report', 'rfi', 'pour', 'payapp'];
 ---
 
 <Base
-  title="The Bridge · Lab · Brett Boggs"
-  description="A cable-stayed bridge that builds itself as you scroll. Datum's first landing film."
+  title={copy.title}
+  description={copy.description}
+  edit="lab-pages/lab-bridge"
 >
   <header class="page-head">
-    <p class="eyebrow">Lab · Jul 2026</p>
-    <h1>The Bridge</h1>
-    <p class="lede">
-      A river crossing that surveys, drafts, builds, and lights up as you scroll. Datum&rsquo;s
-      first landing film.
-    </p>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
   </header>
 
   <section class="film-bleed">
-    <p class="cin-sr">
-      A night survey circles a glowing datum monument above a river valley. Blueprint lines draw
-      a cable-stayed bridge in the air. Over a time-lapse day the field makes it real: pylons
-      pour, deck segments hoist from the river, stay cables tension in. At dusk the lamps ignite,
-      traffic crosses, and live project records pulse along the structure. Dawn blooms to white.
-      Every build starts from a single point; Datum keeps every beam, dollar, and decision on one
-      living record.
-    </p>
+    <p class="cin-sr">{copy.screenReaderStory}</p>
 
     <div class="cin" data-film hidden>
       <div class="cin-stage">
         <canvas class="cin-canvas" aria-hidden="true"></canvas>
         <div class="cin-overlay" aria-hidden="true">
-          {beats.map((b) => (
-            <div class:list={['cin-beat', { 'cin-beat--center': b.center }]}>
+          {copy.beats.map((b, i) => (
+            <div class:list={['cin-beat', { 'cin-beat--center': i === copy.beats.length - 1 }]}>
               <div class="cin-kicker">{b.kicker}</div>
               <h2 class="cin-line">
                 {b.lines.map((seg) => (
@@ -59,8 +40,8 @@ const chips = [
               </h2>
             </div>
           ))}
-          {chips.map((c) => (
-            <div class="cin-chip" data-chip={c.id}>
+          {copy.chips.map((c, i) => (
+            <div class="cin-chip" data-chip={chipIds[i]}>
               <span class="cin-chip-dot"></span>
               <div>
                 <div class="cin-chip-label">{c.label}</div>
@@ -70,49 +51,32 @@ const chips = [
             </div>
           ))}
           <div class="cin-brand">
-            <span class="cin-wordmark">Datum</span>
+            <span class="cin-wordmark">{copy.wordmark}</span>
           </div>
           <div class="cin-hint">
-            <span>Scroll</span>
+            <span>{copy.scrollHint}</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
           </div>
         </div>
-        <button type="button" class="cin-skip">Skip film</button>
+        <button type="button" class="cin-skip">{copy.skipButton}</button>
         <div class="cin-veil" aria-hidden="true"></div>
       </div>
     </div>
 
     <div class="cin-unsupported" data-film-fallback>
-      <p class="cin-kicker">Construction Intelligence</p>
-      <p class="cin-line">Every build starts<br />from a single point.</p>
-      <p class="cin-unsupported-note">
-        The film needs WebGL2 and motion. This browser gets the title card instead.
-      </p>
+      <p class="cin-kicker">{copy.fallbackKicker}</p>
+      <p class="cin-line">{copy.fallbackLines.map((seg, i) => (i === 0 ? seg : <><br />{seg}</>))}</p>
+      <p class="cin-unsupported-note">{copy.fallbackNote}</p>
     </div>
   </section>
 
   <div class="colophon">
-    <p>
-      This was the very first opening film for datumci.com, v1 of what became a ten-version
-      lineage. A night survey circles a glowing datum monument, blueprint lines draft a
-      cable-stayed crossing in mid-air, and then a time-lapse day builds it for real: pylons
-      slip-form upward, deck segments hoist off the river on lift lines, stay cables tension in,
-      tower cranes work and dissolve. At dusk the lamps ignite and live project records pulse
-      along the structure; dawn blooms to white. It lasted two days on the landing before the
-      standing rule arrived that shaped every version after it: nothing literal, no construction
-      imagery. The drafting film next door died on the same rule a few versions later.
-    </p>
-    <p>
-      Pure three.js, and every mesh and texture is procedural; nothing is downloaded. PBR
-      materials under an image-based environment, an animated sun with soft shadows, planar
-      water reflections, ACES tone mapping, bloom, depth of field, and a film grade of grain,
-      vignette, and chromatic aberration. The whole scene is a deterministic function of scroll
-      progress, so scrolling back up un-builds the bridge. Phones get a lighter tier; browsers
-      without WebGL2, or with reduced motion set, get the title card.
-    </p>
+    {copy.colophon.map((para) => (
+      <p>{para}</p>
+    ))}
   </div>
 
-  <a class="back-link" href="/lab/">Back to Lab</a>
+  <a class="back-link" href="/lab/">{copy.backLink}</a>
 </Base>
 
 <script>
