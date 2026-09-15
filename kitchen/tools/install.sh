@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Build Mise and install it on the iPhone plugged into this Mac.
+# Build Ladle and install it on the iPhone plugged into this Mac.
 #
 #   ./tools/install.sh
 #
@@ -12,7 +12,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
 BOLD=$'\033[1m'; DIM=$'\033[2m'; RED=$'\033[31m'; GREEN=$'\033[32m'; OFF=$'\033[0m'
-LOG="$(mktemp -t mise-build)"
+LOG="$(mktemp -t ladle-build)"
 
 say()  { printf '%s%s%s\n' "$BOLD" "$1" "$OFF"; }
 note() { printf '%s  %s%s\n' "$DIM" "$1" "$OFF"; }
@@ -22,7 +22,7 @@ command -v xcodebuild >/dev/null || die "Xcode command line tools are not instal
 
 # --- 1. Which phone? --------------------------------------------------------
 say "Looking for a connected iPhone"
-DEVICES_JSON="$(mktemp -t mise-devices)"
+DEVICES_JSON="$(mktemp -t ladle-devices)"
 xcrun devicectl list devices --json-output "$DEVICES_JSON" >/dev/null 2>&1
 
 read -r UDID DEVICE_NAME <<<"$(python3 - "$DEVICES_JSON" <<'PY'
@@ -57,7 +57,7 @@ if [ ! -f Local.xcconfig ]; then
     say "No signing identity configured, looking one up"
     # Prefer the team Xcode already saved into the project (set in its Signing
     # pane), then fall back to the first development certificate on the Mac.
-    TEAM="$(grep -o 'DEVELOPMENT_TEAM = [A-Z0-9]*' Mise.xcodeproj/project.pbxproj 2>/dev/null | head -1 | awk '{print $3}')"
+    TEAM="$(grep -o 'DEVELOPMENT_TEAM = [A-Z0-9]*' Ladle.xcodeproj/project.pbxproj 2>/dev/null | head -1 | awk '{print $3}')"
     [ -n "$TEAM" ] || TEAM="$(security find-identity -v -p codesigning 2>/dev/null \
             | sed -n 's/.*"Apple Development: .*(\([A-Z0-9][A-Z0-9]*\))".*/\1/p' \
             | head -1)"
@@ -78,8 +78,8 @@ python3 tools/make_project.py >/dev/null || die "Could not generate the Xcode pr
 say "Building"
 note "first build takes a few minutes"
 xcodebuild \
-    -project Mise.xcodeproj \
-    -scheme Mise \
+    -project Ladle.xcodeproj \
+    -scheme Ladle \
     -configuration Debug \
     -destination "id=$UDID" \
     -derivedDataPath build \
@@ -98,8 +98,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-APP="$(find build/Build/Products -name 'Mise.app' -maxdepth 3 | head -1)"
-[ -n "$APP" ] || die "Built, but Mise.app is not where expected. Log: $LOG"
+APP="$(find build/Build/Products -name 'Ladle.app' -maxdepth 3 | head -1)"
+[ -n "$APP" ] || die "Built, but Ladle.app is not where expected. Log: $LOG"
 
 # --- 5. Install and launch --------------------------------------------------
 say "Installing on $DEVICE_NAME"
@@ -109,7 +109,7 @@ if ! xcrun devicectl device install app --device "$UDID" "$APP" >>"$LOG" 2>&1; t
     exit 1
 fi
 
-xcrun devicectl device process launch --device "$UDID" dev.brettboggs.mise >>"$LOG" 2>&1
+xcrun devicectl device process launch --device "$UDID" dev.brettboggs.ladle >>"$LOG" 2>&1
 
 printf '\n%sMise is on %s.%s\n' "$GREEN" "$DEVICE_NAME" "$OFF"
 note "If it will not open: Settings > General > VPN & Device Management > trust your Apple ID, then tap the icon."

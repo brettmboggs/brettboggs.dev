@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-APP = "Mise"
-WIDGET = "MiseShare"
+APP = "Ladle"
+WIDGET = "LadleShare"
 SOURCE_ROOTS = (APP, WIDGET)
 PBXPROJ = ROOT / f"{APP}.xcodeproj/project.pbxproj"
 

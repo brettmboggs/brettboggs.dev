@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Generates Mise.xcodeproj from the source tree.
+"""Generates Ladle.xcodeproj from the source tree.
 
 Hand-maintaining a .pbxproj is miserable and hand-editing one in a diff is
 worse, so the project file is generated. Add a Swift file anywhere under
-Mise/ or MiseShare/ and re-run this; membership follows the folder.
+Ladle/ or LadleShare/ and re-run this; membership follows the folder.
 
     python3 tools/make_project.py
 
-Two targets: the app and the share extension that puts "Mise" in Safari's
+Two targets: the app and the share extension that puts "Ladle" in Safari's
 share sheet. They talk through one App Group, so both App IDs need the group
 switched on in the developer portal before a signed build will export. UUIDs
 are derived from a hash of each object's role, so regenerating produces a
@@ -19,11 +19,11 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PROJECT = ROOT / "Mise.xcodeproj"
+PROJECT = ROOT / "Ladle.xcodeproj"
 
-APP_NAME = "Mise"
-BUNDLE_ID = "dev.brettboggs.mise"
-WIDGET_NAME = "MiseShare"
+APP_NAME = "Ladle"
+BUNDLE_ID = "dev.brettboggs.ladle"
+WIDGET_NAME = "LadleShare"
 WIDGET_BUNDLE_ID = f"{BUNDLE_ID}.share"
 DEPLOYMENT_TARGET = "18.0"
 SWIFT_VERSION = "5.0"
@@ -38,7 +38,7 @@ def development_team() -> str:
     gitignored Local.xcconfig, then whatever the current project file already
     says, so a team picked in Xcode's Signing pane survives a regeneration.
     """
-    override = os.environ.get("MISE_TEAM_ID", "").strip()
+    override = os.environ.get("LADLE_TEAM_ID", "").strip()
     if override:
         return override
 

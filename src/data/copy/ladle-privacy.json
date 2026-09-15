@@ -1,0 +1,47 @@
+{
+  "title": "Privacy · Ladle",
+  "description": "What Ladle does with your data. It stays on your phone.",
+  "eyebrow": "Ladle · updated",
+  "updated": "September 2026",
+  "heading": "Privacy",
+  "lede": "Ladle has no account, no server and no analytics. Your recipes, pantry and plans live on your phone.",
+  "sections": [
+    {
+      "heading": "What the app stores",
+      "body": "Recipes, photos, scanned cards, the pantry, the shopping list, the meal plan and your settings are written to the app's own folder on your phone. They are included in your iCloud or computer backup like any other app data. Deleting the app deletes them."
+    },
+    {
+      "heading": "What the app sends",
+      "body": "When you import a recipe from a web address, the app fetches that page and its photo directly from that website, the way a browser would. Nothing else is sent anywhere. There is no crash reporting, no usage tracking, no advertising identifier, and no third-party code that phones home."
+    },
+    {
+      "heading": "Camera and photos",
+      "body": "Scanning a recipe uses the camera, and reading from your photos uses the ones you pick. The text is recognised on the phone by Apple's built-in recognition. Images never leave the device unless you share a recipe that includes them."
+    },
+    {
+      "heading": "Microphone and speech",
+      "body": "Voice control in cook mode listens for a few words while it is switched on. Recognition runs on the phone when the device supports it; otherwise Apple's speech service processes the audio under Apple's privacy policy. Nothing is recorded or kept by Ladle."
+    },
+    {
+      "heading": "Reminders and notifications",
+      "body": "If you ask, the shopping list is copied into Reminders on your phone. Kitchen timers use local notifications created and delivered by iOS on the device. No notification server is involved."
+    },
+    {
+      "heading": "Sharing",
+      "body": "Sharing a recipe as text, a card, a PDF or a Ladle file sends exactly what you can see to whoever you send it to, through the system share sheet. That is the only way anything leaves the phone."
+    },
+    {
+      "heading": "Children",
+      "body": "Ladle is not directed at children under 13 and collects no data from anyone."
+    },
+    {
+      "heading": "Changes",
+      "body": "If any of this changes, the date at the top will, and the app will say so before it does anything new."
+    },
+    {
+      "heading": "Contact",
+      "body": "Brett Boggs, [support@brettboggs.dev](mailto:support@brettboggs.dev)."
+    }
+  ],
+  "backLink": "← Ladle"
+}

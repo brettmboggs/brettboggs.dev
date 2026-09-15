@@ -2289,14 +2289,14 @@ collections:
       - name: backLink
         label: Back link
         widget: string
-  - name: mise
-    label: Mise
+  - name: ladle
+    label: Ladle
     description: The recipe app's page and privacy policy. The App Store links to these, so keep them live.
     files:
-    - name: mise-privacy
-      label: Mise Privacy
-      file: src/data/copy/mise-privacy.json
-      preview_path: /mise/privacy/
+    - name: ladle-privacy
+      label: Ladle Privacy
+      file: src/data/copy/ladle-privacy.json
+      preview_path: /ladle/privacy/
       fields:
       - name: title
         label: Browser tab title
@@ -2330,10 +2330,10 @@ collections:
       - name: backLink
         label: Back link text
         widget: string
-    - name: mise
-      label: Mise (app page)
-      file: src/data/copy/mise.json
-      preview_path: /mise/
+    - name: ladle
+      label: Ladle (app page)
+      file: src/data/copy/ladle.json
+      preview_path: /ladle/
       fields:
       - name: title
         label: Browser tab title

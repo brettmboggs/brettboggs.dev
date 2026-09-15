@@ -363,11 +363,11 @@ def check_plist(files: list[Path]) -> list[str]:
     Missing purpose strings do not fail the build. They fail at runtime, in
     the kitchen, with a crash the moment the microphone is switched on.
     """
-    plist = ROOT / 'Mise/Info.plist'
+    plist = ROOT / 'Ladle/Info.plist'
     if not plist.exists():
-        return ["Mise/Info.plist is missing"]
+        return ["Ladle/Info.plist is missing"]
     plist_text = plist.read_text()
-    app_sources = [p for p in files if p.parts and 'Mise' in p.relative_to(ROOT).parts[:1]]
+    app_sources = [p for p in files if p.parts and 'Ladle' in p.relative_to(ROOT).parts[:1]]
     joined = "\n".join(blank_noise(p.read_text()) for p in app_sources)
     problems = []
     for needle, key in sorted(USAGE_STRINGS):
@@ -378,10 +378,10 @@ def check_plist(files: list[Path]) -> list[str]:
 
 def check_extension(files: list[Path], decls: dict[str, Decl]) -> list[str]:
     """The share extension is its own module and cannot see the app's types."""
-    ext_files = [p for p in files if p.relative_to(ROOT).parts[:1] == ('MiseShare',)]
-    app_files = [p for p in files if p.relative_to(ROOT).parts[:1] == ('Mise',)]
+    ext_files = [p for p in files if p.relative_to(ROOT).parts[:1] == ('LadleShare',)]
+    app_files = [p for p in files if p.relative_to(ROOT).parts[:1] == ('Ladle',)]
     if not ext_files:
-        return ["MiseShare has no Swift sources"]
+        return ["LadleShare has no Swift sources"]
     app_types = set()
     for path in app_files:
         for m in DECL.finditer(blank_noise(path.read_text())):
@@ -400,11 +400,11 @@ def check_extension(files: list[Path], decls: dict[str, Decl]) -> list[str]:
                 problems.append(f"{path.relative_to(ROOT)} uses {name}, which lives in the app target")
         if 'UIApplication.shared' in clean:
             problems.append(f"{path.relative_to(ROOT)} uses UIApplication.shared, which extensions cannot")
-    plist = ROOT / 'MiseShare/Info.plist'
+    plist = ROOT / 'LadleShare/Info.plist'
     if plist.exists():
         m = re.search(r'<key>NSExtensionPrincipalClass</key>\s*<string>\$\(PRODUCT_MODULE_NAME\)\.(\w+)</string>', plist.read_text())
         if not m:
-            problems.append("MiseShare/Info.plist has no NSExtensionPrincipalClass")
+            problems.append("LadleShare/Info.plist has no NSExtensionPrincipalClass")
         elif m.group(1) not in ext_types:
             problems.append(f"NSExtensionPrincipalClass names {m.group(1)}, which no extension source declares")
     return problems

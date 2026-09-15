@@ -1,13 +1,13 @@
-# Mise
+# Ladle
 
 An iPhone app for the recipes in the box. Scan the handwritten cards, save
 pages from Safari, write down the ones that live in your head, and cook from
 all of them in one clean layout without touching the phone.
 
-Working name, from *mise en place*: everything in its place. To rename it,
+On the App Store as "Ladle: The Cooking Book" (plain "Ladle" was taken). To rename it,
 change `APP_NAME` and `BUNDLE_ID` in `tools/make_project.py`, the display
-names in both `Info.plist` files, the App Group id in `Mise.entitlements`,
-`MiseShare.entitlements`, `Import/Inbox.swift` and `ShareViewController.swift`,
+names in both `Info.plist` files, the App Group id in `Ladle.entitlements`,
+`LadleShare.entitlements`, `Import/Inbox.swift` and `ShareViewController.swift`,
 and the two folder names. Everything else reads from those.
 
 ---
@@ -21,7 +21,7 @@ cards handled, then parsed into title, ingredients, method, servings, times.
 Every line the parser doubted is marked on the review screen; the scan itself
 is kept with the recipe as the original.
 
-**Import from the web.** Share a page from Safari to Mise, or paste a link.
+**Import from the web.** Share a page from Safari to Ladle, or paste a link.
 The importer reads the page's schema.org Recipe data (what nearly every
 recipe site publishes for search engines), falls back to microdata, and as a
 last resort runs the page's visible text through the same parser the scanner
@@ -63,7 +63,7 @@ the next seven days in one tap.
 get made and what changed last time.
 
 **Share.** A recipe as text, as a card image for a text message, as a PDF for
-printing, or as a `.mise` file with the photo inside that opens in Mise on
+printing, or as a `.ladle` file with the photo inside that opens in Ladle on
 another phone. The whole cookbook exports the same way, as one file, for
 AirDrop or a backup.
 
@@ -82,10 +82,10 @@ cd kitchen
 ./tools/install.sh        # phone plugged in: builds, installs, launches
 ```
 
-or open `kitchen/Mise.xcodeproj`, pick the team under Signing & Capabilities
+or open `kitchen/Ladle.xcodeproj`, pick the team under Signing & Capabilities
 for **both** targets, choose your iPhone and press ⌘R.
 
-`Mise.xcodeproj` is generated, not hand-maintained:
+`Ladle.xcodeproj` is generated, not hand-maintained:
 
 ```
 python3 tools/make_project.py    # rebuild after adding or moving files
@@ -96,24 +96,24 @@ python3 tools/make_icon.py       # redraw the app icon
 
 ### One-time setup in the developer portal
 
-1. **Identifiers › App Groups › +**: `group.dev.brettboggs.mise`.
-2. **Identifiers › App IDs › +**: `dev.brettboggs.mise`, with App Groups
+1. **Identifiers › App Groups › +**: `group.dev.brettboggs.ladle`.
+2. **Identifiers › App IDs › +**: `dev.brettboggs.ladle`, with App Groups
    ticked and that group selected.
-3. **Identifiers › App IDs › +**: `dev.brettboggs.mise.share`, same.
-4. **App Store Connect › Apps › +**: name Mise (or whatever it becomes),
-   bundle id `dev.brettboggs.mise`, SKU `mise`.
+3. **Identifiers › App IDs › +**: `dev.brettboggs.ladle.share`, same.
+4. **App Store Connect › Apps › +**: name Ladle (or whatever it becomes),
+   bundle id `dev.brettboggs.ladle`, SKU `ladle`.
 
 The seven GitHub secrets from Slumbio are reused as they are; nothing new is
-needed. `.github/workflows/testflight-mise.yml` archives and uploads on every
+needed. `.github/workflows/testflight-ladle.yml` archives and uploads on every
 push to `main` that touches `kitchen/`. A second workflow,
-`mise-check.yml`, compiles the app for the simulator on every push to any
+`ladle-check.yml`, compiles the app for the simulator on every push to any
 branch, with no signing and no secrets, so a broken build never reaches
 `main` and no Mac is needed to find out.
 
 ### Before the first submission
 
-- Support URL `https://brettboggs.dev/mise/`, privacy URL
-  `https://brettboggs.dev/mise/privacy/`. Both pages are live.
+- Support URL `https://brettboggs.dev/ladle/`, privacy URL
+  `https://brettboggs.dev/ladle/privacy/`. Both pages are live.
 - App Privacy answers: **Data Not Collected**.
 - Screenshots: 6.9" and 6.5" iPhone, plus 13" iPad since the app runs there.
 - Review notes worth including: the share extension needs a recipe URL to
@@ -126,7 +126,7 @@ branch, with no signing and no secrets, so a broken build never reaches
 
 ```
 kitchen/
-├── Mise/
+├── Ladle/
 │   ├── Model/     recipe, quantities, ingredient parser, catalogue, substitutions,
 │   │              matcher, pantry, shopping, plan, library store, persistence,
 │   │              transfer formats
@@ -135,19 +135,19 @@ kitchen/
 │   ├── Intents/   Siri and Shortcuts
 │   ├── Views/     SwiftUI
 │   ├── Support/   theme, haptics, formatters, shake
-│   └── Mise.entitlements    the App Group, and nothing else
-├── MiseShare/     the share extension: takes a URL, drops it in the inbox
+│   └── Ladle.entitlements    the App Group, and nothing else
+├── LadleShare/     the share extension: takes a URL, drops it in the inbox
 ├── Signing.xcconfig         includes the gitignored Local.xcconfig
 └── tools/                   project generator, verifier, installer, icon
 ```
 
 ## Things worth knowing
 
-**The two targets are separate modules.** `MiseShare` cannot see anything
-in `Mise/`, on purpose: it holds its own fifteen lines for writing the inbox.
+**The two targets are separate modules.** `LadleShare` cannot see anything
+in `Ladle/`, on purpose: it holds its own fifteen lines for writing the inbox.
 `check_swift.py` fails if that changes.
 
-**Persistence is flat JSON.** `Application Support/Mise/*.json` plus a
+**Persistence is flat JSON.** `Application Support/Ladle/*.json` plus a
 `Photos/` folder of JPEGs. Every model type decodes with defaults for missing
 fields, so a newer file opens in an older build and the other way round.
 

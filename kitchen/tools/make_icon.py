@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates the Mise app icon: a plate, seen from above, in black and white.
+"""Generates the Ladle app icon: a plate, seen from above, in black and white.
 
 Three files, because iOS 18 and later asks for three: the default (black on
 white), a dark variant (white on black), and a greyscale one the system
@@ -12,7 +12,7 @@ import zlib
 from pathlib import Path
 
 SIZE = 1024
-ICONSET = Path(__file__).resolve().parent.parent / "Mise/Assets.xcassets/AppIcon.appiconset"
+ICONSET = Path(__file__).resolve().parent.parent / "Ladle/Assets.xcassets/AppIcon.appiconset"
 
 # Geometry as fractions of the edge. The rim is the plate's edge; the well
 # is the dip in the middle. A dot sits at the centre: the one thing on it.
