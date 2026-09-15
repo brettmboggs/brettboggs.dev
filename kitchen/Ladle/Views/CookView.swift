@@ -103,7 +103,7 @@ struct CookView: View {
                     .fill(Ink.hairline)
                     .overlay(alignment: .leading) {
                         Rectangle()
-                            .fill(Ink.ink)
+                            .fill(Ink.accent)
                             .frame(width: geo.size.width * session.progress)
                             .animation(.settle, value: session.progress)
                     }
@@ -118,10 +118,9 @@ struct CookView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
                     if let heading = session.currentHeading {
-                        Text(heading.uppercased())
-                            .font(Typeface.meta(11, weight: .semibold))
-                            .tracking(1.6)
-                            .foregroundStyle(Ink.inkSoft)
+                        Text(heading)
+                            .font(Typeface.body(15, weight: .semibold))
+                            .foregroundStyle(Ink.ink)
                     }
                     if let step = session.currentStep {
                         Text(QuantityText.localizeTemperatures(in: step.text, system: system))
@@ -233,10 +232,10 @@ struct CookView: View {
                         Image(systemName: session.isLast ? "checkmark" : "arrow.right")
                             .font(.system(size: 17, weight: .semibold))
                     }
-                    .foregroundStyle(Ink.paper)
+                    .foregroundStyle(Ink.onAccent)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 60)
-                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Ink.ink))
+                    .frame(height: 64)
+                    .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Ink.accent))
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(session.isLast ? "Finish" : "Next step")
@@ -295,17 +294,17 @@ struct CookView: View {
             Button("OK") { timers.dismissRinging(timer.id) }
                 .font(Typeface.body(14, weight: .semibold))
         }
-        .foregroundStyle(Ink.paper)
+        .foregroundStyle(Ink.onAccent)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Ink.ink)
+        .background(Ink.accent)
     }
 
     private var voiceStatusText: String {
         switch voice.status {
         case .starting: return "Starting the microphone…"
         case .listening: return voice.lastHeard.isEmpty ? "Listening. Say “next”, “back”, “repeat”, or “start timer”." : "Heard: \(voice.lastHeard)"
-        case .denied: return "Microphone or speech access was turned off in Settings."
+        case .denied: return "Microphone access is off. Turn it on in Settings."
         case .unavailable(let why): return why
         case .off: return "Voice is off."
         }
@@ -426,10 +425,9 @@ struct CookIngredientsSheet: View {
             List {
                 ForEach(recipe.ingredients) { ingredient in
                     if ingredient.isHeading {
-                        Text(ingredient.name.uppercased())
-                            .font(Typeface.meta(11, weight: .semibold))
-                            .tracking(1.4)
-                            .foregroundStyle(Ink.inkSoft)
+                        Text(ingredient.name)
+                            .font(Typeface.body(15, weight: .semibold))
+                            .foregroundStyle(Ink.ink)
                             .listRowSeparator(.hidden)
                     } else {
                         Button {

@@ -138,7 +138,7 @@ struct PantryView: View {
                     showStaples = true
                 } label: {
                     HStack {
-                        Label("Staples you never run out of", systemImage: "checklist.checked")
+                        Label("Staples you always have", systemImage: "checklist.checked")
                             .font(Typeface.body(16, weight: .medium))
                         Spacer()
                         Image(systemName: "chevron.right")
@@ -333,12 +333,12 @@ struct ShelfRow: View {
                     }
                     Spacer(minLength: 8)
                     if useSoon {
-                        Text("USE SOON")
-                            .font(Typeface.meta(10, weight: .semibold))
-                            .tracking(1.2)
-                            .padding(.horizontal, 7)
+                        Text("Use soon")
+                            .font(Typeface.body(13, weight: .semibold))
+                            .foregroundStyle(Ink.accent)
+                            .padding(.horizontal, 9)
                             .padding(.vertical, 4)
-                            .overlay(RoundedRectangle(cornerRadius: 4).stroke(Ink.ink, lineWidth: 1))
+                            .background(Capsule().fill(Ink.accent.opacity(0.12)))
                     }
                 }
                 .frame(minHeight: 48)
@@ -388,9 +388,9 @@ private struct AddLine: View {
             HStack(spacing: 12) {
                 Image(systemName: "plus")
                     .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(Ink.paper)
+                    .foregroundStyle(Ink.onAccent)
                     .frame(width: 28, height: 28)
-                    .background(Circle().fill(Ink.ink))
+                    .background(Circle().fill(Ink.accent))
                 Text(title)
                     .font(Typeface.body(17, weight: .medium))
                     .foregroundStyle(Ink.ink)

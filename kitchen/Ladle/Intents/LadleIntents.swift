@@ -101,7 +101,7 @@ struct WhatCanIMakeIntent: AppIntent {
             if let close {
                 return .result(dialog: "Nothing without a shop, but \(close.recipe.title) is close. \(close.summary).")
             }
-            return .result(dialog: "Nothing yet. Add what is in the kitchen to the pantry first.")
+            return .result(dialog: "Nothing yet. Tick what you have in the pantry first.")
         }
         if ready.count == 1 { return .result(dialog: "You could make \(ready[0]).") }
         let list = ready.dropLast().joined(separator: ", ") + " or " + ready.last!

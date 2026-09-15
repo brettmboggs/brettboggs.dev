@@ -14,24 +14,24 @@ struct OnboardingView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Ladle")
                         .font(Typeface.display(52))
-                    Text("Every recipe you have, in one place, ready to cook from.")
+                    Text("All your recipes in one place.")
                         .font(Typeface.body(17))
                         .foregroundStyle(Ink.inkSoft)
-                    Rule()
+                    Hairline()
                 }
                 .padding(.top, 24)
 
-                point(symbol: "doc.viewfinder", title: "Scan the cards", text: "Point the camera at a handwritten card or a cookbook page. The words are read on the phone and laid out cleanly. You check them, then they are yours.")
-                point(symbol: "safari", title: "Save from Safari", text: "On any recipe page, tap Share, then Ladle. It arrives formatted like everything else.")
-                point(symbol: "cabinet", title: "Know what you can cook", text: "Tell the pantry what is in the kitchen. Tonight shows what is ready, what is one ingredient away, and what to swap.")
-                point(symbol: "waveform", title: "Cook without touching", text: "Say \"next\" to move on, \"repeat\" to hear it again, \"start timer\" when the step says twenty minutes.")
+                point(symbol: "doc.viewfinder", title: "Scan the cards", text: "Point the camera at a recipe card or cookbook page. Check the text, then save.")
+                point(symbol: "safari", title: "Save from Safari", text: "On a recipe website, tap Share, then Ladle.")
+                point(symbol: "cabinet", title: "See what you can make", text: "Tick what you have. Ladle shows what you can make tonight.")
+                point(symbol: "waveform", title: "Cook hands free", text: "Say \"next\", \"repeat\" or \"start timer\" while you cook.")
 
                 VStack(spacing: 0) {
                     Toggle(isOn: $addStaples) {
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("Stock the pantry with the usual things")
+                            Text("Start with common ingredients")
                                 .font(Typeface.body(15, weight: .medium))
-                            Text("Flour, eggs, onions, olive oil and about fifty more. Easy to trim.")
+                            Text("Flour, eggs, onions, olive oil and about 50 more. You can change these later.")
                                 .font(Typeface.body(13))
                                 .foregroundStyle(Ink.inkSoft)
                         }
@@ -42,14 +42,14 @@ struct OnboardingView: View {
                         VStack(alignment: .leading, spacing: 3) {
                             Text("Add a sample recipe")
                                 .font(Typeface.body(15, weight: .medium))
-                            Text("Sunday Pancakes, so there is something to look at.")
+                            Text("Sunday Pancakes, to try things out.")
                                 .font(Typeface.body(13))
                                 .foregroundStyle(Ink.inkSoft)
                         }
                     }
                     .padding(.vertical, 12)
                 }
-                .tint(Ink.ink)
+                .tint(Ink.accent)
 
                 InkButton(title: "Start cooking") {
                     library.completeOnboarding(addStaples: addStaples, addSample: addSample)

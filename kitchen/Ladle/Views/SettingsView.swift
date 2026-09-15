@@ -27,11 +27,11 @@ struct SettingsView: View {
                 } header: {
                     Text("Recipes")
                 } footer: {
-                    Text("Recipes stay as written. This only changes how amounts are shown.")
+                    Text("Only changes how amounts are shown.")
                 }
 
                 Section {
-                    Toggle("Assume staples are on hand", isOn: library.setting(\.assumeStaples))
+                    Toggle("Count staples as on hand", isOn: library.setting(\.assumeStaples))
                     NavigationLink {
                         StaplesView()
                     } label: {
@@ -45,7 +45,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Pantry")
                 } footer: {
-                    Text("Salt, oil, flour and the like count as present without being listed in the pantry.")
+                    Text("Salt, oil, flour and other basics count as on hand without ticking them.")
                 }
 
                 Section("Cooking") {
@@ -57,7 +57,7 @@ struct SettingsView: View {
 
                 Section("Siri") {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("With the phone across the kitchen, say:")
+                        Text("Say to Siri:")
                             .foregroundStyle(Ink.inkSoft)
                         ForEach(["“Hey Siri, next step in Ladle”", "“Hey Siri, repeat the step in Ladle”", "“Hey Siri, start a timer in Ladle”", "“Hey Siri, add eggs to my Ladle list”", "“Hey Siri, what can I make in Ladle”"], id: \.self) { phrase in
                             Text(phrase)
@@ -77,7 +77,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Your cookbook")
                 } footer: {
-                    Text("Export makes one file with every recipe, photo, pantry item and plan. AirDrop it to another phone, or keep it somewhere safe. Recipes shared one at a time from the Cookbook open the same way.")
+                    Text("Export saves every recipe, photo, pantry item and plan in one file. Use it as a backup or to move to a new phone.")
                 }
 
                 Section {
@@ -95,7 +95,7 @@ struct SettingsView: View {
                     Link("Support", destination: URL(string: "https://brettboggs.dev/ladle/")!)
                     Link("Privacy", destination: URL(string: "https://brettboggs.dev/ladle/privacy/")!)
                 } footer: {
-                    Text("Nothing leaves the phone unless you share it. No account, no tracking.")
+                    Text("Everything stays on this phone. No account, no tracking.")
                 }
             }
             .navigationTitle("Settings")
@@ -164,7 +164,7 @@ struct ExportSheet: View {
                 Text(sizeText)
                     .font(Typeface.meta(12))
                     .foregroundStyle(Ink.inkSoft)
-                Text("Send it to another phone with AirDrop, or save it to Files or iCloud Drive as a backup. Opening the file on a phone with Ladle brings everything in.")
+                Text("AirDrop it to another phone, or save it to Files as a backup.")
                     .font(Typeface.body(15))
                     .foregroundStyle(Ink.inkSoft)
                 Spacer()
@@ -175,9 +175,9 @@ struct ExportSheet: View {
                             .font(Typeface.body(16, weight: .semibold))
                         Spacer()
                     }
-                    .foregroundStyle(Ink.paper)
-                    .padding(.vertical, 14)
-                    .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Ink.ink))
+                    .foregroundStyle(Ink.onAccent)
+                    .padding(.vertical, 16)
+                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Ink.accent))
                 }
             }
             .padding(24)

@@ -70,7 +70,7 @@ struct PlanView: View {
                 Menu {
                     Button {
                         let added = library.shopForPlan(days: 7)
-                        show(added == 0 ? "The pantry already covers this week." : (added == 1 ? "1 thing added to the list." : "\(added) things added to the list."))
+                        show(added == 0 ? "You have everything for this week." : (added == 1 ? "1 thing added to the list." : "\(added) things added to the list."))
                         Haptics.success()
                     } label: {
                         Label("Shop for the next 7 days", systemImage: "cart.badge.plus")
@@ -119,15 +119,14 @@ struct PlanView: View {
                             .font(Typeface.body(16, weight: .medium))
                             .lineLimit(2)
                         HStack(spacing: 6) {
-                            Text(entry.meal.title.uppercased())
-                                .font(Typeface.meta(10, weight: .semibold))
-                                .tracking(1.2)
+                            Text(entry.meal.title)
+                                .font(Typeface.meta(13))
                                 .foregroundStyle(Ink.inkSoft)
                             let availability = library.availability(for: recipe)
                             if availability.total > 0 {
                                 PresenceDot(availability.canMake ? .have : (availability.isClose ? .partial : .missing))
                                 Text(availability.canMake ? "ready" : availability.summary.lowercased())
-                                    .font(Typeface.meta(10))
+                                    .font(Typeface.meta(13))
                                     .foregroundStyle(Ink.inkSoft)
                                     .lineLimit(1)
                             }
@@ -140,9 +139,8 @@ struct PlanView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(entry.note.isEmpty ? "Something" : entry.note)
                         .font(Typeface.body(16, weight: .medium))
-                    Text(entry.meal.title.uppercased())
-                        .font(Typeface.meta(10, weight: .semibold))
-                        .tracking(1.2)
+                    Text(entry.meal.title)
+                        .font(Typeface.meta(13))
                         .foregroundStyle(Ink.inkSoft)
                 }
                 Spacer()
@@ -201,7 +199,7 @@ struct PlanAddSheet: View {
                 }
                 Section("Recipes") {
                     if recipes.isEmpty {
-                        Text(library.recipes.isEmpty ? "No recipes in the book yet." : "No matches.")
+                        Text(library.recipes.isEmpty ? "No recipes yet." : "No matches.")
                             .foregroundStyle(Ink.inkSoft)
                     }
                     ForEach(recipes) { recipe in

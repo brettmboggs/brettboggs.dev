@@ -230,7 +230,7 @@ struct RecipeEditorView: View {
                 }
 
                 Section("Notes") {
-                    TextField("Tweaks, substitutions, who loves it", text: $draft.notes, axis: .vertical)
+                    TextField("Changes, swaps, who likes it", text: $draft.notes, axis: .vertical)
                         .lineLimit(3...10)
                 }
             }
@@ -283,7 +283,7 @@ struct RecipeEditorView: View {
 
     private var reviewHeadline: String {
         let count = flaggedIngredients.count + flaggedSteps.count
-        if count == 0 { return "Read it through, then save." }
+        if count == 0 { return "Check it, then save." }
         return count == 1 ? "One line to check, marked below." : "\(count) lines to check, marked below."
     }
 

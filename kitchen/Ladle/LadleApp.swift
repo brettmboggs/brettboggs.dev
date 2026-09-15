@@ -13,7 +13,7 @@ struct LadleApp: App {
         WindowGroup {
             RootView()
                 .environment(library)
-                .tint(.primary)
+                .tint(Ink.accent)
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .background || phase == .inactive {

@@ -74,7 +74,7 @@ struct RecipeDetailView: View {
                     }
                     .padding(.top, recipe.photoID == nil ? 8 : 20)
 
-                    Rule()
+                    Hairline()
 
                     InkButton(title: "Cook", systemImage: "play.fill") {
                         library.markReviewed(recipe.id)
@@ -260,9 +260,9 @@ struct RecipeDetailView: View {
 
     private func reviewBanner(_ recipe: Recipe) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Imported, not yet checked.")
+            Text("Check this recipe")
                 .font(Typeface.body(15, weight: .semibold))
-            Text("Have a look at the ingredients and steps. Fix anything that came through wrong.")
+            Text("Make sure the ingredients and steps came through right.")
                 .font(Typeface.body(14))
                 .foregroundStyle(Ink.inkSoft)
             HStack(spacing: 10) {
@@ -300,7 +300,7 @@ struct RecipeDetailView: View {
                 PresenceDot(availability.canMake ? .have : (availability.isClose ? .partial : .missing))
                     .padding(.top, 2)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(library.pantry.isEmpty && !availability.canMake ? "Add what is in the kitchen to the Pantry to see what this needs." : availability.summary)
+                    Text(library.pantry.isEmpty && !availability.canMake ? "Tick what you have in Pantry to see what this needs." : availability.summary)
                         .font(Typeface.body(14, weight: .medium))
                         .fixedSize(horizontal: false, vertical: true)
                     if !availability.substitutions.isEmpty {
@@ -364,10 +364,9 @@ struct RecipeDetailView: View {
 
             ForEach(recipe.ingredients) { ingredient in
                 if ingredient.isHeading {
-                    Text(ingredient.name.uppercased())
-                        .font(Typeface.meta(11, weight: .semibold))
-                        .tracking(1.4)
-                        .foregroundStyle(Ink.inkSoft)
+                    Text(ingredient.name)
+                        .font(Typeface.body(15, weight: .semibold))
+                        .foregroundStyle(Ink.ink)
                         .padding(.top, 14)
                         .padding(.bottom, 6)
                 } else {
@@ -397,10 +396,9 @@ struct RecipeDetailView: View {
             let real = recipe.realSteps
             ForEach(recipe.steps) { step in
                 if step.isHeading {
-                    Text(step.text.uppercased())
-                        .font(Typeface.meta(11, weight: .semibold))
-                        .tracking(1.4)
-                        .foregroundStyle(Ink.inkSoft)
+                    Text(step.text)
+                        .font(Typeface.body(15, weight: .semibold))
+                        .foregroundStyle(Ink.ink)
                         .padding(.top, 14)
                         .padding(.bottom, 4)
                 } else if let index = real.firstIndex(where: { $0.id == step.id }) {
@@ -616,7 +614,7 @@ struct CookLogSheet: View {
                     StarRating(rating: $rating)
                 }
                 VStack(alignment: .leading, spacing: 8) {
-                    SectionLabel("Anything to remember")
+                    SectionLabel("Notes")
                     TextField("Less salt next time. Doubled the garlic.", text: $note, axis: .vertical)
                         .lineLimit(3...6)
                         .font(Typeface.body(16))
@@ -624,7 +622,7 @@ struct CookLogSheet: View {
                         .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Ink.paperRaised))
                 }
                 Spacer()
-                InkButton(title: "Save to the log") {
+                InkButton(title: "Save") {
                     library.logCook(recipe.id, rating: rating, note: note)
                     Haptics.success()
                     dismiss()
@@ -762,9 +760,9 @@ struct CardPreview: View {
                             .font(Typeface.body(16, weight: .semibold))
                         Spacer()
                     }
-                    .foregroundStyle(Ink.paper)
-                    .padding(.vertical, 14)
-                    .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Ink.ink))
+                    .foregroundStyle(Ink.onAccent)
+                    .padding(.vertical, 16)
+                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Ink.accent))
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 20)

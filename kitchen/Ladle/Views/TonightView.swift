@@ -44,8 +44,8 @@ struct TonightView: View {
 
                 if library.recipes.isEmpty {
                     EmptyNote(
-                        title: "Start with one recipe.",
-                        message: "Scan a card from the box, or save something from Safari. Tonight fills in from there.",
+                        title: "No recipes yet",
+                        message: "Scan a recipe card or save one from a website.",
                         actionTitle: "Scan a recipe"
                     ) { addFlow = .scan }
                     .indexInsets()
@@ -111,7 +111,7 @@ struct TonightView: View {
         let tomorrow = library.entries(for: DayKey.upcoming(2).last ?? DayKey.today)
         Section {
             if today.isEmpty && tomorrow.isEmpty {
-                Text("Nothing planned. Pick from below, or plan the week in the Plan tab.")
+                Text("Nothing planned for today.")
                     .font(Typeface.body(14))
                     .foregroundStyle(Ink.inkSoft)
                     .indexInsets()
@@ -143,8 +143,8 @@ struct TonightView: View {
                         Image(systemName: "play.fill")
                             .font(.system(size: 13, weight: .semibold))
                             .frame(width: 38, height: 38)
-                            .background(Circle().fill(Ink.ink))
-                            .foregroundStyle(Ink.paper)
+                            .background(Circle().fill(Ink.accent))
+                            .foregroundStyle(Ink.onAccent)
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Cook \(recipe.title)")
@@ -156,9 +156,8 @@ struct TonightView: View {
                 Text(entry.note.isEmpty ? "Something" : entry.note)
                     .font(Typeface.body(16, weight: .medium))
                 Spacer()
-                Text(entry.meal.title.uppercased())
-                    .font(Typeface.meta(10, weight: .semibold))
-                    .tracking(1.2)
+                Text(entry.meal.title)
+                    .font(Typeface.meta(13))
                     .foregroundStyle(Ink.inkSoft)
             }
             .indexInsets()
@@ -176,7 +175,7 @@ struct TonightView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Surprise me")
                         .font(Typeface.body(16, weight: .semibold))
-                    Text(library.readyToCook.isEmpty ? "Picks any recipe. Shake the phone to do the same." : "Picks from what is ready. Shake the phone to do the same.")
+                    Text(library.readyToCook.isEmpty ? "Picks a random recipe. You can also shake the phone." : "Picks a recipe you can make now. You can also shake the phone.")
                         .font(Typeface.body(13))
                         .foregroundStyle(Ink.inkSoft)
                 }
@@ -198,17 +197,17 @@ struct TonightView: View {
         Section {
             if library.pantry.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("The pantry is empty, so nothing can be matched yet.")
+                    Text("Your pantry is empty.")
                         .font(Typeface.body(14))
                         .foregroundStyle(Ink.inkSoft)
-                    Text("Add what is in the kitchen under Pantry and this fills in.")
+                    Text("Tick what you have in Pantry to see what you can make.")
                         .font(Typeface.body(14))
                         .foregroundStyle(Ink.inkSoft)
                 }
                 .indexInsets()
                 .listRowSeparator(.hidden)
             } else if ready.isEmpty {
-                Text("Nothing is fully covered. The closest are below.")
+                Text("Nothing you can fully make yet. These are close.")
                     .font(Typeface.body(14))
                     .foregroundStyle(Ink.inkSoft)
                     .indexInsets()
@@ -249,7 +248,7 @@ struct TonightView: View {
                 }
                 if almost.count > 4 {
                     NavigationLink {
-                        AvailabilityListView(title: "One or two things short", items: almost)
+                        AvailabilityListView(title: "Missing one or two things", items: almost)
                     } label: {
                         Text("All \(almost.count)")
                             .font(Typeface.body(14, weight: .medium))
@@ -257,7 +256,7 @@ struct TonightView: View {
                     .indexInsets()
                 }
             } header: {
-                SectionLabel("One or two things short")
+                SectionLabel("Missing one or two things")
                     .padding(.horizontal, 20)
                     .textCase(nil)
             }
