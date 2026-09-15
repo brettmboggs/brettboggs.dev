@@ -138,6 +138,26 @@ the README lists are set. The site pages under `/slumbio/` are the app's
 support, privacy and terms URLs and must stay live; `/nightjar/` redirects to
 them for the first TestFlight build.
 
+## Mise (the recipe app, in kitchen/)
+
+A second SwiftUI app, for Brett's mom: scan handwritten and printed recipes
+(VisionKit document camera + Vision OCR, on device), import from the web
+(schema.org JSON-LD, microdata, then plain-text fallback), one consistent
+format, a pantry with a 330-ingredient catalogue and ~250 substitution rules
+that says what can be cooked tonight, hands-free cook mode (voice commands,
+read aloud, tap zones, Siri intents), timers, shopping list, meal plan, cook
+log, sharing as text/card/PDF/`.mise` file, whole-cookbook export. Black and
+white only, system serif for titles. Built 2026-09-15 without a compiler in
+the session; treat every SwiftUI change as unverified until it is built on
+Brett's Mac. Same tooling shape as Slumbio: `kitchen/tools/make_project.py`
+generates `Mise.xcodeproj` (app + `MiseShare` share extension, one App Group
+`group.dev.brettboggs.mise`), `verify_project.py` and `check_swift.py` run
+offline, `.github/workflows/testflight-mise.yml` ships it on pushes to
+`main` under `kitchen/` with the same seven secrets. Read `kitchen/README.md`
+before touching it. The site pages under `/mise/` are its support and
+privacy URLs and must stay live. Working name; "Mise" may be taken on the
+App Store, and the README says what to rename.
+
 ## Deployment status
 
 Repo: https://github.com/brettmboggs/brettboggs.dev (Brett is sole

@@ -33,6 +33,7 @@ export default defineConfig({
         !page.includes('/edit/') &&
         !page.includes('/slumbio/privacy/') &&
         !page.includes('/slumbio/terms/') &&
+        !page.includes('/mise/privacy/') &&
         !page.includes('/nightjar/'),
     }),
   ],

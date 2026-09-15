@@ -2289,6 +2289,104 @@ collections:
       - name: backLink
         label: Back link
         widget: string
+  - name: mise
+    label: Mise
+    description: The recipe app's page and privacy policy. The App Store links to these, so keep them live.
+    files:
+    - name: mise-privacy
+      label: Mise Privacy
+      file: src/data/copy/mise-privacy.json
+      preview_path: /mise/privacy/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow (before the date)
+        widget: string
+      - name: updated
+        label: Last updated date
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: sections
+        label: Sections
+        widget: list
+        summary: '{{heading}}'
+        fields:
+        - name: heading
+          label: Section heading
+          widget: string
+        - name: body
+          label: Section text
+          widget: markdown
+      - name: backLink
+        label: Back link text
+        widget: string
+    - name: mise
+      label: Mise (app page)
+      file: src/data/copy/mise.json
+      preview_path: /mise/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: intro
+        label: Intro paragraphs
+        widget: markdown
+      - name: sections
+        label: Sections
+        widget: list
+        summary: '{{heading}}'
+        fields:
+        - name: heading
+          label: Section heading
+          widget: string
+        - name: body
+          label: Section text
+          widget: markdown
+      - name: fine
+        label: Support note
+        widget: markdown
+        buttons:
+        - bold
+        - italic
+        - link
+        - code
+        editor_components: []
+      - name: links
+        label: Footer links
+        widget: list
+        summary: '{{text}}'
+        fields:
+        - name: text
+          label: Label
+          widget: string
+        - name: url
+          label: Link
+          widget: string
+      - name: backLink
+        label: Back link text
+        widget: string
   - name: slumbio
     label: Slumbio
     description: The app page, privacy policy and terms. The App Store links to these, so keep them live.
