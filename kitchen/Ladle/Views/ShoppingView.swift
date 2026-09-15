@@ -45,8 +45,8 @@ struct ShoppingView: View {
 
             if library.shopping.isEmpty {
                 EmptyNote(
-                    title: "Nothing to buy.",
-                    message: "Open a recipe and tap Shop to add what it needs, or plan the week and shop for all of it at once."
+                    title: "Your list is empty",
+                    message: "Open a recipe and tap Shop, or add something above."
                 )
                 .indexInsets()
             }
@@ -94,12 +94,12 @@ struct ShoppingView: View {
                         show(moved == 1 ? "1 thing moved into the pantry." : "\(moved) things moved into the pantry.")
                         Haptics.success()
                     } label: {
-                        Label("Put the checked things in the pantry", systemImage: "arrow.down.to.line")
+                        Label("Move checked items to Pantry", systemImage: "arrow.down.to.line")
                             .font(Typeface.body(15, weight: .medium))
                     }
                     .indexInsets()
                 } header: {
-                    SectionLabel("In the basket", trailing: "\(checked.count)")
+                    SectionLabel("Checked", trailing: "\(checked.count)")
                         .padding(.horizontal, 20)
                         .textCase(nil)
                 }
@@ -126,7 +126,7 @@ struct ShoppingView: View {
                         Button {
                             library.clearChecked()
                         } label: {
-                            Label("Clear the checked things", systemImage: "checkmark.circle")
+                            Label("Clear checked items", systemImage: "checkmark.circle")
                         }
                     }
                     if !library.shopping.isEmpty {
@@ -164,7 +164,7 @@ struct ShoppingView: View {
 
     private var countLine: String {
         let count = library.uncheckedShopping.count
-        if count == 0 { return library.shopping.isEmpty ? "" : "All in the basket" }
+        if count == 0 { return library.shopping.isEmpty ? "" : "All checked" }
         return count == 1 ? "1 thing to get" : "\(count) things to get"
     }
 

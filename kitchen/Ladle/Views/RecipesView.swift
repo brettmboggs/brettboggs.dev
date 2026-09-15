@@ -46,8 +46,8 @@ struct RecipesView: View {
 
             if library.recipes.isEmpty {
                 EmptyNote(
-                    title: "Nothing here yet.",
-                    message: "Scan a card, save a page from Safari, or write one down.",
+                    title: "No recipes yet",
+                    message: "Scan a card, save one from a website, or type one in.",
                     actionTitle: "Scan a recipe"
                 ) { addFlow = .scan }
                 .indexInsets()
@@ -184,10 +184,10 @@ struct RecipesView: View {
 
     private var emptyFilterMessage: String {
         switch filter {
-        case .ready: return "Nothing is fully covered by the pantry. Try the Tonight tab for what is close."
-        case .favorites: return "Swipe a recipe to the right to favourite it."
-        case .quick: return "No recipe here says it takes 30 minutes or less."
-        case .review: return "Everything imported has been looked over."
+        case .ready: return "None you can fully make yet. Tonight shows ones that are close."
+        case .favorites: return "Open a recipe and tap the heart to add it here."
+        case .quick: return "No recipes take 30 minutes or less."
+        case .review: return "All recipes are checked."
         case .tag(let tag): return "No recipes tagged \(tag)."
         case .all: return "Try a different word."
         }
@@ -241,7 +241,7 @@ struct AddMenu: View {
             Button { choose(.photos) } label: { Label("Read from photos", systemImage: "photo.on.rectangle") }
             Button { choose(.web) } label: { Label("From a web link", systemImage: "link") }
             Button { choose(.paste) } label: { Label("Paste text", systemImage: "doc.on.clipboard") }
-            Button { choose(.write) } label: { Label("Write it down", systemImage: "pencil") }
+            Button { choose(.write) } label: { Label("Type it in", systemImage: "pencil") }
         } label: {
             Image(systemName: "plus")
                 .font(.system(size: 18, weight: .medium))
@@ -280,12 +280,12 @@ struct RecipeRow: View {
                         .lineLimit(1)
                 }
                 if recipe.needsReview {
-                    Text("TO REVIEW")
-                        .font(Typeface.meta(9, weight: .semibold))
-                        .tracking(1.2)
-                        .padding(.horizontal, 6)
+                    Text("Check")
+                        .font(Typeface.body(12, weight: .semibold))
+                        .foregroundStyle(Ink.accent)
+                        .padding(.horizontal, 8)
                         .padding(.vertical, 3)
-                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(Ink.ink, lineWidth: 1))
+                        .background(Capsule().fill(Ink.accent.opacity(0.12)))
                 }
             }
             Spacer(minLength: 0)

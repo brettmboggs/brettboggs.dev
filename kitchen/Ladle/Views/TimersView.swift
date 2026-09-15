@@ -11,7 +11,7 @@ struct TimersView: View {
         NavigationStack {
             List {
                 if timers.timers.isEmpty {
-                    EmptyNote(title: "No timers running.", message: "Start one below, or tap a time inside any step while cooking.")
+                    EmptyNote(title: "No timers", message: "Start one below, or tap a time in a recipe step.")
                         .indexInsets()
                 }
                 ForEach(timers.timers) { timer in
@@ -51,7 +51,7 @@ struct TimersView: View {
                             .font(Typeface.body(15, weight: .semibold))
                     }
                     .indexInsets()
-                    TextField("What is it for (optional)", text: $label)
+                    TextField("Name (optional)", text: $label)
                         .indexInsets()
                 } header: {
                     SectionLabel("New timer")
@@ -105,7 +105,7 @@ struct TimerRow: View {
                     Rectangle()
                         .fill(Ink.hairline)
                         .overlay(alignment: .leading) {
-                            Rectangle().fill(Ink.ink).frame(width: geo.size.width * min(1, max(0, progress)))
+                            Rectangle().fill(Ink.accent).frame(width: geo.size.width * min(1, max(0, progress)))
                         }
                 }
                 .frame(height: 2)

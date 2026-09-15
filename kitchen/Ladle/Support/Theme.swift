@@ -1,13 +1,12 @@
 import SwiftUI
 import UIKit
 
-/// Black on white by day, white on black by night, greys in between.
+/// Clean system surfaces with one warm colour.
 ///
-/// Everything routes through the system semantic colours, which is what
-/// makes the palette exactly two colours: `systemBackground` is pure white
-/// in light mode and pure black in dark mode on an iPhone, and `primary`
-/// is the opposite. There is no accent colour. Emphasis is done with weight,
-/// size and space, the way a printed cookbook does it.
+/// Paper and ink route through the system semantic colours, so light and
+/// dark mode come for free. The accent is a tomato red, used for things that
+/// are on: ticks, what the kitchen has, the one main button on a screen.
+/// Everything else is black, white and greys.
 enum Ink {
     static let paper = Color(uiColor: .systemBackground)
     static let paperRaised = Color(uiColor: .secondarySystemBackground)
@@ -16,6 +15,14 @@ enum Ink {
     static let inkSoft = Color.secondary
     static let inkFaint = Color(uiColor: .tertiaryLabel)
     static let hairline = Color(uiColor: .separator)
+
+    static let accent = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 1.00, green: 0.42, blue: 0.30, alpha: 1)
+            : UIColor(red: 0.82, green: 0.26, blue: 0.16, alpha: 1)
+    })
+    /// Text and icons that sit on the accent.
+    static let onAccent = Color.white
 }
 
 enum Typeface {
@@ -26,19 +33,22 @@ enum Typeface {
         min(UIFontMetrics(forTextStyle: style).scaledValue(for: size), size * 1.4)
     }
 
-    /// The system serif, for recipe titles and nothing else. It is what makes
-    /// a screen of recipes read like a book rather than a settings pane.
-    static func display(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: scaled(size, relativeTo: .title2), weight: weight, design: .serif)
+    /// Instrument Serif, bundled in Fonts/, for screen and recipe titles only.
+    /// It is a tall, narrow face, so it is set a size up from the designed
+    /// number to sit level with the system text around it. It has one weight;
+    /// `weight` is accepted so call sites read the same as `body`.
+    static func display(_ size: CGFloat, weight: Font.Weight = .regular, italic: Bool = false) -> Font {
+        .custom(italic ? "InstrumentSerif-Italic" : "InstrumentSerif-Regular", fixedSize: scaled(size * 1.18, relativeTo: .title2))
     }
 
     static func body(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
         .system(size: scaled(size, relativeTo: .body), weight: weight, design: .default)
     }
 
-    /// Metadata: times, counts, step numbers, section labels.
-    static func meta(_ size: CGFloat, weight: Font.Weight = .medium) -> Font {
-        .system(size: scaled(size, relativeTo: .caption1), weight: weight, design: .monospaced)
+    /// Metadata: times, counts, step numbers. Plain system text with even
+    /// digits, so numbers line up without looking like a terminal.
+    static func meta(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: scaled(size + 1, relativeTo: .caption1), weight: weight, design: .default).monospacedDigit()
     }
 }
 

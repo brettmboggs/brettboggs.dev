@@ -41,7 +41,7 @@ struct ScanView: View {
                             .controlSize(.large)
                         Text("Reading…")
                             .font(Typeface.display(22))
-                        Text("The words are read on the phone. Nothing is sent anywhere.")
+                        Text("Text is read on your phone. Nothing is uploaded.")
                             .font(Typeface.body(14))
                             .foregroundStyle(Ink.inkSoft)
                     }
@@ -119,7 +119,7 @@ struct ScanView: View {
         switch source {
         case .paste:
             VStack(alignment: .leading, spacing: 14) {
-                Text("Paste the whole thing: title, ingredients, method. It gets sorted out on the next screen.")
+                Text("Paste the whole recipe. You can check it on the next screen.")
                     .font(Typeface.body(14))
                     .foregroundStyle(Ink.inkSoft)
                 TextEditor(text: $pastedText)
@@ -136,11 +136,11 @@ struct ScanView: View {
         case .camera, .photos:
             VStack(alignment: .leading, spacing: 20) {
                 if !DocumentScanner.isSupported && source == .camera {
-                    Text("The document camera is not available on this device. Choose photos instead.")
+                    Text("The scanner isn't available on this device. Choose photos instead.")
                         .font(Typeface.body(15))
                         .foregroundStyle(Ink.inkSoft)
                 }
-                Text("Handwritten cards, printed pages, screenshots of a text. Straight on and well lit is all it needs.")
+                Text("Works with handwritten cards, printed pages and screenshots. Hold the phone straight above it in good light.")
                     .font(Typeface.body(15))
                     .foregroundStyle(Ink.inkSoft)
                 if DocumentScanner.isSupported {
@@ -260,7 +260,7 @@ struct WebImportView: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 18) {
-                Text("Paste the address of a recipe page. Most sites come through with the photo, times and servings.")
+                Text("Paste a link to a recipe page.")
                     .font(Typeface.body(15))
                     .foregroundStyle(Ink.inkSoft)
                 HStack(spacing: 10) {
@@ -296,8 +296,8 @@ struct WebImportView: View {
                 .opacity(text.isBlank ? 0.4 : 1)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    SectionLabel("Quicker next time")
-                    Text("In Safari, tap the Share button on any recipe page, then Ladle. The recipe is waiting when you come back here.")
+                    SectionLabel("Tip")
+                    Text("In Safari, tap Share on a recipe page, then Ladle.")
                         .font(Typeface.body(14))
                         .foregroundStyle(Ink.inkSoft)
                         .fixedSize(horizontal: false, vertical: true)

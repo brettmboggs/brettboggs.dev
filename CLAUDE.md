@@ -146,8 +146,11 @@ A second SwiftUI app, for Brett's mom: scan handwritten and printed recipes
 format, a pantry with a 330-ingredient catalogue and ~250 substitution rules
 that says what can be cooked tonight, hands-free cook mode (voice commands,
 read aloud, tap zones, Siri intents), timers, shopping list, meal plan, cook
-log, sharing as text/card/PDF/`.ladle` file, whole-cookbook export. Black and
-white only, system serif for titles. No Swift toolchain exists in the web
+log, sharing as text/card/PDF/`.ladle` file, whole-cookbook export. Look:
+clean system text, Instrument Serif (bundled) for titles only, one tomato
+accent, no ALL-CAPS or monospace labels. Copy is plain and short. Brett's bar:
+a 70-year-old can tap through it without help, and a 20-year-old enjoys it;
+every action is a visible tap target, never swipe-only. No Swift toolchain exists in the web
 sessions, so `.github/workflows/ladle-check.yml` compiles the app for the
 simulator on every push that touches `kitchen/` (any branch, no signing, no
 secrets); read that run before calling a change done. Same tooling shape as

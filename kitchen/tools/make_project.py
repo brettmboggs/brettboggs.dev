@@ -65,6 +65,7 @@ FILE_TYPES = {
     ".md": "net.daringfireball.markdown",
     ".png": "image.png",
     ".m4a": "file",
+    ".ttf": "file",
     ".xcconfig": "text.xcconfig",
     ".entitlements": "text.plist.entitlements",
 }
@@ -120,8 +121,10 @@ def build() -> str:
 
     app_sources = sources(Path(APP_NAME))
 
-    # The asset catalog is the only resource; everything else is code.
-    resources = [Path(f"{APP_NAME}/Assets.xcassets")]
+    # The asset catalog and the title typeface are the only resources.
+    resources = [Path(f"{APP_NAME}/Assets.xcassets")] + sorted(
+        p.relative_to(ROOT) for p in (ROOT / APP_NAME / "Fonts").glob("*.ttf")
+    )
     support = [
         Path(f"{APP_NAME}/Info.plist"),
         Path(f"{APP_NAME}/{APP_NAME}.entitlements"),

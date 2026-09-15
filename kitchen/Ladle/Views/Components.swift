@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Small uppercase monospace label. The only heading style in the app.
+/// A section heading: plain words, sentence case, a count on the right.
 struct SectionLabel: View {
     let text: String
     var trailing: String?
@@ -12,18 +12,17 @@ struct SectionLabel: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline) {
-            Text(text.uppercased())
-                .font(Typeface.meta(11, weight: .semibold))
-                .tracking(1.6)
-                .foregroundStyle(Ink.inkSoft)
+            Text(text)
+                .font(Typeface.body(15, weight: .semibold))
+                .foregroundStyle(Ink.ink)
             Spacer(minLength: 8)
             if let trailing {
                 Text(trailing)
-                    .font(Typeface.meta(11))
-                    .foregroundStyle(Ink.inkFaint)
+                    .font(Typeface.meta(13))
+                    .foregroundStyle(Ink.inkSoft)
             }
         }
-        .padding(.top, 6)
+        .padding(.top, 10)
         .accessibilityAddTraits(.isHeader)
     }
 }
@@ -45,7 +44,7 @@ struct Rule: View {
     }
 }
 
-/// The filled black (or white) button. One per screen at most.
+/// The filled accent button, or an outlined one. One filled per screen at most.
 struct InkButton: View {
     let title: String
     var systemImage: String?
@@ -63,18 +62,19 @@ struct InkButton: View {
                 Text(title)
                     .font(Typeface.body(16, weight: .semibold))
             }
-            .foregroundStyle(isProminent ? Ink.paper : Ink.ink)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 14)
-            .frame(maxWidth: isWide ? .infinity : nil)
+            .foregroundStyle(isProminent ? Ink.onAccent : Ink.ink)
+            .padding(.horizontal, 22)
+            .padding(.vertical, 15)
+            .frame(maxWidth: isWide ? .infinity : nil, minHeight: 52)
             .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(isProminent ? Ink.ink : Ink.paper)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(isProminent ? Ink.accent : Ink.paper)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(Ink.ink, lineWidth: isProminent ? 0 : 1.5)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(Ink.hairline, lineWidth: isProminent ? 0 : 1)
             )
+            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
         .buttonStyle(.plain)
     }
@@ -93,10 +93,10 @@ struct IconButton: View {
                 Image(systemName: systemImage)
                     .font(.system(size: 17, weight: .medium))
                     .frame(width: 46, height: 46)
-                    .background(Circle().fill(filled ? Ink.ink : Ink.paperRaised))
-                    .foregroundStyle(filled ? Ink.paper : Ink.ink)
+                    .background(Circle().fill(filled ? Ink.accent : Ink.paperRaised))
+                    .foregroundStyle(filled ? Ink.onAccent : Ink.ink)
                 Text(label)
-                    .font(Typeface.meta(10))
+                    .font(Typeface.meta(11))
                     .foregroundStyle(Ink.inkSoft)
             }
         }
@@ -125,9 +125,9 @@ struct Chip: View {
             }
             .padding(.horizontal, 13)
             .padding(.vertical, 8)
-            .foregroundStyle(isSelected ? Ink.paper : Ink.ink)
-            .background(Capsule().fill(isSelected ? Ink.ink : Ink.paper))
-            .overlay(Capsule().stroke(isSelected ? Ink.ink : Ink.hairline, lineWidth: 1))
+            .foregroundStyle(isSelected ? Ink.onAccent : Ink.ink)
+            .background(Capsule().fill(isSelected ? Ink.accent : Ink.paper))
+            .overlay(Capsule().stroke(isSelected ? Ink.accent : Ink.hairline, lineWidth: 1))
         }
         .buttonStyle(.plain)
     }
@@ -141,11 +141,13 @@ struct CheckCircle: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(isOn ? Ink.ink : Ink.hairline, lineWidth: 1.5)
+                .stroke(isOn ? Ink.accent : Ink.inkFaint, lineWidth: 1.5)
             if isOn {
                 Circle()
-                    .fill(Ink.ink)
-                    .padding(4)
+                    .fill(Ink.accent)
+                Image(systemName: "checkmark")
+                    .font(.system(size: size * 0.45, weight: .bold))
+                    .foregroundStyle(Ink.onAccent)
             }
         }
         .frame(width: size, height: size)
@@ -184,10 +186,10 @@ struct PresenceDot: View {
         Group {
             switch presence {
             case .have:
-                Circle().fill(Ink.ink)
+                Circle().fill(Ink.accent)
             case .partial:
-                Circle().stroke(Ink.ink, lineWidth: 1.5)
-                    .overlay(Circle().fill(Ink.ink).padding(3))
+                Circle().stroke(Ink.accent, lineWidth: 1.5)
+                    .overlay(Circle().fill(Ink.accent).padding(3))
             case .missing:
                 Circle().stroke(Ink.hairline, lineWidth: 1.5)
             }
@@ -205,7 +207,7 @@ struct StarRating: View {
             ForEach(1...5, id: \.self) { star in
                 Image(systemName: star <= rating ? "star.fill" : "star")
                     .font(.system(size: size, weight: .light))
-                    .foregroundStyle(star <= rating ? Ink.ink : Ink.inkFaint)
+                    .foregroundStyle(star <= rating ? Ink.accent : Ink.inkFaint)
                     .onTapGesture {
                         rating = (rating == star) ? 0 : star
                         Haptics.tap()
@@ -305,12 +307,12 @@ struct IndexRow<Trailing: View>: View {
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(Typeface.display(19))
+                    .font(Typeface.display(20))
                     .foregroundStyle(Ink.ink)
                     .lineLimit(2)
                 if let subtitle, !subtitle.isEmpty {
                     Text(subtitle)
-                        .font(Typeface.meta(11))
+                        .font(Typeface.meta(12))
                         .foregroundStyle(Ink.inkSoft)
                         .lineLimit(1)
                 }
@@ -328,7 +330,7 @@ extension IndexRow where Trailing == EmptyView {
     }
 }
 
-/// The big serif title at the top of a tab.
+/// The big title at the top of a tab.
 struct ScreenTitle: View {
     let title: String
     var subtitle: String?
@@ -336,15 +338,13 @@ struct ScreenTitle: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
-                .font(Typeface.display(38))
+                .font(Typeface.display(40))
                 .foregroundStyle(Ink.ink)
             if let subtitle, !subtitle.isEmpty {
                 Text(subtitle)
-                    .font(Typeface.meta(12))
+                    .font(Typeface.body(15))
                     .foregroundStyle(Ink.inkSoft)
             }
-            Rule()
-                .padding(.top, 8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .listRowSeparator(.hidden)
@@ -352,7 +352,7 @@ struct ScreenTitle: View {
     }
 }
 
-/// A line of small monospace metadata: "45 min · Serves 4".
+/// A line of small metadata: "45 min · Serves 4".
 struct MetaText: View {
     let text: String
 

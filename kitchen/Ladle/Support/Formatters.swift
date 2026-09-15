@@ -56,7 +56,7 @@ enum Format {
 
     static func timesCooked(_ count: Int) -> String {
         switch count {
-        case 0: return "Never made yet"
+        case 0: return "Not made yet"
         case 1: return "Made once"
         case 2: return "Made twice"
         default: return "Made \(count) times"

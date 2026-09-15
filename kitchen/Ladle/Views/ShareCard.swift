@@ -1,8 +1,8 @@
 import SwiftUI
 import UIKit
 
-/// The recipe laid out as a printed card: always black on white, whatever
-/// the phone is set to, because it is going somewhere else.
+/// The recipe laid out as a printed card: always light, whatever the phone
+/// is set to, because it is going somewhere else.
 struct RecipeCardView: View {
     let recipe: Recipe
     let system: UnitSystem
@@ -20,7 +20,7 @@ struct RecipeCardView: View {
             }
             VStack(alignment: .leading, spacing: 14) {
                 Text(recipe.title)
-                    .font(.system(size: 30, weight: .regular, design: .serif))
+                    .font(.custom("InstrumentSerif-Regular", fixedSize: 38))
                     .fixedSize(horizontal: false, vertical: true)
                 if !recipe.headnote.isBlank {
                     Text(recipe.headnote)
@@ -29,21 +29,18 @@ struct RecipeCardView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 if !recipe.metaLine.isEmpty {
-                    Text(recipe.metaLine.uppercased())
-                        .font(.system(size: 10, weight: .medium, design: .monospaced))
-                        .tracking(1.4)
+                    Text(recipe.metaLine)
+                        .font(.system(size: 12))
                         .foregroundStyle(Color(white: 0.35))
                 }
-                Rectangle().fill(Color.black).frame(height: 2)
+                Rectangle().fill(Color(white: 0.85)).frame(height: 1)
 
                 VStack(alignment: .leading, spacing: 6) {
                     label("Ingredients")
                     ForEach(recipe.ingredients) { ingredient in
                         if ingredient.isHeading {
-                            Text(ingredient.name.uppercased())
-                                .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                                .tracking(1.2)
-                                .foregroundStyle(Color(white: 0.35))
+                            Text(ingredient.name)
+                                .font(.system(size: 13, weight: .semibold))
                                 .padding(.top, 6)
                         } else {
                             Text(IngredientLine.text(ingredient, scale: 1, system: system))
@@ -58,16 +55,14 @@ struct RecipeCardView: View {
                     let real = recipe.realSteps
                     ForEach(recipe.steps) { step in
                         if step.isHeading {
-                            Text(step.text.uppercased())
-                                .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                                .tracking(1.2)
-                                .foregroundStyle(Color(white: 0.35))
+                            Text(step.text)
+                                .font(.system(size: 13, weight: .semibold))
                                 .padding(.top, 4)
                         } else if let index = real.firstIndex(where: { $0.id == step.id }) {
                             HStack(alignment: .firstTextBaseline, spacing: 10) {
-                                Text(String(format: "%02d", index + 1))
-                                    .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                                    .foregroundStyle(Color(white: 0.45))
+                                Text("\(index + 1)")
+                                    .font(.system(size: 13, weight: .semibold).monospacedDigit())
+                                    .foregroundStyle(Color(red: 0.82, green: 0.26, blue: 0.16))
                                     .frame(width: 22, alignment: .leading)
                                 Text(step.text)
                                     .font(.system(size: 14))
@@ -94,7 +89,7 @@ struct RecipeCardView: View {
                     Spacer()
                     Text("Ladle")
                 }
-                .font(.system(size: 10, design: .monospaced))
+                .font(.system(size: 11))
                 .foregroundStyle(Color(white: 0.5))
                 .padding(.top, 10)
             }
@@ -108,10 +103,8 @@ struct RecipeCardView: View {
     }
 
     private func label(_ text: String) -> some View {
-        Text(text.uppercased())
-            .font(.system(size: 10, weight: .semibold, design: .monospaced))
-            .tracking(1.6)
-            .foregroundStyle(Color(white: 0.35))
+        Text(text)
+            .font(.system(size: 15, weight: .semibold))
     }
 }
 
