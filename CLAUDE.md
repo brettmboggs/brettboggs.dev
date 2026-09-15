@@ -138,30 +138,13 @@ the README lists are set. The site pages under `/slumbio/` are the app's
 support, privacy and terms URLs and must stay live; `/nightjar/` redirects to
 them for the first TestFlight build.
 
-## Ladle (the recipe app, in kitchen/)
+## Ladle
 
-A second SwiftUI app, for Brett's mom: scan handwritten and printed recipes
-(VisionKit document camera + Vision OCR, on device), import from the web
-(schema.org JSON-LD, microdata, then plain-text fallback), one consistent
-format, a pantry with a 330-ingredient catalogue and ~250 substitution rules
-that says what can be cooked tonight, hands-free cook mode (voice commands,
-read aloud, tap zones, Siri intents), timers, shopping list, meal plan, cook
-log, sharing as text/card/PDF/`.ladle` file, whole-cookbook export. Look:
-clean system text, Instrument Serif (bundled) for titles only, one tomato
-accent, no ALL-CAPS or monospace labels. Copy is plain and short. Brett's bar:
-a 70-year-old can tap through it without help, and a 20-year-old enjoys it;
-every action is a visible tap target, never swipe-only. No Swift toolchain exists in the web
-sessions, so `.github/workflows/ladle-check.yml` compiles the app for the
-simulator on every push that touches `kitchen/` (any branch, no signing, no
-secrets); read that run before calling a change done. Same tooling shape as
-Slumbio: `kitchen/tools/make_project.py`
-generates `Ladle.xcodeproj` (app + `LadleShare` share extension, one App Group
-`group.dev.brettboggs.ladle`), `verify_project.py` and `check_swift.py` run
-offline, `.github/workflows/testflight-ladle.yml` ships it on pushes to
-`main` under `kitchen/` with the same seven secrets. Read `kitchen/README.md`
-before touching it. The site pages under `/ladle/` are its support and
-privacy URLs and must stay live. On the App Store it is "Ladle: The Cooking
-Book" (plain "Ladle" and "Mise", its first name, were taken).
+The Ladle recipe app moved to its own private repository,
+https://github.com/brettmboggs/ladle, with its history. This site still serves
+its support and privacy pages under `/ladle/` (`src/pages/ladle/`,
+`src/data/copy/ladle*.json`); they are the App Store support and privacy URLs
+and must stay live.
 
 ## Deployment status
 
