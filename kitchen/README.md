@@ -105,7 +105,10 @@ python3 tools/make_icon.py       # redraw the app icon
 
 The seven GitHub secrets from Slumbio are reused as they are; nothing new is
 needed. `.github/workflows/testflight-mise.yml` archives and uploads on every
-push to `main` that touches `kitchen/`.
+push to `main` that touches `kitchen/`. A second workflow,
+`mise-check.yml`, compiles the app for the simulator on every push to any
+branch, with no signing and no secrets, so a broken build never reaches
+`main` and no Mac is needed to find out.
 
 ### Before the first submission
 

@@ -147,9 +147,11 @@ format, a pantry with a 330-ingredient catalogue and ~250 substitution rules
 that says what can be cooked tonight, hands-free cook mode (voice commands,
 read aloud, tap zones, Siri intents), timers, shopping list, meal plan, cook
 log, sharing as text/card/PDF/`.mise` file, whole-cookbook export. Black and
-white only, system serif for titles. Built 2026-09-15 without a compiler in
-the session; treat every SwiftUI change as unverified until it is built on
-Brett's Mac. Same tooling shape as Slumbio: `kitchen/tools/make_project.py`
+white only, system serif for titles. No Swift toolchain exists in the web
+sessions, so `.github/workflows/mise-check.yml` compiles the app for the
+simulator on every push that touches `kitchen/` (any branch, no signing, no
+secrets); read that run before calling a change done. Same tooling shape as
+Slumbio: `kitchen/tools/make_project.py`
 generates `Mise.xcodeproj` (app + `MiseShare` share extension, one App Group
 `group.dev.brettboggs.mise`), `verify_project.py` and `check_swift.py` run
 offline, `.github/workflows/testflight-mise.yml` ships it on pushes to
