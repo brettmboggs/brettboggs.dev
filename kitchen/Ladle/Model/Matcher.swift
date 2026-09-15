@@ -3,8 +3,8 @@ import Foundation
 /// Reduces an ingredient description to the key it is matched on.
 ///
 /// "2 boneless, skinless chicken thighs, trimmed" and a pantry entry typed as
-/// "Chicken thighs" both come out as `chicken thighs`. The same normaliser
-/// builds the catalogue's alias table, so the two sides can never drift.
+/// "Chicken thighs" both come out as `chicken thighs`. The same normalizer
+/// builds the catalog's alias table, so the two sides can never drift.
 enum IngredientKey {
     static let stopwords: Set<String> = [
         "a", "an", "the", "of", "and", "or", "with", "for", "to", "in", "into", "from", "on", "at",
@@ -38,7 +38,7 @@ enum IngredientKey {
     private static let keep: Set<String> = [
         "green", "red", "white", "black", "yellow", "sweet", "sour", "dried", "frozen", "canned",
         "ground", "cooked", "instant", "light", "dark", "brown", "heavy", "double", "single",
-        "cream", "sea", "kosher", "wheat", "whole",
+        "cream", "sea", "kosher", "wheat", "whole", "hot", "roasted", "crushed",
     ]
 
     static let effectiveStopwords: Set<String> = stopwords.subtracting(keep)
@@ -140,7 +140,7 @@ enum IngredientKey {
         return word
     }
 
-    /// A readable name for a key: the catalogue spelling when there is one.
+    /// A readable name for a key: the catalog spelling when there is one.
     static func displayName(for key: String) -> String {
         if let entry = IngredientCatalog.entry(for: key) { return entry.name }
         return key
@@ -157,10 +157,10 @@ enum IngredientKey {
 struct PantryIndex {
     let pantryKeys: Set<String>
     let stapleKeys: Set<String>
-    /// Catalogue parents of what is on hand: cheddar in the pantry means
+    /// Catalog parents of what is on hand: cheddar in the pantry means
     /// "cheese" is covered.
     private let coveredParents: Set<String>
-    /// Last words of pantry entries the catalogue does not know, so a typed
+    /// Last words of pantry entries the catalog does not know, so a typed
     /// "farro" still meets a recipe's "pearl farro".
     private let looseTails: Set<String>
 
@@ -193,7 +193,7 @@ struct PantryIndex {
             if let parent = entry.parent, pantryKeys.contains(parent) || stapleKeys.contains(parent) { return true }
             return false
         }
-        // Unknown to the catalogue: match on the head word either way.
+        // Unknown to the catalog: match on the head word either way.
         if let tail = key.split(separator: " ").last {
             let t = String(tail)
             if looseTails.contains(t) || pantryKeys.contains(t) { return true }

@@ -472,15 +472,24 @@ enum IngredientCatalog {
         return map
     }()
 
-    /// Normalised alias → canonical name. Built with the same normaliser the
+    /// Normalized alias → canonical name. Built with the same normalizer the
     /// matcher uses on recipe text, so both sides always agree on spelling,
     /// plurals and hyphens.
     static let byAlias: [String: String] = {
         var map: [String: String] = [:]
-        for entry in entries {
-            for alias in [entry.name] + entry.aliases {
-                let key = IngredientKey.normalizedPhrase(alias)
-                if !key.isEmpty, map[key] == nil { map[key] = entry.name }
+        // Aliases that survive normalizing whole go first, so "pepper" means
+        // black pepper, not "hot peppers" with "hot" dropped as a descriptor.
+        func wordCount(_ text: String) -> Int {
+            text.lowercased().split(whereSeparator: { !$0.isLetter }).count
+        }
+        for lossless in [true, false] {
+            for entry in entries {
+                for alias in [entry.name] + entry.aliases {
+                    let key = IngredientKey.normalizedPhrase(alias)
+                    guard !key.isEmpty, map[key] == nil else { continue }
+                    let isLossless = key.split(separator: " ").count == wordCount(alias)
+                    if isLossless == lossless { map[key] = entry.name }
+                }
             }
         }
         // The canonical spelling of every entry wins over a same-spelled
