@@ -1,7 +1,7 @@
 import EventKit
 import SwiftUI
 
-/// The list for the shop, grouped by aisle, tickable with one thumb.
+/// The list for the store, grouped by aisle, checkable with one thumb.
 struct ShoppingView: View {
     @Environment(Library.self) private var library
 
@@ -24,7 +24,7 @@ struct ShoppingView: View {
 
     var body: some View {
         List {
-            ScreenTitle(title: "List", subtitle: countLine)
+            ScreenTitle(title: "List", subtitle: countLine, showsKitchen: true)
 
             HStack(spacing: 10) {
                 TextField("Add something", text: $entry)

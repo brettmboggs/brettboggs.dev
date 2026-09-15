@@ -1,13 +1,14 @@
 import SwiftUI
 
 /// What is in the kitchen, as a checklist. Every everyday ingredient is always
-/// on the screen; tapping one ticks it. Nothing here needs a swipe, a long
+/// on the screen; tapping one checks it. Nothing here needs a swipe, a long
 /// press or a hidden menu to be found.
 struct PantryView: View {
     @Environment(Library.self) private var library
 
     @State private var entry = ""
     @State private var showStaples = false
+    @State private var showBulkAdd = false
     @State private var toast: Toast?
     @FocusState private var entryFocused: Bool
 
@@ -57,7 +58,7 @@ struct PantryView: View {
         }
     }
 
-    /// Catalogue matches for what is being typed that are not already listed.
+    /// Catalog matches for what is being typed that are not already listed.
     private var suggestions: [CatalogEntry] {
         guard entry.collapsed.count >= 2 else { return [] }
         let listed = Set(shelf.map(\.key))
@@ -76,14 +77,42 @@ struct PantryView: View {
 
     var body: some View {
         List {
-            ScreenTitle(title: "Pantry", subtitle: countLine)
+            ScreenTitle(title: "Pantry", subtitle: countLine, showsKitchen: true)
 
             searchField
                 .indexInsets()
                 .listRowSeparator(.hidden)
 
             if entry.isBlank {
-                Text(library.pantry.isEmpty ? "Tap everything you have in the kitchen." : "Tap to tick what you have. Tap again to take it off.")
+                Button {
+                    showBulkAdd = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "text.badge.plus")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(Ink.accent)
+                            .frame(width: 28)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Add a bunch at once")
+                                .font(Typeface.body(16, weight: .semibold))
+                                .foregroundStyle(Ink.ink)
+                            Text("Paste or say a list, or start from a kit")
+                                .font(Typeface.body(13))
+                                .foregroundStyle(Ink.inkSoft)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(Ink.inkFaint)
+                    }
+                    .frame(minHeight: 52)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .indexInsets()
+                .listRowSeparator(.hidden)
+
+                Text(library.pantry.isEmpty ? "Tap everything you have in the kitchen." : "Tap to check off what you have. Tap again to take it off.")
                     .font(Typeface.body(15))
                     .foregroundStyle(Ink.inkSoft)
                     .indexInsets()
@@ -158,6 +187,11 @@ struct PantryView: View {
         .scrollDismissesKeyboard(.interactively)
         .navigationTitle("")
         .toolbarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showBulkAdd) {
+            PantryBulkAddView { count in
+                show(count == 1 ? "1 thing added." : "\(count) things added.")
+            }
+        }
         .sheet(isPresented: $showStaples) {
             NavigationStack {
                 StaplesView()
@@ -244,7 +278,7 @@ struct PantryView: View {
         }
     }
 
-    /// Return on the keyboard adds what was typed, or ticks the one match.
+    /// Return on the keyboard adds what was typed, or checks the one match.
     private func submit() {
         if let typedItem {
             add(typedItem)
@@ -377,7 +411,7 @@ struct ShelfRow: View {
     }
 }
 
-/// A line that adds one thing to the pantry: a catalogue match, or what was typed.
+/// A line that adds one thing to the pantry: a catalog match, or what was typed.
 private struct AddLine: View {
     let title: String
     let detail: String?

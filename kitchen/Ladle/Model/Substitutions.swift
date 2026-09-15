@@ -85,12 +85,12 @@ enum Substitutions {
         Substitution("honey", [["maple syrup"]], "maple syrup, same amount"),
         Substitution("honey", [["granulated sugar"], ["water"]], "1¼ cups sugar dissolved in ¼ cup water per cup", homemade: true),
         Substitution("maple syrup", [["honey"]], "honey, same amount"),
-        Substitution("molasses", [["honey"]], "honey, same amount (lighter flavour)"),
+        Substitution("molasses", [["honey"]], "honey, same amount (lighter flavor)"),
         Substitution("molasses", [["brown sugar"]], "dark brown sugar dissolved in a little water"),
         Substitution("corn syrup", [["honey"]], "honey, same amount"),
         Substitution("corn syrup", [["granulated sugar"], ["water"]], "1¼ cups sugar dissolved in ¼ cup water per cup", homemade: true),
         Substitution("graham crackers", [["crackers"]], "any plain sweet cracker or cookie, crushed"),
-        Substitution("bread crumbs", [["bread"]], "stale bread, toasted and blitzed", homemade: true),
+        Substitution("bread crumbs", [["bread"]], "stale bread, toasted and pulsed fine", homemade: true),
         Substitution("bread crumbs", [["crackers"]], "crushed crackers, same amount"),
         Substitution("bread crumbs", [["rolled oats"]], "oats pulsed fine, same amount"),
         Substitution("pumpkin pie spice", [["cinnamon"], ["nutmeg"], ["ginger powder"]], "1 tsp cinnamon + ¼ tsp nutmeg + ¼ tsp ginger per teaspoon", homemade: true),
@@ -107,7 +107,7 @@ enum Substitutions {
         // Pantry & stocks
         Substitution("chicken broth", [["bouillon"], ["water"]], "1 cube or 1 tsp paste per cup of water", homemade: true),
         Substitution("chicken broth", [["vegetable broth"]], "vegetable broth, same amount"),
-        Substitution("chicken broth", [["water"], ["butter"], ["salt"]], "water with a knob of butter and salt (lighter, still fine)", homemade: true),
+        Substitution("chicken broth", [["water"], ["butter"], ["salt"]], "water with a pat of butter and salt (lighter, still fine)", homemade: true),
         Substitution("beef broth", [["bouillon"], ["water"]], "1 cube or 1 tsp paste per cup of water", homemade: true),
         Substitution("beef broth", [["chicken broth"], ["soy sauce"]], "chicken broth with a splash of soy sauce", homemade: true),
         Substitution("beef broth", [["chicken broth"]], "chicken broth, same amount"),
@@ -152,7 +152,7 @@ enum Substitutions {
         Substitution("bbq sauce", [["ketchup"], ["brown sugar"], ["apple cider vinegar"]], "ketchup, brown sugar and cider vinegar, simmered 5 minutes", homemade: true),
         Substitution("bbq sauce", [["ketchup"], ["brown sugar"], ["white vinegar"]], "ketchup, brown sugar and vinegar, simmered 5 minutes", homemade: true),
         Substitution("salsa", [["canned tomatoes"], ["onion"], ["lime"]], "diced tomatoes with chopped onion and a squeeze of lime", homemade: true),
-        Substitution("pesto", [["basil"], ["olive oil"], ["parmesan"], ["garlic"]], "basil, garlic, parmesan and olive oil blitzed together", homemade: true),
+        Substitution("pesto", [["basil"], ["olive oil"], ["parmesan"], ["garlic"]], "basil, garlic, parmesan and olive oil blended together", homemade: true),
         Substitution("ranch dressing", [["mayonnaise"], ["buttermilk"], ["dried dill"]], "mayo thinned with buttermilk, plus dill and garlic powder", homemade: true),
         Substitution("ranch dressing", [["mayonnaise"], ["milk"], ["ranch seasoning"]], "ranch seasoning mixed into mayo and milk", homemade: true),
         Substitution("italian dressing", [["olive oil"], ["red wine vinegar"], ["italian seasoning"]], "3 parts oil to 1 part vinegar, plus italian seasoning", homemade: true),
@@ -355,7 +355,7 @@ enum Substitutions {
         }
     }
 
-    /// Everything the catalogue knows about making do without `key`.
+    /// Everything the catalog knows about making do without `key`.
     static func ideas(for key: String) -> [Substitution] {
         byTarget[key] ?? []
     }

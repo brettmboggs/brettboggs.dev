@@ -23,7 +23,7 @@ struct OnboardingView: View {
 
                 point(symbol: "doc.viewfinder", title: "Scan the cards", text: "Point the camera at a recipe card or cookbook page. Check the text, then save.")
                 point(symbol: "safari", title: "Save from Safari", text: "On a recipe website, tap Share, then Ladle.")
-                point(symbol: "cabinet", title: "See what you can make", text: "Tick what you have. Ladle shows what you can make tonight.")
+                point(symbol: "cabinet", title: "See what you can make", text: "Check off what you have. Ladle shows what you can make tonight.")
                 point(symbol: "waveform", title: "Cook hands free", text: "Say \"next\", \"repeat\" or \"start timer\" while you cook.")
 
                 VStack(spacing: 0) {

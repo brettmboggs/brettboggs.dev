@@ -435,6 +435,22 @@ def check_overrides(decls: dict[str, Decl]) -> list[str]:
     return problems
 
 
+def check_kits() -> list[str]:
+    """Every starter-kit item must be a catalog name, or it would be added as
+    an unknown ingredient that matches nothing."""
+    catalog = ROOT / 'Ladle/Model/IngredientCatalog.swift'
+    kits = ROOT / 'Ladle/Model/PantryKits.swift'
+    if not (catalog.exists() and kits.exists()):
+        return []
+    names = set(re.findall(r'CatalogEntry\("([^"]+)"', catalog.read_text()))
+    problems = []
+    for m in re.finditer(r'PantryKit\(id: "(\w+)".*?items: \[(.*?)\]\)', kits.read_text(), re.S):
+        for item in re.findall(r'"([^"]+)"', m.group(2)):
+            if item not in names:
+                problems.append(f"PantryKits.swift: kit {m.group(1)} lists {item!r}, which is not a catalog name")
+    return problems
+
+
 if __name__ == '__main__':
     files = sorted(
         p for p in ROOT.rglob('*.swift')
@@ -447,6 +463,7 @@ if __name__ == '__main__':
         + check_numeric_literals(files)
         + check_plist(files)
         + check_extension(files, decls)
+        + check_kits()
     )
 
     types = sum(1 for d in decls.values() if d.kind in ('struct', 'class', 'enum'))

@@ -5,9 +5,21 @@ import Foundation
 enum Inbox {
     static let groupID = "group.dev.brettboggs.ladle"
 
-    struct Item: Codable {
+    /// The extension writes with JSONSerialization: `url` a string, `date` an
+    /// ISO 8601 string. Read exactly that, and fall back to now for a date
+    /// that will not parse, so a link is never dropped over its timestamp.
+    struct Item: Decodable {
         var url: URL
         var date: Date
+
+        private enum CodingKeys: String, CodingKey { case url, date }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            url = try container.decode(URL.self, forKey: .url)
+            let stamp = try? container.decode(String.self, forKey: .date)
+            date = stamp.flatMap { ISO8601DateFormatter().date(from: $0) } ?? Date()
+        }
     }
 
     static var directory: URL? {

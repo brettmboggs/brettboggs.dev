@@ -5,7 +5,7 @@ import Vision
 struct RecognizedLine {
     let text: String
     let confidence: Float
-    /// Vision's normalised box: origin bottom-left, 0…1.
+    /// Vision's normalized box: origin bottom-left, 0…1.
     let box: CGRect
 }
 

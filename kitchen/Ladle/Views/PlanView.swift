@@ -14,7 +14,7 @@ struct PlanView: View {
 
     var body: some View {
         List {
-            ScreenTitle(title: "Plan", subtitle: subtitle)
+            ScreenTitle(title: "Plan", subtitle: subtitle, showsKitchen: true)
 
             ForEach(DayKey.upcoming(14), id: \.self) { day in
                 let entries = library.entries(for: day)

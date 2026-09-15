@@ -105,7 +105,7 @@ private extension String {
 // MARK: - Units
 
 enum UnitKind {
-    case volume   // base: millilitre
+    case volume   // base: milliliter
     case weight   // base: gram
     case count    // no conversion
 }
@@ -116,7 +116,7 @@ struct UnitInfo: Hashable {
     let plural: String
     let abbreviation: String
     let kind: UnitKind
-    /// Millilitres or grams per one of this unit. 1 for counts.
+    /// Milliliters or grams per one of this unit. 1 for counts.
     let toBase: Double
     let system: UnitSystem?
 
@@ -139,8 +139,8 @@ enum Units {
         UnitInfo(id: "pint", singular: "pint", plural: "pints", abbreviation: "pt", kind: .volume, toBase: 473.176, system: .us),
         UnitInfo(id: "quart", singular: "quart", plural: "quarts", abbreviation: "qt", kind: .volume, toBase: 946.353, system: .us),
         UnitInfo(id: "gallon", singular: "gallon", plural: "gallons", abbreviation: "gal", kind: .volume, toBase: 3785.41, system: .us),
-        UnitInfo(id: "milliliter", singular: "millilitre", plural: "millilitres", abbreviation: "ml", kind: .volume, toBase: 1, system: .metric),
-        UnitInfo(id: "liter", singular: "litre", plural: "litres", abbreviation: "l", kind: .volume, toBase: 1000, system: .metric),
+        UnitInfo(id: "milliliter", singular: "milliliter", plural: "milliliters", abbreviation: "ml", kind: .volume, toBase: 1, system: .metric),
+        UnitInfo(id: "liter", singular: "liter", plural: "liters", abbreviation: "l", kind: .volume, toBase: 1000, system: .metric),
         UnitInfo(id: "ounce", singular: "ounce", plural: "ounces", abbreviation: "oz", kind: .weight, toBase: 28.3495, system: .us),
         UnitInfo(id: "pound", singular: "pound", plural: "pounds", abbreviation: "lb", kind: .weight, toBase: 453.592, system: .us),
         UnitInfo(id: "gram", singular: "gram", plural: "grams", abbreviation: "g", kind: .weight, toBase: 1, system: .metric),

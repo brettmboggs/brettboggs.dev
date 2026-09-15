@@ -72,7 +72,7 @@ struct RecipesView: View {
                             library.toggleFavorite(recipe.id)
                             Haptics.tap()
                         } label: {
-                            Label(recipe.isFavorite ? "Unfavourite" : "Favourite", systemImage: recipe.isFavorite ? "heart.slash" : "heart")
+                            Label(recipe.isFavorite ? "Unfavorite" : "Favorite", systemImage: recipe.isFavorite ? "heart.slash" : "heart")
                         }
                         .tint(Ink.inkSoft)
                     }
@@ -160,7 +160,7 @@ struct RecipesView: View {
             HStack(spacing: 8) {
                 Chip(title: "All", isSelected: filter == .all) { filter = .all }
                 Chip(title: "Ready to cook", isSelected: filter == .ready, count: library.readyToCook.count) { filter = .ready }
-                Chip(title: "Favourites", isSelected: filter == .favorites) { filter = .favorites }
+                Chip(title: "Favorites", isSelected: filter == .favorites) { filter = .favorites }
                 Chip(title: "Under 30 min", isSelected: filter == .quick) { filter = .quick }
                 if library.needsReviewCount > 0 {
                     Chip(title: "To review", isSelected: filter == .review, count: library.needsReviewCount) { filter = .review }

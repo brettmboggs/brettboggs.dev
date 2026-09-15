@@ -35,14 +35,25 @@ enum Persistence {
         return try? decoder.decode(type, from: data)
     }
 
-    static func save<T: Encodable>(_ value: T, to name: String) {
-        guard let data = try? encoder.encode(value) else { return }
+    /// `name` may include folders ("Kitchens/<id>/pantry.json"); they are
+    /// created as needed. Returns whether the file was written.
+    @discardableResult
+    static func save<T: Encodable>(_ value: T, to name: String) -> Bool {
+        guard let data = try? encoder.encode(value) else { return false }
+        let target = url(name)
         do {
-            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            try data.write(to: url(name), options: .atomic)
+            try FileManager.default.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try data.write(to: target, options: .atomic)
+            return true
         } catch {
             NSLog("Ladle: could not save \(name): \(error.localizedDescription)")
+            return false
         }
+    }
+
+    /// Deletes a file or folder under the app's folder, if it is there.
+    static func remove(_ name: String) {
+        try? FileManager.default.removeItem(at: url(name))
     }
 }
 

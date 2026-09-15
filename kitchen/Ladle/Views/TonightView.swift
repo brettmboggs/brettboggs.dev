@@ -15,7 +15,7 @@ struct TonightView: View {
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                ScreenTitle(title: "Tonight", subtitle: Date().formatted(.dateTime.weekday(.wide).day().month(.wide)))
+                ScreenTitle(title: "Tonight", subtitle: Date().formatted(.dateTime.weekday(.wide).day().month(.wide)), showsKitchen: true)
 
                 if !timers.timers.isEmpty {
                     Button {
@@ -200,7 +200,7 @@ struct TonightView: View {
                     Text("Your pantry is empty.")
                         .font(Typeface.body(14))
                         .foregroundStyle(Ink.inkSoft)
-                    Text("Tick what you have in Pantry to see what you can make.")
+                    Text("Check off what you have in Pantry to see what you can make.")
                         .font(Typeface.body(14))
                         .foregroundStyle(Ink.inkSoft)
                 }
