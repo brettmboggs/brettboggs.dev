@@ -54,6 +54,13 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM="" \
             2>&1 | tee "$RUNNER_TEMP/build.log" | grep -E "error:|warning: .*(deprecated|unused)|BUILD (SUCCEEDED|FAILED)|\*\* " || true
+          echo "::group::What was compiled"
+          echo "app sources:       $(grep -E 'Compiling .*\.swift' "$RUNNER_TEMP/build.log" | grep -vc MiseShare || true)"
+          echo "extension sources: $(grep -E 'Compiling .*\.swift' "$RUNNER_TEMP/build.log" | grep -c MiseShare || true)"
+          echo "::endgroup::"
+          echo "::group::Warnings"
+          grep -E "warning:" "$RUNNER_TEMP/build.log" | sed 's|/Users/runner/work/brettboggs.dev/brettboggs.dev/||' | sort -u || true
+          echo "::endgroup::"
           if ! grep -q "BUILD SUCCEEDED" "$RUNNER_TEMP/build.log"; then
             echo "::group::Errors"
             grep -E "error:" "$RUNNER_TEMP/build.log" | sort -u
