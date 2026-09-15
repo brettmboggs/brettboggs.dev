@@ -1,0 +1,621 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+		001CED44AF5207BA337AD11A /* CookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookView.swift; sourceTree = "<group>"; };
+		01359A3C0E713D63A23EAE18 /* Import */ = {
+			isa = PBXGroup;
+			children = (
+				809A6CCC04D96DF8E1CC6372 /* DocumentScanner.swift */,
+				D3685D6F975ABD7A4D4760F2 /* HTML.swift */,
+				DD0054F219F690E9BAC3C553 /* Inbox.swift */,
+				0BE0053649EC874355F58041 /* OCR.swift */,
+				C4DB42737BEABDA18E7F1575 /* RecipeDraft.swift */,
+				1D059E4ADF0D9AAB919E4C6E /* TextRecipeParser.swift */,
+				34F427CC5F28883607C65399 /* WebRecipeImporter.swift */,
+			);
+			path = Import;
+			sourceTree = "<group>";
+		};
+		01A54B55A3187E63E24BE09D /* LadleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LadleApp.swift; sourceTree = "<group>"; };
+		05E3FC947FF60026299FE553 /* TonightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B76F734F5D3441E3D65A747 /* TonightView.swift */; };
+		090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		09D59788D220AFA3DB25B222 /* RecipeEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945088A93F5D029898E62AD3 /* RecipeEditorView.swift */; };
+		0A0C03B9EBE32FD7C7A17605 /* Transfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transfer.swift; sourceTree = "<group>"; };
+		0A4BA98F46EEB231C8B8C71D /* IngredientCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CEC8238256E6E077864FAB4 /* IngredientCatalog.swift */; };
+		0B3E32B07519E86AA2B8EA53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = LadleShare/LadleShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LadleShare/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.brettboggs.ladle.share;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0BE0053649EC874355F58041 /* OCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCR.swift; sourceTree = "<group>"; };
+		13D58F750C9F7A867F986420 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		13EFC646831384DEB0FD710B /* Build configuration list for widget */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B3E32B07519E86AA2B8EA53 /* Debug */,
+				209E395F3B2A4C90E54CDEAD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1D059E4ADF0D9AAB919E4C6E /* TextRecipeParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecipeParser.swift; sourceTree = "<group>"; };
+		1D842E33AB3DA40C3EA51DA0 /* TextRecipeParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D059E4ADF0D9AAB919E4C6E /* TextRecipeParser.swift */; };
+		209E395F3B2A4C90E54CDEAD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = LadleShare/LadleShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LadleShare/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.brettboggs.ladle.share;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		23C9D5F82367115E838D4F39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		23E24782FF38DEF6E346B1A4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		244210E48437B6556980A702 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					8C1A045E96B998B40533C7FF = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					314DC4CF3D401B5A7CB470DF = {
+						CreatedOnToolsVersion = 16.2;
+					};
+				};
+			};
+			buildConfigurationList = 9F6B1A7BCFF26D263B843F95;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA0596BBDB4DCC95D5D4F10C;
+			minimizedProjectReferenceProxies = 1;
+			productRefGroup = 6F7199ED7B63CDA338A0FB82 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8C1A045E96B998B40533C7FF /* Ladle */,
+				314DC4CF3D401B5A7CB470DF /* LadleShare */,
+			);
+		};
+		27C0E04DE7CBBEBAF066271E /* Sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sample.swift; sourceTree = "<group>"; };
+		28380FDD8F0A5A742DEA8B8F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		29DE13C62517843D78FD688C /* LadleShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8FA98A24CDE63370537457A9 /* LadleShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		2A60926A6571AFE0609AF25D /* LadleShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LadleShare.entitlements; sourceTree = "<group>"; };
+		2C06032F27D3B8864B12D744 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
+		2FE9790C4299323B3DE61B3A /* Quantity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quantity.swift; sourceTree = "<group>"; };
+		314DC4CF3D401B5A7CB470DF /* LadleShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13EFC646831384DEB0FD710B;
+			buildPhases = (
+				9AC1924D5EF0342E4710968C /* Sources */,
+				4C25D40685BB9E20936B63B4 /* Frameworks */,
+				23E24782FF38DEF6E346B1A4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LadleShare;
+			productName = LadleShare;
+			productReference = 8FA98A24CDE63370537457A9 /* LadleShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		34F427CC5F28883607C65399 /* WebRecipeImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRecipeImporter.swift; sourceTree = "<group>"; };
+		363CF491026FCD2BA130DE40 /* Ladle */ = {
+			isa = PBXGroup;
+			children = (
+				DD3D54A100EF88EDD2C5F477 /* Cook */,
+				01359A3C0E713D63A23EAE18 /* Import */,
+				5C01C62AAFB2C38B78C651CD /* Intents */,
+				F872581169360CDA54E8D12F /* Model */,
+				79937DEB47B17CFC3CC6545B /* Support */,
+				B9872D943B22F1129CB5C684 /* Views */,
+				4F523BC605F6AF2422AD48CA /* Assets.xcassets */,
+				D4A4DA538EA47DFFE2D37D7B /* Info.plist */,
+				79BBBACE7A70437917DFBCC2 /* Ladle.entitlements */,
+				01A54B55A3187E63E24BE09D /* LadleApp.swift */,
+			);
+			path = Ladle;
+			sourceTree = "<group>";
+		};
+		39F8369AE4F77A95B73D6CBB /* ShoppingList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9222CF63C5DA0436FD6E2B7D /* ShoppingList.swift */; };
+		3FA22F1C103A214AB6E1F8FA /* ShareCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCard.swift; sourceTree = "<group>"; };
+		419C43F7E33D95100FC3C1F4 /* RecipeDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DB42737BEABDA18E7F1575 /* RecipeDraft.swift */; };
+		441E565F8F9BB0A2B3253C4B /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9970892D5EA3DB23FA03B3BC /* RecipeDetailView.swift */; };
+		443DE3F11E448DC5FDD2626E /* RecipesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipesView.swift; sourceTree = "<group>"; };
+		44F497883F8D9B1C17F8E9C2 /* AudioSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSession.swift; sourceTree = "<group>"; };
+		459836C8D054D16245BEF5A6 /* RecipesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443DE3F11E448DC5FDD2626E /* RecipesView.swift */; };
+		4B37688D0F292D7C270F2AEA /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
+		4C25D40685BB9E20936B63B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4E029349C16621A6011839DA /* TimerCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerCenter.swift; sourceTree = "<group>"; };
+		4F3AEFCC2203199C74D94FF9 /* Speaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Speaker.swift; sourceTree = "<group>"; };
+		4F523BC605F6AF2422AD48CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5680B823D8A135F1D22C2A94 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		577E8F8A4586CE3913CE1EFC /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		584C342C1866B10AB5FF7DA3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 314DC4CF3D401B5A7CB470DF /* LadleShare */;
+			targetProxy = 82D3F98C29F6712177415044 /* PBXContainerItemProxy */;
+		};
+		58FBB177C49860E43AD7E92A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5B95733C36F835A6D4D5E995 /* ScanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanView.swift; sourceTree = "<group>"; };
+		5C01C62AAFB2C38B78C651CD /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				9076A68C6C34CB44CE10C440 /* LadleIntents.swift */,
+			);
+			path = Intents;
+			sourceTree = "<group>";
+		};
+		5D32D499D7738AB763D0FB39 /* Build configuration list for app */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EF19C69A107C529BF28BA8D4 /* Debug */,
+				ECD3FF0D57E2FBF8BE98DC29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5DC34458B7AF322EBEEABB28 /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B37688D0F292D7C270F2AEA /* PlanView.swift */; };
+		5FBA6C9ECF3AAA3C1B8961CA /* DocumentScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809A6CCC04D96DF8E1CC6372 /* DocumentScanner.swift */; };
+		60B282221C629ACEB3413B65 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F523BC605F6AF2422AD48CA /* Assets.xcassets */; };
+		62FC2DD9E6EC8B9000BD87AC /* CookSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E811878B5063F01DFE4712 /* CookSession.swift */; };
+		63D9CE0B0BDEB0C06BF8B03B /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
+		6762A4D810458FFD12ECAFD4 /* MealPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlan.swift; sourceTree = "<group>"; };
+		67855A4E5FA4FD5820C218A8 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10D6C1C25756C1690A193D2 /* OnboardingView.swift */; };
+		67AAA2F3F7582CBDC670CDCA /* ShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D9CE0B0BDEB0C06BF8B03B /* ShoppingView.swift */; };
+		6ACE7BC297BF23705D4E5F56 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83F37A652B5920FCEA226EA6 /* AudioSession.swift */,
+				62FC2DD9E6EC8B9000BD87AC /* CookSession.swift */,
+				FEEB671028398B393F52D5C5 /* Speaker.swift */,
+				88A12791A102EC7836A784B1 /* TimerCenter.swift */,
+				86EA70927A712DA2143F5AA9 /* VoiceControl.swift */,
+				5FBA6C9ECF3AAA3C1B8961CA /* DocumentScanner.swift */,
+				99EB99081307A8DB11E20E22 /* HTML.swift */,
+				CB0E2E683C80A776C6E58E75 /* Inbox.swift */,
+				B3DE411C5833A15DC2E9C05A /* OCR.swift */,
+				419C43F7E33D95100FC3C1F4 /* RecipeDraft.swift */,
+				1D842E33AB3DA40C3EA51DA0 /* TextRecipeParser.swift */,
+				E409280D61605A51B78CD8F5 /* WebRecipeImporter.swift */,
+				AA5EE750F8CD57B1310FC31C /* LadleIntents.swift */,
+				F37E4C658A04661BE618C9BA /* LadleApp.swift */,
+				83C63AD849E7FD75BC5A4939 /* AppSettings.swift */,
+				0A4BA98F46EEB231C8B8C71D /* IngredientCatalog.swift */,
+				DB2D73ED484CB1E48BA4AFF0 /* IngredientParser.swift */,
+				909D195AF624D7276F3B5796 /* Library.swift */,
+				F6704D838CC4BD6CC141E386 /* Matcher.swift */,
+				E2029852CC23A70A2497753A /* MealPlan.swift */,
+				C7DC996F5020235FD8ACFD1C /* Pantry.swift */,
+				99AEF160E203E078C0004497 /* Persistence.swift */,
+				F0BA899CBD93E4B915149920 /* Quantity.swift */,
+				902D23E0852289F67C0F70DA /* Recipe.swift */,
+				95462669AEB43668FD57E72C /* Sample.swift */,
+				39F8369AE4F77A95B73D6CBB /* ShoppingList.swift */,
+				F7A0E4ACC15C7170D11CB411 /* Substitutions.swift */,
+				B1EAB47BEC2524982E88DCEB /* Transfer.swift */,
+				9D090031888B0CD0347CA135 /* Formatters.swift */,
+				79D500DF18671D3CE8B4E878 /* Haptics.swift */,
+				79A7F906CBD179B9BC1BB631 /* Shake.swift */,
+				89251A0A264789AA94338528 /* Theme.swift */,
+				C5BF74DE096691A45D992527 /* Components.swift */,
+				BEFE2C6B291AD49FC7DB1408 /* CookView.swift */,
+				67855A4E5FA4FD5820C218A8 /* OnboardingView.swift */,
+				8D479048F9A6917C19CB0D55 /* PantryView.swift */,
+				5DC34458B7AF322EBEEABB28 /* PlanView.swift */,
+				441E565F8F9BB0A2B3253C4B /* RecipeDetailView.swift */,
+				09D59788D220AFA3DB25B222 /* RecipeEditorView.swift */,
+				459836C8D054D16245BEF5A6 /* RecipesView.swift */,
+				E635C35D8DDD37AFF10C107A /* RootView.swift */,
+				BB18C156A7298B3E5B1B4B48 /* ScanView.swift */,
+				9B970E2DDA269A02B8C978B0 /* SettingsView.swift */,
+				FD64D25BB555146C89E95088 /* ShareCard.swift */,
+				67AAA2F3F7582CBDC670CDCA /* ShoppingView.swift */,
+				A5D5A9DAE97040002CEC9026 /* TimersView.swift */,
+				05E3FC947FF60026299FE553 /* TonightView.swift */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6CEC8238256E6E077864FAB4 /* IngredientCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientCatalog.swift; sourceTree = "<group>"; };
+		6F516CFBD768E18BAAA8CDE3 /* LadleShare */ = {
+			isa = PBXGroup;
+			children = (
+				23C9D5F82367115E838D4F39 /* Info.plist */,
+				2A60926A6571AFE0609AF25D /* LadleShare.entitlements */,
+				717377C148137571DDDCC999 /* ShareViewController.swift */,
+			);
+			path = LadleShare;
+			sourceTree = "<group>";
+		};
+		6F7199ED7B63CDA338A0FB82 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				81F31879437340D5CD6ED968 /* Ladle.app */,
+				8FA98A24CDE63370537457A9 /* LadleShare.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		717377C148137571DDDCC999 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		726BE10786BC9B42E6FDB470 /* Matcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Matcher.swift; sourceTree = "<group>"; };
+		74015E85EA631E76934EB804 /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
+		74868673DE93F5F5D41B5627 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		7980C41009D5D14815B3004A /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		79937DEB47B17CFC3CC6545B /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				2C06032F27D3B8864B12D744 /* Formatters.swift */,
+				ACBD84C408D4FD3BE2C47780 /* Haptics.swift */,
+				FD2FAE19A1DEB6A1E20C05A1 /* Shake.swift */,
+				9ABA394AB1DFD1E1DB21FF45 /* Theme.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		79A7F906CBD179B9BC1BB631 /* Shake.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2FAE19A1DEB6A1E20C05A1 /* Shake.swift */; };
+		79BBBACE7A70437917DFBCC2 /* Ladle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ladle.entitlements; sourceTree = "<group>"; };
+		79D500DF18671D3CE8B4E878 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBD84C408D4FD3BE2C47780 /* Haptics.swift */; };
+		7B76F734F5D3441E3D65A747 /* TonightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightView.swift; sourceTree = "<group>"; };
+		809A6CCC04D96DF8E1CC6372 /* DocumentScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentScanner.swift; sourceTree = "<group>"; };
+		81F31879437340D5CD6ED968 /* Ladle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ladle.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		82D3F98C29F6712177415044 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 244210E48437B6556980A702 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 314DC4CF3D401B5A7CB470DF;
+			remoteInfo = LadleShare;
+		};
+		83C63AD849E7FD75BC5A4939 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577E8F8A4586CE3913CE1EFC /* AppSettings.swift */; };
+		83F37A652B5920FCEA226EA6 /* AudioSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F497883F8D9B1C17F8E9C2 /* AudioSession.swift */; };
+		86EA70927A712DA2143F5AA9 /* VoiceControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD36ADA3C9EE835A2A7DF427 /* VoiceControl.swift */; };
+		88A12791A102EC7836A784B1 /* TimerCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E029349C16621A6011839DA /* TimerCenter.swift */; };
+		88C1AF9EAEDE4FDCDDF81AD8 /* Pantry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pantry.swift; sourceTree = "<group>"; };
+		89251A0A264789AA94338528 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABA394AB1DFD1E1DB21FF45 /* Theme.swift */; };
+		8C1A045E96B998B40533C7FF /* Ladle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5D32D499D7738AB763D0FB39;
+			buildPhases = (
+				6ACE7BC297BF23705D4E5F56 /* Sources */,
+				13D58F750C9F7A867F986420 /* Frameworks */,
+				EB12F685944315C425ABFF58 /* Resources */,
+				C5F63ED2112A984EE448547F /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				584C342C1866B10AB5FF7DA3 /* PBXTargetDependency */,
+			);
+			name = Ladle;
+			productName = Ladle;
+			productReference = 81F31879437340D5CD6ED968 /* Ladle.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8D479048F9A6917C19CB0D55 /* PantryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AFA0AF59FF85EBE12998EC /* PantryView.swift */; };
+		8FA98A24CDE63370537457A9 /* LadleShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LadleShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		902D23E0852289F67C0F70DA /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74015E85EA631E76934EB804 /* Recipe.swift */; };
+		9076A68C6C34CB44CE10C440 /* LadleIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LadleIntents.swift; sourceTree = "<group>"; };
+		909D195AF624D7276F3B5796 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59B4AC0EE6186AF8F02CDB8 /* Library.swift */; };
+		90AFA0AF59FF85EBE12998EC /* PantryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryView.swift; sourceTree = "<group>"; };
+		9222CF63C5DA0436FD6E2B7D /* ShoppingList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingList.swift; sourceTree = "<group>"; };
+		945088A93F5D029898E62AD3 /* RecipeEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeEditorView.swift; sourceTree = "<group>"; };
+		95462669AEB43668FD57E72C /* Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C0E04DE7CBBEBAF066271E /* Sample.swift */; };
+		9776D4ED3E495368431A5B58 /* ShareViewController.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 717377C148137571DDDCC999 /* ShareViewController.swift */; };
+		98B67E7D64B90FDAC4B45C46 /* IngredientParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientParser.swift; sourceTree = "<group>"; };
+		9970892D5EA3DB23FA03B3BC /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
+		99AEF160E203E078C0004497 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74868673DE93F5F5D41B5627 /* Persistence.swift */; };
+		99EB99081307A8DB11E20E22 /* HTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3685D6F975ABD7A4D4760F2 /* HTML.swift */; };
+		9ABA394AB1DFD1E1DB21FF45 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		9AC1924D5EF0342E4710968C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9776D4ED3E495368431A5B58 /* ShareViewController.swift */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B970E2DDA269A02B8C978B0 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA702CEC2E6E064451095CAC /* SettingsView.swift */; };
+		9D090031888B0CD0347CA135 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C06032F27D3B8864B12D744 /* Formatters.swift */; };
+		9F6B1A7BCFF26D263B843F95 /* Build configuration list for project */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5680B823D8A135F1D22C2A94 /* Debug */,
+				58FBB177C49860E43AD7E92A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A3E811878B5063F01DFE4712 /* CookSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookSession.swift; sourceTree = "<group>"; };
+		A5D5A9DAE97040002CEC9026 /* TimersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7EE64C522088349A46C617 /* TimersView.swift */; };
+		AA0596BBDB4DCC95D5D4F10C = {
+			isa = PBXGroup;
+			children = (
+				363CF491026FCD2BA130DE40 /* Ladle */,
+				6F516CFBD768E18BAAA8CDE3 /* LadleShare */,
+				090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */,
+				6F7199ED7B63CDA338A0FB82 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA5EE750F8CD57B1310FC31C /* LadleIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9076A68C6C34CB44CE10C440 /* LadleIntents.swift */; };
+		AA702CEC2E6E064451095CAC /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		ACBD84C408D4FD3BE2C47780 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		B10D6C1C25756C1690A193D2 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		B1EAB47BEC2524982E88DCEB /* Transfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0C03B9EBE32FD7C7A17605 /* Transfer.swift */; };
+		B3DE411C5833A15DC2E9C05A /* OCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE0053649EC874355F58041 /* OCR.swift */; };
+		B9872D943B22F1129CB5C684 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7980C41009D5D14815B3004A /* Components.swift */,
+				001CED44AF5207BA337AD11A /* CookView.swift */,
+				B10D6C1C25756C1690A193D2 /* OnboardingView.swift */,
+				90AFA0AF59FF85EBE12998EC /* PantryView.swift */,
+				4B37688D0F292D7C270F2AEA /* PlanView.swift */,
+				9970892D5EA3DB23FA03B3BC /* RecipeDetailView.swift */,
+				945088A93F5D029898E62AD3 /* RecipeEditorView.swift */,
+				443DE3F11E448DC5FDD2626E /* RecipesView.swift */,
+				28380FDD8F0A5A742DEA8B8F /* RootView.swift */,
+				5B95733C36F835A6D4D5E995 /* ScanView.swift */,
+				AA702CEC2E6E064451095CAC /* SettingsView.swift */,
+				3FA22F1C103A214AB6E1F8FA /* ShareCard.swift */,
+				63D9CE0B0BDEB0C06BF8B03B /* ShoppingView.swift */,
+				CC7EE64C522088349A46C617 /* TimersView.swift */,
+				7B76F734F5D3441E3D65A747 /* TonightView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BB18C156A7298B3E5B1B4B48 /* ScanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B95733C36F835A6D4D5E995 /* ScanView.swift */; };
+		BEFE2C6B291AD49FC7DB1408 /* CookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001CED44AF5207BA337AD11A /* CookView.swift */; };
+		C4DB42737BEABDA18E7F1575 /* RecipeDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDraft.swift; sourceTree = "<group>"; };
+		C5BF74DE096691A45D992527 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7980C41009D5D14815B3004A /* Components.swift */; };
+		C5F63ED2112A984EE448547F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				29DE13C62517843D78FD688C /* LadleShare.appex */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C7DC996F5020235FD8ACFD1C /* Pantry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C1AF9EAEDE4FDCDDF81AD8 /* Pantry.swift */; };
+		CAEB14C320E2BCD2E9FF6153 /* Substitutions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Substitutions.swift; sourceTree = "<group>"; };
+		CB0E2E683C80A776C6E58E75 /* Inbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0054F219F690E9BAC3C553 /* Inbox.swift */; };
+		CC7EE64C522088349A46C617 /* TimersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimersView.swift; sourceTree = "<group>"; };
+		CD36ADA3C9EE835A2A7DF427 /* VoiceControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControl.swift; sourceTree = "<group>"; };
+		D3685D6F975ABD7A4D4760F2 /* HTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTML.swift; sourceTree = "<group>"; };
+		D4A4DA538EA47DFFE2D37D7B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DB2D73ED484CB1E48BA4AFF0 /* IngredientParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B67E7D64B90FDAC4B45C46 /* IngredientParser.swift */; };
+		DD0054F219F690E9BAC3C553 /* Inbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inbox.swift; sourceTree = "<group>"; };
+		DD3D54A100EF88EDD2C5F477 /* Cook */ = {
+			isa = PBXGroup;
+			children = (
+				44F497883F8D9B1C17F8E9C2 /* AudioSession.swift */,
+				A3E811878B5063F01DFE4712 /* CookSession.swift */,
+				4F3AEFCC2203199C74D94FF9 /* Speaker.swift */,
+				4E029349C16621A6011839DA /* TimerCenter.swift */,
+				CD36ADA3C9EE835A2A7DF427 /* VoiceControl.swift */,
+			);
+			path = Cook;
+			sourceTree = "<group>";
+		};
+		E2029852CC23A70A2497753A /* MealPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6762A4D810458FFD12ECAFD4 /* MealPlan.swift */; };
+		E409280D61605A51B78CD8F5 /* WebRecipeImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F427CC5F28883607C65399 /* WebRecipeImporter.swift */; };
+		E59B4AC0EE6186AF8F02CDB8 /* Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
+		E635C35D8DDD37AFF10C107A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28380FDD8F0A5A742DEA8B8F /* RootView.swift */; };
+		EB12F685944315C425ABFF58 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60B282221C629ACEB3413B65 /* Assets.xcassets */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ECD3FF0D57E2FBF8BE98DC29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Ladle/Ladle.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Ladle/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.brettboggs.ladle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EF19C69A107C529BF28BA8D4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 090AD91AAD51F71AB09CFA60 /* Signing.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Ladle/Ladle.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Ladle/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.brettboggs.ladle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F0BA899CBD93E4B915149920 /* Quantity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE9790C4299323B3DE61B3A /* Quantity.swift */; };
+		F37E4C658A04661BE618C9BA /* LadleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A54B55A3187E63E24BE09D /* LadleApp.swift */; };
+		F6704D838CC4BD6CC141E386 /* Matcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726BE10786BC9B42E6FDB470 /* Matcher.swift */; };
+		F7A0E4ACC15C7170D11CB411 /* Substitutions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEB14C320E2BCD2E9FF6153 /* Substitutions.swift */; };
+		F872581169360CDA54E8D12F /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				577E8F8A4586CE3913CE1EFC /* AppSettings.swift */,
+				6CEC8238256E6E077864FAB4 /* IngredientCatalog.swift */,
+				98B67E7D64B90FDAC4B45C46 /* IngredientParser.swift */,
+				E59B4AC0EE6186AF8F02CDB8 /* Library.swift */,
+				726BE10786BC9B42E6FDB470 /* Matcher.swift */,
+				6762A4D810458FFD12ECAFD4 /* MealPlan.swift */,
+				88C1AF9EAEDE4FDCDDF81AD8 /* Pantry.swift */,
+				74868673DE93F5F5D41B5627 /* Persistence.swift */,
+				2FE9790C4299323B3DE61B3A /* Quantity.swift */,
+				74015E85EA631E76934EB804 /* Recipe.swift */,
+				27C0E04DE7CBBEBAF066271E /* Sample.swift */,
+				9222CF63C5DA0436FD6E2B7D /* ShoppingList.swift */,
+				CAEB14C320E2BCD2E9FF6153 /* Substitutions.swift */,
+				0A0C03B9EBE32FD7C7A17605 /* Transfer.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		FD2FAE19A1DEB6A1E20C05A1 /* Shake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shake.swift; sourceTree = "<group>"; };
+		FD64D25BB555146C89E95088 /* ShareCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA22F1C103A214AB6E1F8FA /* ShareCard.swift */; };
+		FEEB671028398B393F52D5C5 /* Speaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3AEFCC2203199C74D94FF9 /* Speaker.swift */; };
+	};
+	rootObject = 244210E48437B6556980A702 /* Project object */;
+}

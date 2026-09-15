@@ -1,0 +1,41 @@
+---
+import Base from '../../layouts/Base.astro';
+import copy from '../../data/copy/ladle-privacy.json';
+import { md } from '../../data/copy';
+
+// Privacy policy for the Ladle iPhone app. App Store Connect requires a URL;
+// the app links here from Settings.
+---
+
+<Base title={copy.title} description={copy.description} noindex puck={false} edit="ladle/ladle-privacy">
+  <header class="page-head">
+    <p class="eyebrow">{copy.eyebrow} {copy.updated}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
+  </header>
+
+  <section class="body">
+    {copy.sections.map((s) => (
+      <>
+        <h2>{s.heading}</h2>
+        <Fragment set:html={md(s.body)} />
+      </>
+    ))}
+  </section>
+
+  <a class="back-link" href="/ladle/">{copy.backLink}</a>
+</Base>
+
+<style>
+  .body {
+    max-width: 38rem;
+    margin: 2rem 0 3rem;
+  }
+  .body h2 {
+    margin: 2rem 0 0.5rem;
+    font-size: 1.15rem;
+  }
+  .body p {
+    margin: 0 0 1rem;
+  }
+</style>
