@@ -15,7 +15,7 @@ and the two folder names. Everything else reads from those.
 ## What it does
 
 **Scan.** Apple's document camera finds the card, flattens it, and takes as
-many pages as there are. Text is recognised on the phone (Vision, accurate
+many pages as there are. Text is recognized on the phone (Vision, accurate
 mode, handwriting included), put back into reading order with two-column
 cards handled, then parsed into title, ingredients, method, servings, times.
 Every line the parser doubted is marked on the review screen; the scan itself
@@ -32,7 +32,7 @@ preparation, with the original text kept. So every recipe scales to any
 number of servings, shows in cups or grams at a tap, and can be matched
 against the pantry.
 
-**Pantry.** Type in what is in the kitchen. A catalogue of about 330
+**Pantry.** Type in what is in the kitchen. A catalog of about 330
 ingredients with their other names (scallions are green onions, AP flour is
 flour) and their aisle does the matching, and a table of about 250
 substitutions knows that buttermilk is milk plus lemon juice, that panko can
@@ -53,7 +53,7 @@ lock screen. Pause, add a minute, stop.
 
 **Shopping list.** Tap Shop on a recipe and only what the pantry lacks goes
 on the list, grouped by aisle, quantities merged when two recipes want the
-same thing. Add by hand, tick off in the store, move the checked things
+same thing. Add by hand, check off in the store, move the checked things
 into the pantry in one tap. Send as text, or into Reminders.
 
 **Plan.** Two weeks of days, a line per meal, recipes or a note. Shop for
@@ -127,7 +127,7 @@ branch, with no signing and no secrets, so a broken build never reaches
 ```
 kitchen/
 ├── Ladle/
-│   ├── Model/     recipe, quantities, ingredient parser, catalogue, substitutions,
+│   ├── Model/     recipe, quantities, ingredient parser, catalog, substitutions,
 │   │              matcher, pantry, shopping, plan, library store, persistence,
 │   │              transfer formats
 │   ├── Import/    OCR, document camera, text parser, web importer, HTML, inbox

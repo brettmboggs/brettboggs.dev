@@ -303,7 +303,7 @@ struct CookView: View {
     private var voiceStatusText: String {
         switch voice.status {
         case .starting: return "Starting the microphone…"
-        case .listening: return voice.lastHeard.isEmpty ? "Listening. Say “next”, “back”, “repeat”, or “start timer”." : "Heard: \(voice.lastHeard)"
+        case .listening: return voice.lastHeard.isEmpty ? "Listening. Say “next,” “back,” “repeat,” or “start timer.”" : "Heard: \(voice.lastHeard)"
         case .denied: return "Microphone access is off. Turn it on in Settings."
         case .unavailable(let why): return why
         case .off: return "Voice is off."
@@ -412,7 +412,7 @@ struct CookView: View {
     }
 }
 
-/// The ingredient list as a sheet over cook mode, tickable.
+/// The ingredient list as a sheet over cook mode, checkable.
 struct CookIngredientsSheet: View {
     let recipe: Recipe
     let scale: Double

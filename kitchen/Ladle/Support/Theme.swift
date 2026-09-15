@@ -1,12 +1,12 @@
 import SwiftUI
 import UIKit
 
-/// Clean system surfaces with one warm colour.
+/// Clean system surfaces with one warm color.
 ///
-/// Paper and ink route through the system semantic colours, so light and
+/// Paper and ink route through the system semantic colors, so light and
 /// dark mode come for free. The accent is a tomato red, used for things that
-/// are on: ticks, what the kitchen has, the one main button on a screen.
-/// Everything else is black, white and greys.
+/// are on: check marks, what the kitchen has, the one main button on a screen.
+/// Everything else is black, white and grays.
 enum Ink {
     static let paper = Color(uiColor: .systemBackground)
     static let paperRaised = Color(uiColor: .secondarySystemBackground)

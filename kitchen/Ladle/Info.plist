@@ -53,7 +53,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Ladle uses the camera to scan recipe cards and cookbook pages, and to take a photo of a dish. The words are read on the phone.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>With voice control on, Ladle listens for “next”, “back”, “repeat” and “start timer” so you can cook without touching the phone. Nothing is recorded.</string>
+	<string>With voice control on, Ladle listens for “next,” “back,” “repeat,” and “start timer” so you can cook without touching the phone. Nothing is recorded.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Ladle turns what you say into cook-mode commands. Recognition happens on the phone when it can.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>

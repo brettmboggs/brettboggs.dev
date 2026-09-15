@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The recipe page: read it, scale it, tick things off, then cook.
+/// The recipe page: read it, scale it, check things off, then cook.
 struct RecipeDetailView: View {
     let recipeID: UUID
 
@@ -82,7 +82,7 @@ struct RecipeDetailView: View {
                     }
 
                     HStack(spacing: 0) {
-                        IconButton(systemImage: recipe.isFavorite ? "heart.fill" : "heart", label: "Favourite", filled: recipe.isFavorite) {
+                        IconButton(systemImage: recipe.isFavorite ? "heart.fill" : "heart", label: "Favorite", filled: recipe.isFavorite) {
                             library.toggleFavorite(recipe.id)
                             Haptics.tap()
                         }
@@ -300,7 +300,7 @@ struct RecipeDetailView: View {
                 PresenceDot(availability.canMake ? .have : (availability.isClose ? .partial : .missing))
                     .padding(.top, 2)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(library.pantry.isEmpty && !availability.canMake ? "Tick what you have in Pantry to see what this needs." : availability.summary)
+                    Text(library.pantry.isEmpty && !availability.canMake ? "Check off what you have in Pantry to see what this needs." : availability.summary)
                         .font(Typeface.body(14, weight: .medium))
                         .fixedSize(horizontal: false, vertical: true)
                     if !availability.substitutions.isEmpty {

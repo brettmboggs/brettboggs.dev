@@ -5,7 +5,9 @@ import UniformTypeIdentifiers
 /// "Share › Ladle" from Safari. Takes the page's address, drops it in the App
 /// Group inbox, shows a one-line confirmation and gets out of the way. The
 /// app does the reading the next time it is opened.
-@objc(ShareViewController)
+/// No `@objc(...)` rename: Info.plist names the class as
+/// `$(PRODUCT_MODULE_NAME).ShareViewController`, which is its default runtime
+/// name, and a rename would stop the system finding it.
 final class ShareViewController: UIViewController {
     private let groupID = "group.dev.brettboggs.ladle"
     private var host: UIHostingController<ShareConfirmation>?

@@ -22,7 +22,7 @@ enum SampleRecipe {
         ].map(IngredientParser.parse)
         recipe.steps = [
             "Whisk the flour, baking powder, sugar and salt together in a large bowl.",
-            "In a measuring jug, whisk the milk, egg, melted butter and vanilla until smooth.",
+            "In a large measuring cup, whisk the milk, egg, melted butter and vanilla until smooth.",
             "Pour the wet into the dry and stir just until no dry flour is left. A few lumps are fine. Let the batter rest 5 minutes.",
             "Heat a skillet or griddle over medium heat and rub it with a little butter.",
             "Pour about ¼ cup of batter per pancake. Cook until bubbles form and the edges look set, 2 to 3 minutes, then flip and cook 1 to 2 minutes more.",
