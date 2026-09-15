@@ -12,10 +12,13 @@ final class Library {
     static let shared = Library()
 
     private(set) var recipes: [Recipe] = []
+    /// The current kitchen's pantry, list and plan. Switching kitchens swaps
+    /// all three.
     private(set) var pantry: [PantryItem] = []
     private(set) var shopping: [ShoppingItem] = []
     private(set) var plan: [PlanEntry] = []
     private(set) var settings = AppSettings()
+    private(set) var kitchenBook: KitchenBook
 
     private enum Store: String, CaseIterable {
         case recipes = "recipes.json"
@@ -23,6 +26,12 @@ final class Library {
         case shopping = "shopping.json"
         case plan = "plan.json"
         case settings = "settings.json"
+        case kitchens = "kitchens.json"
+
+        /// Pantry, list and plan live in the kitchen's own folder.
+        var isPerKitchen: Bool {
+            self == .pantry || self == .shopping || self == .plan
+        }
     }
 
     private var pending: Set<Store> = []
@@ -30,10 +39,44 @@ final class Library {
 
     init() {
         recipes = Persistence.load([Recipe].self, from: Store.recipes.rawValue) ?? []
-        pantry = Persistence.load([PantryItem].self, from: Store.pantry.rawValue) ?? []
-        shopping = Persistence.load([ShoppingItem].self, from: Store.shopping.rawValue) ?? []
-        plan = Persistence.load([PlanEntry].self, from: Store.plan.rawValue) ?? []
-        settings = Persistence.load(AppSettings.self, from: Store.settings.rawValue) ?? AppSettings()
+        let loadedSettings = Persistence.load(AppSettings.self, from: Store.settings.rawValue) ?? AppSettings()
+        settings = loadedSettings
+
+        if var book = Persistence.load(KitchenBook.self, from: Store.kitchens.rawValue), !book.kitchens.isEmpty {
+            if !book.kitchens.contains(where: { $0.id == book.currentID }) {
+                book.currentID = book.kitchens[0].id
+            }
+            let folder = (book.kitchens.first { $0.id == book.currentID } ?? book.kitchens[0]).folder
+            kitchenBook = book
+            pantry = Persistence.load([PantryItem].self, from: "\(folder)/\(Store.pantry.rawValue)") ?? []
+            shopping = Persistence.load([ShoppingItem].self, from: "\(folder)/\(Store.shopping.rawValue)") ?? []
+            plan = Persistence.load([PlanEntry].self, from: "\(folder)/\(Store.plan.rawValue)") ?? []
+        } else {
+            // Before kitchens: one pantry, list and plan at the top of the
+            // folder. They become Home, written to its folder before the old
+            // files go, so nothing is lost if the app stops halfway.
+            let home = Kitchen(name: "Home", assumeStaples: loadedSettings.assumeStaples)
+            let book = KitchenBook(kitchens: [home], currentID: home.id)
+            let oldPantry = Persistence.load([PantryItem].self, from: Store.pantry.rawValue) ?? []
+            let oldShopping = Persistence.load([ShoppingItem].self, from: Store.shopping.rawValue) ?? []
+            let oldPlan = Persistence.load([PlanEntry].self, from: Store.plan.rawValue) ?? []
+            let wrote = Persistence.save(oldPantry, to: "\(home.folder)/\(Store.pantry.rawValue)")
+                && Persistence.save(oldShopping, to: "\(home.folder)/\(Store.shopping.rawValue)")
+                && Persistence.save(oldPlan, to: "\(home.folder)/\(Store.plan.rawValue)")
+                && Persistence.save(book, to: Store.kitchens.rawValue)
+            if wrote {
+                for store in [Store.pantry, .shopping, .plan] { Persistence.remove(store.rawValue) }
+            }
+            kitchenBook = book
+            pantry = oldPantry
+            shopping = oldShopping
+            plan = oldPlan
+        }
+    }
+
+    private func path(_ store: Store, in kitchen: Kitchen? = nil) -> String {
+        guard store.isPerKitchen else { return store.rawValue }
+        return "\((kitchen ?? currentKitchen).folder)/\(store.rawValue)"
     }
 
     // MARK: - Persistence
@@ -51,16 +94,95 @@ final class Library {
     /// Writes everything that is waiting. Called when the app leaves the
     /// foreground, so nothing is lost to a swipe-up.
     func flush() {
+        saveTask?.cancel()
         for store in pending {
             switch store {
-            case .recipes: Persistence.save(recipes, to: store.rawValue)
-            case .pantry: Persistence.save(pantry, to: store.rawValue)
-            case .shopping: Persistence.save(shopping, to: store.rawValue)
-            case .plan: Persistence.save(plan, to: store.rawValue)
-            case .settings: Persistence.save(settings, to: store.rawValue)
+            case .recipes: Persistence.save(recipes, to: path(store))
+            case .pantry: Persistence.save(pantry, to: path(store))
+            case .shopping: Persistence.save(shopping, to: path(store))
+            case .plan: Persistence.save(plan, to: path(store))
+            case .settings: Persistence.save(settings, to: path(store))
+            case .kitchens: Persistence.save(kitchenBook, to: path(store))
             }
         }
         pending.removeAll()
+    }
+
+    // MARK: - Kitchens
+
+    var kitchens: [Kitchen] { kitchenBook.kitchens }
+
+    var currentKitchen: Kitchen {
+        kitchenBook.kitchens.first { $0.id == kitchenBook.currentID } ?? kitchenBook.kitchens[0]
+    }
+
+    /// Saves what the current kitchen has waiting, then loads another one's
+    /// pantry, list and plan.
+    func switchKitchen(to id: UUID) {
+        guard id != kitchenBook.currentID, let kitchen = kitchens.first(where: { $0.id == id }) else { return }
+        flush()
+        kitchenBook.currentID = id
+        pantry = Persistence.load([PantryItem].self, from: path(.pantry, in: kitchen)) ?? []
+        shopping = Persistence.load([ShoppingItem].self, from: path(.shopping, in: kitchen)) ?? []
+        plan = Persistence.load([PlanEntry].self, from: path(.plan, in: kitchen)) ?? []
+        schedule(.kitchens)
+    }
+
+    /// Adds a kitchen with an empty pantry, list and plan, and switches to it.
+    @discardableResult
+    func addKitchen(name: String, symbol: String, assumeStaples: Bool = true) -> Kitchen {
+        let kitchen = Kitchen(name: uniqueKitchenName(name), symbol: symbol, assumeStaples: assumeStaples)
+        kitchenBook.kitchens.append(kitchen)
+        schedule(.kitchens)
+        switchKitchen(to: kitchen.id)
+        return kitchen
+    }
+
+    func updateKitchen(_ kitchen: Kitchen) {
+        guard let index = kitchenBook.kitchens.firstIndex(where: { $0.id == kitchen.id }) else { return }
+        var copy = kitchen
+        copy.name = kitchen.name.collapsed.isEmpty ? kitchenBook.kitchens[index].name : kitchen.name.collapsed
+        kitchenBook.kitchens[index] = copy
+        schedule(.kitchens)
+    }
+
+    /// Removes a kitchen and its pantry, list and plan. The last kitchen
+    /// cannot go.
+    func deleteKitchen(_ id: UUID) {
+        guard kitchens.count > 1, let kitchen = kitchens.first(where: { $0.id == id }) else { return }
+        if id == kitchenBook.currentID, let other = kitchens.first(where: { $0.id != id }) {
+            switchKitchen(to: other.id)
+        }
+        kitchenBook.kitchens.removeAll { $0.id == id }
+        schedule(.kitchens)
+        flush()
+        Persistence.remove(kitchen.folder)
+    }
+
+    func moveKitchens(from source: IndexSet, to destination: Int) {
+        kitchenBook.kitchens.move(fromOffsets: source, toOffset: destination)
+        schedule(.kitchens)
+    }
+
+    private func uniqueKitchenName(_ candidate: String) -> String {
+        let base = candidate.collapsed.isEmpty ? "Kitchen" : candidate.collapsed
+        let taken = Set(kitchens.map { $0.name.lowercased() })
+        guard taken.contains(base.lowercased()) else { return base }
+        var n = 2
+        while taken.contains("\(base) \(n)".lowercased()) { n += 1 }
+        return "\(base) \(n)"
+    }
+
+    /// The current kitchen's "count staples as on hand", for the Settings toggle.
+    var assumeStaplesHere: Binding<Bool> {
+        Binding(
+            get: { self.currentKitchen.assumeStaples },
+            set: { value in
+                var kitchen = self.currentKitchen
+                kitchen.assumeStaples = value
+                self.updateKitchen(kitchen)
+            }
+        )
     }
 
     // MARK: - AppSettings
@@ -81,7 +203,7 @@ final class Library {
     }
 
     var stapleKeys: Set<String> {
-        settings.assumeStaples ? Set(settings.staples) : []
+        currentKitchen.assumeStaples ? Set(settings.staples) : []
     }
 
     func toggleStaple(_ key: String) {
@@ -132,6 +254,13 @@ final class Library {
         plan.removeAll { $0.recipeID == recipe.id }
         schedule(.recipes)
         schedule(.plan)
+        // Other kitchens may have it planned too.
+        for kitchen in kitchens where kitchen.id != kitchenBook.currentID {
+            let file = path(.plan, in: kitchen)
+            guard let entries = Persistence.load([PlanEntry].self, from: file),
+                  entries.contains(where: { $0.recipeID == recipe.id }) else { continue }
+            Persistence.save(entries.filter { $0.recipeID != recipe.id }, to: file)
+        }
     }
 
     func duplicate(_ recipe: Recipe) -> Recipe {

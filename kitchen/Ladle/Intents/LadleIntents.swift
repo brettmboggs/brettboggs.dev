@@ -84,8 +84,11 @@ struct AddToShoppingListIntent: AppIntent {
         }.map { $0.collapsed }.filter { !$0.isEmpty }
         guard !names.isEmpty else { return .result(dialog: "What should I add?") }
         for name in names { Library.shared.addToShopping(name) }
-        if names.count == 1 { return .result(dialog: "Added \(names[0]).") }
-        return .result(dialog: "Added \(names.count) things to the list.")
+        // With more than one kitchen, say which list it went on.
+        let library = Library.shared
+        let place = library.kitchens.count > 1 ? " to the \(library.currentKitchen.name) list" : ""
+        if names.count == 1 { return .result(dialog: "Added \(names[0])\(place).") }
+        return .result(dialog: place.isEmpty ? "Added \(names.count) things to the list." : "Added \(names.count) things\(place).")
     }
 }
 
@@ -101,7 +104,7 @@ struct WhatCanIMakeIntent: AppIntent {
             if let close {
                 return .result(dialog: "Nothing without a shop, but \(close.recipe.title) is close. \(close.summary).")
             }
-            return .result(dialog: "Nothing yet. Tick what you have in the pantry first.")
+            return .result(dialog: "Nothing yet. Check off what you have in the pantry first.")
         }
         if ready.count == 1 { return .result(dialog: "You could make \(ready[0]).") }
         let list = ready.dropLast().joined(separator: ", ") + " or " + ready.last!

@@ -21,7 +21,7 @@ struct SettingsView: View {
                 Section {
                     Picker("Measurements", selection: library.setting(\.unitSystem)) {
                         ForEach(UnitSystem.allCases) { system in
-                            Text(system == .us ? "Cups & ounces" : "Grams & millilitres").tag(system)
+                            Text(system == .us ? "Cups & ounces" : "Grams & milliliters").tag(system)
                         }
                     }
                 } header: {
@@ -31,7 +31,24 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Toggle("Count staples as on hand", isOn: library.setting(\.assumeStaples))
+                    NavigationLink {
+                        KitchensView(showsDone: false)
+                    } label: {
+                        HStack {
+                            Text("Kitchens")
+                            Spacer()
+                            Text(library.kitchens.count == 1 ? library.currentKitchen.name : "\(library.kitchens.count)")
+                                .foregroundStyle(Ink.inkSoft)
+                        }
+                    }
+                } header: {
+                    Text("Kitchens")
+                } footer: {
+                    Text("Home, a parent's house, the lakehouse. Each has its own pantry, list and plan.")
+                }
+
+                Section {
+                    Toggle("Count staples as on hand in \(library.currentKitchen.name)", isOn: library.assumeStaplesHere)
                     NavigationLink {
                         StaplesView()
                     } label: {
@@ -45,7 +62,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Pantry")
                 } footer: {
-                    Text("Salt, oil, flour and other basics count as on hand without ticking them.")
+                    Text("Salt, oil, flour and other basics count as on hand without checking them off.")
                 }
 
                 Section("Cooking") {

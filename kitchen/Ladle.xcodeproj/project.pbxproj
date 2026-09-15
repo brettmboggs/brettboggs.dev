@@ -78,6 +78,7 @@
 			defaultConfigurationName = Release;
 		};
 		1D059E4ADF0D9AAB919E4C6E /* TextRecipeParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecipeParser.swift; sourceTree = "<group>"; };
+		1D5D394FC6255CA779C3B99B /* KitchensView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9509B7EE8C01340B61429A /* KitchensView.swift */; };
 		1D842E33AB3DA40C3EA51DA0 /* TextRecipeParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D059E4ADF0D9AAB919E4C6E /* TextRecipeParser.swift */; };
 		209E395F3B2A4C90E54CDEAD /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -104,6 +105,7 @@
 			};
 			name = Release;
 		};
+		234A64655A8FC47AE3AC358F /* PantryListReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B6483896A3DCFFF74992E5 /* PantryListReader.swift */; };
 		23C9D5F82367115E838D4F39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		23E24782FF38DEF6E346B1A4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
@@ -192,6 +194,7 @@
 		419C43F7E33D95100FC3C1F4 /* RecipeDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DB42737BEABDA18E7F1575 /* RecipeDraft.swift */; };
 		441E565F8F9BB0A2B3253C4B /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9970892D5EA3DB23FA03B3BC /* RecipeDetailView.swift */; };
 		443DE3F11E448DC5FDD2626E /* RecipesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipesView.swift; sourceTree = "<group>"; };
+		44E4266819FDF25B2FCC8C9C /* PantryBulkAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryBulkAddView.swift; sourceTree = "<group>"; };
 		44F497883F8D9B1C17F8E9C2 /* AudioSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSession.swift; sourceTree = "<group>"; };
 		459836C8D054D16245BEF5A6 /* RecipesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443DE3F11E448DC5FDD2626E /* RecipesView.swift */; };
 		4B37688D0F292D7C270F2AEA /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
@@ -205,6 +208,7 @@
 		4E029349C16621A6011839DA /* TimerCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerCenter.swift; sourceTree = "<group>"; };
 		4F3AEFCC2203199C74D94FF9 /* Speaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Speaker.swift; sourceTree = "<group>"; };
 		4F523BC605F6AF2422AD48CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		55E736FED6F2C9876EB05B46 /* Kitchen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kitchen.swift; sourceTree = "<group>"; };
 		5680B823D8A135F1D22C2A94 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -298,6 +302,7 @@
 		61A361AFA9362C65384355BD /* InstrumentSerif-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InstrumentSerif-Regular.ttf"; sourceTree = "<group>"; };
 		62FC2DD9E6EC8B9000BD87AC /* CookSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E811878B5063F01DFE4712 /* CookSession.swift */; };
 		63D9CE0B0BDEB0C06BF8B03B /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
+		65B6483896A3DCFFF74992E5 /* PantryListReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryListReader.swift; sourceTree = "<group>"; };
 		6762A4D810458FFD12ECAFD4 /* MealPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlan.swift; sourceTree = "<group>"; };
 		67855A4E5FA4FD5820C218A8 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10D6C1C25756C1690A193D2 /* OnboardingView.swift */; };
 		67AAA2F3F7582CBDC670CDCA /* ShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D9CE0B0BDEB0C06BF8B03B /* ShoppingView.swift */; };
@@ -322,10 +327,13 @@
 				83C63AD849E7FD75BC5A4939 /* AppSettings.swift */,
 				0A4BA98F46EEB231C8B8C71D /* IngredientCatalog.swift */,
 				DB2D73ED484CB1E48BA4AFF0 /* IngredientParser.swift */,
+				FD4B5C26364043179F8E2FBB /* Kitchen.swift */,
 				909D195AF624D7276F3B5796 /* Library.swift */,
 				F6704D838CC4BD6CC141E386 /* Matcher.swift */,
 				E2029852CC23A70A2497753A /* MealPlan.swift */,
 				C7DC996F5020235FD8ACFD1C /* Pantry.swift */,
+				D3C3022D80B4B9CA345E192B /* PantryKits.swift */,
+				234A64655A8FC47AE3AC358F /* PantryListReader.swift */,
 				99AEF160E203E078C0004497 /* Persistence.swift */,
 				F0BA899CBD93E4B915149920 /* Quantity.swift */,
 				902D23E0852289F67C0F70DA /* Recipe.swift */,
@@ -339,7 +347,9 @@
 				89251A0A264789AA94338528 /* Theme.swift */,
 				C5BF74DE096691A45D992527 /* Components.swift */,
 				BEFE2C6B291AD49FC7DB1408 /* CookView.swift */,
+				1D5D394FC6255CA779C3B99B /* KitchensView.swift */,
 				67855A4E5FA4FD5820C218A8 /* OnboardingView.swift */,
+				7F0C81AAD846697540166278 /* PantryBulkAddView.swift */,
 				8D479048F9A6917C19CB0D55 /* PantryView.swift */,
 				5DC34458B7AF322EBEEABB28 /* PlanView.swift */,
 				441E565F8F9BB0A2B3253C4B /* RecipeDetailView.swift */,
@@ -395,6 +405,7 @@
 		79BBBACE7A70437917DFBCC2 /* Ladle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ladle.entitlements; sourceTree = "<group>"; };
 		79D500DF18671D3CE8B4E878 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBD84C408D4FD3BE2C47780 /* Haptics.swift */; };
 		7B76F734F5D3441E3D65A747 /* TonightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightView.swift; sourceTree = "<group>"; };
+		7F0C81AAD846697540166278 /* PantryBulkAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E4266819FDF25B2FCC8C9C /* PantryBulkAddView.swift */; };
 		809A6CCC04D96DF8E1CC6372 /* DocumentScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentScanner.swift; sourceTree = "<group>"; };
 		81F31879437340D5CD6ED968 /* Ladle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ladle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		82D3F98C29F6712177415044 /* PBXContainerItemProxy */ = {
@@ -478,6 +489,7 @@
 		AA5EE750F8CD57B1310FC31C /* LadleIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9076A68C6C34CB44CE10C440 /* LadleIntents.swift */; };
 		AA702CEC2E6E064451095CAC /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		ACBD84C408D4FD3BE2C47780 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		AE170E489AA41DC187FD8C97 /* PantryKits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryKits.swift; sourceTree = "<group>"; };
 		B10D6C1C25756C1690A193D2 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		B1EAB47BEC2524982E88DCEB /* Transfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0C03B9EBE32FD7C7A17605 /* Transfer.swift */; };
 		B3DE411C5833A15DC2E9C05A /* OCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE0053649EC874355F58041 /* OCR.swift */; };
@@ -486,7 +498,9 @@
 			children = (
 				7980C41009D5D14815B3004A /* Components.swift */,
 				001CED44AF5207BA337AD11A /* CookView.swift */,
+				CE9509B7EE8C01340B61429A /* KitchensView.swift */,
 				B10D6C1C25756C1690A193D2 /* OnboardingView.swift */,
+				44E4266819FDF25B2FCC8C9C /* PantryBulkAddView.swift */,
 				90AFA0AF59FF85EBE12998EC /* PantryView.swift */,
 				4B37688D0F292D7C270F2AEA /* PlanView.swift */,
 				9970892D5EA3DB23FA03B3BC /* RecipeDetailView.swift */,
@@ -524,7 +538,9 @@
 		CB0E2E683C80A776C6E58E75 /* Inbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0054F219F690E9BAC3C553 /* Inbox.swift */; };
 		CC7EE64C522088349A46C617 /* TimersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimersView.swift; sourceTree = "<group>"; };
 		CD36ADA3C9EE835A2A7DF427 /* VoiceControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceControl.swift; sourceTree = "<group>"; };
+		CE9509B7EE8C01340B61429A /* KitchensView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitchensView.swift; sourceTree = "<group>"; };
 		D3685D6F975ABD7A4D4760F2 /* HTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTML.swift; sourceTree = "<group>"; };
+		D3C3022D80B4B9CA345E192B /* PantryKits.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE170E489AA41DC187FD8C97 /* PantryKits.swift */; };
 		D4A4DA538EA47DFFE2D37D7B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB2D73ED484CB1E48BA4AFF0 /* IngredientParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B67E7D64B90FDAC4B45C46 /* IngredientParser.swift */; };
 		DD0054F219F690E9BAC3C553 /* Inbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inbox.swift; sourceTree = "<group>"; };
@@ -613,10 +629,13 @@
 				577E8F8A4586CE3913CE1EFC /* AppSettings.swift */,
 				6CEC8238256E6E077864FAB4 /* IngredientCatalog.swift */,
 				98B67E7D64B90FDAC4B45C46 /* IngredientParser.swift */,
+				55E736FED6F2C9876EB05B46 /* Kitchen.swift */,
 				E59B4AC0EE6186AF8F02CDB8 /* Library.swift */,
 				726BE10786BC9B42E6FDB470 /* Matcher.swift */,
 				6762A4D810458FFD12ECAFD4 /* MealPlan.swift */,
 				88C1AF9EAEDE4FDCDDF81AD8 /* Pantry.swift */,
+				AE170E489AA41DC187FD8C97 /* PantryKits.swift */,
+				65B6483896A3DCFFF74992E5 /* PantryListReader.swift */,
 				74868673DE93F5F5D41B5627 /* Persistence.swift */,
 				2FE9790C4299323B3DE61B3A /* Quantity.swift */,
 				74015E85EA631E76934EB804 /* Recipe.swift */,
@@ -629,6 +648,7 @@
 			sourceTree = "<group>";
 		};
 		FD2FAE19A1DEB6A1E20C05A1 /* Shake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shake.swift; sourceTree = "<group>"; };
+		FD4B5C26364043179F8E2FBB /* Kitchen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E736FED6F2C9876EB05B46 /* Kitchen.swift */; };
 		FD64D25BB555146C89E95088 /* ShareCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA22F1C103A214AB6E1F8FA /* ShareCard.swift */; };
 		FEEB671028398B393F52D5C5 /* Speaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3AEFCC2203199C74D94FF9 /* Speaker.swift */; };
 		FF5F158E91A8680D1540A24D /* InstrumentSerif-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61A361AFA9362C65384355BD /* InstrumentSerif-Regular.ttf */; };

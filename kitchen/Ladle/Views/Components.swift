@@ -80,7 +80,7 @@ struct InkButton: View {
     }
 }
 
-/// A small round action: favourite, share, plan.
+/// A small round action: favorite, share, plan.
 struct IconButton: View {
     let systemImage: String
     let label: String
@@ -133,7 +133,7 @@ struct Chip: View {
     }
 }
 
-/// The circle that gets ticked: ingredients, shopping, steps.
+/// The circle that gets checked: ingredients, shopping, steps.
 struct CheckCircle: View {
     let isOn: Bool
     var size: CGFloat = 22
@@ -232,7 +232,7 @@ struct StaticStars: View {
     }
 }
 
-/// A recipe's photo, or its initial in serif on grey when it has none.
+/// A recipe's photo, or its initial in serif on gray when it has none.
 struct RecipeThumb: View {
     let recipe: Recipe
     var side: CGFloat = 60
@@ -334,9 +334,15 @@ extension IndexRow where Trailing == EmptyView {
 struct ScreenTitle: View {
     let title: String
     var subtitle: String?
+    /// Show the kitchen switcher above the title, on tabs that change with it.
+    var showsKitchen: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
+            if showsKitchen {
+                KitchenSwitcher()
+                    .padding(.bottom, 2)
+            }
             Text(title)
                 .font(Typeface.display(40))
                 .foregroundStyle(Ink.ink)
