@@ -26,6 +26,9 @@ interface Row {
   when: string;
   datetime: string;
   sort: number;
+  // relevance tier: the case studies lead, then the site builds, then the
+  // photo sets. recency only orders rows inside a tier.
+  rank: number;
   peek?: string;
 }
 
@@ -38,6 +41,7 @@ const rows: Row[] = all
     when: when(e.data.date, e.data.dateEnd),
     datetime: e.data.date.toISOString(),
     sort: ended(e).valueOf(),
+    rank: 0,
     peek: `/peek/${e.id}.webp`,
   }));
 
@@ -52,6 +56,7 @@ if (photo.length) {
     when: when(opened, closed),
     datetime: opened.toISOString(),
     sort: closed.valueOf(),
+    rank: 2,
     peek: '/peek/photography.webp',
   });
 }
@@ -67,11 +72,12 @@ if (sites.length) {
     when: when(opened, closed),
     datetime: opened.toISOString(),
     sort: closed.valueOf(),
+    rank: 1,
     peek: '/peek/websites.webp',
   });
 }
 
-rows.sort((a, b) => b.sort - a.sort);
+rows.sort((a, b) => a.rank - b.rank || b.sort - a.sort);
 ---
 
 <Base title={copy.title} description={copy.description} scene="work" edit="pages/work">
