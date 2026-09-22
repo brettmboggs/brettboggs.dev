@@ -49,6 +49,7 @@ const shots = {
   field: { url: '/lab/field/', top: 300 },
   keepsake: { url: '/lab/keepsake/', top: 290, left: 312, width: 800 },
   'sprout-siege': { url: '/lab/sprout-siege/', top: 80 },
+  ladle: { url: '/ladle/', top: 95, left: 110, width: 880 },
   underground: { url: '/lab/underground/', top: 420 },
   bridge: { url: '/lab/bridge/', top: 250, scroll: 3400 },
   'drafting-film': { url: '/lab/drafting-film/', top: 250, scroll: 8000 },

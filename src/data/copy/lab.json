@@ -6,6 +6,13 @@
   "lede": "Experiments and unfinished things, allowed to be rough.",
   "entries": [
     {
+      "title": "Ladle",
+      "desc": "A recipe app for iOS. Scan a card, share a page, then cook from it by voice without touching the phone.",
+      "meta": "Sep 2026",
+      "href": "/ladle/",
+      "peek": "/peek/ladle.webp"
+    },
+    {
       "title": "Slumbio",
       "desc": "A sleep app for iOS. Thirty-three of its thirty-five sounds are built as they play, so there is no loop to hear.",
       "meta": "Sep 2026",

@@ -32,9 +32,9 @@
       "startDate": "2025-01",
       "summary": "One system for running a construction company: projects, people, equipment, safety, and money in one place. Full-stack engineer: architecture, security, infrastructure and release. Launched with a beta client in 2025.",
       "highlights": [
-        "2,122 HTTP endpoints across 338 backend services",
-        "908 tables in Azure SQL, behind 507 tracked migrations",
-        "300 screens and 338 shared components in React",
+        "2,259 HTTP endpoints across 394 backend services",
+        "1,031 tables in Azure SQL, behind 558 tracked migrations",
+        "332 screens and 392 shared components in React",
         "132 standard operating procedures, automated end to end",
         "Tenant isolation enforced at the query layer, role based access through Entra ID",
         "ERP adapter framework with a durable writeback queue, normalizing phase codes and cost types",
@@ -90,6 +90,16 @@
     }
   ],
   "projects": [
+    {
+      "name": "Slumbio",
+      "description": "An iPhone sleep app, on the App Store. Thirty-three of its thirty-five sounds are built as they play, so there is no loop to hear. Breathing sessions, a sunrise alarm, a sleep timer, and no network code in the app at all.",
+      "url": "https://apps.apple.com/app/id6808987732"
+    },
+    {
+      "name": "Ladle",
+      "description": "An iPhone app for recipes, wherever they come from: scanned off a card with the camera, shared from Safari, or typed in. Cook mode takes voice commands, a pantry tracks what is in the kitchen, and nothing leaves the phone.",
+      "url": "https://brettboggs.dev/ladle/"
+    },
     {
       "name": "Lauren Becherer Pottery",
       "description": "A site for a ceramicist, built around 360 degree turntable photography of the real pieces so the glaze reads true. Astro, static, with a no-code studio admin she runs herself, Stripe checkout, and private progress pages for commission clients.",
@@ -156,6 +166,6 @@
   ],
   "meta": {
     "canonical": "https://brettboggs.dev/resume.json",
-    "lastModified": "2026-09-01"
+    "lastModified": "2026-09-22"
   }
 }

@@ -70,16 +70,16 @@
     "lede": "Full-stack engineer. Architecture, security, infrastructure and release, end to end.",
     "figures": [
       {
-        "number": "2,122",
-        "label": "HTTP endpoints across 338 backend services"
+        "number": "2,259",
+        "label": "HTTP endpoints across 394 backend services"
       },
       {
-        "number": "908",
-        "label": "tables in Azure SQL, behind 507 tracked migrations"
+        "number": "1,031",
+        "label": "tables in Azure SQL, behind 558 tracked migrations"
       },
       {
-        "number": "300",
-        "label": "screens and 338 shared components in React"
+        "number": "332",
+        "label": "screens and 392 shared components in React"
       },
       {
         "number": "132",
@@ -111,7 +111,7 @@
             "nodes": [
               {
                 "name": "Web app",
-                "fig": "300 screens · 338 components",
+                "fig": "332 screens · 392 components",
                 "text": "React. Everyone opens Datum to their own work: what needs action, what is coming up, and what is running late."
               },
               {
@@ -145,8 +145,8 @@
             "label": "Services",
             "nodes": [
               {
-                "name": "338 services",
-                "fig": "2,122 HTTP endpoints",
+                "name": "394 services",
+                "fig": "2,259 HTTP endpoints",
                 "text": "Every handler runs inside a tenant scope and the pool primes that context on every query, so a call site cannot forget it. Twenty-nine background timers are wrapped the same way."
               },
               {
@@ -186,12 +186,12 @@
             "nodes": [
               {
                 "name": "Azure SQL",
-                "fig": "908 tables · 507 migrations",
+                "fig": "1,031 tables · 558 migrations",
                 "text": "One shared platform. Tenant columns are NOT NULL with no default, so an unstamped insert refuses instead of quietly landing in someone else’s company."
               },
               {
                 "name": "Row-level security",
-                "fig": "852 tables · fail closed",
+                "fig": "998 tables · fail closed",
                 "text": "FILTER and BLOCK policies keyed to session context. A query that never set its tenant sees zero rows and writes none, however clever the SQL above it."
               },
               {
