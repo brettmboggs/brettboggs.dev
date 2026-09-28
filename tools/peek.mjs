@@ -39,6 +39,8 @@ const H = 480;
 const shots = {
   // the mark alone on Datum's ink: the render reads soft at plate size
   datum: { mark: 'tools/datum-mark-cream.png', bg: '#1e2022', size: 0.36 },
+  // the new mark on the ink it was drawn for
+  'ked-detailing': { mark: 'public/work/ked/ked.svg', bg: '#07080a', size: 0.2 },
   photography: { file: 'public/photo/ked/flare.webp' },
   eclipse: { file: 'public/photo/eclipse/plane-transit-760.webp' },
   'live-music': { file: 'public/photo/stone-sugar/f02.webp' },
@@ -46,7 +48,6 @@ const shots = {
   product: { file: 'public/photo/product/hero.webp' },
   trra: { file: 'public/lab/trra/hero-1200.webp' },
   ridge: { file: 'public/lab/ridge/still.webp' },
-  'ked-detailing': { url: '/ked/', top: 0, left: 0, width: 1440 },
   field: { url: '/lab/field/', top: 300 },
   keepsake: { url: '/lab/keepsake/', top: 290, left: 312, width: 800 },
   'sprout-siege': { url: '/lab/sprout-siege/', top: 80 },
@@ -171,7 +172,7 @@ for (const [id, shot] of Object.entries(shots)) {
   if (shot.mark) {
     // a logo set on a flat ground, at both sizes
     for (const [w, h, file] of [[W, H, out], [W * 2, H * 2, large]]) {
-      const mark = await sharp(path.resolve(shot.mark)).resize({ height: Math.round(h * shot.size) }).toBuffer();
+      const mark = await sharp(path.resolve(shot.mark), shot.mark.endsWith('.svg') ? { density: 300 } : {}).resize({ height: Math.round(h * shot.size) }).toBuffer();
       await sharp({ create: { width: w, height: h, channels: 3, background: shot.bg } })
         .composite([{ input: mark, gravity: 'centre' }])
         .webp({ quality: 82 })
