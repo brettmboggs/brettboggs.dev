@@ -46,6 +46,7 @@ const shots = {
   product: { file: 'public/photo/product/hero.webp' },
   trra: { file: 'public/lab/trra/hero-1200.webp' },
   ridge: { file: 'public/lab/ridge/still.webp' },
+  'ked-detailing': { url: '/ked/', top: 0, left: 0, width: 1440 },
   field: { url: '/lab/field/', top: 300 },
   keepsake: { url: '/lab/keepsake/', top: 290, left: 312, width: 800 },
   'sprout-siege': { url: '/lab/sprout-siege/', top: 80 },

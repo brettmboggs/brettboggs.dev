@@ -35,10 +35,53 @@ import { md } from '../../../data/copy';
 
     <div class="prose">
       <Fragment set:html={md(copy.body)} />
-      <p class="note">
-        {copy.note}
-      </p>
     </div>
+
+    <section class="brand" aria-labelledby="brand-heading">
+      <h2 id="brand-heading">{copy.brand.heading}</h2>
+      <div class="prose">
+        <Fragment set:html={md(copy.brand.body)} />
+      </div>
+
+      <!-- The marks sit on the ink they were drawn for, not on the page's paper. -->
+      <ul class="marks">
+        {
+          copy.brand.marks.map((m, i) => (
+            <li class:list={['mark', { 'mark-wide': i === 0, 'mark-icon': i === 2 }]}>
+              <img src={m.image} alt={m.alt} loading="lazy" />
+              <span class="mark-label">{m.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <ul class="palette">
+        {
+          copy.brand.palette.map((c) => (
+            <li>
+              <span class="swatch" style={`background:${c.hex}`} />
+              <span class="swatch-name">{c.name}</span>
+              <span class="swatch-hex">{c.hex}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <figure class="board">
+        <img
+          src={copy.brand.sheet.image}
+          alt={copy.brand.sheet.alt}
+          width="1122"
+          height="1402"
+          loading="lazy"
+        />
+        <figcaption>{copy.brand.sheet.caption}</figcaption>
+      </figure>
+    </section>
+
+    <p class="note">
+      {copy.note}
+    </p>
 
     <a class="back-link" href="/work/websites/">{copy.backLink}</a>
   </article>
@@ -113,7 +156,131 @@ import { md } from '../../../data/copy';
   .prose {
     margin-top: 2.75rem;
   }
+  .brand {
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--ink);
+  }
+  .brand h2 {
+    margin: 0 0 1.25rem;
+  }
+  .brand .prose {
+    margin-top: 0;
+  }
+
+  .marks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    border: 2px solid var(--ink);
+    background: #07080a;
+  }
+  .mark {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 12rem;
+    padding: 2.5rem 2rem 3rem;
+  }
+  .mark + .mark {
+    border-left: 1px solid #232832;
+  }
+  .mark-wide {
+    grid-column: 1 / -1;
+    min-height: 16rem;
+    border-bottom: 1px solid #232832;
+  }
+  .mark-wide + .mark {
+    border-left: 0;
+  }
+  .mark img {
+    width: 100%;
+    max-width: 16rem;
+    max-height: 7rem;
+    object-fit: contain;
+  }
+  .mark-icon img {
+    width: 6.5rem;
+    border-radius: 22%;
+    box-shadow: 0 0 0 1px #2e3440;
+  }
+  .mark-wide img {
+    max-width: 34rem;
+    max-height: 9rem;
+  }
+  .mark-label {
+    position: absolute;
+    left: 1rem;
+    bottom: 0.9rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8a919e;
+  }
+
+  .palette {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .palette li {
+    display: grid;
+    gap: 0.2rem;
+  }
+  .swatch {
+    display: block;
+    aspect-ratio: 3 / 2;
+    border: 2px solid var(--ink);
+    margin-bottom: 0.4rem;
+  }
+  .swatch-name,
+  .swatch-hex {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+  }
+  .swatch-hex {
+    color: var(--ink-soft);
+  }
+
+  .board {
+    margin: 2.5rem 0 0;
+  }
+  .board img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--ink);
+  }
+  .board figcaption {
+    margin-top: 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 560px) {
+    .marks {
+      grid-template-columns: 1fr;
+    }
+    .mark + .mark {
+      border-left: 0;
+      border-top: 1px solid #232832;
+    }
+    .mark-wide + .mark {
+      border-top: 0;
+    }
+  }
+
   .note {
+    margin-top: 2.5rem;
     font-family: var(--mono);
     font-size: 0.8rem;
     color: var(--ink-soft);

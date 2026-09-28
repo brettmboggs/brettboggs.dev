@@ -1534,6 +1534,52 @@ collections:
       - name: body
         label: Body
         widget: markdown
+      - name: brand
+        label: The mark (brand section)
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: body
+          label: Body
+          widget: markdown
+        - name: marks
+          label: Marks
+          widget: list
+          fields:
+          - name: image
+            label: Image
+            widget: image
+          - name: label
+            label: Label
+            widget: string
+          - name: alt
+            label: Alt text
+            widget: string
+        - name: palette
+          label: Palette
+          widget: list
+          fields:
+          - name: name
+            label: Name
+            widget: string
+          - name: hex
+            label: Hex
+            widget: string
+        - name: sheet
+          label: Brand sheet
+          widget: object
+          fields:
+          - name: image
+            label: Image
+            widget: image
+          - name: alt
+            label: Alt text
+            widget: string
+          - name: caption
+            label: Caption
+            widget: string
       - name: note
         label: Small note after the body
         widget: text
