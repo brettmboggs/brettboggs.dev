@@ -58,6 +58,13 @@ const shots = {
   // her site's wordmark and vessel favicon, set in Montserrat on her paper; the
   // png is a headless Chrome render, since there is no logo file to crop
   'lauren-becherer-pottery': { mark: 'tools/lbp-mark.png', bg: '#f6f6ef', size: 0.2 },
+  // the group plate on /work: each site's mark in its own band, stacked
+  websites: {
+    stack: [
+      { mark: 'public/work/ked/ked.svg', bg: '#07080a', size: 0.3 },
+      { mark: 'tools/lbp-mark.png', bg: '#f6f6ef', size: 0.34 },
+    ],
+  },
 };
 
 async function chrome() {
@@ -169,6 +176,30 @@ for (const [id, shot] of Object.entries(shots)) {
   if (only && !only.includes(id)) continue;
   const out = path.join(OUT, `${id}.webp`);
   const large = path.join(OUT, `${id}-lg.webp`);
+  if (shot.stack) {
+    // bands of equal height, each a logo on its own ground
+    for (const [w, h, file] of [[W, H, out], [W * 2, H * 2, large]]) {
+      const bh = Math.round(h / shot.stack.length);
+      const bands = await Promise.all(
+        shot.stack.map(async (b, i) => {
+          const mark = await sharp(path.resolve(b.mark), b.mark.endsWith('.svg') ? { density: 300 } : {})
+            .resize({ height: Math.round(bh * b.size) })
+            .toBuffer();
+          const band = await sharp({ create: { width: w, height: bh, channels: 3, background: b.bg } })
+            .composite([{ input: mark, gravity: 'centre' }])
+            .png()
+            .toBuffer();
+          return { input: band, top: i * bh, left: 0 };
+        }),
+      );
+      await sharp({ create: { width: w, height: h, channels: 3, background: '#000' } })
+        .composite(bands)
+        .webp({ quality: 82 })
+        .toFile(file);
+    }
+    console.log(`peek: ${id} stacked from ${shot.stack.map((b) => b.mark).join(', ')}`);
+    continue;
+  }
   if (shot.mark) {
     // a logo set on a flat ground, at both sizes
     for (const [w, h, file] of [[W, H, out], [W * 2, H * 2, large]]) {
