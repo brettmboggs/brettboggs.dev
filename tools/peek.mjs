@@ -55,9 +55,9 @@ const shots = {
   underground: { url: '/lab/underground/', top: 420 },
   bridge: { url: '/lab/bridge/', top: 250, scroll: 3400 },
   'drafting-film': { url: '/lab/drafting-film/', top: 250, scroll: 8000 },
-  // the client sites are captured from where they live:
-  //   node tools/peek.mjs --base https://laurenbechererpottery.com --only lauren-becherer-pottery
-  'lauren-becherer-pottery': { url: '/', top: 30, left: 70, width: 1300 },
+  // her site's wordmark and vessel favicon, set in Montserrat on her paper; the
+  // png is a headless Chrome render, since there is no logo file to crop
+  'lauren-becherer-pottery': { mark: 'tools/lbp-mark.png', bg: '#f6f6ef', size: 0.2 },
 };
 
 async function chrome() {
