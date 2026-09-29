@@ -1,0 +1,12 @@
+# Old Wix URLs -> new pages, so search rankings and old links carry over at
+# cutover. Cloudflare Pages reads this file; the brettboggs.dev preview ignores it.
+/rv                                     /custom           301
+/copy-of-our-products                   /mattresses       301
+/copy-of-rv-boat                        /mattresses       301
+/copy-of-home-and-custom-mattresses-1   /adjustable-beds  301
+/copy-of-bed-boss-mattresses            /mattresses       301
+/faq                                    /visit            301
+/privacy-policy                         /                 301
+/shipping-returns                       /visit            301
+/shop                                   /mattresses       301
+/product-page/*                         /mattresses       301
