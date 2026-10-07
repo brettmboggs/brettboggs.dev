@@ -56,29 +56,46 @@ own overlays. Turn on what helps:
 
 Settings are remembered. Controls fade out when the mouse is still.
 
-## USB only: live view plus camera control
+## USB: live view plus camera control (the Mac app)
 
-No extra hardware. The laptop shows the live picture and controls the camera:
-click-free focus, shutter, ISO, aperture, shutter speed, exposure
-compensation, white balance.
+No extra hardware. One-time setup in Terminal:
 
 ```sh
-python3 -m pip install --user gphoto2   # once
-python3 ~/liveview/bridge.py
+mkdir -p ~/liveview && cd ~/liveview
+curl --remote-name-all https://raw.githubusercontent.com/brettmboggs/brettboggs.dev/claude/nice-archimedes-esk7jj/tools/liveview/{viewer.html,bridge.py,icon.png}
+python3 -m pip install --user gphoto2      # add --break-system-packages if pip refuses
+python3 bridge.py --install
 ```
 
-(If pip says "externally managed", add `--break-system-packages`.)
+That builds **Live View.app** in `~/Applications` and shows it in Finder. Drag it
+into the Dock. From then on: plug in the camera, click the icon. Closing the
+window (or **Quit**) hands the camera back. Re-run the last line after
+downloading a newer version. Log: `~/Library/Logs/Live View.log`.
 
-- Quit EOS Utility first; only one app can hold the camera.
-- Turn the camera's Wi-Fi and Bluetooth off.
-- The bridge asks the camera to keep its own screen on and its buttons
-  unlocked. If the R6 refuses, everything is still controllable from the laptop.
-- **Ctrl+C** in Terminal hands the camera back; its screen and buttons return.
-- Shots save to the memory card as usual. `--download` also copies each one to
-  `~/Pictures/Live View`.
+Before clicking: quit EOS Utility, turn the camera's Wi-Fi off.
 
-Camera keys: **Space** shoot · **A** autofocus · **[ ]** focus near/far ·
-**{ }** big focus steps. Lens AF/MF switch must be on AF for laptop focus.
+### Shooting
 
-Extras: `--host 0.0.0.0` lets an iPad on the same Wi-Fi open the viewer at
-`http://<laptop-ip>:8765`, and `/stream.mjpg` is a plain MJPEG feed for OBS or VLC.
+- **Shoot** (Space). Shots save to the card; tick *Copy shots to laptop* to also
+  get them in `~/Pictures/Live View`.
+- **Modes:** Self-timer (2/5/10 s, with beeps) · Bracket for HDR (3 or 5 shots,
+  ⅔/1/2 EV apart, then puts your exposure back) · Focus stack (N shots, moving
+  focus a set step each time) · Time-lapse (every N seconds). Space or Esc stops.
+- Shutter speed, aperture, ISO, exposure compensation, white balance, focus
+  nudges (`[` `]`, bigger `{` `}`) and Autofocus (A).
+
+### Assist (I)
+
+- **Exposure:** reads the live picture and says *Looks good*, *Highlights
+  clipping*, or *try −⅔ EV*. **Fix** applies it (exposure compensation, or
+  shutter speed in M). Needs the camera's exposure simulation on (the default).
+- **Focus meter:** sharpness inside the focus box; full and green is sharpest.
+  Click the picture to move the box.
+- **Precision focus** (D, or double-click the picture): sweeps the focus motor,
+  finds the sharpest point for the box, and parks there. Lens on AF.
+- **Ghost of last shot:** overlays the previous frame faintly, for lining up a
+  series or matching a composition.
+
+Extras: `python3 bridge.py --host 0.0.0.0` lets an iPad on the same Wi-Fi open
+the viewer at `http://<laptop-ip>:8765`, and `/stream.mjpg` is a plain MJPEG
+feed for OBS or VLC.

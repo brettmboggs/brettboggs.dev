@@ -2,9 +2,11 @@
 """Live view and remote control for a Canon EOS over USB.
 
     python3 -m pip install --user gphoto2   # once
-    python3 bridge.py
+    python3 bridge.py             # run from Terminal
+    python3 bridge.py --install   # or: build "Live View.app" in ~/Applications
 
-Opens the viewer at http://localhost:8765. Ctrl+C hands the camera back.
+Opens the viewer at http://localhost:8765. Ctrl+C (or Quit in the viewer, or
+closing the app window) hands the camera back.
 
 With the gphoto2 Python package installed you get live view plus control
 (focus, shutter, ISO, aperture, shutter speed...). Without it, the bridge falls
@@ -15,13 +17,16 @@ Endpoints: /            the viewer
            /stream.mjpg plain MJPEG, for OBS, VLC, etc.
            /status      JSON health
            /settings    JSON camera settings
-           /cmd         POST {"cmd": "shoot" | "af" | "mf" | "set", ...}
+           /cmd         POST {"cmd": "shoot" | "af" | "mf" | "set" | "download", ...}
+           /ping /bye   viewer heartbeat (app mode quits when the window closes)
+           /quit        POST, release the camera and exit
 """
 import argparse
 import http.server
 import json
 import os
 import platform
+import plistlib
 import queue
 import shutil
 import subprocess
@@ -38,6 +43,8 @@ except ImportError:
     gp = None
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+APP_NAME = "Live View"
+DEFAULT_DOWNLOADS = os.path.expanduser("~/Pictures/Live View")
 SOI, EOI = b"\xff\xd8", b"\xff\xd9"
 
 # Settings shown in the viewer, in display order.
@@ -202,6 +209,9 @@ class Controller:
             self._set_choice(name, value, strict=True)
             self._read_settings()
             return {"settings": self.snapshot()}
+        if kind == "download":
+            self.download_dir = DEFAULT_DOWNLOADS if cmd.get("on") else None
+            return {"download": self.download_dir}
         if kind == "af":
             self._set_value("autofocusdrive", 1)
             self.af_until = time.monotonic() + 1.2
@@ -389,9 +399,55 @@ class NoCamera:
         return {}
 
 
+# ---- lifecycle -------------------------------------------------------------------------
+
+class Lifecycle:
+    """Clean shutdown, plus (in app mode) quitting once the viewer window is gone."""
+
+    IDLE = 150     # seconds without any request from a viewer
+    AFTER_BYE = 8  # grace period after the window closes, in case it was a reload
+    FIRST = 120    # how long to wait for the first viewer
+
+    def __init__(self, camera, worker, auto_quit):
+        self.camera = camera
+        self.worker = worker
+        self.server = None
+        self.auto_quit = auto_quit
+        self.deadline = time.monotonic() + self.FIRST
+        self._exiting = threading.Lock()
+
+    def seen(self):
+        self.deadline = time.monotonic() + self.IDLE
+
+    def bye(self):
+        self.deadline = time.monotonic() + self.AFTER_BYE
+
+    def watch(self):
+        while self.auto_quit:
+            time.sleep(1)
+            if time.monotonic() > self.deadline:
+                print("Viewer closed, quitting.", flush=True)
+                self.exit()
+                return
+
+    def release_camera(self):
+        if self.worker:
+            self.camera.stop.set()
+            if hasattr(self.camera, "close"):
+                self.camera.close()
+            self.worker.join(timeout=5)
+
+    def exit(self):
+        if not self._exiting.acquire(blocking=False):
+            return
+        print("Releasing the camera...", flush=True)
+        self.release_camera()
+        threading.Thread(target=self.server.shutdown, daemon=True).start()
+
+
 # ---- HTTP ----------------------------------------------------------------------------
 
-def make_handler(frames, camera):
+def make_handler(frames, camera, life):
     class Handler(http.server.BaseHTTPRequestHandler):
         protocol_version = "HTTP/1.1"
 
@@ -415,6 +471,7 @@ def make_handler(frames, camera):
 
         def do_GET(self):
             url = urlparse(self.path)
+            life.seen()
             try:
                 if url.path in ("/", "/index.html", "/viewer.html"):
                     with open(os.path.join(HERE, "viewer.html"), "rb") as f:
@@ -435,14 +492,24 @@ def make_handler(frames, camera):
                         self._send(200, jpeg, "image/jpeg", {"X-Seq": str(seq)})
                 elif url.path == "/stream.mjpg":
                     self.stream()
+                elif url.path == "/ping":
+                    self._json({"ok": True})
                 else:
                     self._send(404, b"not found", "text/plain")
             except (BrokenPipeError, ConnectionResetError):
                 pass
 
         def do_POST(self):
+            path = urlparse(self.path).path
             try:
-                if urlparse(self.path).path != "/cmd":
+                if path == "/bye":
+                    life.bye()
+                    return self._json({"ok": True})
+                if path == "/quit":
+                    self._json({"ok": True})
+                    return threading.Thread(target=life.exit, daemon=True).start()
+                life.seen()
+                if path != "/cmd":
                     return self._send(404, b"not found", "text/plain")
                 length = int(self.headers.get("Content-Length") or 0)
                 try:
@@ -482,7 +549,13 @@ def main():
     ap.add_argument("--view-only", action="store_true", help="use the gphoto2 command line tool, no controls")
     ap.add_argument("--gphoto2", default=shutil.which("gphoto2"), help="path to the gphoto2 binary (view-only mode)")
     ap.add_argument("--no-browser", action="store_true", help="don't open the viewer automatically")
+    ap.add_argument("--install", action="store_true", help=f"build {APP_NAME}.app in ~/Applications (macOS)")
+    ap.add_argument("--app", action="store_true", help=argparse.SUPPRESS)  # how the .app launches us
     args = ap.parse_args()
+
+    if args.install:
+        return install_app()
+    url = f"http://localhost:{args.port}/"
 
     frames = Frames()
     if gp is not None and not args.view_only:
@@ -496,27 +569,109 @@ def main():
         camera = NoCamera()
         frames.note("no-gphoto2", "no camera driver. Run: python3 -m pip install --user gphoto2")
 
-    worker = None
-    if hasattr(camera, "run"):
-        worker = threading.Thread(target=camera.run, daemon=True)
-        worker.start()
-
-    server = http.server.ThreadingHTTPServer((args.host, args.port), make_handler(frames, camera))
+    life = Lifecycle(camera, None, auto_quit=args.app)
+    try:
+        server = http.server.ThreadingHTTPServer((args.host, args.port), make_handler(frames, camera, life))
+    except OSError:
+        if args.app:  # already running: just bring up another window
+            open_viewer(url, app_window=True)
+            return
+        raise
     server.daemon_threads = True
-    url = f"http://localhost:{args.port}/"
+    life.server = server
+
+    if hasattr(camera, "run"):
+        life.worker = threading.Thread(target=camera.run, daemon=True)
+        life.worker.start()
+    threading.Thread(target=life.watch, daemon=True).start()
+
     print(f"Live view at {url}  (Ctrl+C to quit and give the camera back)", flush=True)
     if not args.no_browser:
-        threading.Timer(0.6, webbrowser.open, args=(url,)).start()
+        threading.Timer(0.6, open_viewer, args=(url, args.app)).start()
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print("\nReleasing the camera...", flush=True)
-        if worker:
-            camera.stop.set()
-            if hasattr(camera, "close"):
-                camera.close()
-            worker.join(timeout=5)
-        sys.exit(0)
+        print()
+        life.release_camera()
+    print("Camera released.", flush=True)
+
+
+def open_viewer(url, app_window=False):
+    """Open the viewer; on a Mac with Chrome, as its own app-style window."""
+    if app_window and platform.system() == "Darwin":
+        for chrome in ("/Applications/Google Chrome.app", os.path.expanduser("~/Applications/Google Chrome.app")):
+            if os.path.exists(chrome):
+                subprocess.run(["open", "-na", chrome, "--args", f"--app={url}"])
+                return
+    webbrowser.open(url)
+
+
+def install_app():
+    """Build ~/Applications/Live View.app, a double-clickable launcher for this bridge."""
+    if platform.system() != "Darwin":
+        sys.exit("--install builds a macOS app. On other systems run: python3 bridge.py")
+    if gp is None:
+        print("Note: camera controls need the gphoto2 package for this Python:\n"
+              f"    {sys.executable} -m pip install --user gphoto2\n", flush=True)
+    app = os.path.expanduser(f"~/Applications/{APP_NAME}.app")
+    contents = os.path.join(app, "Contents")
+    res = os.path.join(contents, "Resources")
+    macos = os.path.join(contents, "MacOS")
+    if os.path.exists(app):
+        shutil.rmtree(app)
+    os.makedirs(res)
+    os.makedirs(macos)
+    for name in ("bridge.py", "viewer.html"):
+        shutil.copy2(os.path.join(HERE, name), res)
+
+    launcher = os.path.join(macos, APP_NAME)
+    with open(launcher, "w") as f:
+        f.write("#!/bin/sh\n"
+                'cd "$(dirname "$0")/../Resources" || exit 1\n'
+                'mkdir -p "$HOME/Library/Logs"\n'
+                f'exec "{sys.executable}" bridge.py --app >> "$HOME/Library/Logs/{APP_NAME}.log" 2>&1\n')
+    os.chmod(launcher, 0o755)
+
+    info = {
+        "CFBundleName": APP_NAME,
+        "CFBundleDisplayName": APP_NAME,
+        "CFBundleIdentifier": "dev.brettboggs.liveview",
+        "CFBundleExecutable": APP_NAME,
+        "CFBundlePackageType": "APPL",
+        "CFBundleShortVersionString": "1.0",
+        "CFBundleVersion": "1",
+        "LSMinimumSystemVersion": "10.13",
+        "LSUIElement": True,  # no Dock icon of its own; the viewer window is the app
+        "NSHighResolutionCapable": True,
+    }
+    icon = os.path.join(HERE, "icon.png")
+    if os.path.exists(icon):
+        iconset = os.path.join(res, "AppIcon.iconset")
+        os.makedirs(iconset)
+        for size in (16, 32, 128, 256, 512):
+            for scale in (1, 2):
+                px = size * scale
+                out = os.path.join(iconset, f"icon_{size}x{size}{'@2x' if scale == 2 else ''}.png")
+                try:
+                    subprocess.run(["sips", "-z", str(px), str(px), icon, "--out", out],
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                except OSError:
+                    pass
+        try:
+            made = subprocess.run(["iconutil", "-c", "icns", iconset, "-o", os.path.join(res, "AppIcon.icns")]).returncode == 0
+        except OSError:
+            made = False
+        if made:
+            info["CFBundleIconFile"] = "AppIcon"
+        shutil.rmtree(iconset, ignore_errors=True)
+    with open(os.path.join(contents, "Info.plist"), "wb") as f:
+        plistlib.dump(info, f)
+
+    subprocess.run(["touch", app])
+    print(f"Built {app}\n"
+          "Open it from Launchpad or Spotlight, or drag it from the Finder window into your Dock.\n"
+          f"Problems? See ~/Library/Logs/{APP_NAME}.log", flush=True)
+    subprocess.run(["open", "-R", app])
 
 
 if __name__ == "__main__":
