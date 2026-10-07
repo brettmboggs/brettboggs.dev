@@ -56,16 +56,29 @@ own overlays. Turn on what helps:
 
 Settings are remembered. Controls fade out when the mouse is still.
 
-## USB only, no extra hardware (fallback)
+## USB only: live view plus camera control
 
-If you just need the picture and don't care about menus or the rear screen:
+No extra hardware. The laptop shows the live picture and controls the camera:
+click-free focus, shutter, ISO, aperture, shutter speed, exposure
+compensation, white balance.
 
-- **gphoto2** (macOS/Linux): `brew install gphoto2`, quit EOS Utility, run
-  `python3 tools/liveview/bridge.py`, choose "Canon over USB". About 1024 px,
-  15-30 fps. The camera's rear screen goes dark while it runs.
-- **EOS Webcam Utility** (Canon's free app): the camera shows up as a webcam;
-  choose it under Source. Clean picture only.
+```sh
+python3 -m pip install --user gphoto2   # once
+python3 ~/liveview/bridge.py
+```
 
-Extras on the bridge: `--host 0.0.0.0` lets an iPad on the same Wi-Fi open the
-viewer at `http://<laptop-ip>:8765`, and `/stream.mjpg` is a plain MJPEG feed
-for OBS or VLC.
+(If pip says "externally managed", add `--break-system-packages`.)
+
+- Quit EOS Utility first; only one app can hold the camera.
+- Turn the camera's Wi-Fi and Bluetooth off.
+- The bridge asks the camera to keep its own screen on and its buttons
+  unlocked. If the R6 refuses, everything is still controllable from the laptop.
+- **Ctrl+C** in Terminal hands the camera back; its screen and buttons return.
+- Shots save to the memory card as usual. `--download` also copies each one to
+  `~/Pictures/Live View`.
+
+Camera keys: **Space** shoot · **A** autofocus · **[ ]** focus near/far ·
+**{ }** big focus steps. Lens AF/MF switch must be on AF for laptop focus.
+
+Extras: `--host 0.0.0.0` lets an iPad on the same Wi-Fi open the viewer at
+`http://<laptop-ip>:8765`, and `/stream.mjpg` is a plain MJPEG feed for OBS or VLC.
