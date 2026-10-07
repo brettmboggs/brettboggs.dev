@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live View</title>
+<style>
+  :root {
+    --bg: #121212;          /* neutral gray so the surround doesn't bias your color judgement */
+    --panel: rgba(28, 28, 28, 0.88);
+    --line: rgba(255, 255, 255, 0.12);
+    --text: #e6e6e6;
+    --dim: #8c8c8c;
+    --accent: #d9971e;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; overflow: hidden; }
+  body.idle { cursor: none; }
+
+  #stage { position: absolute; inset: 0; display: grid; place-items: center; }
+  #frame { position: relative; }
+  #frame canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #frame.mirror .flip { transform: scaleX(-1); }
+  #frame.rotate { transform: rotate(180deg); }
+
+  .hud { position: absolute; transition: opacity .4s cubic-bezier(.22,1,.36,1); }
+  body.idle .hud, body.clean .hud { opacity: 0; pointer-events: none; }
+  body.clean #hist { opacity: 1; }
+  body.clean.nohist #hist { opacity: 0; }
+
+  #status { top: 12px; left: 12px; font: 11px/1.5 var(--mono); color: var(--dim);
+    background: var(--panel); padding: 6px 10px; border-radius: 6px; }
+  #status b { color: var(--text); font-weight: 500; }
+  #status .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #666; margin-right: 6px; vertical-align: 1px; }
+  #status .dot.live { background: #5fb760; }
+  #hist { top: 12px; right: 12px; width: 256px; height: 100px; background: rgba(0,0,0,.55);
+    border-radius: 6px; border: 1px solid var(--line); }
+
+  #bar { left: 12px; right: 12px; bottom: 14px; margin: 0 auto; width: fit-content; display: flex; flex-wrap: wrap; gap: 6px;
+    align-items: center; justify-content: center;
+    background: var(--panel); border: 1px solid var(--line); padding: 8px; border-radius: 10px; backdrop-filter: blur(8px); }
+  .group { display: flex; gap: 4px; align-items: center; padding: 0 6px; border-right: 1px solid var(--line); }
+  .group:last-child { border-right: 0; }
+  .label { font: 10px var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; }
+  button, select { font: inherit; color: var(--text); background: rgba(255,255,255,.06); border: 1px solid var(--line);
+    border-radius: 6px; padding: 5px 9px; cursor: pointer; }
+  select { max-width: 220px; }
+  button:hover, select:hover { background: rgba(255,255,255,.12); }
+  button.on { background: var(--accent); color: #1a1408; border-color: var(--accent); }
+  button kbd { font: 10px var(--mono); opacity: .55; margin-left: 4px; }
+  input[type=range] { width: 70px; accent-color: var(--accent); }
+
+  #empty { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--dim); }
+  #empty h1 { font-weight: 500; font-size: 18px; color: var(--text); margin: 0 0 8px; }
+  #empty p { margin: 4px 0; max-width: 520px; }
+  #empty code { font-family: var(--mono); color: var(--text); }
+  #toast { left: 50%; top: 14px; transform: translateX(-50%); background: var(--panel); padding: 6px 12px;
+    border-radius: 6px; opacity: 0; pointer-events: none; }
+  #toast.show { opacity: 1 !important; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame">
+    <canvas id="video" class="flip"></canvas>
+    <canvas id="mask" class="flip"></canvas>
+    <canvas id="guides"></canvas>
+  </div>
+</div>
+
+<div id="empty">
+  <div>
+    <h1>No camera yet</h1>
+    <p id="emptyMsg">Pick a source below.</p>
+  </div>
+</div>
+
+<div id="status" class="hud"><span class="dot" id="dot"></span><b id="srcName">No source</b> <span id="meta"></span></div>
+<canvas id="hist" class="hud" width="256" height="100"></canvas>
+<div id="toast" class="hud"></div>
+
+<div id="bar" class="hud">
+  <div class="group">
+    <span class="label">Source</span>
+    <select id="source"></select>
+    <button id="refresh" title="Rescan devices">↻</button>
+  </div>
+  <div class="group">
+    <span class="label">Grid</span>
+    <select id="grid">
+      <option value="off" selected>Off</option>
+      <option value="thirds">Thirds</option>
+      <option value="thirds+">Thirds + center</option>
+      <option value="quarters">4 × 4</option>
+    </select>
+    <select id="aspect" title="Crop guide">
+      <option value="off">No crop guide</option>
+      <option value="1.5">3:2</option>
+      <option value="1.7778">16:9</option>
+      <option value="2.39">2.39:1</option>
+      <option value="1">1:1</option>
+      <option value="0.8">4:5</option>
+      <option value="0.5625">9:16</option>
+    </select>
+  </div>
+  <div class="group">
+    <button id="peak" title="Focus peaking">Peaking<kbd>P</kbd></button>
+    <input id="peakLevel" type="range" min="1" max="10" value="5" title="Peaking sensitivity">
+    <select id="peakColor" title="Peaking color">
+      <option value="255,60,40">Red</option>
+      <option value="255,220,40">Yellow</option>
+      <option value="60,200,255">Cyan</option>
+      <option value="255,255,255">White</option>
+    </select>
+  </div>
+  <div class="group">
+    <button id="zebra" title="Zebra stripes on bright areas">Zebras<kbd>Z</kbd></button>
+    <select id="zebraLevel" title="Zebra threshold">
+      <option value="0.90">90%</option>
+      <option value="0.95" selected>95%</option>
+      <option value="0.99">100%</option>
+    </select>
+  </div>
+  <div class="group">
+    <button id="histBtn" class="on" title="Histogram">Histogram<kbd>H</kbd></button>
+    <button id="mirror" title="Mirror horizontally">Mirror<kbd>M</kbd></button>
+    <button id="rotate" title="Rotate 180°">Flip<kbd>R</kbd></button>
+  </div>
+  <div class="group">
+    <button id="snap" title="Save the current frame as PNG">Snapshot<kbd>S</kbd></button>
+    <button id="clean" title="Hide all controls">Clean<kbd>C</kbd></button>
+    <button id="full" title="Fullscreen">Full<kbd>F</kbd></button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const frameEl = $('frame'), videoCv = $('video'), maskCv = $('mask'), guideCv = $('guides'), histCv = $('hist');
+  const vctx = videoCv.getContext('2d'), mctx = maskCv.getContext('2d'), gctx = guideCv.getContext('2d'), hctx = histCv.getContext('2d');
+  const work = document.createElement('canvas'), wctx = work.getContext('2d', { willReadFrequently: true });
+
+  // ---- persisted settings ----------------------------------------------------
+  const KEY = 'liveview.settings';
+  const S = Object.assign({ source: '', grid: 'off', aspect: 'off', peak: false, peakLevel: 5,
+    peakColor: '255,60,40', zebra: false, zebraLevel: '0.95', hist: true, mirror: false, rotate: false },
+    (() => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } })());
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+
+  // ---- sources -----------------------------------------------------------------
+  const video = document.createElement('video');
+  video.muted = true; video.playsInline = true;
+  let stream = null, bitmap = null, frameW = 0, frameH = 0, frameSeq = 0, srcToken = 0;
+  let hasBridge = false;
+  const fpsTimes = [];
+
+  async function detectBridge() {
+    if (!/^https?:$/.test(location.protocol)) return false;
+    try { const r = await fetch('/status', { cache: 'no-store' }); return (await r.json()).bridge === true; }
+    catch { return false; }
+  }
+
+  async function listSources() {
+    const sel = $('source');
+    const opts = [];
+    if (hasBridge) opts.push({ value: 'bridge', label: 'Canon over USB (gphoto2)' });
+    if (navigator.mediaDevices?.enumerateDevices) {
+      const devices = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
+      devices.forEach((d, i) => opts.push({ value: 'dev:' + d.deviceId, label: d.label || `Camera ${i + 1}` }));
+      if (devices.length && !devices[0].label) opts.push({ value: 'ask', label: 'Allow camera access…' });
+    }
+    sel.innerHTML = '<option value="">Choose source…</option>' +
+      opts.map(o => `<option value="${o.value}">${o.label.replace(/</g, '&lt;')}</option>`).join('');
+    return opts;
+  }
+
+  // Prefer whatever the user last picked, then anything that looks like the camera.
+  function pickDefault(opts) {
+    if (opts.some(o => o.value === S.source)) return S.source;
+    const canon = opts.find(o => /canon|eos|webcam utility|hdmi|capture|cam link|usb video/i.test(o.label) && o.value !== 'ask');
+    if (canon) return canon.value;
+    if (hasBridge) return 'bridge';
+    return '';
+  }
+
+  function stopSource() {
+    srcToken++;
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    video.srcObject = null;
+    if (bitmap) { bitmap.close?.(); bitmap = null; }
+    frameW = frameH = 0;
+  }
+
+  async function useSource(value) {
+    stopSource();
+    $('source').value = value;
+    S.source = value === 'ask' ? '' : value; save();
+    const token = srcToken;
+    if (!value) return showEmpty('Pick a source below.');
+    if (value === 'ask') {
+      try { const s = await navigator.mediaDevices.getUserMedia({ video: true }); s.getTracks().forEach(t => t.stop()); }
+      catch (e) { return showEmpty('Camera access was blocked. Allow it in the browser’s site settings, then press ↻.'); }
+      const opts = await listSources();
+      return useSource(pickDefault(opts));
+    }
+    if (value === 'bridge') {
+      $('srcName').textContent = 'Canon over USB';
+      showEmpty('Waiting for the camera…');
+      bridgeLoop(token);
+      return;
+    }
+    const deviceId = value.slice(4);
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: {
+        deviceId: { exact: deviceId }, width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 60 } } });
+    } catch (e) {
+      return showEmpty(`Couldn’t open that camera (${e.name}). It may be in use by another app.`);
+    }
+    if (token !== srcToken) { stream.getTracks().forEach(t => t.stop()); return; }
+    video.srcObject = stream;
+    await video.play().catch(() => {});
+    $('srcName').textContent = stream.getVideoTracks()[0].label || 'Camera';
+    const vfc = () => { if (token !== srcToken) return; frameSeq++; tickFps(); video.requestVideoFrameCallback(vfc); };
+    if ('requestVideoFrameCallback' in video) video.requestVideoFrameCallback(vfc);
+  }
+
+  async function bridgeLoop(token) {
+    let after = 0, lastStatus = 0;
+    while (token === srcToken) {
+      try {
+        const r = await fetch(`/next.jpg?after=${after}`, { cache: 'no-store' });
+        if (token !== srcToken) return;
+        if (r.status === 200) {
+          after = +r.headers.get('X-Seq') || after + 1;
+          const bmp = await createImageBitmap(await r.blob());
+          if (token !== srcToken) { bmp.close?.(); return; }
+          bitmap?.close?.(); bitmap = bmp; frameSeq++; tickFps();
+          continue;
+        }
+        if (performance.now() - lastStatus > 2000) {
+          lastStatus = performance.now();
+          const st = await (await fetch('/status', { cache: 'no-store' })).json();
+          showEmpty('Waiting for the camera…<br><small>' + (st.log.slice(-1)[0] || st.state).replace(/</g, '&lt;') + '</small>');
+        }
+      } catch {
+        showEmpty('Lost the bridge. Is <code>bridge.py</code> still running?');
+        await new Promise(r => setTimeout(r, 1000));
+      }
+    }
+  }
+
+  function tickFps() {
+    const now = performance.now();
+    fpsTimes.push(now);
+    while (fpsTimes.length && now - fpsTimes[0] > 1000) fpsTimes.shift();
+  }
+
+  function showEmpty(msg) { $('empty').style.display = ''; $('emptyMsg').innerHTML = msg; $('dot').className = 'dot'; }
+
+  // ---- layout ------------------------------------------------------------------
+  function layout(w, h) {
+    const vw = innerWidth, vh = innerHeight;
+    const scale = Math.min(vw / w, vh / h);
+    const cw = Math.round(w * scale), ch = Math.round(h * scale);
+    frameEl.style.width = cw + 'px'; frameEl.style.height = ch + 'px';
+    const dpr = devicePixelRatio || 1;
+    // Draw the video at its native resolution (or the screen's, whichever is smaller).
+    const nw = Math.min(w, Math.round(cw * dpr)), nh = Math.round(nw * h / w);
+    if (videoCv.width !== nw || videoCv.height !== nh) { videoCv.width = nw; videoCv.height = nh; }
+    const gw = Math.round(cw * dpr), gh = Math.round(ch * dpr);
+    if (guideCv.width !== gw || guideCv.height !== gh) { guideCv.width = gw; guideCv.height = gh; guidesDirty = true; }
+  }
+
+  // ---- guides ------------------------------------------------------------------
+  let guidesDirty = true;
+  function drawGuides() {
+    const W = guideCv.width, H = guideCv.height, dpr = devicePixelRatio || 1;
+    gctx.clearRect(0, 0, W, H);
+    // Crop guide: darken outside the target aspect.
+    let x = 0, y = 0, w = W, h = H;
+    const a = parseFloat(S.aspect);
+    if (a) {
+      if (W / H > a) { w = H * a; x = (W - w) / 2; } else { h = W / a; y = (H - h) / 2; }
+      gctx.fillStyle = 'rgba(0,0,0,0.6)';
+      gctx.fillRect(0, 0, W, y); gctx.fillRect(0, y + h, W, H - y - h);
+      gctx.fillRect(0, y, x, h); gctx.fillRect(x + w, y, W - x - w, h);
+      gctx.strokeStyle = 'rgba(255,255,255,0.7)'; gctx.lineWidth = dpr;
+      gctx.strokeRect(x + .5, y + .5, w - 1, h - 1);
+    }
+    if (S.grid === 'off') return;
+    const n = S.grid === 'quarters' ? 4 : 3;
+    gctx.lineWidth = dpr;
+    const line = (x1, y1, x2, y2) => {
+      gctx.strokeStyle = 'rgba(0,0,0,0.35)'; gctx.beginPath(); gctx.moveTo(x1 + dpr, y1 + dpr); gctx.lineTo(x2 + dpr, y2 + dpr); gctx.stroke();
+      gctx.strokeStyle = 'rgba(255,255,255,0.55)'; gctx.beginPath(); gctx.moveTo(x1, y1); gctx.lineTo(x2, y2); gctx.stroke();
+    };
+    for (let i = 1; i < n; i++) {
+      const gx = Math.round(x + w * i / n) + .5, gy = Math.round(y + h * i / n) + .5;
+      line(gx, y, gx, y + h); line(x, gy, x + w, gy);
+    }
+    if (S.grid === 'thirds+') {
+      const cx = x + w / 2, cy = y + h / 2, s = Math.min(w, h) * 0.03;
+      line(cx - s, cy, cx + s, cy); line(cx, cy - s, cx, cy + s);
+    }
+  }
+
+  // ---- analysis: peaking, zebras, histogram ------------------------------------
+  let maskImg = null, zebraPhase = 0;
+  function analyse(src, w, h) {
+    const needMask = S.peak || S.zebra;
+    if (!needMask && !S.hist) return;
+    // Peaking needs detail; keep the analysis close to native width but bounded for speed.
+    const aw = Math.min(w, needMask ? 1280 : 480), ah = Math.round(aw * h / w);
+    if (work.width !== aw || work.height !== ah) { work.width = aw; work.height = ah; }
+    wctx.drawImage(src, 0, 0, aw, ah);
+    const px = wctx.getImageData(0, 0, aw, ah).data;
+    const n = aw * ah;
+    const Y = new Float32Array(n);
+    for (let i = 0, p = 0; i < n; i++, p += 4) Y[i] = 0.2126 * px[p] + 0.7152 * px[p + 1] + 0.0722 * px[p + 2];
+
+    if (S.hist) drawHistogram(px, Y, n);
+
+    if (!needMask) { mctx.clearRect(0, 0, maskCv.width, maskCv.height); return; }
+    if (maskCv.width !== aw || maskCv.height !== ah) { maskCv.width = aw; maskCv.height = ah; maskImg = null; }
+    if (!maskImg) maskImg = mctx.createImageData(aw, ah);
+    const m = maskImg.data; m.fill(0);
+
+    if (S.zebra) {
+      const thr = parseFloat(S.zebraLevel) * 255;
+      zebraPhase = (zebraPhase + 0.5) % 12;
+      const ph = zebraPhase | 0;
+      for (let yy = 0, i = 0; yy < ah; yy++) for (let xx = 0; xx < aw; xx++, i++) {
+        if (Y[i] >= thr && ((xx + yy + ph) % 12) < 5) { const q = i * 4; m[q] = m[q + 1] = m[q + 2] = 20; m[q + 3] = 200; }
+      }
+    }
+    if (S.peak) {
+      // Sobel magnitude on luma; sensitivity 1..10 maps to a falling threshold.
+      const thr = 260 - S.peakLevel * 22, thr2 = thr * thr;
+      const [r, g, b] = S.peakColor.split(',').map(Number);
+      for (let yy = 1; yy < ah - 1; yy++) {
+        let i = yy * aw + 1;
+        for (let xx = 1; xx < aw - 1; xx++, i++) {
+          const tl = Y[i - aw - 1], t = Y[i - aw], tr = Y[i - aw + 1], l = Y[i - 1], rr = Y[i + 1], bl = Y[i + aw - 1], bo = Y[i + aw], br = Y[i + aw + 1];
+          const gx = tr + 2 * rr + br - tl - 2 * l - bl, gy = bl + 2 * bo + br - tl - 2 * t - tr;
+          if (gx * gx + gy * gy > thr2) { const q = i * 4; m[q] = r; m[q + 1] = g; m[q + 2] = b; m[q + 3] = 255; }
+        }
+      }
+    }
+    mctx.putImageData(maskImg, 0, 0);
+  }
+
+  const bins = [new Uint32Array(256), new Uint32Array(256), new Uint32Array(256), new Uint32Array(256)];
+  function drawHistogram(px, Y, n) {
+    bins.forEach(b => b.fill(0));
+    const step = n > 200000 ? 3 : 1;
+    for (let i = 0; i < n; i += step) {
+      const p = i * 4;
+      bins[0][px[p]]++; bins[1][px[p + 1]]++; bins[2][px[p + 2]]++; bins[3][Y[i] | 0]++;
+    }
+    // Scale to the 99th-percentile bin so one spike (a blown sky) doesn't flatten the rest.
+    const all = [...bins[3]].sort((a, b) => a - b), peak = Math.max(1, all[252]);
+    const W = histCv.width, H = histCv.height;
+    hctx.clearRect(0, 0, W, H);
+    hctx.globalCompositeOperation = 'lighter';
+    const draw = (b, color) => {
+      hctx.fillStyle = color; hctx.beginPath(); hctx.moveTo(0, H);
+      for (let x = 0; x < 256; x++) hctx.lineTo(x * W / 255, H - Math.min(1, b[x] / peak) * (H - 4));
+      hctx.lineTo(W, H); hctx.closePath(); hctx.fill();
+    };
+    draw(bins[0], 'rgba(220,60,50,0.55)'); draw(bins[1], 'rgba(60,200,80,0.55)'); draw(bins[2], 'rgba(60,110,230,0.55)');
+    hctx.globalCompositeOperation = 'source-over';
+    hctx.strokeStyle = 'rgba(255,255,255,0.8)'; hctx.lineWidth = 1; hctx.beginPath();
+    for (let x = 0; x < 256; x++) hctx.lineTo(x * W / 255, H - Math.min(1, bins[3][x] / peak) * (H - 4));
+    hctx.stroke();
+    // Clipping warnings at either end.
+    const total = n / step;
+    if (bins[3][255] / total > 0.002) { hctx.fillStyle = '#fff'; hctx.fillRect(W - 4, 0, 4, H); }
+    if (bins[3][0] / total > 0.002) { hctx.fillStyle = '#555'; hctx.fillRect(0, 0, 4, H); }
+  }
+
+  // ---- render loop ---------------------------------------------------------------
+  let drawnSeq = -1, lastLayout = '';
+  function render() {
+    requestAnimationFrame(render);
+    let src = null, w = 0, h = 0;
+    if (stream && video.videoWidth) { src = video; w = video.videoWidth; h = video.videoHeight; }
+    else if (bitmap) { src = bitmap; w = bitmap.width; h = bitmap.height; }
+    if (!src) return;
+    const usingVfc = stream && 'requestVideoFrameCallback' in video;
+    if (stream && !usingVfc) frameSeq++;
+    const sig = `${w}x${h}@${innerWidth}x${innerHeight}`;
+    if (sig !== lastLayout) { lastLayout = sig; frameW = w; frameH = h; layout(w, h); }
+    if (guidesDirty) { guidesDirty = false; drawGuides(); }
+    if (frameSeq === drawnSeq) return;
+    drawnSeq = frameSeq;
+    if ($('empty').style.display !== 'none') { $('empty').style.display = 'none'; $('dot').className = 'dot live'; }
+    vctx.drawImage(src, 0, 0, videoCv.width, videoCv.height);
+    analyse(src, w, h);
+  }
+  setInterval(() => {
+    if (frameW) $('meta').textContent = `${frameW}×${frameH} · ${fpsTimes.length} fps`;
+  }, 500);
+
+  // ---- controls ------------------------------------------------------------------
+  const toggles = { peak: 'peak', zebra: 'zebra', histBtn: 'hist', mirror: 'mirror', rotate: 'rotate' };
+  function applyUI() {
+    for (const [id, k] of Object.entries(toggles)) $(id).classList.toggle('on', !!S[k]);
+    $('grid').value = S.grid; $('aspect').value = S.aspect; $('peakLevel').value = S.peakLevel;
+    $('peakColor').value = S.peakColor; $('zebraLevel').value = S.zebraLevel;
+    frameEl.classList.toggle('mirror', S.mirror); frameEl.classList.toggle('rotate', S.rotate);
+    document.body.classList.toggle('nohist', !S.hist);
+    histCv.style.display = S.hist ? '' : 'none';
+    if (!S.peak && !S.zebra) mctx.clearRect(0, 0, maskCv.width, maskCv.height);
+    guidesDirty = true; drawnSeq = -1; save();
+  }
+  for (const [id, k] of Object.entries(toggles)) $(id).onclick = () => { S[k] = !S[k]; applyUI(); };
+  $('grid').onchange = e => { S.grid = e.target.value; applyUI(); };
+  $('aspect').onchange = e => { S.aspect = e.target.value; applyUI(); };
+  $('peakLevel').oninput = e => { S.peakLevel = +e.target.value; applyUI(); };
+  $('peakColor').onchange = e => { S.peakColor = e.target.value; applyUI(); };
+  $('zebraLevel').onchange = e => { S.zebraLevel = e.target.value; applyUI(); };
+  $('source').onchange = e => useSource(e.target.value);
+  $('refresh').onclick = async () => { hasBridge = await detectBridge(); const o = await listSources(); $('source').value = S.source; if (!S.source) useSource(pickDefault(o)); };
+  $('full').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  $('clean').onclick = () => document.body.classList.toggle('clean');
+  $('snap').onclick = snapshot;
+
+  function snapshot() {
+    const src = stream ? video : bitmap;
+    if (!src || !frameW) return;
+    const c = document.createElement('canvas'); c.width = frameW; c.height = frameH;
+    const x = c.getContext('2d');
+    if (S.rotate) { x.translate(frameW, frameH); x.rotate(Math.PI); }
+    if (S.mirror) { x.translate(frameW, 0); x.scale(-1, 1); }
+    x.drawImage(src, 0, 0);
+    const d = new Date(), pad = n => String(n).padStart(2, '0');
+    const name = `liveview-${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.png`;
+    c.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); toast('Saved ' + name); });
+  }
+
+  let toastT;
+  function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1800); }
+
+  addEventListener('keydown', e => {
+    if (e.target.tagName === 'SELECT' || e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    const map = { p: 'peak', z: 'zebra', h: 'histBtn', m: 'mirror', r: 'rotate', s: 'snap', c: 'clean', f: 'full' };
+    if (map[k]) { $(map[k]).click(); e.preventDefault(); }
+    if (k === 'g') { const o = ['off', 'thirds', 'thirds+', 'quarters']; S.grid = o[(o.indexOf(S.grid) + 1) % o.length]; applyUI(); }
+    if (k === 'escape') document.body.classList.remove('clean');
+  });
+
+  // Hide controls and cursor after a moment of stillness.
+  let idleT;
+  const wake = () => { document.body.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => { if (!$('bar').matches(':hover')) document.body.classList.add('idle'); }, 2500); };
+  addEventListener('mousemove', wake); addEventListener('keydown', wake); wake();
+  addEventListener('resize', () => { lastLayout = ''; });
+  navigator.mediaDevices?.addEventListener?.('devicechange', () => listSources().then(() => $('source').value = S.source));
+
+  // ---- start ---------------------------------------------------------------------
+  (async () => {
+    applyUI();
+    hasBridge = await detectBridge();
+    if (!navigator.mediaDevices?.getUserMedia && !hasBridge) {
+      showEmpty('This browser can’t open cameras from here. Run <code>python3 bridge.py</code> and use the page it opens.');
+    }
+    const opts = await listSources();
+    const first = pickDefault(opts);
+    if (first) useSource(first);
+    else if (opts.some(o => o.value === 'ask')) showEmpty('Choose <b>Allow camera access…</b> under Source to see your cameras.');
+    else showEmpty('No cameras found. Plug the camera in, then press ↻.');
+    requestAnimationFrame(render);
+  })();
+})();
+</script>
+</body>
+</html>
