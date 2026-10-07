@@ -35,6 +35,8 @@ import threading
 import time
 import webbrowser
 from collections import deque
+import signal
+import urllib.request
 from urllib.parse import parse_qs, urlparse
 
 try:
@@ -478,7 +480,7 @@ def make_handler(frames, camera, life):
                         self._send(200, f.read(), "text/html; charset=utf-8")
                 elif url.path == "/status":
                     with frames.cond:
-                        body = {"bridge": True, "control": camera.control, "state": frames.state,
+                        body = {"bridge": True, "pid": os.getpid(), "control": camera.control, "state": frames.state,
                                 "frames": frames.seq, "fps": round(frames.fps, 1), "log": list(frames.log)}
                     self._json(body)
                 elif url.path == "/settings":
@@ -573,10 +575,15 @@ def main():
     try:
         server = http.server.ThreadingHTTPServer((args.host, args.port), make_handler(frames, camera, life))
     except OSError:
-        if args.app:  # already running: just bring up another window
+        if not args.app:
+            raise
+        # Something already has the port. A healthy copy of us: just open another window.
+        # A stuck one: stop it and take over.
+        if running_copy_is_healthy(url):
             open_viewer(url, app_window=True)
             return
-        raise
+        stop_stuck_copy(args.port)
+        server = http.server.ThreadingHTTPServer((args.host, args.port), make_handler(frames, camera, life))
     server.daemon_threads = True
     life.server = server
 
@@ -594,6 +601,30 @@ def main():
         print()
         life.release_camera()
     print("Camera released.", flush=True)
+    os._exit(0)  # don't let a wedged USB call hold the process open on the way out
+
+
+def running_copy_is_healthy(url):
+    try:
+        with urllib.request.urlopen(url + "status", timeout=3) as r:
+            return json.load(r).get("bridge") is True
+    except Exception:
+        return False
+
+
+def stop_stuck_copy(port):
+    print("An earlier copy is stuck, stopping it.", flush=True)
+    try:
+        out = subprocess.run(["lsof", "-ti", f"tcp:{port}", "-sTCP:LISTEN"], capture_output=True, text=True).stdout
+    except OSError:
+        out = ""
+    for pid in out.split():
+        if pid.isdigit() and int(pid) != os.getpid():
+            try:
+                os.kill(int(pid), signal.SIGKILL)
+            except OSError:
+                pass
+    time.sleep(1.5)
 
 
 def open_viewer(url, app_window=False):
@@ -629,7 +660,11 @@ def install_app():
         f.write("#!/bin/sh\n"
                 'cd "$(dirname "$0")/../Resources" || exit 1\n'
                 'mkdir -p "$HOME/Library/Logs"\n'
-                f'exec "{sys.executable}" bridge.py --app >> "$HOME/Library/Logs/{APP_NAME}.log" 2>&1\n')
+                # Start the bridge in the background and exit at once. macOS expects a
+                # running app to answer it; a script that stays running can't, so a
+                # second click would show "not responding". Each click runs this fresh.
+                f'nohup "{sys.executable}" bridge.py --app >> "$HOME/Library/Logs/{APP_NAME}.log" 2>&1 &\n'
+                "exit 0\n")
     os.chmod(launcher, 0o755)
 
     info = {
