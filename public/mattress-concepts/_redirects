@@ -1,12 +1,19 @@
 # Old Wix URLs -> new pages, so search rankings and old links carry over at
 # cutover. Cloudflare Pages reads this file; the brettboggs.dev preview ignores it.
-/rv                                     /rv-mattresses    301
-/copy-of-our-products                   /mattresses       301
-/copy-of-rv-boat                        /mattresses       301
-/copy-of-home-and-custom-mattresses-1   /adjustable-beds  301
-/copy-of-bed-boss-mattresses            /mattresses       301
-/faq                                    /visit            301
-/privacy-policy                         /                 301
-/shipping-returns                       /visit            301
-/shop                                   /mattresses       301
-/product-page/*                         /mattresses       301
+# Targets end in / because each page is a folder; without it Cloudflare adds a second hop.
+/home                                   /                    301
+/homepage                               /                    301
+/rv                                     /rv-mattresses/      301
+/copy-of-our-products                   /mattresses/         301
+/copy-of-rv-boat                        /mattresses/         301
+/copy-of-home-and-custom-mattresses-1   /adjustable-beds/    301
+/copy-of-bed-boss-mattresses            /mattresses/         301
+/faq                                    /visit/              301
+/privacy-policy                         /                    301
+/shipping-returns                       /visit/              301
+/shop                                   /mattresses/         301
+/product-page/*                         /mattresses/         301
+# Wix's sitemap addresses, so search engines find the new sitemap.
+/sitemap.xml                            /sitemap-index.xml   301
+/pages-sitemap.xml                      /sitemap-index.xml   301
+/store-products-sitemap.xml             /sitemap-index.xml   301
