@@ -1,5 +1,5 @@
 ---
-// The black sheet every page ends on.
+// The paper strip every page ends on.
 import copy from '../data/copy/home.json';
 
 const { nav, footer } = copy;
@@ -16,8 +16,8 @@ const year = new Date().getFullYear();
 <style>
   .foot {
     margin-top: clamp(80px, 10vw, 128px);
-    background: var(--ink);
-    color: #9a9a94;
+    background: var(--sheet);
+    color: var(--soft);
   }
   .foot-in {
     display: flex;
@@ -29,8 +29,7 @@ const year = new Date().getFullYear();
     padding: 1.4rem clamp(20px, 4vw, 48px) 1.6rem;
     font-family: var(--mono);
     font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    border-top: 1px solid var(--hair);
   }
   .foot p {
     max-width: none;
@@ -41,11 +40,11 @@ const year = new Date().getFullYear();
     gap: 1.6rem;
   }
   .foot a {
-    color: #9a9a94;
+    color: var(--soft);
     font-weight: 400;
     background-image: none;
   }
   .foot a:hover {
-    color: #fff;
+    color: var(--ink);
   }
 </style>

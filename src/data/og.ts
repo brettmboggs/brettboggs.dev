@@ -12,10 +12,10 @@ export type OgCard = {
 };
 
 export const cards: OgCard[] = [
-  { id: 'home', path: '/', kicker: 'Operations & systems · St. Louis', title: 'Run a tighter operation.', note: "I look at how your business actually runs, then fix what's costing you customers or time." },
-  { id: 'work', path: '/work/', kicker: '01 · Work', title: 'Work', note: 'Case studies. The problem, the build, and what came of it.' },
-  { id: 'lab', path: '/lab/', kicker: '02 · Lab', title: 'Lab', note: 'Experiments and unfinished things, allowed to be rough.' },
-  { id: 'about', path: '/about/', kicker: '03 · About', title: 'Operator turned builder.', note: 'A decade running physical operations, then the software those operations deserved. St. Louis.' },
+  { id: 'home', path: '/', kicker: 'Systems your business owns', title: 'Stop renting your business.', note: 'One system you own, in place of a stack of subscriptions.' },
+  { id: 'work', path: '/work/', kicker: 'Work', title: 'Work', note: 'Case studies. The problem, the build, and what came of it.' },
+  { id: 'lab', path: '/lab/', kicker: 'Lab', title: 'Lab', note: 'Experiments and unfinished things, allowed to be rough.' },
+  { id: 'about', path: '/about/', kicker: 'About', title: 'Operator turned builder.', note: 'A decade running physical operations, then the software those operations deserved. St. Louis.' },
   { id: 'datum', path: '/work/datum/', kicker: 'Work · Datum', title: 'One system for running a construction company.', note: 'Co-founder. Product, design and engineering, end to end.' },
   { id: 'photography', path: '/work/photography/', kicker: 'Work · Photography', title: 'Photography', note: 'Sets shot on location, mostly in whatever light was already there.' },
   { id: 'commercial', path: '/work/photography/commercial/', kicker: 'Photography · 2021 to 2023', title: 'Commercial', note: 'Detailing, a car wash chain, and the people running them.' },

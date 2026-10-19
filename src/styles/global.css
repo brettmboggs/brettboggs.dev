@@ -1,36 +1,37 @@
-/* The drawing set: design tokens and base styles (adopted 2026-10-19).
-   White sheet, engineering grid, black ink, one signal orange, blueprint blue
-   for annotation. Condensed Archivo for display, IBM Plex Mono for labels.
-   The old Golden Hour token names stay as aliases so every page that still
-   says --paper or --rust lands on the new palette without a rewrite. */
+/* The counter: design tokens and base styles (adopted 2026-10-19, replacing
+   the drawing set). A cool counter-top grey with real paper on it, near-black
+   ink, one signal orange. Anybody, set wide, for display; Hanken Grotesk for
+   reading; Martian Mono for the numbers and labels a statement would print.
+   The older token names stay as aliases so every page that still says
+   --paper, --rust or --blue lands on the new palette without a rewrite. */
 
 :root {
-  --bg: #F5F5F1;
-  --sheet: #FFFFFF;
-  --ink: #111111;
-  --ink-2: #33332F;
-  --soft: #64645E;
-  --hair: #D6D6CF;
-  --grid: #E7E7E1;
+  --bg: #E4E7EB;
+  --sheet: #FCFCFA;
+  --ink: #15171C;
+  --ink-2: #4A4F59;
+  --soft: #6B717C;
+  --hair: #C3C8D0;
+  --grid: #D7DBE1;
   --sig: #FF4F00;
   --sig-text: #C23800;
-  --blue: #1F4FD8;
+  --blue: var(--ink-2);
 
   --paper: var(--bg);
-  --paper-deep: #ECECE6;
+  --paper-deep: #D7DBE1;
   --ink-soft: var(--soft);
   --sunflower: var(--sig);
   --sienna: var(--sig-text);
   --rust: var(--sig-text);
-  --olive: var(--blue);
-  --denim: var(--blue);
+  --olive: var(--ink-2);
+  --denim: var(--ink-2);
 
-  --sans: 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif;
-  --display: var(--sans);
+  --sans: 'Hanken Grotesk Variable', 'Helvetica Neue', Arial, sans-serif;
+  --display: 'Anybody Variable', 'Arial Black', Arial, sans-serif;
   --body: var(--sans);
-  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --mono: 'Martian Mono Variable', ui-monospace, Menlo, monospace;
 
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-warm: var(--ease);
   --measure: 66ch;
 }
@@ -66,17 +67,17 @@ h1, h2, h3 {
 }
 
 h1, h2 {
-  font-weight: 800;
-  font-stretch: 70%;
-  line-height: 0.92;
-  letter-spacing: -0.005em;
-  text-transform: uppercase;
+  font-weight: 860;
+  font-stretch: 114%;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
 }
 
 h3 {
-  font-weight: 700;
-  font-stretch: 88%;
+  font-weight: 800;
+  font-stretch: 108%;
   line-height: 1.15;
+  letter-spacing: -0.015em;
 }
 
 p {
@@ -104,7 +105,7 @@ a:focus-visible {
 }
 
 a:focus-visible {
-  outline: 2px solid var(--blue);
+  outline: 2px solid var(--sig);
   outline-offset: 3px;
 }
 
@@ -143,11 +144,6 @@ a:focus-visible {
   inset: 0 calc(50% - 50vw);
   z-index: -1;
   background-color: var(--bg);
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 24px 24px;
-  background-position: -1px -1px;
 }
 
 .page-head h1 {
@@ -200,8 +196,9 @@ a:focus-visible {
 .entry-title {
   display: inline-block;
   font-family: var(--display);
-  font-weight: 750;
-  font-stretch: 82%;
+  font-weight: 820;
+  font-stretch: 110%;
+  letter-spacing: -0.02em;
   font-size: clamp(1.4rem, 2.6vw, 2rem);
   line-height: 1.1;
   transition: color 0.3s var(--ease);
@@ -475,42 +472,6 @@ a:focus-visible {
 /* plates open in the viewer */
 [data-plate] {
   cursor: zoom-in;
-}
-
-/* --- grid spotlight: near the pointer the drawing grid inks in, the way a
-   lamp picks out a patch of a drafting table. pointer and motion only; the
-   coordinates come from Base.astro. --- */
-.page-head::after,
-.spot::after {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgb(17 17 17 / 0.16) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(17 17 17 / 0.16) 1px, transparent 1px);
-  background-size: 24px 24px;
-  background-position: -1px -1px;
-  -webkit-mask-image: radial-gradient(180px circle at var(--mx, -400px) var(--my, -400px), #000 0%, transparent 100%);
-  mask-image: radial-gradient(180px circle at var(--mx, -400px) var(--my, -400px), #000 0%, transparent 100%);
-  opacity: 0;
-  transition: opacity 0.5s var(--ease);
-}
-/* own stacking context, so the z-index: -1 layers sit above the band's own
-   background and below its content */
-.page-head,
-.spot {
-  isolation: isolate;
-}
-.page-head::after {
-  inset: 0 calc(50% - 50vw);
-}
-.spot::after {
-  inset: 0;
-}
-.page-head.is-lit::after,
-.spot.is-lit::after {
-  opacity: 1;
 }
 
 /* --- sheet change: the old page lifts away, the new one settles in. the bar

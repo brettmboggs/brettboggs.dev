@@ -3,274 +3,203 @@ import Base from '../layouts/Base.astro';
 import copy from '../data/copy/home.json';
 import { md } from '../data/copy';
 
-const { hero, problems, systems, process, about, proof, pricing, contact } = copy;
-const dg = hero.diagram;
-const pad = (n: number): string => String(n).padStart(2, '0');
+const { hero, overhead, own, proof, about, process, pricing, contact } = copy;
+const st = hero.statement;
 
-// the headline sets its last word in signal orange
-const accent = hero.titleAccent;
-const lead = hero.title.endsWith(accent) ? hero.title.slice(0, -accent.length).trim() : hero.title;
+// the headline strikes one word through in signal orange
+const [before, after] = hero.title.split(hero.strike);
+const cents = (n: number): string => n.toFixed(2);
+const softTotal = st.rows.filter((r) => r.software).reduce((s, r) => s + r.amount, 0);
+const usd = (n: number): string =>
+  '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-const total = pad(6);
 const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}`;
 const contactApi = import.meta.env.PUBLIC_CONTACT_API ?? 'https://brettboggs-contact.brettmboggs.workers.dev';
 const f = contact.form;
-
-// the as-built drawing: every connector, in the order it draws
-const wires = [
-  'M230 118 V 170 H 300 V 230',
-  'M300 308 V 370 H 180 V 420',
-  'M300 370 H 420 V 420',
-  'M180 498 V 550 H 300 V 600',
-  'M420 498 V 550 H 300',
-];
-// the routes the signal runs, start to finish
-const runs = [
-  'M230 118 V 170 H 300 V 370 H 180 V 550 H 300 V 640',
-  'M230 118 V 170 H 300 V 370 H 420 V 550 H 300 V 640',
-];
-const nodes = [
-  { x: 110, y: 40, w: 240, ...dg.in, tag: 'IN', hot: true },
-  { x: 170, y: 230, w: 260, ...dg.core, tag: 'CORE', hot: false },
-  { x: 80, y: 420, w: 200, ...dg.left, tag: '', hot: false },
-  { x: 320, y: 420, w: 200, ...dg.right, tag: '', hot: false },
-  { x: 170, y: 600, w: 260, ...dg.out, tag: 'OUT', hot: true },
-];
 ---
 
-<Base title={copy.title} description={copy.description} home theme="drawing" full edit="pages/home">
+<Base title={copy.title} description={copy.description} home theme="counter" full edit="pages/home">
 
   <!-- ===================================================== hero -->
-  <section class="hero spot">
-    <div class="d-wrap hero-in">
-      <div class="hero-copy">
-        <p class="tag rise"><i aria-hidden="true"></i>{hero.eyebrow}</p>
-        <h1 class="hero-title rise" style="--d: 0.06s">
-          {lead} <span>{accent}</span>
+  <section class="hero">
+    <div class="c-wrap hero-in">
+      <div>
+        <h1 class="hero-title">
+          {before}<span class="cut">{hero.strike}</span>{after}
         </h1>
-        <p class="dim rise" style="--d: 0.14s"><span>{hero.rule}</span></p>
-        <p class="hero-lede rise" style="--d: 0.2s">{hero.lede}</p>
-        <div class="hero-acts rise" style="--d: 0.26s">
-          <a class="btn btn-sig" href="#start">{hero.cta} <span aria-hidden="true">→</span></a>
-          <a class="btn btn-line" href={hero.secondaryUrl}>{hero.secondary}</a>
+        <p class="lede">{hero.lede}</p>
+        <div class="acts">
+          <a class="btn sig" href="#start">{hero.cta} <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn ghost" href={hero.secondaryUrl}>{hero.secondary}</a>
         </div>
-        <dl class="tblock rise" style="--d: 0.32s">
-          {
-            hero.titleBlock.map((c) => (
-              <div>
-                <dt>{c.label}</dt>
-                <dd>{c.value}</dd>
-              </div>
-            ))
-          }
-        </dl>
       </div>
 
-      <figure class="drawing" id="drawing">
-        <svg viewBox="0 0 560 750" role="img" aria-labelledby="fig-title">
-          <title id="fig-title">{hero.figure}: {dg.in.name}, {dg.core.name}, {dg.left.name}, {dg.right.name}, {dg.out.name}.</title>
-          <text class="fig" x="556" y="14" text-anchor="end">{hero.figure}</text>
-
-          <!-- dimension line down the left edge -->
-          <g class="dimline">
-            <path d="M30 40 V 684 M22 40 H 38 M22 684 H 38" />
-            <text x="18" y="362" transform="rotate(-90 18 362)" text-anchor="middle">{dg.dimension}</text>
-          </g>
-
-          <g class="wires">{wires.map((d) => <path d={d} pathLength="1" />)}</g>
-          <g class="joints">
-            <circle cx="300" cy="370" r="4" />
-            <circle cx="300" cy="550" r="4" />
-          </g>
-
-          <!-- the signal runs under the boxes, so it vanishes inside each step -->
-          <g class="pulses" aria-hidden="true">
+      <!-- the finished statement is the markup; the script rewinds it and plays it once -->
+      <div class="stmt-box">
+        <div class="stmt" id="stmt">
+          <div class="stmt-top"><b>{st.card}</b><span>{st.period}</span></div>
+          <div class="rows">
             {
-              runs.map((d, i) => (
-                <circle r="4.5">
-                  <animateMotion dur="4.8s" begin="indefinite" repeatCount="indefinite" path={d} data-offset={i * 2.4} />
-                </circle>
+              st.rows.map((r) => (
+                <div class:list={['r', { sw: r.software, gone: r.software }]} data-amount={r.amount}>
+                  <span class="d">{r.date}</span>
+                  <span class="m">{r.item}</span>
+                  <span class="v">{cents(r.amount)}</span>
+                </div>
               ))
             }
-          </g>
-
-          <g class="nodes">
-            {
-              nodes.map((n) => (
-                <g class:list={['node', { hot: n.hot }]}>
-                  <rect x={n.x} y={n.y} width={n.w} height="78" />
-                  {n.tag && (
-                    <g class="ntag">
-                      <rect x={n.x + n.w - 40} y={n.y} width="40" height="16" />
-                      <text x={n.x + n.w - 20} y={n.y + 11.5} text-anchor="middle">{n.tag}</text>
-                    </g>
-                  )}
-                  <text class="nname" x={n.x + 16} y={n.y + 34}>{n.name}</text>
-                  <text class="nnote" x={n.x + 16} y={n.y + 58}>{n.note}</text>
-                </g>
-              ))
-            }
-          </g>
-
-          <g class="calls">
-            <g class="call">
-              <path d="M300 186 H 312" />
-              <rect x="312" y="174" width="244" height="24" />
-              <text x="322" y="190">① {dg.callA}</text>
-            </g>
-            <g class="call">
-              <path d="M300 678 V 704" />
-              <rect x="158" y="704" width="284" height="24" />
-              <text x="168" y="720">② {dg.callB}</text>
-            </g>
-          </g>
-        </svg>
-      </figure>
+            <div class="one" id="one">
+              <span class="d">{st.oneDate}</span>
+              <span class="m">{st.oneItem}</span>
+              <span class="v">{cents(st.oneAmount)}</span>
+            </div>
+          </div>
+          <div class="stmt-foot">
+            <div class="t"><span>{st.softLabel}</span><b id="soft">{usd(st.oneAmount)}</b></div>
+            <div class="t kept"><span>{st.keptLabel}</span><b id="kept">{usd(softTotal - st.oneAmount)}</b></div>
+          </div>
+          <div class="cancel" id="cancel" aria-hidden="true">{st.stamp}</div>
+        </div>
+        <div class="stmt-under">
+          <p>{st.caption}</p>
+          <button class="replay" id="replay" type="button">{st.replay}</button>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- ===================================================== 01 problems -->
-  <section class="sec" id="problems">
-    <div class="d-wrap">
-      <header class="sec-head">
-        <p class="sec-num">{problems.eyebrow} / {total}</p>
-        <h2>{problems.heading}</h2>
-      </header>
-      <div class="spec" role="table">
-        <div class="spec-row spec-cols" role="row">
-          <span role="columnheader">No.</span>
-          <span role="columnheader">{problems.columns[0]}</span>
-          <span role="columnheader">{problems.columns[1]}</span>
+  <!-- ===================================================== overhead -->
+  <section class="calc" id="overhead">
+    <div class="c-wrap">
+      <h2 class="h2">{overhead.heading}</h2>
+      <p class="sub">{overhead.sub}</p>
+      <div class="calc-grid">
+        <div>
+          <div class="tools" id="tools">
+            {
+              overhead.tools.map((t, i) => (
+                <label class="tool" for={`tool-${i}`}>
+                  <input type="checkbox" id={`tool-${i}`} checked={t.on} data-name={t.name} />
+                  <span class="tool-name">
+                    {t.name}
+                    <small>like {t.eg}</small>
+                  </span>
+                  <span class="price">
+                    $<input id={`price-${i}`} inputmode="decimal" value={t.price} aria-label={`${t.name} per month`} />
+                    <span>/mo</span>
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+          <div class="hours">
+            <label for="hrs">
+              <span class="lab">{overhead.hoursLabel} <output id="hrsOut">6</output></span>
+              <input id="hrs" type="range" min="0" max="40" value="6" />
+              <small>{overhead.hoursHelp}</small>
+            </label>
+            <label for="wage">
+              <span class="lab">{overhead.wageLabel} <output id="wageOut">$25</output></span>
+              <input id="wage" type="range" min="15" max="80" step="1" value="25" />
+              <small>{overhead.wageHelp}</small>
+            </label>
+          </div>
         </div>
-        {
-          problems.items.map((p, i) => (
-            <div class="spec-row" role="row">
-              <span class="spec-no" role="cell">{pad(i + 1)}</span>
-              <p class="spec-problem" role="cell">{p.problem}</p>
-              <p class="spec-fix" role="cell">{p.fix}</p>
+        <div class="tape-col" id="tapeCol">
+          <div class="printer" aria-hidden="true"></div>
+          <div class="tape" aria-live="polite">
+            <p class="tape-head">{overhead.tapeHead}</p>
+            <div class="lines" id="lines"></div>
+            <div class="sum">
+              <div class="sline"><span>{overhead.softwareLine}</span><span id="softY">$0</span></div>
+              <div class="sline"><span>{overhead.hoursLine}</span><span id="hoursY">$0</span></div>
+              <div class="big"><span>{overhead.totalLine}</span><b id="totalY">$0</b></div>
             </div>
+          </div>
+          <div class="cut-row">
+            <button class="btn sig" id="cut" type="button">{overhead.cut}</button>
+            <p>{overhead.cutNote}</p>
+          </div>
+          <div class="after">
+            <h3>{overhead.afterHeading}</h3>
+            <p>{overhead.afterBody}</p>
+            <p id="payback" data-text={overhead.afterPayback}>{overhead.afterPayback.replace('{total}', 'your total')}</p>
+            <a class="btn sig" href="#start">{hero.cta} <span class="arr" aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== ownership -->
+  <section class="own" id="own">
+    <div class="c-wrap own-in">
+      <div class="deed" id="deed">
+        <p class="deed-title">{own.certTitle}</p>
+        <p class="deed-of">{own.certOf}</p>
+        <ul>
+          {own.items.map((it) => <li><span>{it.thing}</span><em>{it.how}</em></li>)}
+        </ul>
+        <div class="seal" aria-hidden="true">{own.seal}</div>
+      </div>
+      <div>
+        <h2 class="h2">{own.heading}</h2>
+        <div class="points">
+          {own.points.map((pt) => <p><b>{pt.title}</b>{pt.body}</p>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== work -->
+  <section class="work" id="work">
+    <div class="c-wrap">
+      <h2 class="h2">{proof.heading}</h2>
+      <div class="cases">
+        {
+          proof.items.map((it) => (
+            <article class="case">
+              <a class="shot" href={it.url}>
+                <img src={it.image} alt={it.imageAlt} loading="lazy" width="1440" height="960" />
+              </a>
+              <h3>{it.name}</h3>
+              <p>{it.body}</p>
+              <div class="stub">
+                {it.replaced.map((r) => <span><s>{r}</s></span>)}
+                {it.stats.map((s) => <span>{s.value} {s.label}</span>)}
+              </div>
+              <a class="more" href={it.url}>{it.link}</a>
+            </article>
           ))
         }
       </div>
+      <a class="all" href="/work/">{proof.more} <span aria-hidden="true">→</span></a>
     </div>
   </section>
 
-  <!-- ===================================================== 02 systems -->
-  <section class="sec" id="systems">
-    <div class="d-wrap">
-      <header class="sec-head">
-        <p class="sec-num">{systems.eyebrow} / {total}</p>
-        <h2>{systems.heading}</h2>
-      </header>
-      <div class="sys-intro">
-        <p class="sys-lede">{systems.lede}</p>
+  <!-- ===================================================== about -->
+  <section class="about">
+    <div class="c-wrap about-in">
+      <img class="portrait" src={about.portrait} alt={about.portraitAlt} width="480" height="600" loading="lazy" />
+      <div>
+        <h2 class="h2">{about.heading}</h2>
+        <div class="about-body" set:html={md(about.body)} />
+        <a class="more" href={about.url}>{about.link} <span aria-hidden="true">→</span></a>
       </div>
-
-      <div class="caps">
-        <p class="caps-head">{systems.capsHeading}</p>
-        <ol class="caps-list">
-          {
-            systems.caps.map((c, i) => (
-              <li>
-                <span class="cap-no">{pad(i + 1)}</span>
-                <h3>{c.title}</h3>
-                <p>{c.body}</p>
-              </li>
-            ))
-          }
-        </ol>
-      </div>
-
-      <p class="proof-label"><span>{systems.proofLabel}</span></p>
-      <div class="dsheet project">
-        <span class="crop tl" aria-hidden="true"></span><span class="crop tr" aria-hidden="true"></span>
-        <span class="crop bl" aria-hidden="true"></span><span class="crop br" aria-hidden="true"></span>
-        <dl class="pblock">
-          {
-            systems.block.map((c) => (
-              <div>
-                <dt>{c.label}</dt>
-                <dd>{c.value}</dd>
-              </div>
-            ))
-          }
-        </dl>
-
-        <div class="map">
-          <p class="map-label">{systems.map.label}</p>
-          <div class="map-grid">
-            <ul class="map-col map-left">
-              {systems.map.left.map((n) => (
-                <li class="map-node">
-                  <span class="mn-name">{n.name}</span>
-                  <span class="mn-note">{n.note}</span>
-                </li>
-              ))}
-            </ul>
-            <div class="map-core">
-              <span class="core-tag">Core</span>
-              <span class="core-name">{systems.map.core.name}</span>
-              <span class="core-note">{systems.map.core.note}</span>
-            </div>
-            <ul class="map-col map-right">
-              {systems.map.right.map((n) => (
-                <li class="map-node">
-                  <span class="mn-name">{n.name}</span>
-                  <span class="mn-note">{n.note}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div class="map-out">
-            <p class="map-out-label">{systems.map.outLabel}</p>
-            <ul>{systems.map.out.map((o) => <li>{o}</li>)}</ul>
-          </div>
-        </div>
-
-        <div class="pspec" role="table">
-          <div class="pspec-row pspec-cols" role="row">
-            {systems.specCols.map((c) => <span role="columnheader">{c}</span>)}
-          </div>
-          {
-            systems.specs.map((r) => (
-              <div class="pspec-row" role="row">
-                <p class="pspec-cap" role="cell">{r.cap}</p>
-                <p class="pspec-detail" role="cell">{r.detail}</p>
-              </div>
-            ))
-          }
-        </div>
-
-        <dl class="sheet-foot">
-          {
-            systems.figures.map((f) => (
-              <div class="fig-cell">
-                <dt>{f.number}</dt>
-                <dd>{f.label}</dd>
-              </div>
-            ))
-          }
-        </dl>
-      </div>
-      <p class="walk"><i aria-hidden="true"></i>{systems.walk}</p>
     </div>
   </section>
 
-  <!-- ===================================================== 03 process -->
-  <section class="sec" id="process">
-    <div class="d-wrap">
-      <header class="sec-head">
-        <p class="sec-num">{process.eyebrow} / {total}</p>
-        <h2>{process.heading}</h2>
-      </header>
+  <!-- ===================================================== how it goes -->
+  <section class="how">
+    <div class="c-wrap">
+      <h2 class="h2">{process.heading}</h2>
       <ol class="steps">
         {
-          process.steps.map((s, i) => (
+          process.steps.map((s) => (
             <li class="step">
-              <span class="step-no">{pad(i + 1)}</span>
               <h3>{s.title}</h3>
-              <span class="step-tag">{s.tag}</span>
               <p>{s.body}</p>
+              <span class="t">{s.tag}</span>
             </li>
           ))
         }
@@ -278,106 +207,34 @@ const nodes = [
     </div>
   </section>
 
-  <!-- ===================================================== 04 who -->
-  <section class="sec" id="who">
-    <div class="d-wrap">
-      <header class="sec-head">
-        <p class="sec-num">{about.eyebrow} / {total}</p>
-        <h2>{about.heading}</h2>
-      </header>
-      <div class="who">
-        <figure class="who-photo">
-          <span class="crop tl" aria-hidden="true"></span><span class="crop br" aria-hidden="true"></span>
-          <img src={about.portrait} alt={about.portraitAlt} width="480" height="600" loading="lazy" decoding="async" />
-        </figure>
-        <div>
-          <div class="who-body" set:html={md(about.body)} />
-          <ol class="revs">
-            {
-              about.timeline.map((t, i) => (
-                <li>
-                  <span class="rev-no">{String.fromCharCode(65 + i)}</span>
-                  <span class="rev-role">{t.role}</span>
-                  <span class="rev-place">{t.place}</span>
-                </li>
-              ))
-            }
-          </ol>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================================================== 05 work -->
-  <section class="sec" id="work">
-    <div class="d-wrap">
-      <header class="sec-head">
-        <p class="sec-num">{proof.eyebrow} / {total}</p>
-        <h2>{proof.heading}</h2>
-      </header>
-      <div class="cases">
-        {
-          proof.items.map((c, i) => (
-            <article class="case">
-              <a class="case-shot" href={c.url} tabindex="-1" aria-hidden="true">
-                <span class="case-label">Detail {String.fromCharCode(65 + i)} · {c.name}</span>
-                <img src={c.image} alt="" width="1440" height="960" loading="lazy" decoding="async" />
-              </a>
-              <div class="case-text">
-                <p class="case-meta">{c.meta}</p>
-                <h3>{c.name}</h3>
-                <p class="case-body">{c.body}</p>
-                <dl class="case-stats">
-                  {c.stats.map((s) => (
-                    <div>
-                      <dt>{s.value}</dt>
-                      <dd>{s.label}</dd>
-                    </div>
-                  ))}
-                </dl>
-                <a class="arrow-link" href={c.url}>{c.link} →</a>
-              </div>
-            </article>
-          ))
-        }
-      </div>
-      <a class="arrow-link more" href="/work/">{proof.more} →</a>
-    </div>
-  </section>
-
-  <!-- ===================================================== 06 pricing -->
-  <section class="sec" id="pricing">
-    <div class="d-wrap">
-      <header class="sec-head">
-        <p class="sec-num">{pricing.eyebrow} / {total}</p>
-        <h2>{pricing.heading}</h2>
-      </header>
-      <div class="spec prices" role="table">
-        <div class="spec-row spec-cols" role="row">
-          {pricing.columns.map((c) => <span role="columnheader">{c}</span>)}
-        </div>
+  <!-- ===================================================== pricing -->
+  <section class="pricing" id="pricing">
+    <div class="c-wrap">
+      <h2 class="h2">{pricing.heading}</h2>
+      <div class="prices">
         {
           pricing.rows.map((r) => (
-            <div class:list={['spec-row', { top: r.name.startsWith('Company') }]} role="row">
-              <p class="price-name" role="cell">{r.name}</p>
-              <p class="price-amt" role="cell">{r.price}</p>
-              <p class="price-body" role="cell">{r.body}</p>
+            <div class="pr">
+              <h3>{r.name}</h3>
+              <p class="amt">{r.price}</p>
+              <p>{r.body}</p>
             </div>
           ))
         }
       </div>
-      {pricing.note && <p class="founding"><i aria-hidden="true"></i>{pricing.note}</p>}
     </div>
   </section>
 
-  <!-- ===================================================== close -->
+  <!-- ===================================================== contact -->
   <section class="start" id="start">
-    <div class="d-wrap start-in">
-      <h2>{contact.heading}</h2>
-      <div class="start-side">
+    <div class="c-wrap start-in">
+      <div>
+        <h2>{contact.heading}</h2>
         <p class="start-body">{contact.body}</p>
+      </div>
+      <div>
         <form class="note" id="note" action={contactApi} method="post">
-          <div class="note-pair">
+          <div class="pair">
             <label>
               <span>{f.name}</span>
               <input name="name" autocomplete="name" maxlength="200" required />
@@ -395,8 +252,8 @@ const nodes = [
             Company <input name="company" tabindex="-1" autocomplete="off" />
           </label>
           <div class="note-go">
-            <button class="btn btn-sig big" type="submit" data-sending={f.sending}>
-              <b>{f.send}</b> <span aria-hidden="true">→</span>
+            <button class="btn sig" type="submit" data-sending={f.sending}>
+              <b>{f.send}</b> <span class="arr" aria-hidden="true">→</span>
             </button>
             <p class="note-status" role="status" aria-live="polite"></p>
           </div>
@@ -413,1303 +270,1001 @@ const nodes = [
 
 <style>
   /* ================================================================
-     The drawing set: the homepage's own visual system. White sheet,
-     engineering grid, black ink, one signal orange, blueprint blue for
-     annotation. Everything else on the site keeps Golden Hour.
+     The counter: a cool counter-top grey with real paper on it. One
+     month's card statement in the hero, a register tape for the
+     overhead, a certificate for what the business ends up owning.
      ================================================================ */
-  :global(html.drawing) {
-    --bg: #f5f5f1;
-    --sheet: #ffffff;
-    --ink: #111111;
-    --ink-2: #33332f;
-    --soft: #64645e;
-    --hair: #d6d6cf;
-    --grid: #e7e7e1;
-    --sig: #ff4f00;
-    --sig-text: #c23800;
-    --blue: #1f4fd8;
-    --sans: 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif;
-    --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
-    --ease: cubic-bezier(0.22, 1, 0.36, 1);
-    scroll-padding-top: 84px;
-  }
-  :global(html.drawing body) {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--sans);
-    font-size: 1.0625rem;
-    line-height: 1.6;
-  }
-  :global(html.drawing body::after) {
-    display: none;
-  }
-  :global(html.drawing ::selection) {
-    background: var(--sig);
-    color: #fff;
-  }
-  :global(html.drawing main) {
+  :global(html.counter main) {
     min-height: 0;
   }
-  :global(html.drawing a) {
-    color: inherit;
-    font-weight: inherit;
-    background-image: none;
+  :global(html.counter .foot) {
+    margin-top: 0;
   }
-  :global(html.drawing a:focus-visible) {
-    outline: 2px solid var(--blue);
-    outline-offset: 3px;
-  }
-
-  .d-wrap {
-    max-width: 1280px;
+  .c-wrap {
+    max-width: 1240px;
     margin: 0 auto;
-    padding: 0 clamp(20px, 4vw, 48px);
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
   }
   p {
     max-width: none;
   }
-  h2,
-  h3 {
-    font-family: var(--sans);
-    font-variation-settings: normal;
-    text-wrap: balance;
+  section a {
+    background-image: none;
   }
 
-  /* --- buttons and links --- */
+  /* --- buttons --- */
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.95rem 1.35rem;
-    border: 1.5px solid var(--ink);
-    font-family: var(--sans);
-    font-weight: 650;
-    font-size: 0.98rem;
-    letter-spacing: 0.005em;
-    line-height: 1;
+    gap: 0.55rem;
+    padding: 0.9rem 1.3rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--sheet);
+    font: 600 0.98rem/1 var(--sans);
     white-space: nowrap;
+    cursor: pointer;
     transition:
-      background-color 0.3s var(--ease),
-      border-color 0.3s var(--ease),
-      color 0.3s var(--ease),
-      transform 0.3s var(--ease),
-      box-shadow 0.3s var(--ease);
+      transform 0.35s var(--ease),
+      box-shadow 0.35s var(--ease);
   }
-  .btn span {
-    transition: transform 0.3s var(--ease);
+  .btn:hover {
+    transform: translateY(-2px);
+    color: var(--sheet);
   }
-  .btn:hover span {
-    transform: translateX(4px);
+  .btn:active {
+    transform: translateY(1px) scale(0.98);
   }
-  .btn-sig {
+  .btn.sig,
+  .btn.sig:hover {
     background: var(--sig);
-    border-color: var(--sig);
     color: var(--ink);
   }
-  .btn-sig:hover {
-    box-shadow: 4px 4px 0 var(--ink);
-    transform: translate(-2px, -2px);
+  .btn.ghost,
+  .btn.ghost:hover {
+    background: transparent;
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1.5px var(--ink);
   }
-  .btn-ink {
-    background: var(--ink);
-    color: #fff;
+  .btn .arr {
+    transition: transform 0.35s var(--ease);
   }
-  .btn-ink:hover {
-    background: var(--sig);
-    border-color: var(--sig);
+  .btn:hover .arr {
+    transform: translateX(3px);
   }
-  .btn-line {
-    background: var(--bg);
+  .btn b {
+    font-weight: inherit;
   }
-  .btn-line:hover {
-    background: var(--ink);
-    color: #fff;
+  .btn:focus-visible {
+    outline: 2.5px solid var(--sig);
+    outline-offset: 3px;
   }
-  .btn.big {
-    padding: 1.2rem 1.6rem;
-    font-size: 1.1rem;
+
+  /* --- shared section type --- */
+  section {
+    padding-block: clamp(72px, 10vw, 128px);
   }
-  .arrow-link {
-    display: inline-block;
-    font-weight: 650;
-    border-bottom: 1.5px solid var(--sig);
-    padding-bottom: 2px;
-    transition: color 0.25s var(--ease);
+  .h2 {
+    font-weight: 860;
+    font-stretch: 112%;
+    font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
   }
-  .arrow-link:hover {
-    color: var(--sig-text);
+  .sub {
+    margin-top: 1rem;
+    font-size: 1.15rem;
+    color: var(--ink-2);
+    max-width: 52ch;
   }
 
   /* --- hero --- */
   .hero {
-    position: relative;
-    border-bottom: 1px solid var(--ink);
-    background-color: var(--bg);
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 24px 24px;
-    background-position: -1px -1px;
+    padding-block: clamp(32px, 6vw, 72px) clamp(48px, 7vw, 88px);
   }
   .hero-in {
     display: grid;
-    gap: 3rem;
-    padding-top: clamp(40px, 6vw, 72px);
-    padding-bottom: clamp(40px, 5vw, 64px);
-  }
-  @media (min-width: 1000px) {
-    .hero-in {
-      grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
-      gap: 0;
-      min-height: calc(100svh - 69px);
-      align-items: stretch;
-    }
-    .hero-copy {
-      padding-right: clamp(32px, 4vw, 64px);
-      border-right: 1px solid var(--ink);
-    }
-    .drawing {
-      padding-left: clamp(24px, 3vw, 48px);
-    }
-  }
-  .hero-copy {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .tag {
-    display: flex;
+    gap: 2.75rem;
     align-items: center;
-    gap: 0.6rem;
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--soft);
   }
-  .tag i {
-    flex: none;
-    width: 9px;
-    height: 9px;
-    background: var(--sig);
+  @media (min-width: 980px) {
+    .hero-in {
+      grid-template-columns: 1.05fr 1fr;
+    }
   }
   .hero-title {
-    margin-top: 1.5rem;
-    font-family: var(--sans);
-    font-variation-settings: normal;
-    font-weight: 820;
-    font-stretch: 68%;
-    font-size: clamp(3.6rem, 8vw, 7.2rem);
-    line-height: 0.86;
-    letter-spacing: -0.012em;
-    text-transform: uppercase;
-    text-wrap: balance;
+    font-weight: 880;
+    font-stretch: 118%;
+    font-size: clamp(2.9rem, 6.2vw, 5.6rem);
+    line-height: 0.9;
+    letter-spacing: -0.035em;
   }
-  .hero-title span {
-    color: var(--sig);
+  .cut {
+    position: relative;
+    white-space: nowrap;
   }
-  .dim {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-top: 1.6rem;
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--blue);
-  }
-  .dim::before,
-  .dim::after {
+  .cut::after {
     content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--blue);
+    position: absolute;
+    left: -2%;
+    right: -2%;
+    top: 52%;
+    height: 0.1em;
+    background: var(--sig);
+    transform-origin: left;
+    animation: strike 0.7s 0.5s var(--ease) both;
   }
-  .dim::before {
-    max-width: 2.5rem;
+  @keyframes strike {
+    from {
+      transform: scaleX(0);
+    }
   }
-  .hero-lede {
+  .lede {
     margin-top: 1.6rem;
-    max-width: 33rem;
-    font-size: clamp(1.08rem, 1.5vw, 1.22rem);
-    line-height: 1.55;
+    font-size: 1.25rem;
+    line-height: 1.45;
     color: var(--ink-2);
+    max-width: 34ch;
   }
-  .hero-acts {
+  .acts {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.8rem;
     margin-top: 2rem;
   }
-  .tblock {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-top: clamp(2.5rem, 5vw, 4rem);
-    border: 1px solid var(--ink);
-    background: var(--sheet);
-    font-family: var(--mono);
-  }
-  .tblock div {
-    padding: 0.55rem 0.7rem;
-    border-right: 1px solid var(--ink);
+
+  /* the statement */
+  .stmt-box {
+    position: relative;
     min-width: 0;
   }
-  .tblock div:last-child {
-    border-right: 0;
-  }
-  .tblock dt {
-    font-size: 0.56rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--soft);
-  }
-  .tblock dd {
-    margin: 0.15rem 0 0;
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .stmt {
+    position: relative;
+    background: var(--sheet);
+    color: var(--ink);
+    padding: clamp(18px, 2.6vw, 30px);
+    border-radius: 4px;
+    font: 400 0.8rem/1.5 var(--mono);
+    box-shadow:
+      0 1px 0 rgb(21 23 28 / 0.05),
+      0 40px 70px -30px rgb(40 48 64 / 0.35);
+    transform: rotate(1.4deg);
   }
   @media (max-width: 560px) {
-    .tblock {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .tblock div:nth-child(2) {
-      border-right: 0;
-    }
-    .tblock div:nth-child(-n + 2) {
-      border-bottom: 1px solid var(--ink);
+    .stmt {
+      font-size: 0.68rem;
+      transform: none;
     }
   }
-
-  /* --- the as-built drawing --- */
-  .drawing {
+  .stmt-top {
     display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .drawing svg {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    overflow: visible;
-  }
-  .fig {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    fill: var(--soft);
-  }
-  .dimline path {
-    fill: none;
-    stroke: var(--blue);
-    stroke-width: 1;
-  }
-  .dimline text {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    fill: var(--blue);
-  }
-  .wires path {
-    fill: none;
-    stroke: var(--ink);
-    stroke-width: 1.5;
-  }
-  .joints circle {
-    fill: var(--ink);
-  }
-  .pulses circle {
-    fill: var(--sig);
-    opacity: 0;
-  }
-  .node rect {
-    fill: var(--sheet);
-    stroke: var(--ink);
-    stroke-width: 1.5;
-  }
-  .node.hot > rect {
-    stroke: var(--sig);
-    stroke-width: 2;
-  }
-  .ntag rect {
-    fill: var(--ink);
-    stroke: none;
-  }
-  .node.hot .ntag rect {
-    fill: var(--sig);
-  }
-  .ntag text {
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    fill: #fff;
-  }
-  .nname {
-    font-family: var(--sans);
-    font-size: 19px;
-    font-weight: 720;
-    font-stretch: 88%;
-    fill: var(--ink);
-  }
-  .nnote {
-    font-family: var(--mono);
-    font-size: 11.5px;
-    fill: var(--soft);
-  }
-  @media (max-width: 640px) {
-    .nname {
-      font-size: 21px;
-    }
-    .nnote {
-      font-size: 12px;
-    }
-  }
-  .call path {
-    fill: none;
-    stroke: var(--blue);
-    stroke-width: 1;
-  }
-  .call rect {
-    fill: var(--bg);
-    stroke: var(--blue);
-    stroke-width: 1;
-  }
-  .call text {
-    font-family: var(--mono);
-    font-size: 10.5px;
-    fill: var(--blue);
-  }
-
-  /* --- section frame --- */
-  .sec {
-    padding: clamp(80px, 11vw, 140px) 0;
-    border-bottom: 1px solid var(--ink);
-  }
-  .sec-head {
-    display: grid;
+    justify-content: space-between;
     gap: 1rem;
-    padding-bottom: clamp(28px, 4vw, 44px);
+    padding-bottom: 12px;
+    border-bottom: 1.5px solid var(--ink);
   }
-  @media (min-width: 900px) {
-    .sec-head {
-      grid-template-columns: 200px 1fr;
-      align-items: end;
-    }
-  }
-  .sec-num {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.14em;
-    color: var(--sig-text);
-    padding-bottom: 0.6rem;
-  }
-  .sec-head h2 {
-    font-weight: 800;
-    font-stretch: 70%;
-    font-size: clamp(2.6rem, 6.2vw, 5.2rem);
-    line-height: 0.9;
-    letter-spacing: -0.005em;
+  .stmt-top b {
+    font: 850 1rem/1.1 var(--display);
+    font-stretch: 120%;
+    letter-spacing: -0.01em;
     text-transform: uppercase;
   }
-
-  /* spec tables: problems and prices */
-  .spec {
-    border-top: 2px solid var(--ink);
+  .stmt-top span {
+    color: var(--soft);
+    text-align: right;
   }
-  .spec-row {
+  .rows {
+    margin-top: 6px;
+  }
+  .r,
+  .one {
     display: grid;
-    gap: 0.4rem 2rem;
-    padding: 1.4rem 0;
-    border-bottom: 1px solid var(--ink);
-    transition: background-color 0.3s var(--ease);
+    grid-template-columns: 3.4em 1fr auto;
+    gap: 0.9rem;
   }
-  .spec-row:not(.spec-cols):hover {
-    background: var(--sheet);
+  .r {
+    position: relative;
+    padding: 6px 0;
+    border-bottom: 1px dotted var(--hair);
   }
-  .spec-cols {
-    padding: 0.7rem 0;
-    font-family: var(--mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+  .r .d {
     color: var(--soft);
   }
-  @media (min-width: 900px) {
-    #problems .spec-row {
-      grid-template-columns: 200px 1fr 1fr;
-      align-items: baseline;
-    }
+  .v {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
   }
-  @media (max-width: 899px) {
-    #problems .spec-cols {
-      display: none;
-    }
-  }
-  .spec-no {
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    color: var(--sig-text);
-  }
-  .spec-problem {
-    font-weight: 650;
-    font-stretch: 90%;
-    font-size: clamp(1.25rem, 2.1vw, 1.6rem);
-    line-height: 1.2;
-    letter-spacing: -0.005em;
-  }
-  .spec-fix {
+  .r.sw .d,
+  .r.sw .m,
+  .r.sw .v {
     position: relative;
-    padding-left: 1.6rem;
-    color: var(--ink-2);
+    z-index: 1;
   }
-  .spec-fix::before {
-    content: '→';
+  /* an orange highlighter, a little uneven, like a real one */
+  .r.sw::before {
+    content: '';
     position: absolute;
-    left: 0;
+    left: -4px;
+    right: -4px;
+    top: 4px;
+    bottom: 4px;
+    background: color-mix(in srgb, var(--sig) 38%, var(--sheet));
+    border-radius: 3px 8px 4px 9px / 7px 3px 9px 4px;
+    transform-origin: left center;
+    transform: scaleX(var(--hl, 1)) skewX(-6deg);
+  }
+  .r:global(.gone) {
+    opacity: 0.4;
+  }
+  .r:global(.gone) .m,
+  .r:global(.gone) .v {
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+  }
+  .one {
+    margin: 8px -6px 0;
+    padding: 8px 6px;
+    background: var(--ink);
+    color: var(--sheet);
+    border-radius: 4px;
+  }
+  .one .v {
     color: var(--sig);
-    font-weight: 700;
   }
-
-  /* --- systems: what gets built, then the proof --- */
-  @media (min-width: 900px) {
-    .sys-intro,
-    .caps {
-      display: grid;
-      grid-template-columns: 200px 1fr;
-      column-gap: 2rem;
-    }
-    .sys-lede {
-      grid-column: 2;
-    }
-  }
-  .sys-lede {
-    max-width: 52rem;
-    font-weight: 600;
-    font-stretch: 92%;
-    font-size: clamp(1.3rem, 2.2vw, 1.75rem);
-    line-height: 1.3;
-  }
-  .caps {
-    margin-top: clamp(40px, 6vw, 72px);
-  }
-  .caps-head {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--soft);
-    padding: 1.2rem 0 1rem;
-  }
-  .caps-list {
-    list-style: none;
-    padding: 0;
+  .stmt-foot {
     display: grid;
-    border-top: 2px solid var(--ink);
-  }
-  .caps-list li {
-    padding: 1.4rem 1.4rem 1.6rem 0;
-    border-bottom: 1px solid var(--ink);
-  }
-  @media (min-width: 700px) {
-    .caps-list {
-      grid-template-columns: repeat(6, 1fr);
-    }
-    .caps-list li {
-      grid-column: span 2;
-      padding-left: 1.4rem;
-      border-right: 1px solid var(--ink);
-    }
-    .caps-list li:nth-child(3n + 1) {
-      padding-left: 0;
-    }
-    .caps-list li:nth-child(3),
-    .caps-list li:last-child {
-      border-right: 0;
-    }
-    .caps-list li:nth-child(n + 4) {
-      grid-column: span 3;
-    }
-    .caps-list li:nth-child(4) {
-      padding-left: 0;
-    }
-  }
-  .cap-no {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--blue);
-  }
-  .caps-list h3 {
-    margin-top: 0.55rem;
-    font-weight: 720;
-    font-stretch: 85%;
-    font-size: 1.35rem;
-    line-height: 1.15;
-  }
-  .caps-list p {
-    margin-top: 0.55rem;
-    font-size: 0.98rem;
-    color: var(--ink-2);
-  }
-  .proof-label {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-top: clamp(56px, 8vw, 88px);
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--blue);
-  }
-  .proof-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--blue);
-  }
-  .dsheet {
-    position: relative;
-    margin-top: 1.6rem;
-    border: 1.5px solid var(--ink);
-    background: var(--sheet);
-  }
-  .crop {
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    border-color: var(--ink);
-    border-style: solid;
-    pointer-events: none;
-  }
-  .crop.tl {
-    top: -10px;
-    left: -10px;
-    border-width: 1.5px 0 0 1.5px;
-  }
-  .crop.tr {
-    top: -10px;
-    right: -10px;
-    border-width: 1.5px 1.5px 0 0;
-  }
-  .crop.bl {
-    bottom: -10px;
-    left: -10px;
-    border-width: 0 0 1.5px 1.5px;
-  }
-  .crop.br {
-    bottom: -10px;
-    right: -10px;
-    border-width: 0 1.5px 1.5px 0;
-  }
-
-  /* the project sheet: a title block, a map of how the departments hang off
-     one record, what it does, and the figures. no screens, no names */
-  .pblock {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    border-bottom: 1.5px solid var(--ink);
-  }
-  @media (min-width: 900px) {
-    .pblock {
-      grid-template-columns: 1.3fr 1.3fr 1.5fr 0.6fr;
-    }
-  }
-  .pblock div {
-    padding: 0.8rem 1.2rem 0.9rem;
-    border-right: 1px solid var(--ink);
-    min-width: 0;
-  }
-  .pblock div:last-child {
-    border-right: 0;
-  }
-  @media (max-width: 899px) {
-    .pblock div:nth-child(2) {
-      border-right: 0;
-    }
-    .pblock div:nth-child(-n + 2) {
-      border-bottom: 1px solid var(--ink);
-    }
-  }
-  .pblock dt {
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--soft);
-  }
-  .pblock dd {
-    margin: 0.25rem 0 0;
-    font-weight: 650;
-    font-stretch: 92%;
-    font-size: 1.02rem;
-    line-height: 1.25;
-  }
-  .pblock div:last-child dd {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-  }
-  .pblock div:last-child dd::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--sig);
-    box-shadow: 0 0 0 0 rgb(255 79 0 / 0.5);
-    animation: live 2.4s ease-out infinite;
-  }
-  @keyframes live {
-    0% {
-      box-shadow: 0 0 0 0 rgb(255 79 0 / 0.45);
-    }
-    70%,
-    100% {
-      box-shadow: 0 0 0 9px rgb(255 79 0 / 0);
-    }
-  }
-
-  .map {
-    padding: clamp(24px, 3vw, 36px) clamp(18px, 3vw, 40px) clamp(28px, 3.5vw, 40px);
-    border-bottom: 1.5px solid var(--ink);
-    background-color: var(--bg);
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-  .map-label,
-  .map-out-label {
-    font-family: var(--mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--blue);
-  }
-  .map-grid {
-    display: grid;
-    gap: 14px;
-    margin-top: 1.4rem;
-  }
-  .map-col {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-  }
-  .map-node {
-    position: relative;
-    display: grid;
-    gap: 0.2rem;
-    padding: 0.75rem 0.9rem 0.8rem;
-    border: 1.5px solid var(--ink);
-    background: var(--sheet);
-  }
-  .mn-name {
-    font-weight: 700;
-    font-stretch: 88%;
-    font-size: 1.05rem;
-    line-height: 1.15;
-  }
-  .mn-note {
-    font-family: var(--mono);
-    font-size: 0.66rem;
-    line-height: 1.45;
-    color: var(--soft);
-  }
-  .map-core {
-    position: relative;
-    display: grid;
-    gap: 0.4rem;
-    align-content: center;
-    padding: 1.6rem 1.3rem;
-    border: 2px solid var(--sig);
-    background: var(--sheet);
-    text-align: center;
-  }
-  .core-tag {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    padding: 0.12rem 0.45rem;
-    background: var(--sig);
-    color: var(--ink);
-    font-family: var(--mono);
-    font-size: 0.58rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-  .core-name {
-    font-weight: 820;
-    font-stretch: 68%;
-    font-size: clamp(2rem, 3.4vw, 2.7rem);
-    line-height: 0.9;
-    text-transform: uppercase;
-  }
-  .core-note {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    color: var(--soft);
-  }
-  @media (max-width: 899px) {
-    .map-core {
-      order: -1;
-    }
-  }
-
-  /* desktop: departments on two buses, both buses tied into the core */
-  @media (min-width: 900px) {
-    .map-grid {
-      grid-template-columns: minmax(0, 1fr) 250px minmax(0, 1fr);
-      column-gap: 72px;
-      align-items: center;
-    }
-    .map-col {
-      grid-template-columns: 1fr;
-      position: relative;
-    }
-    /* each node's stub to its bus */
-    .map-left .map-node::after,
-    .map-right .map-node::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 36px;
-      height: 1.5px;
-      background: var(--ink);
-    }
-    .map-left .map-node::after {
-      left: 100%;
-    }
-    .map-right .map-node::after {
-      right: 100%;
-    }
-    /* the buses: from the first node's centre to the last's (3 gaps of 14px) */
-    .map-col::after {
-      content: '';
-      position: absolute;
-      top: calc((100% - 42px) / 8);
-      bottom: calc((100% - 42px) / 8);
-      width: 1.5px;
-      background: var(--ink);
-    }
-    .map-left::after {
-      right: -37px;
-    }
-    .map-right::after {
-      left: -37px;
-    }
-    /* bus to core, with a joint where they meet */
-    .map-core::before,
-    .map-core::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 36px;
-      height: 1.5px;
-      background: var(--ink);
-    }
-    .map-core::before {
-      right: 100%;
-    }
-    .map-core::after {
-      left: 100%;
-    }
-    .map-grid {
-      position: relative;
-    }
-  }
-
-  .map-out {
-    margin-top: 1.6rem;
-    padding-top: 1.1rem;
-    border-top: 1px dashed var(--blue);
-  }
-  .map-out ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.7rem;
-  }
-  .map-out li {
-    padding: 0.4rem 0.65rem;
-    border: 1px solid var(--blue);
-    background: var(--sheet);
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--blue);
-  }
-
-  .pspec-row {
-    display: grid;
-    gap: 0.35rem 2rem;
-    padding: 1.1rem clamp(18px, 3vw, 40px);
-    border-bottom: 1px solid var(--ink);
-  }
-  @media (min-width: 900px) {
-    .pspec-row {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
-      align-items: baseline;
-    }
-  }
-  .pspec-cols {
-    padding-top: 0.7rem;
-    padding-bottom: 0.7rem;
-    font-family: var(--mono);
-    font-size: 0.64rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--soft);
-  }
-  @media (max-width: 899px) {
-    .pspec-cols {
-      display: none;
-    }
-  }
-  .pspec-cap {
-    font-weight: 680;
-    font-stretch: 90%;
-    font-size: 1.12rem;
-    line-height: 1.25;
-  }
-  .pspec-detail {
-    color: var(--ink-2);
-  }
-  .walk {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-top: 1.4rem;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.04em;
-    color: var(--ink-2);
-  }
-  .walk i {
-    flex: none;
-    width: 9px;
-    height: 9px;
-    background: var(--sig);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .pblock div:last-child dd::before {
-      animation: none;
-    }
-  }
-  .sheet-foot {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    margin-top: 12px;
+    padding-top: 10px;
     border-top: 1.5px solid var(--ink);
   }
-  @media (min-width: 900px) {
-    .sheet-foot {
-      grid-template-columns: repeat(4, 1fr);
-    }
+  .stmt-foot .t {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
   }
-  .fig-cell {
-    padding: 1.2rem 1.25rem 1.3rem;
-    border-right: 1px solid var(--ink);
+  .stmt-foot b {
+    font: 700 1.3rem/1 var(--mono);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
   }
-  .fig-cell:last-child {
-    border-right: 0;
+  .stmt-foot .kept {
+    color: var(--sig-text);
   }
-  @media (max-width: 899px) {
-    .fig-cell:nth-child(2) {
-      border-right: 0;
-    }
-    .fig-cell:nth-child(-n + 2) {
-      border-bottom: 1px solid var(--ink);
-    }
-  }
-  .fig-cell dt {
-    font-weight: 800;
-    font-stretch: 70%;
-    font-size: clamp(2.4rem, 4.4vw, 3.4rem);
-    line-height: 0.95;
-  }
-  .fig-cell dd {
-    margin: 0.45rem 0 0;
-    font-family: var(--mono);
-    font-size: 0.7rem;
+  .cancel {
+    position: absolute;
+    right: 9%;
+    top: 36%;
+    pointer-events: none;
+    padding: 0.35rem 0.75rem;
+    border: 3px solid var(--sig);
+    border-radius: 6px;
+    color: var(--sig-text);
+    font: 900 1.5rem/1 var(--display);
+    font-stretch: 125%;
     letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transform: rotate(-11deg);
+    opacity: 0;
+    mix-blend-mode: multiply;
+  }
+  .stmt-under {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .stmt-under p {
+    font: 400 0.7rem/1.4 var(--mono);
     color: var(--soft);
   }
+  .replay {
+    flex: none;
+    padding: 0.3rem 0;
+    border: 0;
+    background: none;
+    font: 500 0.72rem var(--mono);
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    visibility: hidden;
+  }
+  .replay:global(.on) {
+    visibility: visible;
+  }
 
-  /* --- process --- */
-  .steps {
-    list-style: none;
-    padding: 0;
+  /* --- overhead: pick the tools, the tape prints --- */
+  .calc {
+    background: var(--sheet);
+    border-radius: 28px 28px 0 0;
+  }
+  .calc-grid {
     display: grid;
-    border-top: 2px solid var(--ink);
+    gap: 3rem;
+    margin-top: 3rem;
+    align-items: start;
+  }
+  @media (min-width: 980px) {
+    .calc-grid {
+      grid-template-columns: 1.15fr 0.85fr;
+    }
+  }
+  .tools {
+    display: grid;
+    gap: 0.6rem;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  }
+  .tool {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 0.9rem;
+    border-radius: 14px;
+    background: var(--bg);
+    cursor: pointer;
+    transition:
+      background-color 0.25s,
+      box-shadow 0.25s,
+      transform 0.3s var(--ease);
+  }
+  .tool:hover {
+    transform: translateY(-1px);
+  }
+  .tool input[type='checkbox'] {
+    appearance: none;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 1.5px var(--ink-2);
+    cursor: pointer;
+  }
+  .tool input[type='checkbox']:checked {
+    background: var(--ink);
+    box-shadow: none;
+  }
+  .tool input[type='checkbox']:checked::after {
+    content: '';
+    width: 9px;
+    height: 5px;
+    border: 2px solid var(--sheet);
+    border-top: 0;
+    border-right: 0;
+    transform: translateY(-1px) rotate(-45deg);
+  }
+  .tool input[type='checkbox']:focus-visible {
+    outline: 2.5px solid var(--sig);
+    outline-offset: 2px;
+  }
+  .tool:has(input:checked) {
+    background: #fff;
+    box-shadow: inset 0 0 0 1.5px var(--ink);
+  }
+  .tool-name {
+    font-weight: 600;
+    font-size: 0.98rem;
+    line-height: 1.2;
+  }
+  .tool-name small {
+    display: block;
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: var(--soft);
+  }
+  .price {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font: 500 0.85rem var(--mono);
+    color: var(--ink-2);
+  }
+  .price input {
+    width: 4.2em;
+    padding: 0.3rem 0.35rem;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    font: inherit;
+    color: var(--ink);
+    text-align: right;
+    box-shadow: inset 0 -1.5px 0 var(--hair);
+  }
+  .price input:focus {
+    outline: none;
+    box-shadow: inset 0 -2px 0 var(--sig);
+  }
+  .hours {
+    display: grid;
+    gap: 1.2rem;
+    margin-top: 2rem;
+  }
+  @media (min-width: 640px) {
+    .hours {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .hours label {
+    display: grid;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.98rem;
+  }
+  .hours output {
+    font: 700 1.05rem var(--mono);
+  }
+  .lab {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .hours small {
+    font-weight: 400;
+    font-size: 0.82rem;
+    color: var(--soft);
+  }
+  input[type='range'] {
+    width: 100%;
+    accent-color: var(--ink);
+  }
+
+  /* the register tape */
+  .tape-col {
     position: relative;
+    min-width: 0;
+  }
+  @media (min-width: 980px) {
+    .tape-col {
+      position: sticky;
+      top: 92px;
+    }
+  }
+  .printer {
+    position: relative;
+    z-index: 2;
+    height: 18px;
+    border-radius: 10px 10px 4px 4px;
+    background: var(--ink);
+  }
+  .tape {
+    margin: -6px 14px 0;
+    padding: 22px 20px 30px;
+    background: #fff;
+    font: 400 0.78rem/1.6 var(--mono);
+    color: var(--ink);
+    filter: drop-shadow(0 14px 22px rgb(40 48 64 / 0.14));
+    -webkit-mask:
+      linear-gradient(#000 0 0) top / 100% calc(100% - 9px) no-repeat,
+      conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 9px repeat-x;
+    mask:
+      linear-gradient(#000 0 0) top / 100% calc(100% - 9px) no-repeat,
+      conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 9px repeat-x;
+    transition:
+      transform 0.9s var(--ease),
+      opacity 0.6s;
+  }
+  .tape-head {
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--hair);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--soft);
+  }
+  .lines {
+    min-height: 3rem;
+    padding: 10px 0;
+  }
+  .lines :global(.line),
+  .sline {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .lines :global(.line span:first-child),
+  .sline span:first-child {
+    text-transform: uppercase;
+  }
+  .lines :global(.line.new) {
+    animation: print 0.45s var(--ease) both;
+  }
+  @keyframes print {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+      clip-path: inset(0 0 100% 0);
+    }
+  }
+  .sum {
+    display: grid;
+    gap: 2px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--hair);
+  }
+  .big {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 2px solid var(--ink);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .big b {
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+  }
+  .cut-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.4rem;
+    padding-left: 14px;
+  }
+  .cut-row p {
+    font-size: 0.9rem;
+    color: var(--soft);
+  }
+  .after {
+    display: none;
+    margin: 1.2rem 14px 0;
+    padding: 1.4rem 1.4rem 1.5rem;
+    border-radius: 18px;
+    background: var(--ink);
+    color: var(--sheet);
+  }
+  .after h3 {
+    font-weight: 850;
+    font-stretch: 115%;
+    font-size: 1.7rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .after p {
+    margin-top: 0.7rem;
+    font-size: 0.98rem;
+    color: #c9ccd3;
+  }
+  .after .btn {
+    margin-top: 1.2rem;
+  }
+  .tape-col:global(.is-cut) .tape {
+    position: absolute;
+    left: 0;
+    right: 0;
+    transform: translateY(40px) rotate(-7deg);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .tape-col:global(.is-cut) .cut-row {
+    display: none;
+  }
+  .tape-col:global(.is-cut) .after {
+    display: block;
+    animation: lift 0.7s 0.35s var(--ease) both;
+  }
+  @keyframes lift {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+    }
+  }
+
+  /* --- ownership: a deed, not a feature grid --- */
+  .own-in {
+    display: grid;
+    gap: 3.5rem;
+    align-items: center;
+  }
+  @media (min-width: 980px) {
+    .own-in {
+      grid-template-columns: 0.9fr 1.1fr;
+    }
+  }
+  .deed {
+    position: relative;
+    padding: clamp(24px, 4vw, 44px);
+    border-radius: 6px;
+    background: var(--sheet);
+    box-shadow:
+      0 1px 0 rgb(21 23 28 / 0.05),
+      0 30px 60px -20px rgb(40 48 64 / 0.25);
+    transform: rotate(-1.2deg);
+  }
+  .deed::before {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    pointer-events: none;
+  }
+  .deed-title {
+    font-family: var(--display);
+    font-weight: 850;
+    font-stretch: 140%;
+    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .deed-of {
+    margin-top: 0.4rem;
+    font: 400 0.72rem var(--mono);
+    color: var(--soft);
+    text-align: center;
+  }
+  .deed ul {
+    display: grid;
+    gap: 0.9rem;
+    margin: 1.6rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .deed li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: baseline;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px dotted var(--hair);
+  }
+  .deed li:last-child {
+    border-bottom: 0;
+  }
+  .deed li span {
+    font-weight: 600;
+  }
+  .deed li em {
+    font: 500 0.72rem var(--mono);
+    font-style: normal;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sig-text);
+  }
+  .seal {
+    position: absolute;
+    right: -22px;
+    bottom: -48px;
+    display: grid;
+    place-items: center;
+    width: 104px;
+    height: 104px;
+    padding: 12px;
+    border: 2.5px solid var(--sig);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--sheet) 70%, transparent);
+    color: var(--sig-text);
+    font: 700 0.62rem/1.25 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    transform: rotate(-14deg);
+    transition:
+      transform 0.5s cubic-bezier(0.2, 1.6, 0.4, 1),
+      opacity 0.2s;
+  }
+  .deed:global(.unstamped) .seal {
+    transform: rotate(-14deg) scale(1.6);
+    opacity: 0;
+  }
+  @media (max-width: 560px) {
+    .seal {
+      right: 8px;
+    }
+  }
+  .points {
+    display: grid;
+    gap: 1.4rem;
+    margin-top: 2rem;
+  }
+  .points p {
+    max-width: 46ch;
+    color: var(--ink-2);
+  }
+  .points b {
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 1.1rem;
+    color: var(--ink);
+  }
+
+  /* --- work: the one dark band --- */
+  .work {
+    background: var(--ink);
+    color: var(--sheet);
+  }
+  .cases {
+    display: grid;
+    gap: 2.5rem 1.5rem;
+    margin-top: 3rem;
+  }
+  @media (min-width: 900px) {
+    .cases {
+      grid-template-columns: 1.35fr 1fr;
+    }
+  }
+  .case {
+    display: grid;
+    gap: 1.1rem;
+    align-content: start;
+  }
+  .shot {
+    display: block;
+    max-width: 100%;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: 16px;
+    background: #22252c;
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 1.2s var(--ease);
+  }
+  .case:hover .shot img {
+    transform: scale(1.03);
+  }
+  .case h3 {
+    font-weight: 820;
+    font-stretch: 112%;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    color: var(--sheet);
+  }
+  .case p {
+    max-width: 50ch;
+    color: #c9ccd3;
+  }
+  .stub {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .stub span {
+    padding: 0.45rem 0.7rem;
+    border-radius: 999px;
+    background: #23262d;
+    color: #e6e7ea;
+    font: 500 0.72rem var(--mono);
+  }
+  .stub s {
+    color: #9a9fa8;
+  }
+  .work .more,
+  .work .all {
+    justify-self: start;
+    font-weight: 600;
+    color: var(--sheet);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .work .more:hover,
+  .work .all:hover {
+    color: var(--sig);
+  }
+  .all {
+    display: inline-block;
+    margin-top: 3rem;
+  }
+
+  /* --- about --- */
+  .about-in {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .about-in {
+      grid-template-columns: 0.55fr 1fr;
+      gap: 4rem;
+    }
+  }
+  .portrait {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 16px;
+    filter: grayscale(1) contrast(1.05);
+  }
+  .about-body {
+    display: grid;
+    gap: 1rem;
+    max-width: 58ch;
+    margin-top: 1.4rem;
+    font-size: 1.08rem;
+    color: var(--ink-2);
+  }
+  .about .more {
+    display: inline-block;
+    margin-top: 1.4rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .about .more:hover {
+    color: var(--sig-text);
+  }
+
+  /* --- how it goes: one line you follow --- */
+  .how {
+    padding-top: 0;
+  }
+  .steps {
+    display: grid;
+    margin: 3rem 0 0;
+    padding: 0;
+    list-style: none;
   }
   @media (min-width: 900px) {
     .steps {
       grid-template-columns: repeat(4, 1fr);
     }
   }
-  .steps::after {
+  .step {
+    position: relative;
+    padding: 1.4rem 1.4rem 1.6rem 0;
+    border-top: 2px solid var(--ink);
+  }
+  .step::before {
     content: '';
     position: absolute;
+    top: -7px;
     left: 0;
-    right: 0;
-    top: -2px;
-    height: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+  .step:last-child::before {
     background: var(--sig);
-    transform-origin: left center;
-  }
-  .step {
-    padding: 1.6rem 1.5rem 1.8rem 0;
-    border-bottom: 1px solid var(--ink);
-  }
-  @media (min-width: 900px) {
-    .step {
-      padding: 1.8rem 1.6rem 2rem;
-      border-bottom: 0;
-      border-right: 1px solid var(--ink);
-    }
-    .step:first-child {
-      padding-left: 0;
-    }
-    .step:last-child {
-      border-right: 0;
-    }
-  }
-  .step-no {
-    display: block;
-    font-weight: 800;
-    font-stretch: 70%;
-    font-size: 3.6rem;
-    line-height: 1;
-    color: transparent;
-    -webkit-text-stroke: 1.5px var(--ink);
   }
   .step h3 {
-    margin-top: 0.9rem;
-    font-weight: 750;
-    font-stretch: 85%;
-    font-size: 1.55rem;
-    line-height: 1.1;
-  }
-  .step-tag {
-    display: inline-block;
-    margin-top: 0.7rem;
-    padding: 0.2rem 0.5rem;
-    border: 1px solid var(--blue);
-    font-family: var(--mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--blue);
+    font-weight: 820;
+    font-stretch: 112%;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
   }
   .step p {
+    max-width: 32ch;
+    margin-top: 0.5rem;
+    color: var(--ink-2);
+  }
+  .step .t {
+    display: inline-block;
     margin-top: 0.9rem;
-    color: var(--ink-2);
-    font-size: 1rem;
+    font: 500 0.72rem var(--mono);
+    color: var(--soft);
   }
 
-  /* --- who --- */
-  .who {
+  /* --- pricing --- */
+  .pricing {
+    padding-top: 0;
+  }
+  .prices {
     display: grid;
-    gap: 2.5rem 4rem;
-    align-items: start;
+    gap: 1px;
+    margin-top: 2.5rem;
+    overflow: hidden;
+    border-radius: 18px;
+    background: var(--hair);
   }
   @media (min-width: 900px) {
-    .who {
-      grid-template-columns: 200px 300px 1fr;
-    }
-    .who-photo {
-      grid-column: 2;
+    .prices {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
-  .who-photo {
-    position: relative;
-    max-width: 300px;
-    border: 1.5px solid var(--ink);
+  .pr {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+    padding: 1.6rem 1.6rem 1.8rem;
     background: var(--sheet);
-    padding: 10px;
   }
-  .who-photo img {
-    display: block;
-    width: 100%;
-    height: auto;
-    filter: grayscale(1) contrast(1.08);
+  .pr h3 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-stretch: 100%;
+    font-size: 1.05rem;
+    letter-spacing: 0;
   }
-  .who-body {
-    font-size: clamp(1.1rem, 1.6vw, 1.28rem);
-    line-height: 1.55;
-    color: var(--ink-2);
-  }
-  .who-body :global(p + p) {
-    margin-top: 1rem;
-  }
-  .who-body :global(a) {
+  .pr .amt {
     color: var(--ink);
-    font-weight: 650;
-    border-bottom: 1.5px solid var(--sig);
+    font-family: var(--display);
+    font-weight: 860;
+    font-stretch: 115%;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
   }
-  .revs {
-    list-style: none;
-    padding: 0;
-    margin-top: 2rem;
-    border-top: 1.5px solid var(--ink);
-    font-family: var(--mono);
-    font-size: 0.8rem;
-  }
-  .revs li {
-    display: grid;
-    grid-template-columns: 2.2rem 1fr auto;
-    gap: 1rem;
-    padding: 0.7rem 0;
-    border-bottom: 1px solid var(--hair);
-  }
-  .rev-no {
-    color: var(--blue);
-  }
-  .rev-place {
-    color: var(--soft);
-    text-align: right;
-  }
-  .revs li:last-child .rev-role,
-  .revs li:last-child .rev-place {
-    color: var(--sig-text);
-  }
-
-  /* --- work --- */
-  .cases {
-    display: grid;
-    gap: clamp(56px, 8vw, 96px);
-  }
-  .case {
-    display: grid;
-    gap: 2rem 4rem;
-    align-items: center;
-  }
-  @media (min-width: 900px) {
-    .case {
-      grid-template-columns: 1.15fr 1fr;
-    }
-    .case:nth-child(even) .case-shot {
-      order: 2;
-    }
-  }
-  .case-shot {
-    position: relative;
-    display: block;
-    border: 1.5px solid var(--ink);
-    background: var(--sheet);
-    padding: 10px;
-  }
-  .case-label {
-    position: absolute;
-    top: -0.75rem;
-    left: 14px;
-    z-index: 1;
-    padding: 0.15rem 0.45rem;
-    background: var(--ink);
-    color: #fff;
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .case-shot img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-  .case-meta {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--soft);
-  }
-  .case h3 {
-    margin-top: 0.6rem;
-    font-weight: 800;
-    font-stretch: 72%;
-    font-size: clamp(2rem, 3.6vw, 2.9rem);
-    line-height: 0.95;
-    text-transform: uppercase;
-  }
-  .case-body {
-    margin-top: 1rem;
+  .pr p:not(.amt) {
+    max-width: 44ch;
     color: var(--ink-2);
   }
-  .case-stats {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin: 1.6rem 0;
-    border-top: 1.5px solid var(--ink);
-    border-bottom: 1px solid var(--ink);
-  }
-  .case-stats div {
-    padding: 0.9rem 1rem 1rem 0;
-  }
-  .case-stats div + div {
-    padding-left: 1rem;
-    border-left: 1px solid var(--ink);
-  }
-  .case-stats dt {
-    font-weight: 800;
-    font-stretch: 70%;
-    font-size: clamp(1.8rem, 3vw, 2.4rem);
-    line-height: 1;
-  }
-  .case-stats dd {
-    margin: 0.4rem 0 0;
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    color: var(--soft);
-  }
-  .more {
-    margin-top: clamp(48px, 6vw, 72px);
-  }
 
-  /* --- prices --- */
-  @media (min-width: 900px) {
-    .prices .spec-row {
-      grid-template-columns: 1fr 240px 1.4fr;
-      align-items: baseline;
-    }
-  }
-  @media (max-width: 899px) {
-    .prices .spec-cols {
-      display: none;
-    }
-  }
-  .price-name {
-    font-weight: 700;
-    font-stretch: 88%;
-    font-size: 1.35rem;
-  }
-  .price-amt {
-    font-weight: 800;
-    font-stretch: 75%;
-    font-size: 1.55rem;
-    color: var(--sig-text);
-  }
-  .price-body {
-    color: var(--ink-2);
-  }
-  .spec-row.top {
-    position: relative;
-    background: var(--sheet);
-  }
-  .spec-row.top::before {
-    content: '';
-    position: absolute;
-    left: -14px;
-    top: -1px;
-    bottom: -1px;
-    width: 4px;
-    background: var(--sig);
-  }
-  .founding {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-top: 1.4rem;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    color: var(--ink-2);
-  }
-  .founding i {
-    flex: none;
-    width: 9px;
-    height: 9px;
-    background: var(--sig);
-  }
-
-  /* --- the close and the footer: one black sheet --- */
+  /* --- contact --- */
   .start {
-    background: var(--ink);
-    color: #fff;
-    padding: clamp(80px, 11vw, 140px) 0;
+    background: var(--sheet);
+    border-radius: 28px 28px 0 0;
   }
   .start-in {
     display: grid;
     gap: 2.5rem;
-    align-items: end;
   }
-  @media (min-width: 900px) {
+  @media (min-width: 980px) {
     .start-in {
-      grid-template-columns: 1.2fr 1fr;
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
     }
   }
   .start h2 {
-    font-weight: 820;
-    font-stretch: 68%;
-    font-size: clamp(3.2rem, 8vw, 7rem);
-    line-height: 0.86;
-    text-transform: uppercase;
-    color: #fff;
+    font-weight: 880;
+    font-stretch: 118%;
+    font-size: clamp(2.8rem, 6.4vw, 5.4rem);
+    line-height: 0.9;
+    letter-spacing: -0.035em;
   }
   .start-body {
+    margin-top: 1.2rem;
     font-size: 1.2rem;
-    color: #d8d8d2;
-    margin-bottom: 1.6rem;
+    color: var(--ink-2);
   }
-  .start .btn-sig:hover {
-    box-shadow: 4px 4px 0 #fff;
-  }
-  /* --- the note: the quick way in --- */
   .note {
     display: grid;
     gap: 1rem;
   }
-  .note-pair {
+  .pair {
     display: grid;
     gap: 1rem;
   }
   @media (min-width: 560px) {
-    .note-pair {
+    .pair {
       grid-template-columns: 1fr 1fr;
     }
   }
   .note label {
     display: grid;
-    gap: 0.4rem;
-  }
-  .note label > span {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #9a9a94;
+    gap: 0.35rem;
+    font-weight: 600;
+    font-size: 0.9rem;
   }
   .note input,
   .note textarea {
     width: 100%;
-    padding: 0.8rem 0.9rem;
-    border: 1.5px solid #4a4a46;
-    border-radius: 0;
-    background: #1b1b1a;
-    color: #fff;
+    padding: 0.85rem 0.95rem;
+    border: 0;
+    border-radius: 12px;
+    background: var(--bg);
     font: inherit;
+    font-weight: 400;
     font-size: 1rem;
-    transition: border-color 0.3s var(--ease);
-  }
-  .note textarea {
-    resize: vertical;
-    min-height: 7.5rem;
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1.5px transparent;
+    transition: box-shadow 0.2s;
   }
   .note input:focus,
   .note textarea:focus {
     outline: none;
-    border-color: var(--sig);
+    box-shadow: inset 0 0 0 2px var(--ink);
+  }
+  .note textarea {
+    min-height: 7rem;
+    resize: vertical;
   }
   .note-trap {
     position: absolute;
@@ -1720,118 +1275,65 @@ const nodes = [
     flex-wrap: wrap;
     align-items: center;
     gap: 1rem;
-    margin-top: 0.4rem;
-  }
-  .note button {
-    cursor: pointer;
-  }
-  .note button b {
-    font-weight: inherit;
   }
   .note button:disabled {
     opacity: 0.6;
     cursor: progress;
   }
   .note-status {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    color: #d8d8d2;
+    font: 400 0.78rem var(--mono);
+    color: var(--ink-2);
   }
   .note-error {
-    color: #ff8a57;
+    color: var(--sig-text);
   }
   .note-error a,
   .start-alt a {
+    color: inherit;
+    font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
   /* shown after a send; without script the Worker redirects to /#sent */
   .note-sent {
     display: none;
-    font-size: 1.2rem;
-    color: #fff;
-    border-left: 3px solid var(--sig);
-    padding-left: 1rem;
+    padding: 1.2rem 1.3rem;
+    border-radius: 14px;
+    background: var(--bg);
+    font-weight: 600;
+    font-size: 1.1rem;
   }
   .note-sent:focus {
     outline: none;
   }
   .note-sent:target,
-  .start.is-sent .note-sent {
+  .start:global(.is-sent) .note-sent {
     display: block;
   }
-  .start-side:has(.note-sent:target) .note,
-  .start.is-sent .note {
+  .start-in > div:has(.note-sent:target) .note,
+  .start:global(.is-sent) .note {
     display: none;
   }
   .start-alt {
-    margin-top: 1.4rem;
-    color: #d8d8d2;
+    margin-top: 1.2rem;
+    color: var(--ink-2);
   }
   .start-area {
     margin-top: 0.6rem;
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    color: #9a9a94;
-  }
-  /* the close runs straight into the shared black footer */
-  :global(html.drawing .foot) {
-    margin-top: 0;
-    border-top: 1px solid #2c2c2a;
+    font: 400 0.72rem var(--mono);
+    color: var(--soft);
   }
 
-  /* --- entrances --- */
-  .rise {
-    animation: d-rise 0.9s var(--ease) both;
-    animation-delay: var(--d, 0s);
-  }
-  @keyframes d-rise {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-  /* longhands only: see the note in global.css */
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .spec-row:not(.spec-cols),
-      .caps-list li,
-      .step,
-      .case,
-      .who,
-      .project,
-      .sec-head {
-        animation-name: d-rise;
-        animation-timing-function: linear;
-        animation-fill-mode: both;
-        animation-timeline: view();
-        animation-range: entry 0% entry 50%;
-      }
-      .steps::after {
-        animation-name: fill-rule;
-        animation-timing-function: linear;
-        animation-fill-mode: both;
-        animation-timeline: view();
-        animation-range: entry 70% cover 45%;
-      }
-    }
-  }
-  @keyframes fill-rule {
-    from {
-      transform: scaleX(0);
-    }
-    to {
-      transform: scaleX(1);
-    }
-  }
   @media (prefers-reduced-motion: reduce) {
-    .rise {
+    .cut::after,
+    .lines :global(.line.new),
+    .tape-col:global(.is-cut) .after {
       animation: none;
+    }
+    .tape,
+    .seal,
+    .btn {
+      transition: none;
     }
   }
 </style>
@@ -1839,8 +1341,145 @@ const nodes = [
 <script>
   import { gsap } from 'gsap';
 
-  // the note posts in place; without script the form posts itself and the
-  // Worker sends the browser back to /#sent
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const money = (n: number): string => '$' + Math.round(n).toLocaleString('en-US');
+  const cents = (n: number): string =>
+    '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  /* ---------------- hero: the statement reads itself, once ---------------- */
+  const sw = Array.from(document.querySelectorAll<HTMLElement>('.r.sw'));
+  const one = document.getElementById('one');
+  const cancel = document.getElementById('cancel');
+  const replay = document.getElementById('replay');
+  const softEl = document.getElementById('soft');
+  const keptEl = document.getElementById('kept');
+  const stmt = document.getElementById('stmt');
+  if (!reduced && stmt && one && cancel && replay && softEl && keptEl && sw.length) {
+    const amounts = sw.map((r) => Number(r.dataset.amount));
+    const softTotal = amounts.reduce((a, b) => a + b, 0);
+    const plan = Number(one.querySelector('.v')?.textContent ?? 0);
+    const state = { soft: plan, kept: softTotal - plan };
+    const paint = (): void => {
+      softEl.textContent = cents(state.soft);
+      keptEl.textContent = cents(state.kept);
+    };
+    const tl = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' }, onComplete: () => replay.classList.add('on') });
+    tl.call(() => {
+      sw.forEach((r) => r.classList.remove('gone'));
+      gsap.set(sw, { '--hl': 0, opacity: 1 });
+      gsap.set(one, { opacity: 0, y: 10 });
+      gsap.set(cancel, { opacity: 0, scale: 1.5 });
+      state.soft = 0;
+      state.kept = 0;
+      paint();
+      replay.classList.remove('on');
+    });
+    // the highlighter finds every software charge, the tally climbs with it
+    sw.forEach((r, i) => {
+      tl.to(r, { '--hl': 1, duration: 0.32, ease: 'power1.inOut' }, 0.3 + i * 0.2);
+      tl.to(state, { soft: amounts.slice(0, i + 1).reduce((a, b) => a + b, 0), duration: 0.25, onUpdate: paint }, 0.36 + i * 0.2);
+    });
+    tl.to(cancel, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(3)' }, '+=0.45');
+    // cancelled: the charges stay on the page, struck out, and one line takes over
+    tl.call(() => sw.forEach((r) => r.classList.add('gone')), undefined, '+=0.45');
+    tl.to(sw, { opacity: 0.4, duration: 0.45, stagger: 0.03 }, '<');
+    tl.to(cancel, { opacity: 0, duration: 0.3 }, '+=0.2');
+    tl.to(one, { opacity: 1, y: 0, duration: 0.45 }, '<');
+    tl.to(state, { soft: plan, kept: softTotal - plan, duration: 0.7, onUpdate: paint }, '<');
+
+    // play when the statement is actually on screen, once
+    const seen = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        tl.play(0);
+        seen.disconnect();
+      },
+      { threshold: 0.4 },
+    );
+    seen.observe(stmt);
+    replay.addEventListener('click', () => tl.play(0));
+  }
+
+  /* ---------------- overhead: the tape prints what's switched on ---------------- */
+  const tools = Array.from(document.querySelectorAll<HTMLLabelElement>('.tool')).map((row) => {
+    const box = row.querySelector<HTMLInputElement>('input[type=checkbox]')!;
+    const price = row.querySelector<HTMLInputElement>('.price input')!;
+    // typing a price must not toggle the row
+    price.addEventListener('click', (e) => e.preventDefault());
+    return { name: box.dataset.name ?? '', box, price };
+  });
+  const hrs = document.getElementById('hrs') as HTMLInputElement | null;
+  const wage = document.getElementById('wage') as HTMLInputElement | null;
+  const linesEl = document.getElementById('lines');
+  const totalEl = document.getElementById('totalY');
+  const payback = document.getElementById('payback');
+  let shown = new Set<string>();
+  let shownTotal = 0;
+
+  // the total rolls to its new value like a register
+  const roll = (to: number): void => {
+    if (!totalEl) return;
+    const o = { v: shownTotal };
+    shownTotal = to;
+    if (reduced) {
+      totalEl.textContent = money(to);
+      return;
+    }
+    gsap.to(o, { v: to, duration: 0.6, ease: 'power3.out', onUpdate: () => { totalEl.textContent = money(o.v); } });
+  };
+
+  const priceOf = (t: (typeof tools)[number]): number => Math.max(0, parseFloat(t.price.value) || 0);
+  function render(): void {
+    if (!linesEl || !hrs || !wage) return;
+    const on = tools.filter((t) => t.box.checked);
+    linesEl.replaceChildren(
+      ...on.map((t) => {
+        const row = document.createElement('div');
+        row.className = shown.has(t.name) ? 'line' : 'line new';
+        const name = document.createElement('span');
+        name.textContent = t.name;
+        const year = document.createElement('span');
+        year.textContent = money(priceOf(t) * 12);
+        row.append(name, year);
+        return row;
+      }),
+    );
+    shown = new Set(on.map((t) => t.name));
+    const soft = on.reduce((s, t) => s + priceOf(t) * 12, 0);
+    const lost = Number(hrs.value) * Number(wage.value) * 52;
+    document.getElementById('hrsOut')!.textContent = hrs.value;
+    document.getElementById('wageOut')!.textContent = '$' + wage.value;
+    document.getElementById('softY')!.textContent = money(soft);
+    document.getElementById('hoursY')!.textContent = money(lost);
+    roll(soft + lost);
+    if (payback) payback.textContent = (payback.dataset.text ?? '').replace('{total}', `${money(soft + lost)} a year`);
+  }
+  tools.forEach((t) => {
+    t.box.addEventListener('change', render);
+    t.price.addEventListener('input', render);
+  });
+  hrs?.addEventListener('input', render);
+  wage?.addEventListener('input', render);
+  render();
+  document.getElementById('cut')?.addEventListener('click', () => document.getElementById('tapeCol')?.classList.add('is-cut'));
+
+  /* ---------------- ownership: the seal lands when the deed is read ---------------- */
+  const deed = document.getElementById('deed');
+  if (deed && !reduced) {
+    deed.classList.add('unstamped');
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        window.setTimeout(() => deed.classList.remove('unstamped'), 450);
+        io.disconnect();
+      },
+      { threshold: 0.5 },
+    );
+    io.observe(deed);
+  }
+
+  /* ---------------- contact: the note posts in place ---------------- */
+  // without script the form posts itself and the Worker sends the browser back to /#sent
   const note = document.getElementById('note') as HTMLFormElement | null;
   if (note) {
     const button = note.querySelector('button')!;
@@ -1871,69 +1510,5 @@ const nodes = [
         label.textContent = idle;
       }
     });
-  }
-
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // the as-built drawing draws itself, then the signal starts running the
-  // handoffs. reduced motion, or no script, gets the finished drawing.
-  const drawing = document.getElementById('drawing');
-  if (drawing && !reduced) {
-    const svg = drawing.querySelector('svg')!;
-    const wires = drawing.querySelectorAll<SVGPathElement>('.wires path');
-    const dims = drawing.querySelectorAll('.dimline');
-    const nodes = drawing.querySelectorAll('.node');
-    const joints = drawing.querySelectorAll('.joints circle');
-    const calls = drawing.querySelectorAll('.call');
-    const fig = drawing.querySelector('.fig');
-
-    gsap.set(wires, { strokeDasharray: 1, strokeDashoffset: 1 });
-    gsap.set([...nodes, ...calls, ...joints, ...dims, fig], { opacity: 0 });
-    gsap.set(nodes, { y: 8 });
-
-    const start = (): void => {
-      drawing.classList.add('is-running');
-      drawing.querySelectorAll<SVGAnimationElement>('animateMotion').forEach((m) => {
-        // each dot stays hidden until its own run starts, or it waits at the origin
-        window.setTimeout(() => {
-          m.beginElement();
-          (m.parentNode as SVGElement).style.opacity = '1';
-        }, Number(m.dataset.offset ?? 0) * 1000);
-      });
-    };
-
-    const tl = gsap
-      .timeline({ paused: true, delay: 0.3, defaults: { ease: 'power3.out' } })
-      .to([fig, ...dims], { opacity: 1, duration: 0.6 })
-      .to(nodes[0], { opacity: 1, y: 0, duration: 0.5 }, '<0.1')
-      .to(wires[0], { strokeDashoffset: 0, duration: 0.55, ease: 'power2.inOut' })
-      .to(nodes[1], { opacity: 1, y: 0, duration: 0.5 }, '-=0.1')
-      .to(calls[0], { opacity: 1, duration: 0.4 }, '<')
-      .to([wires[1], wires[2]], { strokeDashoffset: 0, duration: 0.6, ease: 'power2.inOut' })
-      .to(joints[0], { opacity: 1, duration: 0.2 }, '<0.2')
-      .to([nodes[2], nodes[3]], { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 }, '-=0.15')
-      .to([wires[3], wires[4]], { strokeDashoffset: 0, duration: 0.6, ease: 'power2.inOut' })
-      .to(joints[1], { opacity: 1, duration: 0.2 }, '<0.3')
-      .to(nodes[4], { opacity: 1, y: 0, duration: 0.5 }, '-=0.1')
-      .to(calls[1], { opacity: 1, duration: 0.4 })
-      .add(start);
-
-    // draw once the drawing is actually in view; on a phone it sits below the copy
-    const seen = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        tl.play();
-        seen.disconnect();
-      },
-      { threshold: 0.3 },
-    );
-    seen.observe(drawing);
-
-    // the pulses are decoration; rest them while the drawing is off screen
-    new IntersectionObserver((entries) => {
-      if (!drawing.classList.contains('is-running')) return;
-      if (entries.some((e) => e.isIntersecting)) svg.unpauseAnimations();
-      else svg.pauseAnimations();
-    }).observe(drawing);
   }
 </script>

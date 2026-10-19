@@ -1,19 +1,17 @@
-// Builds the favicon / app-icon set from the header wordmark.
+// Builds the favicon / app-icon set from the header mark.
 // Run: node tools/make-icons.mjs
 //
-// The mark is the collapsed wordmark: roman B, italic B, sunflower period.
-// Letterforms are baked to outlines so nothing depends on Fraunces loading.
+// The mark is the collapsed name: BB in heavy Anybody, then a signal-orange
+// period, the way the header sets BRETT BOGGS. Letterforms are baked to
+// outlines so nothing depends on the font loading.
 //
-// It sits on a solid espresso tile rather than being drawn transparent. A
+// It sits on a solid ink tile rather than being drawn transparent. A
 // transparent mark has to commit to one ink colour, and whichever it picks
-// disappears against half the tab strips in the world: paper letters vanish on
-// Chrome's light tabs, ink letters vanish on a dark theme. A tile carries its
-// own contrast everywhere and reads as the site's paper-on-ink pairing.
+// disappears against half the tab strips in the world. A tile carries its own
+// contrast everywhere.
 //
-// Tracking is set per size rather than once. The header's -0.04em is right at
-// display sizes and welds the two B's into one blob at 16px, so small renders
-// open the letterspacing up and give back the counters. Fraunces is an optical
-// -size family; this is the same idea applied to the mark.
+// Tracking is set per size rather than once: tight at display sizes, opened
+// up at 16px so the two B's keep their counters instead of welding together.
 import { createRequire } from 'node:module';
 import { readFileSync, writeFileSync } from 'node:fs';
 import sharp from 'sharp';
@@ -22,26 +20,20 @@ import { pathData } from './glyph-path.mjs';
 const require = createRequire(import.meta.url);
 const opentype = require('opentype.js');
 
-const INK = '#33291C';
-const PAPER = '#F4EDDF';
-const SUNFLOWER = '#D9971E';
+const INK = '#15171C';
+const PAPER = '#FCFCFA';
+const SIGNAL = '#FF4F00';
 const UPEM = 2000;
 
 const toArrayBuffer = (b) => b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
-const load = (style) =>
-  opentype.parse(
-    toArrayBuffer(
-      readFileSync(`node_modules/@fontsource/fraunces/files/fraunces-latin-600-${style}.woff`),
-    ),
-  );
-
-const roman = load('normal');
-const italic = load('italic');
+const anybody = opentype.parse(
+  toArrayBuffer(readFileSync('node_modules/@fontsource/anybody/files/anybody-latin-900-normal.woff')),
+);
 
 const MARK = [
-  { font: roman, ch: 'B', fill: PAPER },
-  { font: italic, ch: 'B', fill: PAPER },
-  { font: roman, ch: '.', fill: SUNFLOWER },
+  { font: anybody, ch: 'B', fill: PAPER },
+  { font: anybody, ch: 'B', fill: PAPER },
+  { font: anybody, ch: '.', fill: SIGNAL },
 ];
 
 // `inset` is the share of the tile kept as margin, `track` the letterspacing in em
@@ -80,9 +72,9 @@ function svg(size, { inset, track }) {
 }
 
 // treatments, loosest tracking where the render is smallest
-const TINY = { inset: 0.05, track: 0.045 };
-const SMALL = { inset: 0.07, track: 0.02 };
-const DISPLAY = { inset: 0.14, track: -0.04 };
+const TINY = { inset: 0.06, track: 0.06 };
+const SMALL = { inset: 0.08, track: 0.03 };
+const DISPLAY = { inset: 0.16, track: -0.01 };
 
 // render at 512 then downsample: lets the resampler do the antialiasing rather
 // than the SVG rasteriser guessing at 16px

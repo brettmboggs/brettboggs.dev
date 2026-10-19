@@ -21,7 +21,7 @@ construction management, datumci.com), and a playground for experiments.
 
 ## Routes
 
-- `/` — the sales page for Brett's operations and systems practice (changed 2026-10-19 at Brett's request: he'd rather win clients than use the site as a job portfolio). It has its OWN visual system, "drawing set" (approved 2026-10-19): white sheet, engineering grid, black ink, signal orange #FF4F00, blueprint blue for annotation, Archivo (condensed via font-stretch) + IBM Plex Mono. Golden Hour still governs every other page; convert them only when Brett asks. Base takes `theme="drawing"` and `chrome={false}` for this page, which brings its own bar and footer. Copy in `src/data/copy/home.json`; the hero is an as-built SVG diagram that draws itself (GSAP) with SMIL pulses on the handoffs. Rules from Brett: lead with operations, websites are one tool among several; the construction platform (Datum) appears only as an anonymous "Project 01" sheet (title block, system map, what it does, figures): no name, no screenshots (Brett: dated, and the client stays confidential), never pitched (it has its own domain); never offer Datum-like systems to construction companies. Prices must match the consulting repo's PRICING.md. Orange buttons take ink text (white fails contrast).
+- `/` — the sales page for Brett's operations and systems practice. Rebuilt 2026-10-19 (Brett approved mockup "A2"): positioning is CUT OVERHEAD, one system the business owns in place of a stack of subscriptions; lean away from construction. Sections: hero card statement (GSAP, plays ONCE on load, no scroll-driven animation: Brett dislikes long scroll animations), overhead calculator with a register tape (tool prices are October 2026 list prices; Podium's is a third-party estimate), certificate of ownership, recent work, about, how it goes, pricing, contact form (tools/contact Worker). Copy in `src/data/copy/home.json`. Rules from Brett: the construction platform (Datum) is never pitched on the homepage; never offer Datum-like systems to construction companies; no "founding clients" line (he said it costs credibility). Prices must match the consulting repo's PRICING.md. Orange buttons take ink text (white fails contrast).
 - `/lab/film/` — The Ridge film, moved off the homepage 2026-10-19. Base's `film` prop carries the film-only layout (header over the render, floating footer, puck runway); `home` now only means "carry the identity schema".
 - `/work` — case studies, Markdown in `src/content/work/`
 - `/lab` — experiments; allowed to be rough. Each experiment is a page under `src/pages/lab/`
@@ -38,21 +38,20 @@ signed-in Edit button (never on store/checkout: strict CSP).
 Content frontmatter supports `draft: true` — drafts are filtered out of listings
 and never get pages built.
 
-## Design (current: the drawing set, site-wide since 2026-10-19)
+## Design (current: "the counter", site-wide since 2026-10-19)
 
-The whole site now runs the "drawing set" system Brett approved for the
-homepage: white sheet #F5F5F1 on a 24px engineering grid, ink #111111, one
-signal orange #FF4F00 (#C23800 for orange text), blueprint blue #1F4FD8 for
-annotation. Archivo (variable, condensed via font-stretch ~70% for uppercase
-h1/h2) + IBM Plex Mono for labels. Tokens live in src/styles/global.css; the
-old Golden Hour names (--paper, --rust, --sunflower...) are kept as ALIASES
-to the new palette, so don't reintroduce warm colours through them. Shared
-chrome: src/components/Bar.astro (sticky bar, nav, CTA, a CAD-style X/Y
-pointer readout on wide screens) and Foot.astro (black footer). Flare kept
-deliberately small: grid spotlight on .page-head and .spot bands, sheet-swap
-view transition. Dusk mode, film grain and the puck compass were retired.
-Orange buttons take ink text (white fails contrast). Lab pieces may keep
-their own art (the film and Keepsake load Fraunces themselves).
+Cool counter-top grey #E4E7EB with paper #FCFCFA on it, ink #15171C, one
+signal orange #FF4F00 (#C23800 for orange text). Anybody (variable, set wide
+via font-stretch ~112-125%, weight 850+) for display, Hanken Grotesk for body,
+Martian Mono for numbers and labels, all self-hosted via Fontsource in
+Base.astro. Tokens live in src/styles/global.css; older token names (--paper,
+--rust, --blue...) are aliases to the new palette. Shared chrome:
+src/components/Bar.astro and Foot.astro. Pill buttons, no drafting grid.
+Favicon/app icons: `node tools/make-icons.mjs`. Social cards are drawn at
+build time by src/pages/og/[id].png.ts (cards listed in src/data/og.ts);
+public/og.png is a copy of the home card. Lab pieces may keep their own art.
+The drawing set (white sheet, engineering grid, condensed Archivo) ran
+2026-10-19 for one day and was replaced.
 
 ## Golden Hour (retired 2026-10-19, kept for history)
 

@@ -103,11 +103,11 @@ collections:
         label: Hero
         widget: object
         fields:
-          - name: eyebrow
-            label: Eyebrow
-            widget: string
           - name: title
             label: Title
+            widget: string
+          - name: strike
+            label: Strike
             widget: string
           - name: lede
             label: Lede
@@ -118,134 +118,158 @@ collections:
           - name: secondary
             label: Secondary
             widget: string
-          - name: titleAccent
-            label: Title accent
-            widget: string
-          - name: rule
-            label: Rule
-            widget: string
           - name: secondaryUrl
             label: Secondary url
             widget: string
-          - name: titleBlock
-            label: Title block
-            widget: list
-            summary: '{{label}}'
-            fields:
-              - name: label
-                label: Label
-                widget: string
-              - name: value
-                label: Value
-                widget: string
-          - name: figure
-            label: Figure
-            widget: string
-          - name: diagram
-            label: Diagram
+          - name: statement
+            label: Statement
             widget: object
             fields:
-              - name: in
-                label: In
-                widget: object
-                fields:
-                  - name: name
-                    label: Name
-                    widget: string
-                  - name: note
-                    label: Note
-                    widget: string
-              - name: core
-                label: Core
-                widget: object
-                fields:
-                  - name: name
-                    label: Name
-                    widget: string
-                  - name: note
-                    label: Note
-                    widget: string
-              - name: left
-                label: Left
-                widget: object
-                fields:
-                  - name: name
-                    label: Name
-                    widget: string
-                  - name: note
-                    label: Note
-                    widget: string
-              - name: right
-                label: Right
-                widget: object
-                fields:
-                  - name: name
-                    label: Name
-                    widget: string
-                  - name: note
-                    label: Note
-                    widget: string
-              - name: out
-                label: Out
-                widget: object
-                fields:
-                  - name: name
-                    label: Name
-                    widget: string
-                  - name: note
-                    label: Note
-                    widget: string
-              - name: callA
-                label: Call a
+              - name: card
+                label: Card
                 widget: string
-              - name: callB
-                label: Call b
+              - name: period
+                label: Period
                 widget: string
-              - name: dimension
-                label: Dimension
+              - name: rows
+                label: Rows
+                widget: list
+                summary: '{{date}}'
+                fields:
+                  - name: date
+                    label: Date
+                    widget: string
+                  - name: item
+                    label: Item
+                    widget: string
+                  - name: amount
+                    label: Amount
+                    widget: number
+                    value_type: float
+                  - name: software
+                    label: Software
+                    widget: boolean
+              - name: oneDate
+                label: One date
                 widget: string
-      - name: problems
-        label: Problems
+              - name: oneItem
+                label: One item
+                widget: string
+              - name: oneAmount
+                label: One amount
+                widget: number
+                value_type: float
+              - name: softLabel
+                label: Soft label
+                widget: string
+              - name: keptLabel
+                label: Kept label
+                widget: string
+              - name: stamp
+                label: Stamp
+                widget: string
+              - name: caption
+                label: Caption
+                widget: string
+              - name: replay
+                label: Replay
+                widget: string
+      - name: overhead
+        label: Overhead
         widget: object
         fields:
-          - name: eyebrow
-            label: Eyebrow
-            widget: string
           - name: heading
             label: Heading
+            widget: string
+          - name: sub
+            label: Sub
+            widget: string
+          - name: tools
+            label: Tools
+            widget: list
+            summary: '{{name}}'
+            fields:
+              - name: name
+                label: Name
+                widget: string
+              - name: eg
+                label: Eg
+                widget: string
+              - name: price
+                label: Price
+                widget: number
+                value_type: float
+              - name: on
+                label: On
+                widget: boolean
+          - name: hoursLabel
+            label: Hours label
+            widget: string
+          - name: hoursHelp
+            label: Hours help
+            widget: string
+          - name: wageLabel
+            label: Wage label
+            widget: string
+          - name: wageHelp
+            label: Wage help
+            widget: string
+          - name: tapeHead
+            label: Tape head
+            widget: string
+          - name: softwareLine
+            label: Software line
+            widget: string
+          - name: hoursLine
+            label: Hours line
+            widget: string
+          - name: totalLine
+            label: Total line
+            widget: string
+          - name: cut
+            label: Cut
+            widget: string
+          - name: cutNote
+            label: Cut note
+            widget: string
+          - name: afterHeading
+            label: After heading
+            widget: string
+          - name: afterBody
+            label: After body
+            widget: text
+          - name: afterPayback
+            label: After payback
+            widget: string
+      - name: own
+        label: Own
+        widget: object
+        fields:
+          - name: heading
+            label: Heading
+            widget: string
+          - name: certTitle
+            label: Cert title
+            widget: string
+          - name: certOf
+            label: Cert of
             widget: string
           - name: items
             label: Items
             widget: list
-            summary: '{{problem}}'
+            summary: '{{thing}}'
             fields:
-              - name: problem
-                label: Problem
+              - name: thing
+                label: Thing
                 widget: string
-              - name: fix
-                label: Fix
+              - name: how
+                label: How
                 widget: string
-          - name: columns
-            label: Columns
-            widget: list
-      - name: systems
-        label: Systems
-        widget: object
-        fields:
-          - name: eyebrow
-            label: Eyebrow
+          - name: seal
+            label: Seal
             widget: string
-          - name: heading
-            label: Heading
-            widget: string
-          - name: lede
-            label: Lede
-            widget: text
-          - name: capsHeading
-            label: Caps heading
-            widget: string
-          - name: caps
-            label: Caps
+          - name: points
+            label: Points
             widget: list
             summary: '{{title}}'
             fields:
@@ -254,155 +278,11 @@ collections:
                 widget: string
               - name: body
                 label: Body
-                widget: text
-          - name: proofLabel
-            label: Proof label
-            widget: string
-          - name: figures
-            label: Figures
-            widget: list
-            summary: '{{number}}'
-            fields:
-              - name: number
-                label: Number
-                widget: string
-              - name: label
-                label: Label
-                widget: string
-          - name: block
-            label: Block
-            widget: list
-            summary: '{{label}}'
-            fields:
-              - name: label
-                label: Label
-                widget: string
-              - name: value
-                label: Value
-                widget: string
-          - name: map
-            label: Map
-            widget: object
-            fields:
-              - name: label
-                label: Label
-                widget: string
-              - name: core
-                label: Core
-                widget: object
-                fields:
-                  - name: name
-                    label: Name
-                    widget: string
-                  - name: note
-                    label: Note
-                    widget: string
-              - name: left
-                label: Left
-                widget: list
-                summary: '{{name}}'
-                fields:
-                  - name: name
-                    label: Name
-                    widget: string
-                  - name: note
-                    label: Note
-                    widget: string
-              - name: right
-                label: Right
-                widget: list
-                summary: '{{name}}'
-                fields:
-                  - name: name
-                    label: Name
-                    widget: string
-                  - name: note
-                    label: Note
-                    widget: string
-              - name: outLabel
-                label: Out label
-                widget: string
-              - name: out
-                label: Out
-                widget: list
-          - name: specCols
-            label: Spec cols
-            widget: list
-          - name: specs
-            label: Specs
-            widget: list
-            summary: '{{cap}}'
-            fields:
-              - name: cap
-                label: Cap
-                widget: string
-              - name: detail
-                label: Detail
-                widget: text
-          - name: walk
-            label: Walk
-            widget: string
-      - name: process
-        label: Process
-        widget: object
-        fields:
-          - name: eyebrow
-            label: Eyebrow
-            widget: string
-          - name: heading
-            label: Heading
-            widget: string
-          - name: steps
-            label: Steps
-            widget: list
-            summary: '{{title}}'
-            fields:
-              - name: title
-                label: Title
-                widget: string
-              - name: body
-                label: Body
-                widget: text
-              - name: tag
-                label: Tag
-                widget: string
-      - name: about
-        label: About
-        widget: object
-        fields:
-          - name: eyebrow
-            label: Eyebrow
-            widget: string
-          - name: heading
-            label: Heading
-            widget: string
-          - name: body
-            label: Body
-            widget: markdown
-          - name: portrait
-            label: Portrait
-            widget: image
-          - name: portraitAlt
-            label: Portrait alt
-            widget: string
-          - name: timeline
-            label: Timeline
-            widget: list
-            summary: '{{role}}'
-            fields:
-              - name: role
-                label: Role
-                widget: string
-              - name: place
-                label: Place
                 widget: string
       - name: proof
         label: Proof
         widget: object
         fields:
-          - name: eyebrow
-            label: Eyebrow
-            widget: string
           - name: heading
             label: Heading
             widget: string
@@ -433,7 +313,7 @@ collections:
                     widget: string
               - name: image
                 label: Image
-                widget: image
+                widget: string
               - name: imageAlt
                 label: Image alt
                 widget: string
@@ -443,16 +323,59 @@ collections:
               - name: url
                 label: Url
                 widget: string
+              - name: replaced
+                label: Replaced
+                widget: list
           - name: more
             label: More
             widget: string
+      - name: about
+        label: About
+        widget: object
+        fields:
+          - name: heading
+            label: Heading
+            widget: string
+          - name: body
+            label: Body
+            widget: text
+          - name: portrait
+            label: Portrait
+            widget: string
+          - name: portraitAlt
+            label: Portrait alt
+            widget: string
+          - name: link
+            label: Link
+            widget: string
+          - name: url
+            label: Url
+            widget: string
+      - name: process
+        label: Process
+        widget: object
+        fields:
+          - name: heading
+            label: Heading
+            widget: string
+          - name: steps
+            label: Steps
+            widget: list
+            summary: '{{title}}'
+            fields:
+              - name: title
+                label: Title
+                widget: string
+              - name: body
+                label: Body
+                widget: string
+              - name: tag
+                label: Tag
+                widget: string
       - name: pricing
         label: Pricing
         widget: object
         fields:
-          - name: eyebrow
-            label: Eyebrow
-            widget: string
           - name: heading
             label: Heading
             widget: string
@@ -470,12 +393,6 @@ collections:
               - name: body
                 label: Body
                 widget: string
-          - name: note
-            label: Note
-            widget: string
-          - name: columns
-            label: Columns
-            widget: list
       - name: contact
         label: Contact
         widget: object
@@ -491,28 +408,28 @@ collections:
             widget: object
             fields:
               - name: name
-                label: Name label
+                label: Name
                 widget: string
               - name: email
-                label: Email label
+                label: Email
                 widget: string
               - name: message
-                label: Message label
+                label: Message
                 widget: string
               - name: send
-                label: Send button
+                label: Send
                 widget: string
               - name: sending
-                label: While sending
+                label: Sending
                 widget: string
               - name: sent
-                label: After sending
+                label: Sent
                 widget: string
               - name: error
-                label: If it fails
+                label: Error
                 widget: string
               - name: alt
-                label: Email instead line
+                label: Alt
                 widget: string
           - name: email
             label: Email
@@ -523,9 +440,6 @@ collections:
           - name: area
             label: Area
             widget: string
-          - name: secondary
-            label: Secondary
-            widget: text
       - name: nav
         label: Nav
         widget: object

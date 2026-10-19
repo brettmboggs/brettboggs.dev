@@ -1,5 +1,5 @@
 // One social card per page, drawn at build time in the site's own type and
-// drawing-set look.
+// counter look.
 // satori lays the card out from a plain element tree and returns SVG with the
 // glyphs already outlined; sharp rasterises it. No browser, no service, no
 // runtime: the PNGs are just files in the build.
@@ -16,85 +16,84 @@ export const getStaticPaths: GetStaticPaths = () =>
 // static cuts of the fonts the site already ships; satori reads woff, not woff2
 const font = (p: string) => readFile(path.resolve(process.cwd(), 'node_modules', p));
 const fonts = Promise.all([
-  font('@fontsource/archivo/files/archivo-latin-800-normal.woff'),
-  font('@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff'),
+  font('@fontsource/anybody/files/anybody-latin-900-normal.woff'),
+  font('@fontsource/hanken-grotesk/files/hanken-grotesk-latin-400-normal.woff'),
+  font('@fontsource/martian-mono/files/martian-mono-latin-400-normal.woff'),
 ]);
 
-// the drawing set: white sheet, grid, ink, one signal orange, blueprint blue
-const BG = '#F5F5F1';
-const GRID = '#E4E4DE';
-const INK = '#111111';
-const SOFT = '#5F5F59';
+// the counter: cool counter-top grey, paper, ink, one signal orange
+const BG = '#E4E7EB';
+const SHEET = '#FCFCFA';
+const INK = '#15171C';
+const SOFT = '#6B717C';
+const HAIR = '#C3C8D0';
 const SIG = '#FF4F00';
-const BLUE = '#1F4FD8';
+const HIGHLIGHT = '#FFC2A6';
 
 type Style = Record<string, string | number>;
 type Node = { type: string; props: { style?: Style; children?: unknown } };
 const el = (type: string, style: Style, children?: unknown): Node => ({ type, props: { style, children } });
 
+// the homepage card carries a corner of the statement the hero reads
+const statement = (): Node => {
+  const row = (item: string, amount: string, gone: boolean): Node =>
+    el('div', { display: 'flex', justifyContent: 'space-between', padding: '7px 8px', marginBottom: 4, borderRadius: 4, backgroundColor: gone ? HIGHLIGHT : 'transparent', color: gone ? SOFT : INK, textDecoration: gone ? 'line-through' : 'none' }, [
+      el('span', { display: 'flex' }, item),
+      el('span', { display: 'flex' }, amount),
+    ]);
+  return el('div', { display: 'flex', flexDirection: 'column', width: 400, padding: '26px 26px 22px', backgroundColor: SHEET, borderRadius: 6, fontFamily: 'Martian Mono', fontSize: 15, transform: 'rotate(2deg)', boxShadow: '0 30px 60px rgba(40,48,64,0.28)' }, [
+    el('div', { display: 'flex', justifyContent: 'space-between', paddingBottom: 12, marginBottom: 10, borderBottom: `2px solid ${INK}` }, [
+      el('span', { display: 'flex', fontFamily: 'Anybody', fontSize: 18, textTransform: 'uppercase' }, 'Business card'),
+      el('span', { display: 'flex', color: SOFT, fontSize: 13 }, 'October'),
+    ]),
+    row('Scheduling app', '189.00', true),
+    row('Accounting', '85.00', true),
+    row('Fuel', '86.40', false),
+    row('Reviews and texting', '399.00', true),
+    row('Website builder', '39.00', true),
+    el('div', { display: 'flex', justifyContent: 'space-between', padding: '9px 10px', marginTop: 6, borderRadius: 4, backgroundColor: INK, color: SHEET }, [
+      el('span', { display: 'flex' }, 'Your own system'),
+      el('span', { display: 'flex', color: SIG }, '400.00'),
+    ]),
+  ]);
+};
+
 export const GET: APIRoute = async ({ props }) => {
   const card = props.card as OgCard;
-  const [archivo, mono] = await fonts;
-  const long = card.title.length > 24;
-
-  const cell = (label: string, value: string, last = false): Node =>
-    el('div', { display: 'flex', flexDirection: 'column', padding: '10px 16px', borderRight: last ? 'none' : `2px solid ${INK}`, flexGrow: 1 }, [
-      el('div', { display: 'flex', fontSize: 13, letterSpacing: 3, color: SOFT }, label),
-      el('div', { display: 'flex', marginTop: 4, fontSize: 18, color: INK }, value),
-    ]);
+  const [anybody, hanken, mono] = await fonts;
+  const home = card.id === 'home';
+  const long = card.title.length > (home ? 16 : 24);
 
   const tree = el(
     'div',
     {
       display: 'flex',
-      flexDirection: 'column',
       width: '100%',
       height: '100%',
       backgroundColor: BG,
-      backgroundImage: `linear-gradient(${GRID} 1px, transparent 1px), linear-gradient(90deg, ${GRID} 1px, transparent 1px)`,
-      backgroundSize: '30px 30px',
-      padding: '56px 72px 52px',
-      fontFamily: 'Plex Mono',
+      padding: '58px 72px 54px',
+      fontFamily: 'Hanken Grotesk',
       color: INK,
     },
     [
-      el('div', { display: 'flex', justifyContent: 'space-between', alignItems: 'center' }, [
-        el('div', { display: 'flex', alignItems: 'center', fontSize: 20, letterSpacing: 4, textTransform: 'uppercase', color: SOFT }, [
-          el('div', { display: 'flex', width: 14, height: 14, backgroundColor: SIG, marginRight: 14 }),
-          card.kicker,
-        ]),
-        el('div', { display: 'flex', fontFamily: 'Archivo', fontSize: 30, letterSpacing: 0, textTransform: 'uppercase' }, [
+      el('div', { display: 'flex', flexDirection: 'column', flexGrow: 1, flexShrink: 1, minWidth: 0 }, [
+        el('div', { display: 'flex', fontFamily: 'Anybody', fontSize: 28, textTransform: 'uppercase' }, [
           el('span', { display: 'flex' }, 'Brett Boggs'),
           el('span', { display: 'flex', color: SIG }, '.'),
         ]),
-      ]),
-      el(
-        'div',
-        { display: 'flex', flexGrow: 1, alignItems: 'center' },
+        el('div', { display: 'flex', marginTop: 10, fontFamily: 'Martian Mono', fontSize: 16, color: SOFT, textTransform: 'uppercase', letterSpacing: 1 }, card.kicker),
         el(
           'div',
-          {
-            display: 'flex',
-            fontFamily: 'Archivo',
-            fontSize: long ? 78 : 112,
-            lineHeight: 0.95,
-            letterSpacing: -2,
-            textTransform: 'uppercase',
-            maxWidth: 1040,
-          },
-          card.title,
+          { display: 'flex', flexGrow: 1, alignItems: 'center' },
+          el('div', { display: 'flex', fontFamily: 'Anybody', fontSize: long ? 72 : home ? 92 : 104, lineHeight: 0.95, letterSpacing: -3, maxWidth: home ? 620 : 1040 }, card.title),
         ),
-      ),
-      el('div', { display: 'flex', fontSize: 22, lineHeight: 1.45, color: SOFT, maxWidth: 960, marginBottom: 22 }, card.note),
-      el('div', { display: 'flex', border: `2px solid ${INK}`, backgroundColor: '#FFFFFF' }, [
-        cell('DRAWN BY', 'B. BOGGS'),
-        cell('SHEET', card.id.toUpperCase().slice(0, 14)),
-        cell('PRACTICE', 'OPERATIONS & SYSTEMS'),
-        el('div', { display: 'flex', flexDirection: 'column', padding: '10px 16px', flexGrow: 1 }, [
-          el('div', { display: 'flex', fontSize: 13, letterSpacing: 3, color: SOFT }, 'WEB'),
-          el('div', { display: 'flex', marginTop: 4, fontSize: 18, color: BLUE }, 'brettboggs.dev'),
+        el('div', { display: 'flex', fontSize: 25, lineHeight: 1.4, color: '#4A4F59', maxWidth: home ? 600 : 940 }, card.note),
+        el('div', { display: 'flex', alignItems: 'center', marginTop: 26, paddingTop: 18, borderTop: `1.5px solid ${HAIR}`, fontFamily: 'Martian Mono', fontSize: 16, color: SOFT }, [
+          el('div', { display: 'flex', width: 12, height: 12, backgroundColor: SIG, marginRight: 12 }),
+          'brettboggs.dev',
         ]),
       ]),
+      ...(home ? [el('div', { display: 'flex', alignItems: 'center', marginLeft: 40 }, statement())] : []),
     ],
   );
 
@@ -102,8 +101,9 @@ export const GET: APIRoute = async ({ props }) => {
     width: 1200,
     height: 630,
     fonts: [
-      { name: 'Archivo', data: archivo, weight: 800, style: 'normal' },
-      { name: 'Plex Mono', data: mono, weight: 400, style: 'normal' },
+      { name: 'Anybody', data: anybody, weight: 900, style: 'normal' },
+      { name: 'Hanken Grotesk', data: hanken, weight: 400, style: 'normal' },
+      { name: 'Martian Mono', data: mono, weight: 400, style: 'normal' },
     ],
   });
   const png = await sharp(Buffer.from(svg)).png({ compressionLevel: 9 }).toBuffer();

@@ -1,289 +1,210 @@
 {
-  "title": "Brett Boggs · Operations and systems for local businesses",
-  "description": "Operations and systems for local businesses in St. Charles County. I look at how your business actually runs, then fix what's costing you customers or time.",
+  "title": "Brett Boggs · Systems your business owns",
+  "description": "One system you own in place of a stack of subscriptions. Operations and software for small businesses in St. Louis and St. Charles County.",
   "hero": {
-    "eyebrow": "Operations and systems · St. Louis and St. Charles County",
-    "title": "Run a tighter operation.",
-    "lede": "I look at how your business actually runs, then fix what's costing you customers or time. Sometimes that's software built around how you work. Sometimes it's a better process and nothing else.",
+    "title": "Stop renting your business.",
+    "strike": "renting",
+    "lede": "Most small businesses pay a stack of apps to do one job. I build one system you own, so you can cancel the rest.",
     "cta": "Book a free look",
-    "secondary": "See a full system",
-    "titleAccent": "operation.",
-    "rule": "I ran operations for ten years · now I build the systems",
-    "secondaryUrl": "#systems",
-    "titleBlock": [
-      {
-        "label": "Drawn by",
-        "value": "B. Boggs"
-      },
-      {
-        "label": "Sheet",
-        "value": "OPS-01"
-      },
-      {
-        "label": "Scale",
-        "value": "Whole company"
-      },
-      {
-        "label": "Area",
-        "value": "St. Louis region"
-      }
-    ],
-    "figure": "Fig. 1 · One record, every handoff",
-    "diagram": {
-      "in": {
-        "name": "Calls & leads",
-        "note": "missed call → text back"
-      },
-      "core": {
-        "name": "One job record",
-        "note": "quote · schedule · crew · cost"
-      },
-      "left": {
-        "name": "Field",
-        "note": "photos · hours · sign-off"
-      },
-      "right": {
-        "name": "Office",
-        "note": "dispatch · follow-ups"
-      },
-      "out": {
-        "name": "Paid, in the books",
-        "note": "writes back to your accounting"
-      },
-      "callA": "Quote follow-up, day 3, automatic",
-      "callB": "Nothing re-typed between departments",
-      "dimension": "One record"
+    "secondary": "Add up your bills",
+    "secondaryUrl": "#overhead",
+    "statement": {
+      "card": "Business card",
+      "period": "Statement · Oct 1 to Oct 31",
+      "rows": [
+        {
+          "date": "10/01",
+          "item": "Fuel",
+          "amount": 86.4,
+          "software": false
+        },
+        {
+          "date": "10/01",
+          "item": "Scheduling app",
+          "amount": 189,
+          "software": true
+        },
+        {
+          "date": "10/02",
+          "item": "Accounting software",
+          "amount": 85,
+          "software": true
+        },
+        {
+          "date": "10/04",
+          "item": "Parts and supplies",
+          "amount": 212.18,
+          "software": false
+        },
+        {
+          "date": "10/05",
+          "item": "Website builder",
+          "amount": 39,
+          "software": true
+        },
+        {
+          "date": "10/07",
+          "item": "Reviews and texting",
+          "amount": 399,
+          "software": true
+        },
+        {
+          "date": "10/11",
+          "item": "Fuel",
+          "amount": 74.95,
+          "software": false
+        },
+        {
+          "date": "10/12",
+          "item": "Online booking",
+          "amount": 49,
+          "software": true
+        },
+        {
+          "date": "10/15",
+          "item": "Business phone line",
+          "amount": 19,
+          "software": true
+        },
+        {
+          "date": "10/18",
+          "item": "Email marketing",
+          "amount": 20,
+          "software": true
+        },
+        {
+          "date": "10/22",
+          "item": "Equipment repair",
+          "amount": 140,
+          "software": false
+        },
+        {
+          "date": "10/28",
+          "item": "CRM, 3 seats",
+          "amount": 60,
+          "software": true
+        }
+      ],
+      "oneDate": "11/01",
+      "oneItem": "Your own system, one plan",
+      "oneAmount": 400,
+      "softLabel": "Software this month",
+      "keptLabel": "Kept every month",
+      "stamp": "Cancelled",
+      "caption": "Example statement. Typical list prices for a small service business.",
+      "replay": "Replay"
     }
   },
-  "problems": {
-    "eyebrow": "01",
-    "heading": "What it usually is.",
+  "overhead": {
+    "heading": "Add up what it costs to run.",
+    "sub": "Typical list prices, checked October 2026, are filled in. Change any number to what you actually pay.",
+    "tools": [
+      {
+        "name": "Scheduling app",
+        "eg": "Housecall Pro, Jobber",
+        "price": 189,
+        "on": true
+      },
+      {
+        "name": "Accounting",
+        "eg": "QuickBooks Online",
+        "price": 85,
+        "on": true
+      },
+      {
+        "name": "Website builder",
+        "eg": "Squarespace, Wix",
+        "price": 39,
+        "on": true
+      },
+      {
+        "name": "Reviews and texting",
+        "eg": "Podium, Birdeye",
+        "price": 399,
+        "on": true
+      },
+      {
+        "name": "Online booking",
+        "eg": "Square Appointments",
+        "price": 49,
+        "on": true
+      },
+      {
+        "name": "Business phone line",
+        "eg": "Quo, Grasshopper",
+        "price": 19,
+        "on": true
+      },
+      {
+        "name": "Email marketing",
+        "eg": "Mailchimp",
+        "price": 20,
+        "on": false
+      },
+      {
+        "name": "CRM, 3 seats",
+        "eg": "HubSpot, Pipedrive",
+        "price": 60,
+        "on": false
+      }
+    ],
+    "hoursLabel": "Hours a week spent re-typing and chasing",
+    "hoursHelp": "Same job in two places, chasing quotes, building reports by hand.",
+    "wageLabel": "What that hour costs you",
+    "wageHelp": "Wage plus taxes, or your own time.",
+    "tapeHead": "Overhead · per year",
+    "softwareLine": "Software",
+    "hoursLine": "Lost hours",
+    "totalLine": "Total",
+    "cut": "Cut it",
+    "cutNote": "See what replaces it.",
+    "afterHeading": "One system. Yours.",
+    "afterBody": "Built around how you already work, with your data and logins in your name. One plan keeps it running, from $400 a month.",
+    "afterPayback": "Builds are a fixed quote, priced so {total} pays it back inside 18 months."
+  },
+  "own": {
+    "heading": "What you own when we're done.",
+    "certTitle": "Certificate of ownership",
+    "certOf": "Held by the business, not the vendor",
     "items": [
       {
-        "problem": "Calls that go to voicemail and never get called back.",
-        "fix": "A missed call gets a text back in seconds and lands on a list someone works."
+        "thing": "The code",
+        "how": "Your account"
       },
       {
-        "problem": "Quotes that go out and nobody follows up.",
-        "fix": "Every quote gets its follow-up on a schedule, without anyone having to remember."
+        "thing": "The data",
+        "how": "Export any time"
       },
       {
-        "problem": "The same job typed into three places.",
-        "fix": "Enter it once. The calendar, the invoice and the books all read from the same record."
+        "thing": "The domain and every login",
+        "how": "In your name"
       },
       {
-        "problem": "Paying every month for software that almost fits.",
-        "fix": "A system you own, built around the way you already work, in place of the subscriptions."
+        "thing": "A handover document",
+        "how": "For whoever's next"
       },
       {
-        "problem": "Customers who can't find you, or find the wrong hours.",
-        "fix": "A fast site and a Google profile that agree with each other and stay current."
-      },
-      {
-        "problem": "Departments that each keep their own version of the truth.",
-        "fix": "One platform the office, the field and the books all work from, so a handoff can't drop anything."
+        "thing": "New hires",
+        "how": "No per-seat fee"
       }
     ],
-    "columns": [
-      "Condition found",
-      "Correction"
-    ]
-  },
-  "systems": {
-    "eyebrow": "02",
-    "heading": "Every department. One system.",
-    "lede": "I build the system a whole company runs on: sales, scheduling, operations, billing, the books and your people working from one record, instead of five tools that don't talk to each other.",
-    "capsHeading": "What I build and connect",
-    "caps": [
+    "seal": "Owned outright",
+    "points": [
       {
-        "title": "Connect what you already run",
-        "body": "Accounting and ERP, Outlook and Microsoft 365, payments, phones and texts. Data goes in once and lands everywhere it's needed."
+        "title": "No price hikes you didn't vote for.",
+        "body": "A subscription can double next year. Software you own costs what it cost."
       },
       {
-        "title": "Replace what doesn't fit",
-        "body": "Screens built around how your departments actually hand work to each other, in place of subscriptions that almost fit."
+        "title": "No lock-in.",
+        "body": "Everything lives in accounts with your name on them. If I disappear, the next person picks it up from the handover doc."
       },
       {
-        "title": "Automate the procedures",
-        "body": "Approvals, follow-ups, reminders and reports that people currently do from memory."
-      },
-      {
-        "title": "The office and the floor, one record",
-        "body": "Phone apps that capture photos, hours and sign-offs where the work happens, whether that's a service call, a shop floor or a customer's driveway, and show up in the office the same minute."
-      },
-      {
-        "title": "See the business live",
-        "body": "What's owed, what's late, and who has the ball, without waiting for someone to build a spreadsheet."
-      }
-    ],
-    "proofLabel": "Proof · Project 01",
-    "figures": [
-      {
-        "number": "8",
-        "label": "departments working from one record"
-      },
-      {
-        "number": "132",
-        "label": "procedures automated end to end"
-      },
-      {
-        "number": "332",
-        "label": "screens, web and phone"
-      },
-      {
-        "number": "1,031",
-        "label": "database tables behind it"
-      }
-    ],
-    "block": [
-      {
-        "label": "Project",
-        "value": "Company-wide operations platform"
-      },
-      {
-        "label": "Client",
-        "value": "Construction company · confidential"
-      },
-      {
-        "label": "Role",
-        "value": "Lead engineer · designed and built end to end"
-      },
-      {
-        "label": "Status",
-        "value": "Live"
-      }
-    ],
-    "map": {
-      "label": "How it fits together",
-      "core": {
-        "name": "One record",
-        "note": "projects · people · equipment · money"
-      },
-      "left": [
-        {
-          "name": "Estimating",
-          "note": "bid documents read in, not retyped"
-        },
-        {
-          "name": "Project management",
-          "note": "plans and RFIs tracked to an answer"
-        },
-        {
-          "name": "Field",
-          "note": "daily reports, hours and photos from the site"
-        },
-        {
-          "name": "Safety",
-          "note": "hazards, incidents and training"
-        }
-      ],
-      "right": [
-        {
-          "name": "People",
-          "note": "hiring, onboarding, certifications"
-        },
-        {
-          "name": "Equipment",
-          "note": "fleet, yard and service"
-        },
-        {
-          "name": "Finance",
-          "note": "owed, owing, aging, approvals"
-        },
-        {
-          "name": "Leadership",
-          "note": "the whole company at a glance"
-        }
-      ],
-      "outLabel": "Connected to",
-      "out": [
-        "The accounting system they already run",
-        "Outlook, across the company",
-        "A phone app for the field",
-        "Microsoft sign-in, access by role"
-      ]
-    },
-    "specCols": [
-      "What it does",
-      "In practice"
-    ],
-    "specs": [
-      {
-        "cap": "Everyone opens to their own work",
-        "detail": "What needs action, what's coming up, and what's running late, for each person, without anyone building a report."
-      },
-      {
-        "cap": "The field and the office share one record",
-        "detail": "Daily reports, timecards and photos are captured where the work happens, and the office sees them the same minute."
-      },
-      {
-        "cap": "The paperwork reads itself in",
-        "detail": "Incoming documents and plans go into the system instead of being retyped by hand."
-      },
-      {
-        "cap": "Procedures run on their own",
-        "detail": "132 standard procedures, from approvals to escalations, are automated end to end instead of living in someone's head."
-      },
-      {
-        "cap": "The books stay in the accounting system",
-        "detail": "Costs flow back to the accounting system the company already runs, with cost codes matched, so nothing is keyed twice."
-      }
-    ],
-    "walk": "The client stays confidential. I'm glad to walk you through how it works in person."
-  },
-  "process": {
-    "eyebrow": "03",
-    "heading": "How it goes.",
-    "steps": [
-      {
-        "title": "Look",
-        "body": "Twenty minutes, free, at your place or on the phone. You walk me through one job, from the first call to getting paid.",
-        "tag": "20 min · free"
-      },
-      {
-        "title": "Plan",
-        "body": "In writing: what to fix first, what to ignore, and a fixed price. It's yours to keep, even if you do it yourself.",
-        "tag": "Written · fixed price"
-      },
-      {
-        "title": "Build",
-        "body": "Nothing goes live until you've seen it. Your current tools keep running until you're ready to switch.",
-        "tag": "You approve"
-      },
-      {
-        "title": "Keep it running",
-        "body": "Hosting, backups, fixes and small changes, monthly. You own all of it: the data, the accounts, the code.",
-        "tag": "Monthly"
-      }
-    ]
-  },
-  "about": {
-    "eyebrow": "04",
-    "heading": "Who you'd be working with.",
-    "body": "I spent ten years running operations before I wrote software. A service lane at a Honda dealership. General manager of a car wash, then a group of them, then a district. Schedules, payroll, and equipment that breaks on the coldest day of the year.\n\nNow I'm the lead engineer on a company-wide platform for a construction company, built end to end. This is the same work, for businesses of any size closer to home.",
-    "portrait": "/about/brett-480.webp",
-    "portraitAlt": "Brett Boggs",
-    "timeline": [
-      {
-        "role": "Service lane",
-        "place": "Honda dealership"
-      },
-      {
-        "role": "General manager → district",
-        "place": "Car washes"
-      },
-      {
-        "role": "Operations",
-        "place": "Real estate investment"
-      },
-      {
-        "role": "Lead engineer",
-        "place": "Construction software"
+        "title": "Grows without a bill.",
+        "body": "Add a truck, a location or three people. Nothing charges you per seat."
       }
     ]
   },
   "proof": {
-    "eyebrow": "05",
     "heading": "Recent work.",
     "items": [
       {
@@ -303,7 +224,11 @@
         "image": "/peek/ked-live-lg.webp",
         "imageAlt": "The Knock Em' Down Detailing site.",
         "link": "Read the case study",
-        "url": "/work/websites/ked-detailing/"
+        "url": "/work/websites/ked-detailing/",
+        "replaced": [
+          "Housecall Pro",
+          "QuickBooks"
+        ]
       },
       {
         "name": "Mattress Concepts",
@@ -322,13 +247,48 @@
         "image": "/peek/mattress-concepts-lg.webp",
         "imageAlt": "The new Mattress Concepts homepage.",
         "link": "Visit the site",
-        "url": "https://www.mattressconcepts.com"
+        "url": "https://www.mattressconcepts.com",
+        "replaced": [
+          "Wix"
+        ]
       }
     ],
     "more": "All work"
   },
+  "about": {
+    "heading": "Who you'd be working with.",
+    "body": "I spent ten years running operations before I wrote software. A service lane at a Honda dealership. General manager of a car wash, then a group of them, then a district. Schedules, payroll, and equipment that breaks on the coldest day of the year.\n\nNow I'm the lead engineer on a company-wide platform for a construction company, built end to end. This is the same work, for businesses of any size closer to home.",
+    "portrait": "/about/brett-480.webp",
+    "portraitAlt": "Brett Boggs",
+    "link": "More about me",
+    "url": "/about/"
+  },
+  "process": {
+    "heading": "How it goes.",
+    "steps": [
+      {
+        "title": "Look",
+        "body": "You walk me through one job, from the first call to getting paid.",
+        "tag": "20 minutes · free"
+      },
+      {
+        "title": "Plan",
+        "body": "In writing: what to fix first, what to ignore, and a fixed price.",
+        "tag": "Yours to keep"
+      },
+      {
+        "title": "Build",
+        "body": "Your current tools keep running until you've seen the new one work.",
+        "tag": "You approve each piece"
+      },
+      {
+        "title": "Cancel",
+        "body": "Switch over, cancel the old subscriptions, keep the difference.",
+        "tag": "The point of it all"
+      }
+    ]
+  },
   "pricing": {
-    "eyebrow": "06",
     "heading": "Getting started.",
     "rows": [
       {
@@ -344,24 +304,13 @@
       {
         "name": "Builds",
         "price": "Fixed quote",
-        "body": "Priced up front against what it replaces: the subscriptions, and the hours. Websites from $1,500."
-      },
-      {
-        "name": "Company-wide systems",
-        "price": "Scoped after a review",
-        "body": "One platform across your departments, connected to what you already run. Delivered in phases, each one useful on its own."
+        "body": "One process, a full system, or the whole company. Priced against what it replaces. Websites from $1,500."
       },
       {
         "name": "Keeping it running",
         "price": "From $400/mo",
-        "body": "Hosting, backups, fixes, Google posts, review replies, and one improvement every quarter."
+        "body": "Hosting, backups, fixes, and one improvement every quarter."
       }
-    ],
-    "note": "",
-    "columns": [
-      "Item",
-      "Price",
-      "Includes"
     ]
   },
   "contact": {
@@ -379,21 +328,20 @@
     },
     "email": "hello@brettboggs.dev",
     "subject": "A free look",
-    "area": "Based in O'Fallon. In person across the St. Louis area, by phone anywhere.",
-    "secondary": "Or send the one thing that's eating your week. I'll tell you honestly if it's worth fixing."
+    "area": "Based in O'Fallon. In person across the St. Louis area, by phone anywhere."
   },
   "nav": {
     "label": "Sections",
     "name": "Brett Boggs",
-    "role": "Operations & systems",
+    "role": "Systems you own",
     "links": [
       {
-        "text": "What I fix",
-        "url": "#problems"
+        "text": "Your overhead",
+        "url": "#overhead"
       },
       {
-        "text": "Systems",
-        "url": "#systems"
+        "text": "What you own",
+        "url": "#own"
       },
       {
         "text": "Work",

@@ -1,8 +1,7 @@
 ---
-import '@fontsource-variable/archivo/wdth.css';
-import '@fontsource-variable/archivo/wdth-italic.css';
-import '@fontsource/ibm-plex-mono/400.css';
-import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource-variable/anybody/wdth.css';
+import '@fontsource-variable/hanken-grotesk/index.css';
+import '@fontsource-variable/martian-mono/index.css';
 import '../styles/global.css';
 import { ogFor } from '../data/og';
 import EditLink from '../components/EditLink.astro';
@@ -70,8 +69,8 @@ const here = path.startsWith('/work')
 // the social card: a page's own picture if it brought one, else the card drawn
 // for it at build time (src/data/og.ts), else the film
 const card = ogFor(path);
-const ogImage = ogGiven ?? (card ? `/og/${card.id}.png` : '/og.png');
-const ogAlt = ogGiven || !card ? 'Brett Boggs. Work and experiments.' : `${card.title} ${card.note}`;
+const ogImage = ogGiven ?? (card ? `/og/${card.id}.png` : '/og/home.png');
+const ogAlt = ogGiven || !card ? 'Brett Boggs. Systems your business owns.' : `${card.title} ${card.note}`;
 
 const year = new Date().getFullYear();
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -90,7 +89,7 @@ const schema = home
           name: 'Brett Boggs',
           url: 'https://brettboggs.dev',
           email: 'hello@brettboggs.dev',
-          image: 'https://brettboggs.dev/og.png',
+          image: 'https://brettboggs.dev/og/home.png',
           affiliation: {
             '@type': 'Organization',
             name: 'Datum',
@@ -103,7 +102,7 @@ const schema = home
           '@id': 'https://brettboggs.dev/#site',
           url: 'https://brettboggs.dev',
           name: 'Brett Boggs',
-          description: 'Operations and systems for local businesses in St. Charles County.',
+          description: 'Systems your business owns, in place of a stack of subscriptions. St. Charles County.',
           publisher: { '@id': 'https://brettboggs.dev/#brett' },
           inLanguage: 'en',
         },
@@ -114,7 +113,7 @@ const schema = home
           url: 'https://brettboggs.dev',
           email: 'hello@brettboggs.dev',
           description:
-            'Operations and systems for local businesses: custom software, process fixes, websites and Google profiles.',
+            'Operations and systems for small businesses: one system the business owns in place of a stack of subscriptions, plus process fixes, websites and Google profiles.',
           founder: { '@id': 'https://brettboggs.dev/#brett' },
           address: {
             '@type': 'PostalAddress',
@@ -148,7 +147,7 @@ const schema = home
     <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#F5F5F1" />
+    <meta name="theme-color" content="#E4E7EB" />
     <meta name="msvalidate.01" content="06865AF16856E94AD3EDEBC41AEE5FF5" />
     <meta name="google-site-verification" content="U3pdbIQTNC8OSjS7xZRCUAfmT1gX_4ryAZzrnL1hVLE" />
     <meta name="apple-mobile-web-app-title" content="Brett Boggs" />
@@ -249,24 +248,6 @@ const schema = home
 
       // index rows that carry a still show it beside the cursor
       mountPeek();
-
-      // grid spotlight: feed the pointer position to each page head and any
-      // .spot band, relative to the band (its grid runs edge to edge)
-      if (
-        window.matchMedia('(pointer: fine)').matches &&
-        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      ) {
-        document.querySelectorAll<HTMLElement>('.page-head, .spot').forEach((el) => {
-          el.addEventListener('pointermove', (e) => {
-            const r = el.getBoundingClientRect();
-            const bleed = el.classList.contains('page-head') ? 0 : r.left;
-            el.style.setProperty('--mx', `${e.clientX - bleed}px`);
-            el.style.setProperty('--my', `${e.clientY - r.top}px`);
-            el.classList.add('is-lit');
-          });
-          el.addEventListener('pointerleave', () => el.classList.remove('is-lit'));
-        });
-      }
 
       // section pages: the zoomed crop stays under the page, ghost-faint
       const ghost = document.getElementById('scene-ghost');
