@@ -5,11 +5,13 @@
 /homepage                               /                    301
 /rv                                     /rv-mattresses/      301
 /copy-of-our-products                   /mattresses/         301
-/copy-of-rv-boat                        /mattresses/         301
+# Old "Our Products" page (title "Superior Foam Mattresses"): custom foam and short queens.
+/copy-of-rv-boat                        /custom/             301
 /copy-of-home-and-custom-mattresses-1   /adjustable-beds/    301
-/copy-of-bed-boss-mattresses            /mattresses/         301
+/copy-of-bed-boss-mattresses            /mattresses/#extras  301
 /faq                                    /visit/              301
-/privacy-policy                         /                    301
+# The old Testimonials page lived at /privacy-policy.
+/privacy-policy                         /#testimonials       301
 /shipping-returns                       /visit/              301
 /shop                                   /mattresses/         301
 /product-page/*                         /mattresses/         301
