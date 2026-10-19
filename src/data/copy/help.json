@@ -1,0 +1,30 @@
+{
+  "title": "How I help · Brett Boggs",
+  "description": "Operations reviews, software your business owns, automations, websites and Google profiles. One person, O'Fallon, Missouri. In person across St. Louis, by phone anywhere.",
+  "eyebrow": "How I help",
+  "heading": "How I help.",
+  "lede": "One person who learns how your business runs, then fixes what's costing you time or money. You deal with me from the first call to the last fix.",
+  "groups": {
+    "service": "What I do",
+    "switch": "Getting off a tool you rent",
+    "answer": "Straight answers"
+  },
+  "kinds": {
+    "service": "How I help",
+    "switch": "Switching",
+    "answer": "Questions"
+  },
+  "priceLabel": "Price",
+  "faqHeading": "Questions",
+  "relatedHeading": "Related",
+  "updated": "Updated",
+  "cta": {
+    "heading": "Start with a free look.",
+    "body": "Twenty minutes, in person or by phone. Walk me through one job, from the first call to getting paid.",
+    "button": "Book a free look",
+    "url": "/#start",
+    "email": "hello@brettboggs.dev",
+    "area": "Based in O'Fallon, Missouri. In person across St. Charles County and the St. Louis area, by phone or video anywhere."
+  },
+  "backLink": "← How I help"
+}

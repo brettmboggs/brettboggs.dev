@@ -246,8 +246,8 @@
         ],
         "image": "/peek/mattress-concepts-lg.webp",
         "imageAlt": "The new Mattress Concepts homepage.",
-        "link": "Visit the site",
-        "url": "https://www.mattressconcepts.com",
+        "link": "Read the case study",
+        "url": "/work/websites/mattress-concepts/",
         "replaced": [
           "Wix"
         ]
@@ -257,11 +257,11 @@
   },
   "about": {
     "heading": "Who you'd be working with.",
-    "body": "I spent ten years running operations before I wrote software. A service lane at a Honda dealership. General manager of a car wash, then a group of them, then a district. Schedules, payroll, and equipment that breaks on the coldest day of the year.\n\nNow I'm the lead engineer on a company-wide platform for a construction company, built end to end. This is the same work, for businesses of any size closer to home.",
+    "body": "I spent ten years running operations before I wrote software. A service lane at a Honda dealership. General manager of a car wash, then a group of them, then a district. Schedules, payroll, and equipment that breaks on the coldest day of the year.\n\nNow I'm the lead engineer on a company-wide platform for a construction company, built end to end. This is the same work, for businesses of any size closer to home.\n\nThere's no company here. Just me. Nobody in the middle needs you to keep renting, so what I build is yours, and when it needs changing you call the person who built it.",
     "portrait": "/about/brett-480.webp",
     "portraitAlt": "Brett Boggs",
-    "link": "More about me",
-    "url": "/about/"
+    "link": "Why it's one person",
+    "url": "/help/one-person/"
   },
   "process": {
     "heading": "How it goes.",
@@ -294,22 +294,26 @@
       {
         "name": "A look",
         "price": "Free",
-        "body": "Twenty minutes. Bring the thing that's eating your week."
+        "body": "Twenty minutes. Bring the thing that's eating your week.",
+        "url": ""
       },
       {
         "name": "Operations review",
         "price": "$350",
-        "body": "Ninety minutes and a written plan. Credited toward any project."
+        "body": "Ninety minutes and a written plan. Credited toward any project.",
+        "url": "/help/operations-review/"
       },
       {
         "name": "Builds",
         "price": "Fixed quote",
-        "body": "One process, a full system, or the whole company. Priced against what it replaces. Websites from $1,500."
+        "body": "One process, a full system, or the whole company. Priced against what it replaces. Websites from $1,500.",
+        "url": "/help/custom-software/"
       },
       {
         "name": "Keeping it running",
         "price": "From $400/mo",
-        "body": "Hosting, backups, fixes, and one improvement every quarter."
+        "body": "Hosting, backups, fixes, and one improvement every quarter.",
+        "url": "/help/keeping-it-running/"
       }
     ]
   },
@@ -340,8 +344,8 @@
         "url": "#overhead"
       },
       {
-        "text": "What you own",
-        "url": "#own"
+        "text": "How I help",
+        "url": "/help/"
       },
       {
         "text": "Work",
@@ -360,6 +364,18 @@
   },
   "footer": {
     "links": [
+      {
+        "text": "How I help",
+        "url": "/help/"
+      },
+      {
+        "text": "Questions",
+        "url": "/help/questions/"
+      },
+      {
+        "text": "Writing",
+        "url": "/writing/"
+      },
       {
         "text": "Work",
         "url": "/work/"

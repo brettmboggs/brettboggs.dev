@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Ask from '../../components/Ask.astro';
+import copy from '../../data/copy/help.json';
+import { SITE, PRACTICE, breadcrumb } from '../../data/schema';
+
+const entries = (await getCollection('help', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
+const kinds = ['service', 'switch', 'answer'] as const;
+const url = `${SITE}/help/`;
+
+const graph = [
+  {
+    '@type': 'OfferCatalog',
+    '@id': `${url}#catalog`,
+    name: copy.heading.replace(/\.$/, ''),
+    provider: PRACTICE,
+    itemListElement: entries
+      .filter((e) => e.data.kind !== 'answer')
+      .map((e) => ({ '@type': 'Offer', itemOffered: { '@id': `${SITE}/help/${e.id}/#service` } })),
+  },
+  breadcrumb(url, [
+    { name: 'Brett Boggs', url: `${SITE}/` },
+    { name: copy.eyebrow, url },
+  ]),
+];
+---
+
+<Base title={copy.title} description={copy.description} edit="pages/help" graph={graph}>
+  <header class="page-head">
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
+  </header>
+
+  {
+    kinds.map((k) => (
+      <section class="group">
+        <h2 class="group-head">{copy.groups[k]}</h2>
+        <ul class="entry-list">
+          {entries
+            .filter((e) => e.data.kind === k)
+            .map((e) => (
+              <li>
+                <a class="entry-row" href={`/help/${e.id}/`}>
+                  <span>
+                    <span class="entry-title">{e.data.heading}</span>
+                    <span class="entry-desc">{e.data.summary}</span>
+                  </span>
+                  {e.data.price && <span class="entry-meta">{e.data.price.amount}</span>}
+                </a>
+              </li>
+            ))}
+        </ul>
+      </section>
+    ))
+  }
+
+  <Ask />
+</Base>
+
+<style>
+  .group {
+    margin-top: 4rem;
+  }
+  .group-head {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 400;
+    font-stretch: 100%;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+</style>

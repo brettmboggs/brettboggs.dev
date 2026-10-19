@@ -26,4 +26,36 @@ const work = defineCollection({
   }),
 });
 
-export const collections = { work };
+// how-I-help pages: what I do, getting off a rented tool, straight answers.
+// One template renders them all at /help/<id>/
+const help = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/help' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    kind: z.enum(['service', 'switch', 'answer']),
+    heading: z.string(),
+    lede: z.string(),
+    // the line under the heading on /help/
+    summary: z.string(),
+    order: z.number().default(100),
+    price: z.object({ amount: z.string(), note: z.string() }).optional(),
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
+    related: z.array(z.string()).default([]),
+    updated: z.coerce.date(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+const writing = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/writing' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { work, help, writing };

@@ -1,0 +1,42 @@
+---
+title: "Operations review for small businesses · Brett Boggs"
+description: "Ninety minutes walking through how your business actually runs, then a written plan: what to fix first, what to ignore, and what it costs. $350, credited toward any project. St. Louis and remote."
+kind: service
+heading: "Operations review."
+lede: "Ninety minutes on how your business actually runs. Then a written plan of what to fix first, what to ignore, and what each fix costs."
+summary: "Ninety minutes and a written plan. Credited toward any project."
+order: 10
+price:
+  amount: "$350"
+  note: "Ninety minutes on site, or on video if you're not near St. Louis, plus the written plan. Credited in full toward any project."
+related: [custom-software, automations, one-person]
+updated: 2026-10-19
+faq:
+  - q: "Do I have to hire you for the work afterward?"
+    a: "No. The plan is yours. Plenty of fixes in it will be things you or your staff can do in an afternoon. If you want me to build any of it, the $350 comes off the price."
+  - q: "What do I need to prepare?"
+    a: "Nothing written. Bring the person who answers the phone and the person who does the books, if that isn't you. Have your logins handy so we can look at the real screens."
+  - q: "Is this only for businesses with software problems?"
+    a: "No. Half of what turns up is process: the same job written down in three places, a quote nobody follows up on, a report someone builds by hand every Friday. Software is only one of the fixes."
+---
+
+I ran operations for ten years before I wrote software. A service lane, a car wash, then a group of them, then a district. The problems were almost never where the owner thought they were.
+
+So the review starts with one real job. We follow it from the first phone call to the money landing in the bank, and I watch where it slows down.
+
+## What we look at
+
+- **Where the same information gets typed twice.** A name and address that goes into a scheduling app, then an invoice, then the books.
+- **Where things get dropped.** Quotes that never get a follow-up. Missed calls nobody returns. Reviews nobody asks for.
+- **What you pay for and barely use.** Most businesses I see pay for three or four tools that overlap.
+- **What only lives in someone's head.** The thing that breaks when one person is out sick.
+
+## What you get
+
+A written plan, usually two or three pages. Each item says what it fixes, what it saves in hours or dollars, and what it costs to fix, including the option of doing nothing. It ranks them. The top one is usually cheap.
+
+Some of the plan will be for me to build. Some will be a setting in a tool you already pay for. I'll say which is which.
+
+## Who it's for
+
+Owners who know something is costing them time or money but can't say exactly what. Businesses with between one and fifty people. Service businesses, shops, makers, offices. You don't need to be good with computers. That's my job.

@@ -23,9 +23,11 @@ construction management, datumci.com), and a playground for experiments.
 
 - `/` — the sales page for Brett's operations and systems practice. Rebuilt 2026-10-19 (Brett approved mockup "A2"): positioning is CUT OVERHEAD, one system the business owns in place of a stack of subscriptions; lean away from construction. Sections: hero card statement (GSAP, plays ONCE on load, no scroll-driven animation: Brett dislikes long scroll animations), overhead calculator with a register tape (tool prices are October 2026 list prices; Podium's is a third-party estimate), certificate of ownership, recent work, about, how it goes, pricing, contact form (tools/contact Worker). Copy in `src/data/copy/home.json`. Rules from Brett: the construction platform (Datum) is never pitched on the homepage; never offer Datum-like systems to construction companies; no "founding clients" line (he said it costs credibility). Prices must match the consulting repo's PRICING.md. Orange buttons take ink text (white fails contrast).
 - `/lab/film/` — The Ridge film, moved off the homepage 2026-10-19. Base's `film` prop carries the film-only layout (header over the render, floating footer, puck runway); `home` now only means "carry the identity schema".
+- `/help/` — how-I-help pages (added 2026-10-19 for search and AI discovery): services, "alternative to X" switching pages, and straight answers, Markdown in `src/content/help/` rendered by one template with Service, FAQPage and breadcrumb JSON-LD (`src/data/schema.ts`). Shared words in `src/data/copy/help.json`. Prices on these pages must match the consulting repo's PRICING.md like the homepage. Tool prices quoted there are the homepage calculator's October 2026 figures; don't invent new ones.
+- **Positioning (Brett, 2026-10-19):** Brett is the go-to person for owners ("the it guy," meaning the one everyone relies on, NOT information technology: no help desk, printers or laptops). He is one person, not a company, on purpose: no company in the middle is why the client owns the software. Lean into that; never present the practice as an agency or a team.
 - `/work` — case studies, Markdown in `src/content/work/`
 - `/lab` — experiments; allowed to be rough. Each experiment is a page under `src/pages/lab/`
-- `/writing` — posts, Markdown in `src/content/writing/`
+- `/writing/` — posts, Markdown in `src/content/writing/`, BlogPosting JSON-LD. Practical, owner-useful notes; no AI-written-sounding filler.
 - `/edit/` — the editor (Sveltia CMS, config in `public/edit/config.yml`), see `docs/EDITOR.md`
 
 **Copy lives in data, not templates.** Every page's words are in
@@ -131,9 +133,16 @@ browser after touching these rules.
 
 ## Never mention AI
 
-Zero references to AI, Claude, or AI-assisted authorship anywhere: site copy,
+Zero references to Claude or AI-assisted authorship anywhere: site copy,
 commit messages, README, PR descriptions, repo metadata. Do NOT add
 Co-Authored-By trailers to commits in this repo.
+
+Exception (Brett, 2026-10-19): AI as a service topic may appear, mainly on
+`/help/ai-for-small-business/` and in brief FAQ answers, so owners searching
+for AI help find him. Framing: the client and the bottleneck come first, AI is
+one tool, he never pitches it where it doesn't pay off, and it rarely goes
+inside client software. Don't let it spread into the homepage pitch; owners
+shouldn't be scared off. Never say the site or client code is AI-written.
 
 ## Nightjar (the iPhone app, in app/)
 

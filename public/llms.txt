@@ -1,16 +1,47 @@
 # Brett Boggs
 
-> Site of Brett Boggs: operations and systems for local businesses in St. Charles County, Missouri; co-founder of Datum, an all-in-one construction management platform; and a photographer. This file is a curated, factual index for machine readers. If anything here conflicts with a page on the site, the page wins.
+> Site of Brett Boggs: operations and systems for small businesses, in person around St. Louis and St. Charles County, Missouri, and remote anywhere; co-founder of Datum, an all-in-one construction management platform; and a photographer. This file is a curated, factual index for machine readers. If anything here conflicts with a page on the site, the page wins.
 
 Contact: hello@brettboggs.dev · GitHub: https://github.com/brettmboggs
 
-## Operations and systems for local businesses
+## Operations and systems for small businesses
 
-From the homepage (https://brettboggs.dev/): Brett builds small businesses one system they own in place of a stack of subscriptions, so they can cancel the rest. The business keeps the code, the data, the domain and every login, with a handover document. The homepage has a calculator for a business's yearly software and lost-hours overhead. Based in O'Fallon, Missouri; in person across the St. Louis area, by phone anywhere.
+From the homepage (https://brettboggs.dev/): Brett builds small businesses one system they own in place of a stack of subscriptions, so they can cancel the rest. The business keeps the code, the data, the domain and every login, with a handover document. The homepage has a calculator for a business's yearly software and lost-hours overhead. Based in O'Fallon, Missouri; in person across St. Charles County and the St. Louis area, by phone or video anywhere.
 
-- A first look is free (20 minutes). An operations review is $350 for 90 minutes and a written plan, credited toward any project.
-- Builds are quoted at a fixed price, against what they replace. Websites from $1,500. Keeping a system running is from $400 a month.
-- Work: Knock Em' Down Detailing (https://brettboggs.dev/work/websites/ked-detailing/), a system built to replace Housecall Pro and QuickBooks; Mattress Concepts (https://www.mattressconcepts.com), phone speed score 74 to 95.
+Brett works alone, on purpose: there is no company in the middle, so what he builds belongs to the client, and the person who built it is the person who answers. He spent ten years running operations (a dealership service lane, car washes up to a district of eight locations) before building software, and starts every engagement by finding where work gets stuck.
+
+Prices:
+- A first look is free (20 minutes).
+- An operations review is $350 for 90 minutes and a written plan, credited toward any project.
+- One process automated or rebuilt: $1,500 to $3,000, fixed quote.
+- A full system replacing a booking or field-service app and parts of accounting: $5,000 to $12,000, fixed quote.
+- Websites with Google profile setup: from $1,500, no hosting fee.
+- Keeping a system running: from $400 a month.
+
+How he helps (https://brettboggs.dev/help/):
+- [Operations review](https://brettboggs.dev/help/operations-review/): ninety minutes and a written plan of what to fix first.
+- [Software your business owns](https://brettboggs.dev/help/custom-software/): one system in place of a stack of subscriptions.
+- [Automating the busywork](https://brettboggs.dev/help/automations/): missed-call text-back, quote follow-ups, reminders, orders into the books.
+- [Websites and Google profiles](https://brettboggs.dev/help/websites/): fast sites the business owns, and Google profiles that are filled in.
+- [AI, where it actually helps](https://brettboggs.dev/help/ai-for-small-business/): plain advice and setup, only where it saves time or money.
+- [Keeping it running](https://brettboggs.dev/help/keeping-it-running/): hosting, fixes, edits and one improvement a quarter.
+- [Why it's one person](https://brettboggs.dev/help/one-person/) and [Questions](https://brettboggs.dev/help/questions/).
+
+Switching off rented tools:
+- [Housecall Pro alternative](https://brettboggs.dev/help/housecall-pro-alternative/)
+- [Jobber alternative](https://brettboggs.dev/help/jobber-alternative/)
+- [Do you need QuickBooks?](https://brettboggs.dev/help/quickbooks-alternative/)
+- [Podium alternative for reviews and texting](https://brettboggs.dev/help/podium-alternative/)
+- [Leaving Wix](https://brettboggs.dev/help/wix-alternative/)
+- [Leaving Squarespace](https://brettboggs.dev/help/squarespace-alternative/)
+
+Work: Knock Em' Down Detailing (https://brettboggs.dev/work/websites/ked-detailing/), a system built to replace Housecall Pro and QuickBooks; Mattress Concepts (https://brettboggs.dev/work/websites/mattress-concepts/), off Wix, phone speed score 74 to 95.
+
+## Writing
+
+- [What your software actually costs](https://brettboggs.dev/writing/what-your-software-costs/): eight ordinary subscriptions, $860 a month, $51,600 over five years.
+- [Find the bottleneck before you buy anything](https://brettboggs.dev/writing/find-the-bottleneck/): walk one job from first call to getting paid.
+- [Your Google profile is the page people actually see](https://brettboggs.dev/writing/google-profile-checklist/): a checklist, including service-area businesses.
 
 ## Datum
 
@@ -37,7 +68,7 @@ Shipped, as counted on https://brettboggs.dev/work/datum/:
 
 - [Datum](https://brettboggs.dev/work/datum/): One system for running a construction company.
 - [Photography](https://brettboggs.dev/work/photography/): Commercial, live music, and product photography, 2021 to 2023.
-- [Websites](https://brettboggs.dev/work/websites/): Sites for small businesses. Lauren Becherer Pottery (https://laurenbechererpottery.com), handmade ceramics built around 360 degree turntable photography, and Knock Em' Down Detailing, a mobile auto and marine detailer in St. Louis: a new site, a new logo and brand kit, online quotes and booking, and an iPhone app to run the business.
+- [Websites](https://brettboggs.dev/work/websites/): Sites for small businesses. Mattress Concepts, a mattress store and workshop in High Ridge, off Wix with a quote form that draws the mattress to scale. Lauren Becherer Pottery (https://laurenbechererpottery.com), handmade ceramics built around 360 degree turntable photography, and Knock Em' Down Detailing, a mobile auto and marine detailer in St. Louis: a new site, a new logo and brand kit, online quotes and booking, and an iPhone app to run the business.
 
 ## Apps
 
@@ -50,7 +81,7 @@ Shipped, as counted on https://brettboggs.dev/work/datum/:
 - [The Field](https://brettboggs.dev/lab/field/): A prairie run on the GPU. Every blade is a spring in a compute shader, and the cursor is weather.
 - [Keepsake](https://brettboggs.dev/lab/keepsake/): A seeded drawing, deterministic from its hash, different for every visitor.
 - [Sprout Siege](https://brettboggs.dev/lab/sprout-siege/): An idle farm game for iOS, built around a simulation core that never touches the screen.
-- [The Ridge](https://brettboggs.dev/lab/ridge/): A golden hour flyover, rendered in Blender and scrubbed by scroll. It runs the front page.
+- [The Ridge](https://brettboggs.dev/lab/ridge/): A golden hour flyover, rendered in Blender and scrubbed by scroll. It opened the front page until October 2026.
 - [The Underground](https://brettboggs.dev/lab/underground/): The same ground as the Ridge, cut open six metres to rock. Roots grow as you scroll.
 - [The Bridge](https://brettboggs.dev/lab/bridge/): A cable-stayed crossing that surveys, drafts and builds itself as you scroll. Datum's first landing film.
 - [The Drafting Film](https://brettboggs.dev/lab/drafting-film/): A highway underpass you draft by scrolling. It ran Datum's landing page for one night.
@@ -64,4 +95,4 @@ Shipped, as counted on https://brettboggs.dev/work/datum/:
 ## Machine-readable
 
 - [JSON Resume](https://brettboggs.dev/resume.json): resume data following the JSON Resume schema
-- Structured data: schema.org Person and WebSite JSON-LD on https://brettboggs.dev/
+- Structured data: schema.org Person, WebSite and ProfessionalService JSON-LD on https://brettboggs.dev/; Service and FAQPage on each /help/ page

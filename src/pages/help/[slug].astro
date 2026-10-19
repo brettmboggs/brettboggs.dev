@@ -1,0 +1,171 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Ask from '../../components/Ask.astro';
+import copy from '../../data/copy/help.json';
+import { md } from '../../data/copy';
+import { SITE, breadcrumb, faqPage, service } from '../../data/schema';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('help', ({ data }) => !data.draft);
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const url = `${SITE}/help/${entry.id}/`;
+
+const related = (await Promise.all(d.related.map((id) => getEntry('help', id)))).filter(
+  (e): e is NonNullable<typeof e> => !!e && !e.data.draft,
+);
+
+const graph = [
+  ...(d.kind === 'answer' ? [] : [service(url, d.heading.replace(/\.$/, ''), d.description, d.price)]),
+  ...(d.faq.length ? [faqPage(url, d.faq)] : []),
+  breadcrumb(url, [
+    { name: 'Brett Boggs', url: `${SITE}/` },
+    { name: copy.eyebrow, url: `${SITE}/help/` },
+    { name: d.heading.replace(/\.$/, ''), url },
+  ]),
+];
+const fmt = (date: Date) => date.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+
+<Base title={d.title} description={d.description} edit={`help/${entry.id}`} graph={graph} ogImage={`/og/help-${entry.id}.png`}>
+  <article>
+    <header class="page-head">
+      <p class="eyebrow">{copy.kinds[d.kind]}</p>
+      <h1>{d.heading}</h1>
+      <p class="lede">{d.lede}</p>
+    </header>
+
+    {
+      d.price && (
+        <p class="price">
+          <span class="price-label">{copy.priceLabel}</span>
+          <span class="price-amt">{d.price.amount}</span>
+          <span class="price-note">{d.price.note}</span>
+        </p>
+      )
+    }
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {
+      d.faq.length > 0 && (
+        <section class="faq">
+          <h2>{copy.faqHeading}</h2>
+          <dl>
+            {d.faq.map((f) => (
+              <div class="qa">
+                <dt>{f.q}</dt>
+                <dd set:html={md(f.a)} />
+              </div>
+            ))}
+          </dl>
+        </section>
+      )
+    }
+
+    <p class="stamp">{copy.updated} {fmt(d.updated)}</p>
+
+    <Ask />
+
+    {
+      related.length > 0 && (
+        <nav class="related" aria-label={copy.relatedHeading}>
+          <h2>{copy.relatedHeading}</h2>
+          <ul class="entry-list">
+            {related.map((r) => (
+              <li>
+                <a class="entry-row" href={`/help/${r.id}/`}>
+                  <span>
+                    <span class="entry-title">{r.data.heading}</span>
+                    <span class="entry-desc">{r.data.summary}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+
+    <a class="back-link" href="/help/">{copy.backLink}</a>
+  </article>
+</Base>
+
+<style>
+  .price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 1.2rem;
+    max-width: var(--measure);
+    margin-top: 2.2rem;
+    padding: 1.2rem 1.4rem;
+    border-radius: 18px;
+    background: var(--sheet);
+  }
+  .price-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+  .price-amt {
+    font-family: var(--display);
+    font-weight: 860;
+    font-stretch: 115%;
+    font-size: 1.8rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .price-note {
+    flex-basis: 100%;
+    color: var(--ink-2);
+  }
+  .faq,
+  .related {
+    max-width: var(--measure);
+    margin-top: 4rem;
+  }
+  .faq h2,
+  .related h2 {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 400;
+    font-stretch: 100%;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+  .faq dl {
+    margin: 1rem 0 0;
+  }
+  .qa {
+    padding: 1.2rem 0;
+    border-top: 1px solid var(--hair);
+  }
+  .qa dt {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .qa dd {
+    margin: 0.4rem 0 0;
+    color: var(--ink-2);
+  }
+  .qa dd :global(p + p) {
+    margin-top: 0.6rem;
+  }
+  .stamp {
+    margin-top: 2.5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--soft);
+  }
+</style>

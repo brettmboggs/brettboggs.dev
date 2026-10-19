@@ -215,7 +215,7 @@ const f = contact.form;
         {
           pricing.rows.map((r) => (
             <div class="pr">
-              <h3>{r.name}</h3>
+              <h3>{r.url ? <a href={r.url}>{r.name} <span aria-hidden="true">→</span></a> : r.name}</h3>
               <p class="amt">{r.price}</p>
               <p>{r.body}</p>
             </div>
@@ -1183,6 +1183,12 @@ const f = contact.form;
     font-stretch: 100%;
     font-size: 1.05rem;
     letter-spacing: 0;
+  }
+  .pr h3 a {
+    color: var(--ink);
+  }
+  .pr h3 a span {
+    color: var(--sig-text);
   }
   .pr .amt {
     color: var(--ink);

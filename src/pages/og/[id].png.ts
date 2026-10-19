@@ -8,10 +8,21 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import satori from 'satori';
 import sharp from 'sharp';
+import { getCollection } from 'astro:content';
 import { cards, type OgCard } from '../../data/og';
+import help from '../../data/copy/help.json';
 
-export const getStaticPaths: GetStaticPaths = () =>
-  cards.map((card) => ({ params: { id: card.id }, props: { card } }));
+// the hand-listed cards, plus one for every how-I-help page and post
+export const getStaticPaths: GetStaticPaths = async () => {
+  const guides = await getCollection('help', ({ data }) => !data.draft);
+  const posts = await getCollection('writing', ({ data }) => !data.draft);
+  const all: OgCard[] = [
+    ...cards,
+    ...guides.map((e) => ({ id: `help-${e.id}`, path: `/help/${e.id}/`, kicker: help.kinds[e.data.kind], title: e.data.heading, note: e.data.summary })),
+    ...posts.map((p) => ({ id: `writing-${p.id}`, path: `/writing/${p.id}/`, kicker: 'Writing', title: p.data.title, note: p.data.description })),
+  ];
+  return all.map((card) => ({ params: { id: card.id }, props: { card } }));
+};
 
 // static cuts of the fonts the site already ships; satori reads woff, not woff2
 const font = (p: string) => readFile(path.resolve(process.cwd(), 'node_modules', p));
@@ -85,7 +96,7 @@ export const GET: APIRoute = async ({ props }) => {
         el(
           'div',
           { display: 'flex', flexGrow: 1, alignItems: 'center' },
-          el('div', { display: 'flex', fontFamily: 'Anybody', fontSize: long ? 72 : home ? 92 : 104, lineHeight: 0.95, letterSpacing: -3, maxWidth: home ? 620 : 1040 }, card.title),
+          el('div', { display: 'flex', fontFamily: 'Anybody', fontSize: card.title.length > 44 ? 60 : long ? 72 : home ? 92 : 104, lineHeight: 0.95, letterSpacing: -3, maxWidth: home ? 620 : 1040 }, card.title),
         ),
         el('div', { display: 'flex', fontSize: 25, lineHeight: 1.4, color: '#4A4F59', maxWidth: home ? 600 : 940 }, card.note),
         el('div', { display: 'flex', alignItems: 'center', marginTop: 26, paddingTop: 18, borderTop: `1.5px solid ${HAIR}`, fontFamily: 'Martian Mono', fontSize: 16, color: SOFT }, [

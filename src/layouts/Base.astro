@@ -35,6 +35,8 @@ interface Props {
   noServiceWorker?: boolean;
   /** the editor entry behind this page's words: "pages/<file>" or "work/<id>" */
   edit?: string;
+  /** a page's own structured data nodes (Service, FAQPage, BlogPosting...) */
+  graph?: Record<string, unknown>[];
 }
 
 const {
@@ -52,6 +54,7 @@ const {
   puck = false,
   noServiceWorker = false,
   edit,
+  graph,
 } = Astro.props;
 
 // which section the visitor is in, for the puck's needle and current mark
@@ -95,7 +98,9 @@ const schema = home
             name: 'Datum',
             url: 'https://datumci.com',
           },
-          sameAs: ['https://github.com/brettmboggs'],
+          jobTitle: 'Operations and systems consultant',
+          knowsAbout: ['Small business operations', 'Custom business software', 'Workflow automation', 'Websites', 'Google Business Profile'],
+          sameAs: ['https://github.com/brettmboggs', 'https://www.linkedin.com/in/brettmboggs/'],
         },
         {
           '@type': 'WebSite',
@@ -122,7 +127,15 @@ const schema = home
             postalCode: '63368',
             addressCountry: 'US',
           },
-          areaServed: { '@type': 'AdministrativeArea', name: 'St. Charles County, Missouri' },
+          areaServed: [
+            { '@type': 'AdministrativeArea', name: 'St. Charles County, Missouri' },
+            { '@type': 'AdministrativeArea', name: 'St. Louis County, Missouri' },
+            { '@type': 'City', name: 'St. Louis, Missouri' },
+          ],
+          priceRange: '$350 to $12,000',
+          slogan: 'Systems your business owns.',
+          knowsAbout: ['Small business operations', 'Custom business software', 'Workflow automation', 'Replacing subscription software', 'Websites', 'Google Business Profile', 'AI for small business'],
+          hasOfferCatalog: { '@id': 'https://brettboggs.dev/help/#catalog' },
         },
       ],
     }
@@ -174,6 +187,7 @@ const schema = home
 
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+    {graph && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })} />}
     <slot name="head" />
   </head>
   <body>

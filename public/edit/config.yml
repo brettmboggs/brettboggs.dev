@@ -83,6 +83,70 @@ collections:
       - { name: unlisted, label: Unlisted (page exists, off the index), widget: boolean, default: false }
       - { name: body, label: Body, widget: markdown, required: false }
 
+  # ---------------------------------------------------------------- How I help
+  - name: help
+    label: How I help
+    label_singular: How-I-help page
+    description: The pages under /help/. What I do, getting off a rented tool, and straight answers. Questions listed here also become search-result answers.
+    folder: src/content/help
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    summary: "{{heading}}{{draft | ternary(' · draft', '')}}"
+    sortable_fields: [order, heading]
+    preview_path: /help/{{slug}}/
+    fields:
+      - { name: title, label: Title (browser tab and search result), widget: string }
+      - { name: description, label: Description (search result), widget: text }
+      - { name: kind, label: Kind, widget: select, options: [{ label: What I do, value: service }, { label: Switching off a tool, value: switch }, { label: Straight answers, value: answer }] }
+      - { name: heading, label: Heading, widget: string }
+      - { name: lede, label: Lede, widget: text }
+      - { name: summary, label: Line on /help/, widget: string }
+      - { name: order, label: Order on /help/, widget: number, value_type: int, default: 100 }
+      - name: price
+        label: Price
+        widget: object
+        required: false
+        fields:
+          - { name: amount, label: Amount, widget: string }
+          - { name: note, label: Note, widget: text }
+      - name: faq
+        label: Questions
+        widget: list
+        required: false
+        summary: "{{q}}"
+        fields:
+          - { name: q, label: Question, widget: string }
+          - { name: a, label: Answer (Markdown), widget: text }
+      - { name: related, label: Related pages (file names), widget: list, required: false }
+      - { name: updated, label: Updated, widget: datetime, time_format: false, format: YYYY-MM-DD }
+      - { name: draft, label: Draft (hidden everywhere), widget: boolean, default: false }
+      - { name: body, label: Body, widget: markdown }
+
+  # ---------------------------------------------------------------- Writing
+  - name: writing
+    label: Writing
+    label_singular: Post
+    description: Posts at /writing/.
+    folder: src/content/writing
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    summary: "{{title}}{{draft | ternary(' · draft', '')}}"
+    sortable_fields: [date, title]
+    preview_path: /writing/{{slug}}/
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Description, widget: text }
+      - { name: date, label: Date, widget: datetime, time_format: false, format: YYYY-MM-DD }
+      - { name: updated, label: Updated, widget: datetime, time_format: false, format: YYYY-MM-DD, required: false }
+      - { name: draft, label: Draft (hidden everywhere), widget: boolean, default: false }
+      - { name: body, label: Body, widget: markdown }
+
   # ---------------------------------------------------------------- Page copy
   - name: pages
     label: Pages
@@ -393,6 +457,10 @@ collections:
               - name: body
                 label: Body
                 widget: string
+              - name: url
+                label: Link (a how-I-help page, or blank)
+                widget: string
+                required: false
       - name: contact
         label: Contact
         widget: object
@@ -482,6 +550,58 @@ collections:
               - name: url
                 label: Url
                 widget: string
+    - name: help
+      label: How I help (index and shared words)
+      file: src/data/copy/help.json
+      preview_path: /help/
+      fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Description, widget: text }
+      - { name: eyebrow, label: Eyebrow, widget: string }
+      - { name: heading, label: Heading, widget: string }
+      - { name: lede, label: Lede, widget: text }
+      - name: groups
+        label: Group headings on /help/
+        widget: object
+        fields:
+          - { name: service, label: What I do, widget: string }
+          - { name: switch, label: Switching, widget: string }
+          - { name: answer, label: Answers, widget: string }
+      - name: kinds
+        label: Eyebrow on each page, by kind
+        widget: object
+        fields:
+          - { name: service, label: What I do, widget: string }
+          - { name: switch, label: Switching, widget: string }
+          - { name: answer, label: Answers, widget: string }
+      - { name: priceLabel, label: Price label, widget: string }
+      - { name: faqHeading, label: Questions heading, widget: string }
+      - { name: relatedHeading, label: Related heading, widget: string }
+      - { name: updated, label: Updated label, widget: string }
+      - name: cta
+        label: The ask at the foot of every page
+        widget: object
+        fields:
+          - { name: heading, label: Heading, widget: string }
+          - { name: body, label: Body, widget: text }
+          - { name: button, label: Button, widget: string }
+          - { name: url, label: Button link, widget: string }
+          - { name: email, label: Email, widget: string }
+          - { name: area, label: Area line, widget: string }
+      - { name: backLink, label: Back link, widget: string }
+    - name: writing
+      label: Writing (index)
+      file: src/data/copy/writing.json
+      preview_path: /writing/
+      fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Description, widget: text }
+      - { name: eyebrow, label: Eyebrow, widget: string }
+      - { name: heading, label: Heading, widget: string }
+      - { name: lede, label: Lede, widget: text }
+      - { name: empty, label: When there are no posts, widget: string }
+      - { name: backLink, label: Back link, widget: string }
+      - { name: byline, label: Byline, widget: string }
     - name: about
       label: About
       file: src/data/copy/about.json

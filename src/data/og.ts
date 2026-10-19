@@ -13,6 +13,8 @@ export type OgCard = {
 
 export const cards: OgCard[] = [
   { id: 'home', path: '/', kicker: 'Systems your business owns', title: 'Stop renting your business.', note: 'One system you own, in place of a stack of subscriptions.' },
+  { id: 'help', path: '/help/', kicker: 'How I help', title: 'How I help.', note: 'One person who learns how your business runs, then fixes what costs you time or money.' },
+  { id: 'writing', path: '/writing/', kicker: 'Writing', title: 'Writing.', note: 'Notes on running a small business with less overhead.' },
   { id: 'work', path: '/work/', kicker: 'Work', title: 'Work', note: 'Case studies. The problem, the build, and what came of it.' },
   { id: 'lab', path: '/lab/', kicker: 'Lab', title: 'Lab', note: 'Experiments and unfinished things, allowed to be rough.' },
   { id: 'about', path: '/about/', kicker: 'About', title: 'Operator turned builder.', note: 'A decade running physical operations, then the software those operations deserved. St. Louis.' },

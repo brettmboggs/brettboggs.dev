@@ -1,0 +1,70 @@
+---
+// The one action, at the foot of every how-I-help and writing page. The form
+// itself lives on the homepage; this sends people to it.
+import copy from '../data/copy/help.json';
+
+const { cta } = copy;
+---
+
+<section class="ask">
+  <h2>{cta.heading}</h2>
+  <p>{cta.body}</p>
+  <div class="ask-go">
+    <a class="ask-btn" href={cta.url}>{cta.button} <span aria-hidden="true">→</span></a>
+    <a class="ask-mail" href={`mailto:${cta.email}`}>{cta.email}</a>
+  </div>
+  <p class="ask-area">{cta.area}</p>
+</section>
+
+<style>
+  .ask {
+    margin-top: 5rem;
+    padding: clamp(1.8rem, 4vw, 3rem);
+    border-radius: 24px;
+    background: var(--sheet);
+  }
+  .ask h2 {
+    font-weight: 880;
+    font-stretch: 118%;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+  .ask p {
+    margin-top: 1rem;
+    max-width: 52ch;
+    color: var(--ink-2);
+  }
+  .ask-go {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.2rem 1.6rem;
+    margin-top: 1.6rem;
+  }
+  .ask-btn {
+    display: inline-flex;
+    gap: 0.5rem;
+    padding: 0.95rem 1.3rem;
+    border-radius: 999px;
+    background: var(--sig);
+    color: var(--ink);
+    font-weight: 600;
+    line-height: 1;
+    background-image: none;
+    transition: transform 0.35s var(--ease);
+  }
+  .ask-btn:hover {
+    color: var(--ink);
+    transform: translateY(-2px);
+  }
+  .ask-mail {
+    font-weight: 500;
+  }
+  .ask .ask-area {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    line-height: 1.6;
+    color: var(--soft);
+  }
+</style>
