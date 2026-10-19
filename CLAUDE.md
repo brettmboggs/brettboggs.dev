@@ -21,7 +21,8 @@ construction management, datumci.com), and a playground for experiments.
 
 ## Routes
 
-- `/` — polished front door: who Brett is, what he's building, contact
+- `/` — the sales page for Brett's operations and systems practice (changed 2026-10-19 at Brett's request: he'd rather win clients than use the site as a job portfolio). Operations first, websites one tool among several. Copy in `src/data/copy/home.json`; the hero board animation (scraps of a messy week gather into Call → Quote → Booked → Done → Paid) is GSAP in `src/pages/index.astro`. Prices on the page must match the consulting repo's PRICING.md.
+- `/lab/film/` — The Ridge film, moved off the homepage 2026-10-19. Base's `film` prop carries the film-only layout (header over the render, floating footer, puck runway); `home` now only means "carry the identity schema".
 - `/work` — case studies, Markdown in `src/content/work/`
 - `/lab` — experiments; allowed to be rough. Each experiment is a page under `src/pages/lab/`
 - `/writing` — posts, Markdown in `src/content/writing/`
@@ -65,7 +66,7 @@ brief: "a hippie who went to college." Airy, light, professional-but-passion-pro
   aesthetics, skill bars, default-blue links, motion that delays reading,
   card grids (Brett flagged them as AI-slop; use editorial index rows).
 
-## Hero direction (reset 2026-08-25, after two rejected attempts)
+## Hero direction (history: the film now lives at /lab/film/, not the homepage)
 
 Brett REJECTED: big bold display of his own name (particle version AND solid
 3D bronze version) — "super cringey" from a visitor's POV. Identity lives in a
