@@ -13,6 +13,8 @@ interface Props {
   title: string;
   description?: string;
   home?: boolean;
+  /** the Ridge film page: header over the render, floating footer, long puck runway */
+  film?: boolean;
   /** page-specific social card, resolved against the site root */
   ogImage?: string;
   /** marks the page as an article and stamps its dates */
@@ -34,6 +36,7 @@ const {
   title,
   description = 'Brett Boggs. Work and experiments.',
   home = false,
+  film = false,
   ogImage: ogGiven,
   article,
   noindex = false,
@@ -91,9 +94,27 @@ const schema = home
           '@id': 'https://brettboggs.dev/#site',
           url: 'https://brettboggs.dev',
           name: 'Brett Boggs',
-          description: 'Brett Boggs. Work and experiments.',
+          description: 'Operations and systems for local businesses in St. Charles County.',
           publisher: { '@id': 'https://brettboggs.dev/#brett' },
           inLanguage: 'en',
+        },
+        {
+          '@type': 'ProfessionalService',
+          '@id': 'https://brettboggs.dev/#practice',
+          name: 'Brett Boggs',
+          url: 'https://brettboggs.dev',
+          email: 'hello@brettboggs.dev',
+          description:
+            'Operations and systems for local businesses: custom software, process fixes, websites and Google profiles.',
+          founder: { '@id': 'https://brettboggs.dev/#brett' },
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: "O'Fallon",
+            addressRegion: 'MO',
+            postalCode: '63368',
+            addressCountry: 'US',
+          },
+          areaServed: { '@type': 'AdministrativeArea', name: 'St. Charles County, Missouri' },
         },
       ],
     }
@@ -123,7 +144,7 @@ const schema = home
     <meta name="google-site-verification" content="U3pdbIQTNC8OSjS7xZRCUAfmT1gX_4ryAZzrnL1hVLE" />
     <meta name="apple-mobile-web-app-title" content="Brett Boggs" />
     {
-      !home && (
+      !film && (
         <script is:inline>
           /* dusk, decided before first paint: after sunset the paper cools. sunset is
              guessed from the clock and the month, never from location. ?dusk=1 or
@@ -174,9 +195,9 @@ const schema = home
     <slot name="head" />
   </head>
   <body>
-    {home && <div class="ridge-ghost" id="ridge-ghost" aria-hidden="true"></div>}
+    {film && <div class="ridge-ghost" id="ridge-ghost" aria-hidden="true"></div>}
     {scene && <div class="scene-ghost" id="scene-ghost" data-scene={scene} aria-hidden="true"></div>}
-    <header class:list={['site-header', 'wrap', { 'over-film': home }]}>
+    <header class:list={['site-header', 'wrap', { 'over-film': film }]}>
       <a class="wordmark" href="/" aria-label="Brett Boggs, home">B<span class="wordmark-rest" aria-hidden="true">rett</span><span class="wordmark-b">B</span><span class="wordmark-rest" aria-hidden="true">oggs</span><span class="wordmark-dot">.</span></a>
       <nav>
         <a href="/work/">Work</a>
@@ -188,9 +209,9 @@ const schema = home
     <main class="wrap">
       <slot />
     </main>
-    <footer class:list={['site-footer', 'wrap', { floating: home }]} id="site-footer">
+    <footer class:list={['site-footer', 'wrap', { floating: film }]} id="site-footer">
       <p>&copy; {year} Brett Boggs</p>
-      {!home && (
+      {!film && (
         <nav class="foot-nav" aria-label="About this site">
           <a href="/colophon/">Colophon</a>
           <a href="/log/">Log</a>
@@ -200,7 +221,7 @@ const schema = home
     </footer>
     {edit && <EditLink target={edit} />}
     {puck && (
-      <nav class="puck" id="puck" aria-label="Quick navigation" data-here={here} data-home={home ? '1' : ''}>
+      <nav class="puck" id="puck" aria-label="Quick navigation" data-here={here} data-home={film ? '1' : ''}>
         <button class="puck-face" id="puck-face" type="button" aria-expanded="false" aria-controls="puck-menu">
           <svg viewBox="0 0 56 56" fill="none" aria-hidden="true">
             <circle cx="28" cy="28" r="19" stroke="currentColor" stroke-width="1.75" />

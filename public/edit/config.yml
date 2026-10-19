@@ -99,47 +99,204 @@ collections:
       - name: description
         label: Search description
         widget: text
-      - name: heroTitle
-        label: Hero headline
-        widget: string
-      - name: heroId
-        label: Line under the headline
-        widget: string
-      - name: navLabel
-        label: Section links label (screen readers)
-        widget: string
-      - name: work
-        label: Flag 1 (Work)
+      - name: hero
+        label: Hero
         widget: object
         fields:
+        - name: eyebrow
+          label: Eyebrow
+          widget: string
         - name: title
-          label: Title
+          label: Headline
           widget: string
-        - name: notePrefix
-          label: Note before the latest project name
+        - name: lede
+          label: Line under the headline
+          widget: text
+        - name: cta
+          label: Main button
           widget: string
-        - name: noteFallback
-          label: Note when there is no project
+        - name: secondary
+          label: Second link
           widget: string
-      - name: lab
-        label: Flag 2 (Lab)
+        - name: replay
+          label: Replay button
+          widget: string
+        - name: boardLabel
+          label: Board label (screen readers)
+          widget: string
+        - name: mess
+          label: Scraps on the board (before)
+          widget: list
+        - name: flow
+          label: Steps on the board (after)
+          widget: list
+          summary: '{{step}} · {{note}}'
+          fields:
+          - name: step
+            label: Step
+            widget: string
+          - name: note
+            label: Note
+            widget: string
+        - name: stamp
+          label: Stamp
+          widget: string
+      - name: problems
+        label: Problems
         widget: object
         fields:
-        - name: title
-          label: Title
+        - name: eyebrow
+          label: Number
           widget: string
-        - name: note
-          label: Note
+        - name: heading
+          label: Heading
           widget: string
+        - name: items
+          label: Rows
+          widget: list
+          summary: '{{problem}}'
+          fields:
+          - name: problem
+            label: Problem
+            widget: string
+          - name: fix
+            label: Fix
+            widget: text
+      - name: process
+        label: How it goes
+        widget: object
+        fields:
+        - name: eyebrow
+          label: Number
+          widget: string
+        - name: heading
+          label: Heading
+          widget: string
+        - name: steps
+          label: Steps
+          widget: list
+          summary: '{{title}}'
+          fields:
+          - name: title
+            label: Title
+            widget: string
+          - name: body
+            label: Body
+            widget: text
       - name: about
-        label: Flag 3 (About)
+        label: Who
         widget: object
         fields:
-        - name: title
-          label: Title
+        - name: eyebrow
+          label: Number
           widget: string
+        - name: heading
+          label: Heading
+          widget: string
+        - name: body
+          label: Body (Markdown)
+          widget: markdown
+        - name: portrait
+          label: Portrait
+          widget: image
+        - name: portraitAlt
+          label: Portrait description
+          widget: string
+      - name: proof
+        label: Recent work
+        widget: object
+        fields:
+        - name: eyebrow
+          label: Number
+          widget: string
+        - name: heading
+          label: Heading
+          widget: string
+        - name: items
+          label: Case studies
+          widget: list
+          summary: '{{name}}'
+          fields:
+          - name: name
+            label: Name
+            widget: string
+          - name: meta
+            label: Line above the name
+            widget: string
+          - name: body
+            label: Body
+            widget: text
+          - name: stats
+            label: Numbers
+            widget: list
+            summary: '{{value}} {{label}}'
+            fields:
+            - name: value
+              label: Number
+              widget: string
+            - name: label
+              label: Label
+              widget: string
+          - name: image
+            label: Screenshot
+            widget: image
+          - name: imageAlt
+            label: Screenshot description
+            widget: string
+          - name: link
+            label: Link text
+            widget: string
+          - name: url
+            label: Link
+            widget: string
+        - name: more
+          label: All work link
+          widget: string
+      - name: pricing
+        label: Getting started
+        widget: object
+        fields:
+        - name: eyebrow
+          label: Number
+          widget: string
+        - name: heading
+          label: Heading
+          widget: string
+        - name: rows
+          label: Rows
+          widget: list
+          summary: '{{name}} · {{price}}'
+          fields:
+          - name: name
+            label: Name
+            widget: string
+          - name: price
+            label: Price
+            widget: string
+          - name: body
+            label: Body
+            widget: text
         - name: note
-          label: Note
+          label: Founding note
+          widget: string
+      - name: contact
+        label: Contact
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: body
+          label: Body
+          widget: string
+        - name: email
+          label: Email
+          widget: string
+        - name: subject
+          label: Email subject
+          widget: string
+        - name: area
+          label: Service area line
           widget: string
     - name: about
       label: About
@@ -1858,6 +2015,59 @@ collections:
       - name: backLink
         label: Back link
         widget: string
+    - name: lab-film
+      label: Lab · The Ridge film
+      file: src/data/copy/lab-film.json
+      preview_path: /lab/film/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: heroTitle
+        label: Hero headline
+        widget: string
+      - name: heroId
+        label: Line under the headline
+        widget: string
+      - name: navLabel
+        label: Section links label (screen readers)
+        widget: string
+      - name: work
+        label: Flag 1 (Work)
+        widget: object
+        fields:
+        - name: title
+          label: Title
+          widget: string
+        - name: notePrefix
+          label: Note before the latest project name
+          widget: string
+        - name: noteFallback
+          label: Note when there is no project
+          widget: string
+      - name: lab
+        label: Flag 2 (Lab)
+        widget: object
+        fields:
+        - name: title
+          label: Title
+          widget: string
+        - name: note
+          label: Note
+          widget: string
+      - name: about
+        label: Flag 3 (About)
+        widget: object
+        fields:
+        - name: title
+          label: Title
+          widget: string
+        - name: note
+          label: Note
+          widget: string
     - name: lab-ridge
       label: Lab · The Ridge
       file: src/data/copy/lab-ridge.json

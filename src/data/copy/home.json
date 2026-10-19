@@ -1,20 +1,180 @@
 {
-  "title": "Brett Boggs",
-  "description": "Brett Boggs. Work and experiments.",
-  "heroTitle": "Walk through the work.",
-  "heroId": "Brett Boggs · co-founder and full-stack engineer, Datum · St. Louis",
-  "navLabel": "Site sections",
-  "work": {
-    "title": "Work",
-    "notePrefix": "latest · ",
-    "noteFallback": "case studies"
+  "title": "Brett Boggs · Operations and systems for local businesses",
+  "description": "Operations and systems for local businesses in St. Charles County. I look at how your business actually runs, then fix what's costing you customers or time.",
+  "hero": {
+    "eyebrow": "Operations and systems · St. Charles County",
+    "title": "Run a tighter operation.",
+    "lede": "I look at how your business actually runs, then fix what's costing you customers or time. Sometimes that's software built around how you work. Sometimes it's a better process and nothing else.",
+    "cta": "Book a free look",
+    "secondary": "See the work",
+    "replay": "Replay",
+    "boardLabel": "A week of jobs, before and after",
+    "mess": [
+      "Scheduling app · $59/mo",
+      "Invoicing · $35/mo",
+      "CRM · $49/mo",
+      "3 missed calls",
+      "follow up w/ quote??",
+      "Same job, typed 3 times",
+      "Paper ticket #0412",
+      "Who has the deposit?"
+    ],
+    "flow": [
+      {
+        "step": "Call",
+        "note": "texted back in 9s"
+      },
+      {
+        "step": "Quote",
+        "note": "follow-up on day 3"
+      },
+      {
+        "step": "Booked",
+        "note": "on the calendar"
+      },
+      {
+        "step": "Done",
+        "note": "photos attached"
+      },
+      {
+        "step": "Paid",
+        "note": "in the books"
+      }
+    ],
+    "stamp": "One system. Yours."
   },
-  "lab": {
-    "title": "Lab",
-    "note": "experiments"
+  "problems": {
+    "eyebrow": "01",
+    "heading": "What it usually is.",
+    "items": [
+      {
+        "problem": "Calls that go to voicemail and never get called back.",
+        "fix": "A missed call gets a text back in seconds and lands on a list someone works."
+      },
+      {
+        "problem": "Quotes that go out and nobody follows up.",
+        "fix": "Every quote gets its follow-up on a schedule, without anyone having to remember."
+      },
+      {
+        "problem": "The same job typed into three places.",
+        "fix": "Enter it once. The calendar, the invoice and the books all read from the same record."
+      },
+      {
+        "problem": "Paying every month for software that almost fits.",
+        "fix": "A system you own, built around the way you already work, in place of the subscriptions."
+      },
+      {
+        "problem": "Customers who can't find you, or find the wrong hours.",
+        "fix": "A fast site and a Google profile that agree with each other and stay current."
+      }
+    ]
+  },
+  "process": {
+    "eyebrow": "02",
+    "heading": "How it goes.",
+    "steps": [
+      {
+        "title": "Look",
+        "body": "Twenty minutes, free, at your place or on the phone. You walk me through one job, from the first call to getting paid."
+      },
+      {
+        "title": "Plan",
+        "body": "In writing: what to fix first, what to ignore, and a fixed price. It's yours to keep, even if you do it yourself."
+      },
+      {
+        "title": "Build",
+        "body": "Nothing goes live until you've seen it. Your current tools keep running until you're ready to switch."
+      },
+      {
+        "title": "Keep it running",
+        "body": "Hosting, backups, fixes and small changes, monthly. You own all of it: the data, the accounts, the code."
+      }
+    ]
   },
   "about": {
-    "title": "About",
-    "note": "who is behind it"
+    "eyebrow": "03",
+    "heading": "Who you'd be working with.",
+    "body": "I spent ten years running operations before I wrote software. A service lane at a Honda dealership. General manager of a car wash, then a group of them, then a district. Schedules, payroll, and equipment that breaks on the coldest day of the year.\n\nNow I build [Datum](/work/datum/), software for running a construction company. This is the same work, for businesses closer to home.",
+    "portrait": "/about/brett-480.webp",
+    "portraitAlt": "Brett Boggs"
+  },
+  "proof": {
+    "eyebrow": "04",
+    "heading": "Recent work.",
+    "items": [
+      {
+        "name": "Knock Em' Down Detailing",
+        "meta": "Mobile detailing · St. Louis",
+        "body": "One system built to replace Housecall Pro and QuickBooks: booking, quotes, invoicing, the books, follow-ups, and an iPhone app for the driveway. A new site and brand on top.",
+        "stats": [
+          {
+            "value": "1 app",
+            "label": "booking, invoices, the books and follow-ups"
+          },
+          {
+            "value": "$0",
+            "label": "a month to host the site"
+          }
+        ],
+        "image": "/peek/ked-live-lg.webp",
+        "imageAlt": "The Knock Em' Down Detailing site.",
+        "link": "Read the case study",
+        "url": "/work/websites/ked-detailing/"
+      },
+      {
+        "name": "Mattress Concepts",
+        "meta": "Mattress maker · High Ridge",
+        "body": "Off a slow Wix site and a Google profile with no new photos in four years. Now 32 pages, a quote form that draws the mattress to scale from the customer's measurements, and a profile with the right hours.",
+        "stats": [
+          {
+            "value": "74 → 95",
+            "label": "phone speed score"
+          },
+          {
+            "value": "8.6s → 2.7s",
+            "label": "until the page shows on a phone"
+          }
+        ],
+        "image": "/peek/mattress-concepts-lg.webp",
+        "imageAlt": "The new Mattress Concepts homepage.",
+        "link": "Visit the site",
+        "url": "https://www.mattressconcepts.com"
+      }
+    ],
+    "more": "All work"
+  },
+  "pricing": {
+    "eyebrow": "05",
+    "heading": "Getting started.",
+    "rows": [
+      {
+        "name": "A look",
+        "price": "Free",
+        "body": "Twenty minutes. Bring the thing that's eating your week."
+      },
+      {
+        "name": "Operations review",
+        "price": "$350",
+        "body": "Ninety minutes and a written plan. Credited toward any project."
+      },
+      {
+        "name": "Builds",
+        "price": "Fixed quote",
+        "body": "Priced up front against what it replaces: the subscriptions, and the hours. Websites from $1,500."
+      },
+      {
+        "name": "Keeping it running",
+        "price": "From $400/mo",
+        "body": "Hosting, backups, fixes, Google posts, review replies, and one improvement every quarter."
+      }
+    ],
+    "note": "The first five clients get founding rates, locked for a year."
+  },
+  "contact": {
+    "heading": "Start with a free look.",
+    "body": "Tell me what's eating your time. I'll reply within a day.",
+    "email": "hello@brettboggs.dev",
+    "subject": "A free look",
+    "area": "Based in O'Fallon. In person across St. Charles County, by phone anywhere."
   }
 }

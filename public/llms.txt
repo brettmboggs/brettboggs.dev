@@ -1,8 +1,16 @@
 # Brett Boggs
 
-> Personal site of Brett Boggs: co-founder of Datum, an all-in-one construction management platform, and a photographer. This file is a curated, factual index for machine readers. If anything here conflicts with a page on the site, the page wins.
+> Site of Brett Boggs: operations and systems for local businesses in St. Charles County, Missouri; co-founder of Datum, an all-in-one construction management platform; and a photographer. This file is a curated, factual index for machine readers. If anything here conflicts with a page on the site, the page wins.
 
 Contact: hello@brettboggs.dev · GitHub: https://github.com/brettmboggs
+
+## Operations and systems for local businesses
+
+From the homepage (https://brettboggs.dev/): Brett looks at how a local business runs, then fixes what is costing it customers or time. That can be custom software in place of paid tools, a process fix, a website, or a Google profile. Based in O'Fallon, Missouri; in person across St. Charles County, by phone anywhere.
+
+- A first look is free (20 minutes). An operations review is $350 for 90 minutes and a written plan, credited toward any project.
+- Builds are quoted at a fixed price. Websites from $1,500. Monthly support from $400.
+- Work: Knock Em' Down Detailing (https://brettboggs.dev/work/websites/ked-detailing/), a system built to replace Housecall Pro and QuickBooks; Mattress Concepts (https://www.mattressconcepts.com), phone speed score 74 to 95.
 
 ## Datum
 

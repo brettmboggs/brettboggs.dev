@@ -1,0 +1,20 @@
+{
+  "title": "The Ridge, the film · Brett Boggs",
+  "description": "The Ridge. A scroll-scrubbed golden-hour film, rendered in Blender.",
+  "heroTitle": "Walk through the work.",
+  "heroId": "Brett Boggs · co-founder and full-stack engineer, Datum · St. Louis",
+  "navLabel": "Site sections",
+  "work": {
+    "title": "Work",
+    "notePrefix": "latest · ",
+    "noteFallback": "case studies"
+  },
+  "lab": {
+    "title": "Lab",
+    "note": "experiments"
+  },
+  "about": {
+    "title": "About",
+    "note": "who is behind it"
+  }
+}
