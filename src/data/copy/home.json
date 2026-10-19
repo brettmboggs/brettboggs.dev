@@ -146,7 +146,7 @@
       },
       {
         "label": "Role",
-        "value": "Co-founder · designed and built end to end"
+        "value": "Lead engineer · designed and built end to end"
       },
       {
         "label": "Status",
@@ -260,7 +260,7 @@
   "about": {
     "eyebrow": "04",
     "heading": "Who you'd be working with.",
-    "body": "I spent ten years running operations before I wrote software. A service lane at a Honda dealership. General manager of a car wash, then a group of them, then a district. Schedules, payroll, and equipment that breaks on the coldest day of the year.\n\nNow I co-found and build software for running construction companies, end to end. This is the same work, for businesses of any size closer to home.",
+    "body": "I spent ten years running operations before I wrote software. A service lane at a Honda dealership. General manager of a car wash, then a group of them, then a district. Schedules, payroll, and equipment that breaks on the coldest day of the year.\n\nNow I'm the lead engineer on a company-wide platform for a construction company, built end to end. This is the same work, for businesses of any size closer to home.",
     "portrait": "/about/brett-480.webp",
     "portraitAlt": "Brett Boggs",
     "timeline": [
@@ -277,7 +277,7 @@
         "place": "Real estate investment"
       },
       {
-        "role": "Co-founder, engineer",
+        "role": "Lead engineer",
         "place": "Construction software"
       }
     ]
