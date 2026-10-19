@@ -162,6 +162,65 @@ collections:
           - name: fix
             label: Fix
             widget: text
+      - name: datum
+        label: Datum
+        widget: object
+        fields:
+        - name: eyebrow
+          label: Number
+          widget: string
+        - name: heading
+          label: Heading
+          widget: string
+        - name: lede
+          label: Lede
+          widget: text
+        - name: body
+          label: Body
+          widget: text
+        - name: tabsLabel
+          label: Tabs label (screen readers)
+          widget: string
+        - name: tabs
+          label: Departments
+          widget: list
+          summary: '{{name}}'
+          fields:
+          - name: name
+            label: Name
+            widget: string
+          - name: image
+            label: Screenshot
+            widget: image
+          - name: alt
+            label: Screenshot description
+            widget: string
+        - name: figures
+          label: Figures
+          widget: list
+          summary: '{{number}} {{label}}'
+          fields:
+          - name: number
+            label: Number
+            widget: string
+          - name: label
+            label: Label
+            widget: string
+        - name: link
+          label: Case study link text
+          widget: string
+        - name: url
+          label: Case study link
+          widget: string
+        - name: contractor
+          label: Contractor line
+          widget: string
+        - name: contractorLink
+          label: Contractor link text
+          widget: string
+        - name: contractorUrl
+          label: Contractor link
+          widget: string
       - name: process
         label: How it goes
         widget: object

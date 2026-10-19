@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import copy from '../data/copy/home.json';
 import { md } from '../data/copy';
 
-const { hero, problems, process, about, proof, pricing, contact } = copy;
+const { hero, problems, datum, process, about, proof, pricing, contact } = copy;
 
 // where each scrap of the old way lands on the board: percent of the board,
 // plus a tilt. hand-placed so nothing covers a word at any board width.
@@ -76,6 +76,66 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
         ))
       }
     </ul>
+  </section>
+
+  <section class="block datum" id="datum">
+    <header class="block-head">
+      <p class="eyebrow">{datum.eyebrow}</p>
+      <h2>{datum.heading}</h2>
+    </header>
+    <div class="datum-intro">
+      <p class="datum-lede">{datum.lede}</p>
+      <p class="datum-body">{datum.body}</p>
+    </div>
+
+    <div class="deck" id="deck">
+      <div class="deck-tabs" role="tablist" aria-label={datum.tabsLabel}>
+        {
+          datum.tabs.map((t, i) => (
+            <button
+              class="deck-tab"
+              type="button"
+              role="tab"
+              id={`deck-tab-${i}`}
+              aria-controls={`deck-pane-${i}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? 0 : -1}
+            >
+              <span class="deck-num">{String(i + 1).padStart(2, '0')}</span>
+              {t.name}
+              <span class="deck-timer" aria-hidden="true" />
+            </button>
+          ))
+        }
+      </div>
+      <div class="deck-frame">
+        <div class="deck-chrome" aria-hidden="true"><span /><span /><span /></div>
+        <div class="deck-panes">
+          {
+            datum.tabs.map((t, i) => (
+              <figure class:list={['deck-pane', { 'is-on': i === 0 }]} role="tabpanel" id={`deck-pane-${i}`} aria-labelledby={`deck-tab-${i}`}>
+                <img src={t.image} alt={t.alt} width="1200" height="525" loading={i === 0 ? 'lazy' : 'lazy'} decoding="async" />
+              </figure>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <dl class="figures">
+      {
+        datum.figures.map((f) => (
+          <div class="figure">
+            <dt>{f.number}</dt>
+            <dd>{f.label}</dd>
+          </div>
+        ))
+      }
+    </dl>
+    <p class="datum-links">
+      <a href={datum.url}>{datum.link} →</a>
+      <span class="datum-contractor">{datum.contractor} <a href={datum.contractorUrl}>{datum.contractorLink}</a></span>
+    </p>
   </section>
 
   <section class="block" id="process">
@@ -422,6 +482,190 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
     font-weight: 600;
   }
 
+  /* datum: the top of the range, shown department by department */
+  .datum-intro {
+    display: grid;
+    gap: 1rem 3rem;
+    margin-top: 1.75rem;
+  }
+  @media (min-width: 860px) {
+    .datum-intro {
+      grid-template-columns: 1.1fr 1fr;
+    }
+  }
+  .datum-lede {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 48, 'SOFT' 50, 'WONK' 0;
+    font-weight: 500;
+    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+    line-height: 1.3;
+  }
+  .datum-body {
+    color: var(--ink-soft);
+  }
+  .deck {
+    margin-top: 2.75rem;
+  }
+  .deck-tabs {
+    display: flex;
+    gap: 0.25rem 1.75rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 2px solid var(--ink);
+  }
+  .deck-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .deck-tab {
+    position: relative;
+    flex: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.85rem 0 0.95rem;
+    border: 0;
+    background: none;
+    font-family: var(--body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: color 0.35s var(--ease-warm);
+  }
+  .deck-num {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: var(--rust);
+  }
+  .deck-tab[aria-selected='true'],
+  .deck-tab:hover {
+    color: var(--ink);
+  }
+  .deck-tab:focus-visible {
+    outline: 2px solid var(--sienna);
+    outline-offset: 2px;
+  }
+  /* the selected tab carries a sunflower bar; while the deck runs on its own
+     the bar fills as the timer, so the visitor can see a change is coming */
+  .deck-timer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 4px;
+    background: var(--sunflower);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  .deck-tab[aria-selected='true'] .deck-timer {
+    transform: scaleX(1);
+  }
+  .deck.is-auto .deck-tab[aria-selected='true'] .deck-timer {
+    animation: deck-timer var(--deck-ms, 4500ms) linear both;
+  }
+  @keyframes deck-timer {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  .deck-frame {
+    margin-top: 1.75rem;
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 12px 12px 0 -2px var(--sunflower), 12px 12px 0 0 var(--ink);
+  }
+  .deck-chrome {
+    display: flex;
+    gap: 6px;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 2px solid var(--ink);
+    background: var(--paper-deep);
+  }
+  .deck-chrome span {
+    width: 9px;
+    height: 9px;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+  }
+  .deck-panes {
+    display: grid;
+  }
+  .deck-pane {
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.015);
+    transition:
+      opacity 0.7s var(--ease-warm),
+      transform 1.2s var(--ease-warm),
+      visibility 0s linear 0.7s;
+  }
+  .deck-pane.is-on {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 0.7s var(--ease-warm),
+      transform 1.2s var(--ease-warm);
+  }
+  .deck-pane img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .deck-pane,
+    .deck-pane.is-on {
+      transition: none;
+      transform: none;
+    }
+  }
+  .figures {
+    display: grid;
+    gap: 1.5rem 2.5rem;
+    margin-top: 3rem;
+  }
+  @media (min-width: 760px) {
+    .figures {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .figure {
+    padding-top: 1rem;
+    border-top: 2px solid var(--ink);
+  }
+  .figure dt {
+    font-family: var(--display);
+    font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
+    font-weight: 600;
+    font-size: clamp(2.4rem, 5vw, 3.4rem);
+    line-height: 1;
+  }
+  .figure dd {
+    margin: 0.5rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+  }
+  .datum-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2.5rem;
+    align-items: baseline;
+    max-width: none;
+    margin-top: 2.25rem;
+  }
+  .datum-contractor {
+    color: var(--ink-soft);
+  }
+
   /* process: four steps along one rule that fills as you read */
   .steps {
     position: relative;
@@ -642,7 +886,9 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
       .row,
       .step,
       .case,
-      .who-grid {
+      .who-grid,
+      .figure,
+      .deck {
         animation-name: rise;
         animation-timing-function: linear;
         animation-fill-mode: both;
@@ -732,5 +978,71 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
     gsap.set([...steps, stamp, replay], { opacity: 0 });
     gsap.set(line, { scaleY: 0 });
     io.observe(board);
+  }
+  // the datum deck: one department at a time. it runs on its own while it is on
+  // screen, and stops for good the moment the visitor picks a tab
+  const deck = document.getElementById('deck');
+  if (deck) {
+    const tabs = Array.from(deck.querySelectorAll<HTMLButtonElement>('.deck-tab'));
+    const panes = Array.from(deck.querySelectorAll<HTMLElement>('.deck-pane'));
+    const MS = 4500;
+    let at = 0;
+    let timer = 0;
+    let manual = false;
+    deck.style.setProperty('--deck-ms', `${MS}ms`);
+
+    const show = (i: number, focus = false): void => {
+      at = (i + tabs.length) % tabs.length;
+      tabs.forEach((t, j) => {
+        t.setAttribute('aria-selected', String(j === at));
+        t.tabIndex = j === at ? 0 : -1;
+      });
+      panes.forEach((p, j) => p.classList.toggle('is-on', j === at));
+      if (focus) tabs[at].focus();
+      // restart the timer bar on the newly selected tab
+      const bar = tabs[at].querySelector<HTMLElement>('.deck-timer');
+      if (bar) {
+        bar.style.animation = 'none';
+        void bar.offsetWidth;
+        bar.style.animation = '';
+      }
+      tabs[at].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    };
+    const stop = (): void => {
+      manual = true;
+      window.clearInterval(timer);
+      deck.classList.remove('is-auto');
+    };
+    const run = (): void => {
+      if (manual || reduced) return;
+      window.clearInterval(timer);
+      deck.classList.add('is-auto');
+      timer = window.setInterval(() => show(at + 1), MS);
+    };
+
+    tabs.forEach((t, i) =>
+      t.addEventListener('click', () => {
+        stop();
+        show(i);
+      }),
+    );
+    deck.querySelector('.deck-tabs')!.addEventListener('keydown', (e) => {
+      const k = (e as KeyboardEvent).key;
+      if (k !== 'ArrowRight' && k !== 'ArrowLeft') return;
+      e.preventDefault();
+      stop();
+      show(at + (k === 'ArrowRight' ? 1 : -1), true);
+    });
+
+    new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) run();
+        else {
+          window.clearInterval(timer);
+          deck.classList.remove('is-auto');
+        }
+      },
+      { threshold: 0.4 },
+    ).observe(deck);
   }
 </script>
