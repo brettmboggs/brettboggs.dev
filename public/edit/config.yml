@@ -269,8 +269,14 @@ collections:
               - name: name
                 label: Name
                 widget: string
+              - name: caption
+                label: Caption
+                widget: string
               - name: image
                 label: Image
+                widget: image
+              - name: full
+                label: Full
                 widget: image
               - name: alt
                 label: Alt
@@ -286,6 +292,21 @@ collections:
               - name: label
                 label: Label
                 widget: string
+          - name: proofHint
+            label: Proof hint
+            widget: string
+          - name: openFull
+            label: Open full
+            widget: string
+          - name: close
+            label: Close
+            widget: string
+          - name: prev
+            label: Prev
+            widget: string
+          - name: next
+            label: Next
+            widget: string
       - name: process
         label: Process
         widget: object
