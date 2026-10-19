@@ -13,6 +13,13 @@
 /shipping-returns                       /visit/              301
 /shop                                   /mattresses/         301
 /product-page/*                         /mattresses/         301
+# Addresses people commonly guess.
+/about                                  /#about              301
+/about-us                               /#about              301
+/contact                                /visit/              301
+/contact-us                             /visit/              301
+/reviews                                /#testimonials       301
+/testimonials                           /#testimonials       301
 # Wix's sitemap addresses, so search engines find the new sitemap.
 /sitemap.xml                            /sitemap-index.xml   301
 /pages-sitemap.xml                      /sitemap-index.xml   301
