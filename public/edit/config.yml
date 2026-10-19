@@ -258,29 +258,6 @@ collections:
           - name: proofLabel
             label: Proof label
             widget: string
-          - name: tabsLabel
-            label: Tabs label
-            widget: string
-          - name: tabs
-            label: Tabs
-            widget: list
-            summary: '{{name}}'
-            fields:
-              - name: name
-                label: Name
-                widget: string
-              - name: caption
-                label: Caption
-                widget: string
-              - name: image
-                label: Image
-                widget: image
-              - name: full
-                label: Full
-                widget: image
-              - name: alt
-                label: Alt
-                widget: string
           - name: figures
             label: Figures
             widget: list
@@ -292,20 +269,78 @@ collections:
               - name: label
                 label: Label
                 widget: string
-          - name: proofHint
-            label: Proof hint
-            widget: string
-          - name: openFull
-            label: Open full
-            widget: string
-          - name: close
-            label: Close
-            widget: string
-          - name: prev
-            label: Prev
-            widget: string
-          - name: next
-            label: Next
+          - name: block
+            label: Block
+            widget: list
+            summary: '{{label}}'
+            fields:
+              - name: label
+                label: Label
+                widget: string
+              - name: value
+                label: Value
+                widget: string
+          - name: map
+            label: Map
+            widget: object
+            fields:
+              - name: label
+                label: Label
+                widget: string
+              - name: core
+                label: Core
+                widget: object
+                fields:
+                  - name: name
+                    label: Name
+                    widget: string
+                  - name: note
+                    label: Note
+                    widget: string
+              - name: left
+                label: Left
+                widget: list
+                summary: '{{name}}'
+                fields:
+                  - name: name
+                    label: Name
+                    widget: string
+                  - name: note
+                    label: Note
+                    widget: string
+              - name: right
+                label: Right
+                widget: list
+                summary: '{{name}}'
+                fields:
+                  - name: name
+                    label: Name
+                    widget: string
+                  - name: note
+                    label: Note
+                    widget: string
+              - name: outLabel
+                label: Out label
+                widget: string
+              - name: out
+                label: Out
+                widget: list
+          - name: specCols
+            label: Spec cols
+            widget: list
+          - name: specs
+            label: Specs
+            widget: list
+            summary: '{{cap}}'
+            fields:
+              - name: cap
+                label: Cap
+                widget: string
+              - name: detail
+                label: Detail
+                widget: text
+          - name: walk
+            label: Walk
             widget: string
       - name: process
         label: Process

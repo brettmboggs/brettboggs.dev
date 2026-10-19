@@ -116,68 +116,120 @@
         "body": "What's owed, what's late, and who has the ball, without waiting for someone to build a spreadsheet."
       }
     ],
-    "proofLabel": "Proof · screens from a platform I built for a construction company",
-    "tabsLabel": "Departments in the platform",
-    "tabs": [
-      {
-        "name": "Finance",
-        "caption": "What's owed to you, what you owe, how old it is, and which items are stuck with whom.",
-        "image": "/datum/finance-overview-1200.webp",
-        "full": "/datum/finance-overview-full.webp",
-        "alt": "Finance overview: money owed and owing, aging charts, and open items"
-      },
-      {
-        "name": "Field",
-        "caption": "The day's crew, hours, equipment and production, filed from the job site and approved by the foreman.",
-        "image": "/datum/field-job-day-1200.webp",
-        "full": "/datum/field-job-day-full.webp",
-        "alt": "A job day: crew on site, hours, equipment and production by cost code"
-      },
-      {
-        "name": "Safety",
-        "caption": "Incidents, near misses and open observations, tracked month by month instead of in a binder.",
-        "image": "/datum/safety-dashboard-1200.webp",
-        "full": "/datum/safety-dashboard-full.webp",
-        "alt": "Safety overview: incidents, near misses, days without incident and monthly trend"
-      },
-      {
-        "name": "People",
-        "caption": "Open positions, onboarding, expiring certifications and upcoming reviews, in one place.",
-        "image": "/datum/people-dashboard-1200.webp",
-        "full": "/datum/people-dashboard-full.webp",
-        "alt": "People overview: employees, open positions, onboarding and expiring certifications"
-      },
-      {
-        "name": "Equipment",
-        "caption": "Every machine, which job it's on, what's in the yard, and what's due for service.",
-        "image": "/datum/equipment-command-center-1200.webp",
-        "full": "/datum/equipment-command-center-full.webp",
-        "alt": "Equipment overview: fleet by project, utilization and open maintenance"
-      }
-    ],
+    "proofLabel": "Proof · Project 01",
     "figures": [
       {
-        "number": "6",
-        "label": "departments on one record, five shown here"
+        "number": "8",
+        "label": "departments working from one record"
       },
       {
         "number": "132",
-        "label": "standard operating procedures, automated end to end"
+        "label": "procedures automated end to end"
       },
       {
-        "number": "2,259",
-        "label": "HTTP endpoints across 394 services"
+        "number": "332",
+        "label": "screens, web and phone"
       },
       {
-        "number": "1",
-        "label": "connection back to the accounting system they already run"
+        "number": "1,031",
+        "label": "database tables behind it"
       }
     ],
-    "proofHint": "Pick a department to look around",
-    "openFull": "Open full size",
-    "close": "Close",
-    "prev": "Previous screen",
-    "next": "Next screen"
+    "block": [
+      {
+        "label": "Project",
+        "value": "Company-wide operations platform"
+      },
+      {
+        "label": "Client",
+        "value": "Construction company · confidential"
+      },
+      {
+        "label": "Role",
+        "value": "Co-founder · designed and built end to end"
+      },
+      {
+        "label": "Status",
+        "value": "Live"
+      }
+    ],
+    "map": {
+      "label": "How it fits together",
+      "core": {
+        "name": "One record",
+        "note": "projects · people · equipment · money"
+      },
+      "left": [
+        {
+          "name": "Estimating",
+          "note": "bid documents read in, not retyped"
+        },
+        {
+          "name": "Project management",
+          "note": "plans and RFIs tracked to an answer"
+        },
+        {
+          "name": "Field",
+          "note": "daily reports, hours and pours from the site"
+        },
+        {
+          "name": "Safety",
+          "note": "hazards, incidents and training"
+        }
+      ],
+      "right": [
+        {
+          "name": "People",
+          "note": "hiring, onboarding, certifications"
+        },
+        {
+          "name": "Equipment",
+          "note": "fleet, yard and service"
+        },
+        {
+          "name": "Finance",
+          "note": "owed, owing, aging, approvals"
+        },
+        {
+          "name": "Leadership",
+          "note": "the whole company at a glance"
+        }
+      ],
+      "outLabel": "Connected to",
+      "out": [
+        "The accounting system they already run",
+        "Outlook, across the company",
+        "A phone app for the field",
+        "Microsoft sign-in, access by role"
+      ]
+    },
+    "specCols": [
+      "What it does",
+      "In practice"
+    ],
+    "specs": [
+      {
+        "cap": "Everyone opens to their own work",
+        "detail": "What needs action, what's coming up, and what's running late, for each person, without anyone building a report."
+      },
+      {
+        "cap": "The field and the office share one record",
+        "detail": "Daily reports, hazards, timecards and concrete pours are captured on site, and the office sees them the same minute."
+      },
+      {
+        "cap": "The paperwork reads itself in",
+        "detail": "Bid documents, plans and requests for information go into the system instead of being retyped by an estimator."
+      },
+      {
+        "cap": "Procedures run on their own",
+        "detail": "132 standard procedures, from approvals to escalations, are automated end to end instead of living in someone's head."
+      },
+      {
+        "cap": "The books stay in the accounting system",
+        "detail": "Costs flow back to the accounting system the company already runs, with cost codes matched, so nothing is keyed twice."
+      }
+    ],
+    "walk": "The client stays confidential. I'm glad to walk you through how it works in person."
   },
   "process": {
     "eyebrow": "03",
