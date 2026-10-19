@@ -94,269 +94,396 @@ collections:
       preview_path: /
       fields:
       - name: title
-        label: Browser tab title
+        label: Title
         widget: string
       - name: description
-        label: Search description
+        label: Description
         widget: text
       - name: hero
         label: Hero
         widget: object
         fields:
-        - name: eyebrow
-          label: Eyebrow
-          widget: string
-        - name: title
-          label: Headline
-          widget: string
-        - name: lede
-          label: Line under the headline
-          widget: text
-        - name: cta
-          label: Main button
-          widget: string
-        - name: secondary
-          label: Second link
-          widget: string
-        - name: replay
-          label: Replay button
-          widget: string
-        - name: boardLabel
-          label: Board label (screen readers)
-          widget: string
-        - name: mess
-          label: Scraps on the board (before)
-          widget: list
-        - name: flow
-          label: Steps on the board (after)
-          widget: list
-          summary: '{{step}} · {{note}}'
-          fields:
-          - name: step
-            label: Step
+          - name: eyebrow
+            label: Eyebrow
             widget: string
-          - name: note
-            label: Note
+          - name: title
+            label: Title
             widget: string
-        - name: stamp
-          label: Stamp
-          widget: string
+          - name: lede
+            label: Lede
+            widget: text
+          - name: cta
+            label: Cta
+            widget: string
+          - name: secondary
+            label: Secondary
+            widget: string
+          - name: titleAccent
+            label: Title accent
+            widget: string
+          - name: rule
+            label: Rule
+            widget: string
+          - name: secondaryUrl
+            label: Secondary url
+            widget: string
+          - name: titleBlock
+            label: Title block
+            widget: list
+            summary: '{{label}}'
+            fields:
+              - name: label
+                label: Label
+                widget: string
+              - name: value
+                label: Value
+                widget: string
+          - name: figure
+            label: Figure
+            widget: string
+          - name: diagram
+            label: Diagram
+            widget: object
+            fields:
+              - name: in
+                label: In
+                widget: object
+                fields:
+                  - name: name
+                    label: Name
+                    widget: string
+                  - name: note
+                    label: Note
+                    widget: string
+              - name: core
+                label: Core
+                widget: object
+                fields:
+                  - name: name
+                    label: Name
+                    widget: string
+                  - name: note
+                    label: Note
+                    widget: string
+              - name: left
+                label: Left
+                widget: object
+                fields:
+                  - name: name
+                    label: Name
+                    widget: string
+                  - name: note
+                    label: Note
+                    widget: string
+              - name: right
+                label: Right
+                widget: object
+                fields:
+                  - name: name
+                    label: Name
+                    widget: string
+                  - name: note
+                    label: Note
+                    widget: string
+              - name: out
+                label: Out
+                widget: object
+                fields:
+                  - name: name
+                    label: Name
+                    widget: string
+                  - name: note
+                    label: Note
+                    widget: string
+              - name: callA
+                label: Call a
+                widget: string
+              - name: callB
+                label: Call b
+                widget: string
+              - name: dimension
+                label: Dimension
+                widget: string
       - name: problems
         label: Problems
         widget: object
         fields:
-        - name: eyebrow
-          label: Number
-          widget: string
-        - name: heading
-          label: Heading
-          widget: string
-        - name: items
-          label: Rows
-          widget: list
-          summary: '{{problem}}'
-          fields:
-          - name: problem
-            label: Problem
+          - name: eyebrow
+            label: Eyebrow
             widget: string
-          - name: fix
-            label: Fix
-            widget: text
-      - name: datum
-        label: Datum
-        widget: object
-        fields:
-        - name: eyebrow
-          label: Number
-          widget: string
-        - name: heading
-          label: Heading
-          widget: string
-        - name: lede
-          label: Lede
-          widget: text
-        - name: body
-          label: Body
-          widget: text
-        - name: tabsLabel
-          label: Tabs label (screen readers)
-          widget: string
-        - name: tabs
-          label: Departments
-          widget: list
-          summary: '{{name}}'
-          fields:
-          - name: name
-            label: Name
+          - name: heading
+            label: Heading
             widget: string
-          - name: image
-            label: Screenshot
-            widget: image
-          - name: alt
-            label: Screenshot description
-            widget: string
-        - name: figures
-          label: Figures
-          widget: list
-          summary: '{{number}} {{label}}'
-          fields:
-          - name: number
-            label: Number
-            widget: string
-          - name: label
-            label: Label
-            widget: string
-        - name: link
-          label: Case study link text
-          widget: string
-        - name: url
-          label: Case study link
-          widget: string
-        - name: contractor
-          label: Contractor line
-          widget: string
-        - name: contractorLink
-          label: Contractor link text
-          widget: string
-        - name: contractorUrl
-          label: Contractor link
-          widget: string
-      - name: process
-        label: How it goes
-        widget: object
-        fields:
-        - name: eyebrow
-          label: Number
-          widget: string
-        - name: heading
-          label: Heading
-          widget: string
-        - name: steps
-          label: Steps
-          widget: list
-          summary: '{{title}}'
-          fields:
-          - name: title
-            label: Title
-            widget: string
-          - name: body
-            label: Body
-            widget: text
-      - name: about
-        label: Who
-        widget: object
-        fields:
-        - name: eyebrow
-          label: Number
-          widget: string
-        - name: heading
-          label: Heading
-          widget: string
-        - name: body
-          label: Body (Markdown)
-          widget: markdown
-        - name: portrait
-          label: Portrait
-          widget: image
-        - name: portraitAlt
-          label: Portrait description
-          widget: string
-      - name: proof
-        label: Recent work
-        widget: object
-        fields:
-        - name: eyebrow
-          label: Number
-          widget: string
-        - name: heading
-          label: Heading
-          widget: string
-        - name: items
-          label: Case studies
-          widget: list
-          summary: '{{name}}'
-          fields:
-          - name: name
-            label: Name
-            widget: string
-          - name: meta
-            label: Line above the name
-            widget: string
-          - name: body
-            label: Body
-            widget: text
-          - name: stats
-            label: Numbers
+          - name: items
+            label: Items
             widget: list
-            summary: '{{value}} {{label}}'
+            summary: '{{problem}}'
             fields:
-            - name: value
-              label: Number
-              widget: string
-            - name: label
-              label: Label
-              widget: string
-          - name: image
-            label: Screenshot
-            widget: image
-          - name: imageAlt
-            label: Screenshot description
-            widget: string
-          - name: link
-            label: Link text
-            widget: string
-          - name: url
-            label: Link
-            widget: string
-        - name: more
-          label: All work link
-          widget: string
-      - name: pricing
-        label: Getting started
+              - name: problem
+                label: Problem
+                widget: string
+              - name: fix
+                label: Fix
+                widget: string
+          - name: columns
+            label: Columns
+            widget: list
+      - name: systems
+        label: Systems
         widget: object
         fields:
-        - name: eyebrow
-          label: Number
-          widget: string
-        - name: heading
-          label: Heading
-          widget: string
-        - name: rows
-          label: Rows
-          widget: list
-          summary: '{{name}} · {{price}}'
-          fields:
-          - name: name
-            label: Name
+          - name: eyebrow
+            label: Eyebrow
             widget: string
-          - name: price
-            label: Price
+          - name: heading
+            label: Heading
+            widget: string
+          - name: lede
+            label: Lede
+            widget: text
+          - name: capsHeading
+            label: Caps heading
+            widget: string
+          - name: caps
+            label: Caps
+            widget: list
+            summary: '{{title}}'
+            fields:
+              - name: title
+                label: Title
+                widget: string
+              - name: body
+                label: Body
+                widget: text
+          - name: proofLabel
+            label: Proof label
+            widget: string
+          - name: tabsLabel
+            label: Tabs label
+            widget: string
+          - name: tabs
+            label: Tabs
+            widget: list
+            summary: '{{name}}'
+            fields:
+              - name: name
+                label: Name
+                widget: string
+              - name: image
+                label: Image
+                widget: image
+              - name: alt
+                label: Alt
+                widget: string
+          - name: figures
+            label: Figures
+            widget: list
+            summary: '{{number}}'
+            fields:
+              - name: number
+                label: Number
+                widget: string
+              - name: label
+                label: Label
+                widget: string
+      - name: process
+        label: Process
+        widget: object
+        fields:
+          - name: eyebrow
+            label: Eyebrow
+            widget: string
+          - name: heading
+            label: Heading
+            widget: string
+          - name: steps
+            label: Steps
+            widget: list
+            summary: '{{title}}'
+            fields:
+              - name: title
+                label: Title
+                widget: string
+              - name: body
+                label: Body
+                widget: text
+              - name: tag
+                label: Tag
+                widget: string
+      - name: about
+        label: About
+        widget: object
+        fields:
+          - name: eyebrow
+            label: Eyebrow
+            widget: string
+          - name: heading
+            label: Heading
             widget: string
           - name: body
             label: Body
-            widget: text
-        - name: note
-          label: Founding note
-          widget: string
+            widget: markdown
+          - name: portrait
+            label: Portrait
+            widget: image
+          - name: portraitAlt
+            label: Portrait alt
+            widget: string
+          - name: timeline
+            label: Timeline
+            widget: list
+            summary: '{{role}}'
+            fields:
+              - name: role
+                label: Role
+                widget: string
+              - name: place
+                label: Place
+                widget: string
+      - name: proof
+        label: Proof
+        widget: object
+        fields:
+          - name: eyebrow
+            label: Eyebrow
+            widget: string
+          - name: heading
+            label: Heading
+            widget: string
+          - name: items
+            label: Items
+            widget: list
+            summary: '{{name}}'
+            fields:
+              - name: name
+                label: Name
+                widget: string
+              - name: meta
+                label: Meta
+                widget: string
+              - name: body
+                label: Body
+                widget: text
+              - name: stats
+                label: Stats
+                widget: list
+                summary: '{{value}}'
+                fields:
+                  - name: value
+                    label: Value
+                    widget: string
+                  - name: label
+                    label: Label
+                    widget: string
+              - name: image
+                label: Image
+                widget: image
+              - name: imageAlt
+                label: Image alt
+                widget: string
+              - name: link
+                label: Link
+                widget: string
+              - name: url
+                label: Url
+                widget: string
+          - name: more
+            label: More
+            widget: string
+      - name: pricing
+        label: Pricing
+        widget: object
+        fields:
+          - name: eyebrow
+            label: Eyebrow
+            widget: string
+          - name: heading
+            label: Heading
+            widget: string
+          - name: rows
+            label: Rows
+            widget: list
+            summary: '{{name}}'
+            fields:
+              - name: name
+                label: Name
+                widget: string
+              - name: price
+                label: Price
+                widget: string
+              - name: body
+                label: Body
+                widget: string
+          - name: note
+            label: Note
+            widget: string
+          - name: columns
+            label: Columns
+            widget: list
       - name: contact
         label: Contact
         widget: object
         fields:
-        - name: heading
-          label: Heading
-          widget: string
-        - name: body
-          label: Body
-          widget: string
-        - name: email
-          label: Email
-          widget: string
-        - name: subject
-          label: Email subject
-          widget: string
-        - name: area
-          label: Service area line
-          widget: string
+          - name: heading
+            label: Heading
+            widget: string
+          - name: body
+            label: Body
+            widget: string
+          - name: email
+            label: Email
+            widget: string
+          - name: subject
+            label: Subject
+            widget: string
+          - name: area
+            label: Area
+            widget: string
+          - name: secondary
+            label: Secondary
+            widget: text
+      - name: nav
+        label: Nav
+        widget: object
+        fields:
+          - name: label
+            label: Label
+            widget: string
+          - name: name
+            label: Name
+            widget: string
+          - name: role
+            label: Role
+            widget: string
+          - name: links
+            label: Links
+            widget: list
+            summary: '{{text}}'
+            fields:
+              - name: text
+                label: Text
+                widget: string
+              - name: url
+                label: Url
+                widget: string
+          - name: cta
+            label: Cta
+            widget: string
+      - name: footer
+        label: Footer
+        widget: object
+        fields:
+          - name: links
+            label: Links
+            widget: list
+            summary: '{{text}}'
+            fields:
+              - name: text
+                label: Text
+                widget: string
+              - name: url
+                label: Url
+                widget: string
     - name: about
       label: About
       file: src/data/copy/about.json

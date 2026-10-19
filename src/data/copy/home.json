@@ -6,42 +6,54 @@
     "title": "Run a tighter operation.",
     "lede": "I look at how your business actually runs, then fix what's costing you customers or time. Sometimes that's software built around how you work. Sometimes it's a better process and nothing else.",
     "cta": "Book a free look",
-    "secondary": "See the work",
-    "replay": "Replay",
-    "boardLabel": "A week of jobs, before and after",
-    "mess": [
-      "Scheduling app · $59/mo",
-      "Invoicing · $35/mo",
-      "CRM · $49/mo",
-      "3 missed calls",
-      "follow up w/ quote??",
-      "Same job, typed 3 times",
-      "Paper ticket #0412",
-      "Who has the deposit?"
-    ],
-    "flow": [
+    "secondary": "See a full system",
+    "titleAccent": "operation.",
+    "rule": "I ran operations for ten years · now I build the systems",
+    "secondaryUrl": "#systems",
+    "titleBlock": [
       {
-        "step": "Call",
-        "note": "texted back in 9s"
+        "label": "Drawn by",
+        "value": "B. Boggs"
       },
       {
-        "step": "Quote",
-        "note": "follow-up on day 3"
+        "label": "Sheet",
+        "value": "OPS-01"
       },
       {
-        "step": "Booked",
-        "note": "on the calendar"
+        "label": "Scale",
+        "value": "Whole company"
       },
       {
-        "step": "Done",
-        "note": "photos attached"
-      },
-      {
-        "step": "Paid",
-        "note": "in the books"
+        "label": "Area",
+        "value": "St. Louis region"
       }
     ],
-    "stamp": "One system. Yours."
+    "figure": "Fig. 1 · One record, every handoff",
+    "diagram": {
+      "in": {
+        "name": "Calls & leads",
+        "note": "missed call → text back"
+      },
+      "core": {
+        "name": "One job record",
+        "note": "quote · schedule · crew · cost"
+      },
+      "left": {
+        "name": "Field",
+        "note": "photos · hours · sign-off"
+      },
+      "right": {
+        "name": "Office",
+        "note": "dispatch · follow-ups"
+      },
+      "out": {
+        "name": "Paid, in the books",
+        "note": "writes back to your accounting"
+      },
+      "callA": "Quote follow-up, day 3, automatic",
+      "callB": "Nothing re-typed between departments",
+      "dimension": "One record"
+    }
   },
   "problems": {
     "eyebrow": "01",
@@ -71,50 +83,77 @@
         "problem": "Departments that each keep their own version of the truth.",
         "fix": "One platform the office, the field and the books all work from, so a handoff can't drop anything."
       }
+    ],
+    "columns": [
+      "Condition found",
+      "Correction"
     ]
   },
-  "datum": {
+  "systems": {
     "eyebrow": "02",
     "heading": "Every department. One system.",
-    "lede": "I co-founded and built Datum, software for running a construction company. Estimating, the field, finance, safety, people and equipment work from one record instead of five tools that don't talk to each other.",
-    "body": "That's the top end of what I do: a system your whole company works from, built around how your departments actually hand work to each other. Not a copy of Datum. Built for you, the same way.",
-    "tabsLabel": "Departments in Datum",
+    "lede": "I build the platform a whole company runs on: estimating, the field, finance, safety, people and equipment working from one record, instead of five tools that don't talk to each other.",
+    "capsHeading": "What I build and connect",
+    "caps": [
+      {
+        "title": "Connect what you already run",
+        "body": "Accounting and ERP, Outlook and Microsoft 365, payments, phones and texts. Data goes in once and lands everywhere it's needed."
+      },
+      {
+        "title": "Replace what doesn't fit",
+        "body": "Screens built around how your departments actually hand work to each other, in place of subscriptions that almost fit."
+      },
+      {
+        "title": "Automate the procedures",
+        "body": "Approvals, follow-ups, reminders and reports that people currently do from memory."
+      },
+      {
+        "title": "Office and field, one record",
+        "body": "Phone apps that capture photos, hours and sign-offs where the work happens, and show up in the office the same minute."
+      },
+      {
+        "title": "See the business live",
+        "body": "What's owed, what's late, and who has the ball, without waiting for someone to build a spreadsheet."
+      }
+    ],
+    "proofLabel": "Proof · screens from a platform I built for a construction company",
+    "tabsLabel": "Departments in the platform",
     "tabs": [
       {
         "name": "Estimating",
         "image": "/datum/estimating-bid-analysis-1200.webp",
-        "alt": "Estimating and bid analysis in Datum"
+        "alt": "Estimating and bid analysis"
       },
       {
         "name": "Field",
         "image": "/datum/field-job-day-1200.webp",
-        "alt": "Datum's field view of a job day"
+        "alt": "The field view of a job day"
       },
       {
         "name": "Finance",
         "image": "/datum/finance-overview-1200.webp",
-        "alt": "Finance overview in Datum"
+        "alt": "Finance overview"
       },
       {
         "name": "Safety",
         "image": "/datum/safety-dashboard-1200.webp",
-        "alt": "Safety dashboard in Datum"
+        "alt": "Safety dashboard"
       },
       {
         "name": "People",
         "image": "/datum/people-dashboard-1200.webp",
-        "alt": "People dashboard in Datum"
+        "alt": "People dashboard"
       },
       {
         "name": "Equipment",
         "image": "/datum/equipment-command-center-1200.webp",
-        "alt": "Equipment command center in Datum"
+        "alt": "Equipment command center"
       }
     ],
     "figures": [
       {
         "number": "6",
-        "label": "departments in one system"
+        "label": "departments on one record"
       },
       {
         "number": "132",
@@ -123,13 +162,12 @@
       {
         "number": "2,259",
         "label": "HTTP endpoints across 394 services"
+      },
+      {
+        "number": "1",
+        "label": "connection back to the accounting system they already run"
       }
-    ],
-    "link": "Read the Datum case study",
-    "url": "/work/datum/",
-    "contractor": "Run a construction company? Datum is at",
-    "contractorLink": "datumci.com",
-    "contractorUrl": "https://datumci.com"
+    ]
   },
   "process": {
     "eyebrow": "03",
@@ -137,28 +175,50 @@
     "steps": [
       {
         "title": "Look",
-        "body": "Twenty minutes, free, at your place or on the phone. You walk me through one job, from the first call to getting paid."
+        "body": "Twenty minutes, free, at your place or on the phone. You walk me through one job, from the first call to getting paid.",
+        "tag": "20 min · free"
       },
       {
         "title": "Plan",
-        "body": "In writing: what to fix first, what to ignore, and a fixed price. It's yours to keep, even if you do it yourself."
+        "body": "In writing: what to fix first, what to ignore, and a fixed price. It's yours to keep, even if you do it yourself.",
+        "tag": "Written · fixed price"
       },
       {
         "title": "Build",
-        "body": "Nothing goes live until you've seen it. Your current tools keep running until you're ready to switch."
+        "body": "Nothing goes live until you've seen it. Your current tools keep running until you're ready to switch.",
+        "tag": "You approve"
       },
       {
         "title": "Keep it running",
-        "body": "Hosting, backups, fixes and small changes, monthly. You own all of it: the data, the accounts, the code."
+        "body": "Hosting, backups, fixes and small changes, monthly. You own all of it: the data, the accounts, the code.",
+        "tag": "Monthly"
       }
     ]
   },
   "about": {
     "eyebrow": "04",
     "heading": "Who you'd be working with.",
-    "body": "I spent ten years running operations before I wrote software. A service lane at a Honda dealership. General manager of a car wash, then a group of them, then a district. Schedules, payroll, and equipment that breaks on the coldest day of the year.\n\nNow I build [Datum](/work/datum/), software for running a construction company. This is the same work, for businesses closer to home.",
+    "body": "I spent ten years running operations before I wrote software. A service lane at a Honda dealership. General manager of a car wash, then a group of them, then a district. Schedules, payroll, and equipment that breaks on the coldest day of the year.\n\nNow I co-found and build software for running construction companies, end to end. This is the same work, for businesses of any size closer to home.",
     "portrait": "/about/brett-480.webp",
-    "portraitAlt": "Brett Boggs"
+    "portraitAlt": "Brett Boggs",
+    "timeline": [
+      {
+        "role": "Service lane",
+        "place": "Honda dealership"
+      },
+      {
+        "role": "General manager → district",
+        "place": "Car washes"
+      },
+      {
+        "role": "Operations",
+        "place": "Real estate investment"
+      },
+      {
+        "role": "Co-founder, engineer",
+        "place": "Construction software"
+      }
+    ]
   },
   "proof": {
     "eyebrow": "05",
@@ -227,7 +287,7 @@
       {
         "name": "Company-wide systems",
         "price": "Scoped after a review",
-        "body": "One platform across your departments, built the way Datum was. Delivered in phases, each one useful on its own."
+        "body": "One platform across your departments, connected to what you already run. Delivered in phases, each one useful on its own."
       },
       {
         "name": "Keeping it running",
@@ -235,13 +295,67 @@
         "body": "Hosting, backups, fixes, Google posts, review replies, and one improvement every quarter."
       }
     ],
-    "note": "The first five clients get founding rates, locked for a year."
+    "note": "The first five clients get founding rates, locked for a year.",
+    "columns": [
+      "Item",
+      "Price",
+      "Includes"
+    ]
   },
   "contact": {
     "heading": "Start with a free look.",
     "body": "Tell me what's eating your time. I'll reply within a day.",
     "email": "hello@brettboggs.dev",
     "subject": "A free look",
-    "area": "Based in O'Fallon. In person across St. Charles County, by phone anywhere."
+    "area": "Based in O'Fallon. In person across the St. Louis area, by phone anywhere.",
+    "secondary": "Or send the one thing that's eating your week. I'll tell you honestly if it's worth fixing."
+  },
+  "nav": {
+    "label": "Sections",
+    "name": "Brett Boggs",
+    "role": "Operations & systems",
+    "links": [
+      {
+        "text": "What I fix",
+        "url": "#problems"
+      },
+      {
+        "text": "Systems",
+        "url": "#systems"
+      },
+      {
+        "text": "Work",
+        "url": "#work"
+      },
+      {
+        "text": "Pricing",
+        "url": "#pricing"
+      },
+      {
+        "text": "About",
+        "url": "/about/"
+      }
+    ],
+    "cta": "Book a free look"
+  },
+  "footer": {
+    "links": [
+      {
+        "text": "Work",
+        "url": "/work/"
+      },
+      {
+        "text": "About",
+        "url": "/about/"
+      },
+      {
+        "text": "Lab",
+        "url": "/lab/"
+      },
+      {
+        "text": "Resume",
+        "url": "/resume/"
+      }
+    ]
   }
 }

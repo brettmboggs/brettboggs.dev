@@ -15,6 +15,10 @@ interface Props {
   home?: boolean;
   /** the Ridge film page: header over the render, floating footer, long puck runway */
   film?: boolean;
+  /** a page-wide class on <html>, for a page with its own visual system */
+  theme?: string;
+  /** false: the page brings its own header and footer */
+  chrome?: boolean;
   /** page-specific social card, resolved against the site root */
   ogImage?: string;
   /** marks the page as an article and stamps its dates */
@@ -37,6 +41,8 @@ const {
   description = 'Brett Boggs. Work and experiments.',
   home = false,
   film = false,
+  theme,
+  chrome = true,
   ogImage: ogGiven,
   article,
   noindex = false,
@@ -122,7 +128,7 @@ const schema = home
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class={theme}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -197,7 +203,7 @@ const schema = home
   <body>
     {film && <div class="ridge-ghost" id="ridge-ghost" aria-hidden="true"></div>}
     {scene && <div class="scene-ghost" id="scene-ghost" data-scene={scene} aria-hidden="true"></div>}
-    <header class:list={['site-header', 'wrap', { 'over-film': film }]}>
+    {chrome && (<header class:list={['site-header', 'wrap', { 'over-film': film }]}>
       <a class="wordmark" href="/" aria-label="Brett Boggs, home">B<span class="wordmark-rest" aria-hidden="true">rett</span><span class="wordmark-b">B</span><span class="wordmark-rest" aria-hidden="true">oggs</span><span class="wordmark-dot">.</span></a>
       <nav>
         <a href="/work/">Work</a>
@@ -205,10 +211,11 @@ const schema = home
         <a href="/about/">About</a>
         <a href="/store/">Store</a>
       </nav>
-    </header>
-    <main class="wrap">
+    </header>)}
+    <main class:list={[{ wrap: chrome }]}>
       <slot />
     </main>
+    {chrome && (
     <footer class:list={['site-footer', 'wrap', { floating: film }]} id="site-footer">
       <p>&copy; {year} Brett Boggs</p>
       {!film && (
@@ -219,6 +226,7 @@ const schema = home
         </nav>
       )}
     </footer>
+    )}
     {edit && <EditLink target={edit} />}
     {puck && (
       <nav class="puck" id="puck" aria-label="Quick navigation" data-here={here} data-home={film ? '1' : ''}>

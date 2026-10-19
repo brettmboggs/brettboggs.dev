@@ -1,567 +1,1117 @@
 ---
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
 import Base from '../layouts/Base.astro';
 import copy from '../data/copy/home.json';
 import { md } from '../data/copy';
 
-const { hero, problems, datum, process, about, proof, pricing, contact } = copy;
+const { nav, hero, problems, systems, process, about, proof, pricing, contact, footer } = copy;
+const dg = hero.diagram;
+const pad = (n: number): string => String(n).padStart(2, '0');
 
-// where each scrap of the old way lands on the board: percent of the board,
-// plus a tilt. hand-placed so nothing covers a word at any board width.
-const scatter = [
-  { x: 6, y: 7, r: -4 },
-  { x: 48, y: 15, r: 3 },
-  { x: 14, y: 29, r: 2 },
-  { x: 52, y: 38, r: -3 },
-  { x: 8, y: 52, r: -2 },
-  { x: 40, y: 62, r: 4 },
-  { x: 12, y: 76, r: 3 },
-  { x: 50, y: 85, r: -5 },
-];
-const mess = hero.mess.map((text, i) => ({ text, fee: text.includes('/mo'), ...scatter[i % scatter.length] }));
+// the headline sets its last word in signal orange
+const accent = hero.titleAccent;
+const lead = hero.title.endsWith(accent) ? hero.title.slice(0, -accent.length).trim() : hero.title;
+
+const total = pad(6);
 const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}`;
+const year = new Date().getFullYear();
+
+// the as-built drawing: every connector, in the order it draws
+const wires = [
+  'M230 118 V 170 H 300 V 230',
+  'M300 308 V 370 H 180 V 420',
+  'M300 370 H 420 V 420',
+  'M180 498 V 550 H 300 V 600',
+  'M420 498 V 550 H 300',
+];
+// the routes the signal runs, start to finish
+const runs = [
+  'M230 118 V 170 H 300 V 370 H 180 V 550 H 300 V 640',
+  'M230 118 V 170 H 300 V 370 H 420 V 550 H 300 V 640',
+];
+const nodes = [
+  { x: 110, y: 40, w: 240, ...dg.in, tag: 'IN', hot: true },
+  { x: 170, y: 230, w: 260, ...dg.core, tag: 'CORE', hot: false },
+  { x: 80, y: 420, w: 200, ...dg.left, tag: '', hot: false },
+  { x: 320, y: 420, w: 200, ...dg.right, tag: '', hot: false },
+  { x: 170, y: 600, w: 260, ...dg.out, tag: 'OUT', hot: true },
+];
 ---
 
-<Base title={copy.title} description={copy.description} home edit="pages/home">
+<Base title={copy.title} description={copy.description} home theme="drawing" chrome={false} puck={false} edit="pages/home">
+  <header class="bar">
+    <div class="d-wrap bar-in">
+      <a class="mark" href="/">
+        <span class="mark-name">{nav.name}</span>
+        <span class="mark-role">{nav.role}</span>
+      </a>
+      <nav class="bar-nav" aria-label={nav.label}>
+        {nav.links.map((l) => <a href={l.url}>{l.text}</a>)}
+      </nav>
+      <a class="btn btn-ink bar-cta" href="#start">{nav.cta}</a>
+    </div>
+  </header>
+
+  <!-- ===================================================== hero -->
   <section class="hero">
-    <div class="hero-copy">
-      <p class="eyebrow reveal">{hero.eyebrow}</p>
-      <h1 class="reveal" style="--delay: 0.08s">{hero.title}</h1>
-      <p class="hero-lede reveal" style="--delay: 0.18s">{hero.lede}</p>
-      <div class="hero-actions reveal" style="--delay: 0.28s">
-        <a class="button" href="#start">{hero.cta}</a>
-        <a class="quiet" href="/work/">{hero.secondary}</a>
+    <div class="d-wrap hero-in">
+      <div class="hero-copy">
+        <p class="tag rise"><i aria-hidden="true"></i>{hero.eyebrow}</p>
+        <h1 class="hero-title rise" style="--d: 0.06s">
+          {lead} <span>{accent}</span>
+        </h1>
+        <p class="dim rise" style="--d: 0.14s"><span>{hero.rule}</span></p>
+        <p class="hero-lede rise" style="--d: 0.2s">{hero.lede}</p>
+        <div class="hero-acts rise" style="--d: 0.26s">
+          <a class="btn btn-sig" href="#start">{hero.cta} <span aria-hidden="true">→</span></a>
+          <a class="btn btn-line" href={hero.secondaryUrl}>{hero.secondary}</a>
+        </div>
+        <dl class="tblock rise" style="--d: 0.32s">
+          {
+            hero.titleBlock.map((c) => (
+              <div>
+                <dt>{c.label}</dt>
+                <dd>{c.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
       </div>
-    </div>
 
-    <figure class="board reveal" id="board" style="--delay: 0.2s" aria-label={hero.boardLabel}>
-      <div class="board-mess" aria-hidden="true">
-        {
-          mess.map((m) => (
-            <span class:list={['chip', { fee: m.fee }]} style={`left:${m.x}%;top:${m.y}%`} data-r={m.r}>
-              {m.text}
-              {m.fee && <span class="strike" />}
-            </span>
-          ))
-        }
-      </div>
-      <ol class="flow">
-        <span class="flow-line" aria-hidden="true"></span>
-        {
-          hero.flow.map((f) => (
-            <li class="flow-step">
-              <span class="flow-dot" aria-hidden="true" />
-              <span class="flow-name">{f.step}</span>
-              <span class="flow-note">{f.note}</span>
-            </li>
-          ))
-        }
-      </ol>
-      <p class="stamp">{hero.stamp}</p>
-      <button class="replay" id="replay" type="button" hidden>{hero.replay}</button>
-    </figure>
+      <figure class="drawing" id="drawing">
+        <svg viewBox="0 0 560 750" role="img" aria-labelledby="fig-title">
+          <title id="fig-title">{hero.figure}: {dg.in.name}, {dg.core.name}, {dg.left.name}, {dg.right.name}, {dg.out.name}.</title>
+          <text class="fig" x="556" y="14" text-anchor="end">{hero.figure}</text>
+
+          <!-- dimension line down the left edge -->
+          <g class="dimline">
+            <path d="M30 40 V 684 M22 40 H 38 M22 684 H 38" />
+            <text x="18" y="362" transform="rotate(-90 18 362)" text-anchor="middle">{dg.dimension}</text>
+          </g>
+
+          <g class="wires">{wires.map((d) => <path d={d} pathLength="1" />)}</g>
+          <g class="joints">
+            <circle cx="300" cy="370" r="4" />
+            <circle cx="300" cy="550" r="4" />
+          </g>
+
+          <!-- the signal runs under the boxes, so it vanishes inside each step -->
+          <g class="pulses" aria-hidden="true">
+            {
+              runs.map((d, i) => (
+                <circle r="4.5">
+                  <animateMotion dur="4.8s" begin="indefinite" repeatCount="indefinite" path={d} data-offset={i * 2.4} />
+                </circle>
+              ))
+            }
+          </g>
+
+          <g class="nodes">
+            {
+              nodes.map((n) => (
+                <g class:list={['node', { hot: n.hot }]}>
+                  <rect x={n.x} y={n.y} width={n.w} height="78" />
+                  {n.tag && (
+                    <g class="ntag">
+                      <rect x={n.x + n.w - 40} y={n.y} width="40" height="16" />
+                      <text x={n.x + n.w - 20} y={n.y + 11.5} text-anchor="middle">{n.tag}</text>
+                    </g>
+                  )}
+                  <text class="nname" x={n.x + 16} y={n.y + 34}>{n.name}</text>
+                  <text class="nnote" x={n.x + 16} y={n.y + 58}>{n.note}</text>
+                </g>
+              ))
+            }
+          </g>
+
+          <g class="calls">
+            <g class="call">
+              <path d="M300 186 H 312" />
+              <rect x="312" y="174" width="244" height="24" />
+              <text x="322" y="190">① {dg.callA}</text>
+            </g>
+            <g class="call">
+              <path d="M300 678 V 704" />
+              <rect x="158" y="704" width="284" height="24" />
+              <text x="168" y="720">② {dg.callB}</text>
+            </g>
+          </g>
+        </svg>
+      </figure>
+    </div>
   </section>
 
-  <section class="block" id="problems">
-    <header class="block-head">
-      <p class="eyebrow">{problems.eyebrow}</p>
-      <h2>{problems.heading}</h2>
-    </header>
-    <ul class="rows">
-      {
-        problems.items.map((p) => (
-          <li class="row">
-            <p class="row-problem">{p.problem}</p>
-            <p class="row-fix">{p.fix}</p>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
-
-  <section class="block datum" id="datum">
-    <header class="block-head">
-      <p class="eyebrow">{datum.eyebrow}</p>
-      <h2>{datum.heading}</h2>
-    </header>
-    <div class="datum-intro">
-      <p class="datum-lede">{datum.lede}</p>
-      <p class="datum-body">{datum.body}</p>
-    </div>
-
-    <div class="deck" id="deck">
-      <div class="deck-tabs" role="tablist" aria-label={datum.tabsLabel}>
+  <!-- ===================================================== 01 problems -->
+  <section class="sec" id="problems">
+    <div class="d-wrap">
+      <header class="sec-head">
+        <p class="sec-num">{problems.eyebrow} / {total}</p>
+        <h2>{problems.heading}</h2>
+      </header>
+      <div class="spec" role="table">
+        <div class="spec-row spec-cols" role="row">
+          <span role="columnheader">No.</span>
+          <span role="columnheader">{problems.columns[0]}</span>
+          <span role="columnheader">{problems.columns[1]}</span>
+        </div>
         {
-          datum.tabs.map((t, i) => (
-            <button
-              class="deck-tab"
-              type="button"
-              role="tab"
-              id={`deck-tab-${i}`}
-              aria-controls={`deck-pane-${i}`}
-              aria-selected={i === 0 ? 'true' : 'false'}
-              tabindex={i === 0 ? 0 : -1}
-            >
-              <span class="deck-num">{String(i + 1).padStart(2, '0')}</span>
-              {t.name}
-              <span class="deck-timer" aria-hidden="true" />
-            </button>
+          problems.items.map((p, i) => (
+            <div class="spec-row" role="row">
+              <span class="spec-no" role="cell">{pad(i + 1)}</span>
+              <p class="spec-problem" role="cell">{p.problem}</p>
+              <p class="spec-fix" role="cell">{p.fix}</p>
+            </div>
           ))
         }
       </div>
-      <div class="deck-frame">
-        <div class="deck-chrome" aria-hidden="true"><span /><span /><span /></div>
+    </div>
+  </section>
+
+  <!-- ===================================================== 02 systems -->
+  <section class="sec" id="systems">
+    <div class="d-wrap">
+      <header class="sec-head">
+        <p class="sec-num">{systems.eyebrow} / {total}</p>
+        <h2>{systems.heading}</h2>
+      </header>
+      <div class="sys-intro">
+        <p class="sys-lede">{systems.lede}</p>
+      </div>
+
+      <div class="caps">
+        <p class="caps-head">{systems.capsHeading}</p>
+        <ol class="caps-list">
+          {
+            systems.caps.map((c, i) => (
+              <li>
+                <span class="cap-no">{pad(i + 1)}</span>
+                <h3>{c.title}</h3>
+                <p>{c.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <p class="proof-label"><span>{systems.proofLabel}</span></p>
+      <div class="dsheet" id="deck">
+        <span class="crop tl" aria-hidden="true"></span><span class="crop tr" aria-hidden="true"></span>
+        <span class="crop bl" aria-hidden="true"></span><span class="crop br" aria-hidden="true"></span>
+        <div class="deck-tabs" role="tablist" aria-label={systems.tabsLabel}>
+          {
+            systems.tabs.map((t, i) => (
+              <button
+                class="deck-tab"
+                type="button"
+                role="tab"
+                id={`deck-tab-${i}`}
+                aria-controls={`deck-pane-${i}`}
+                aria-selected={i === 0 ? 'true' : 'false'}
+                tabindex={i === 0 ? 0 : -1}
+              >
+                <span class="deck-ref">A-{pad(i + 1)}</span>
+                {t.name}
+                <span class="deck-timer" aria-hidden="true" />
+              </button>
+            ))
+          }
+        </div>
         <div class="deck-panes">
           {
-            datum.tabs.map((t, i) => (
+            systems.tabs.map((t, i) => (
               <figure class:list={['deck-pane', { 'is-on': i === 0 }]} role="tabpanel" id={`deck-pane-${i}`} aria-labelledby={`deck-tab-${i}`}>
-                <img src={t.image} alt={t.alt} width="1200" height="525" loading={i === 0 ? 'lazy' : 'lazy'} decoding="async" />
+                <img src={t.image} alt={t.alt} width="1200" height="525" loading="lazy" decoding="async" />
               </figure>
             ))
           }
         </div>
+        <dl class="sheet-foot">
+          {
+            systems.figures.map((f) => (
+              <div class="fig-cell">
+                <dt>{f.number}</dt>
+                <dd>{f.label}</dd>
+              </div>
+            ))
+          }
+        </dl>
       </div>
     </div>
-
-    <dl class="figures">
-      {
-        datum.figures.map((f) => (
-          <div class="figure">
-            <dt>{f.number}</dt>
-            <dd>{f.label}</dd>
-          </div>
-        ))
-      }
-    </dl>
-    <p class="datum-links">
-      <a href={datum.url}>{datum.link} →</a>
-      <span class="datum-contractor">{datum.contractor} <a href={datum.contractorUrl}>{datum.contractorLink}</a></span>
-    </p>
   </section>
 
-  <section class="block" id="process">
-    <header class="block-head">
-      <p class="eyebrow">{process.eyebrow}</p>
-      <h2>{process.heading}</h2>
-    </header>
-    <ol class="steps">
-      {
-        process.steps.map((s, i) => (
-          <li class="step">
-            <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
-            <h3>{s.title}</h3>
-            <p>{s.body}</p>
-          </li>
-        ))
-      }
-    </ol>
-  </section>
-
-  <section class="block who" id="who">
-    <header class="block-head">
-      <p class="eyebrow">{about.eyebrow}</p>
-      <h2>{about.heading}</h2>
-    </header>
-    <div class="who-grid">
-      <img class="who-portrait" src={about.portrait} alt={about.portraitAlt} width="480" height="600" loading="lazy" decoding="async" />
-      <div class="prose who-body" set:html={md(about.body)} />
+  <!-- ===================================================== 03 process -->
+  <section class="sec" id="process">
+    <div class="d-wrap">
+      <header class="sec-head">
+        <p class="sec-num">{process.eyebrow} / {total}</p>
+        <h2>{process.heading}</h2>
+      </header>
+      <ol class="steps">
+        {
+          process.steps.map((s, i) => (
+            <li class="step">
+              <span class="step-no">{pad(i + 1)}</span>
+              <h3>{s.title}</h3>
+              <span class="step-tag">{s.tag}</span>
+              <p>{s.body}</p>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </section>
 
-  <section class="block" id="work">
-    <header class="block-head">
-      <p class="eyebrow">{proof.eyebrow}</p>
-      <h2>{proof.heading}</h2>
-    </header>
-    <div class="cases">
-      {
-        proof.items.map((c) => (
-          <article class="case">
-            <a class="case-shot" href={c.url} tabindex="-1" aria-hidden="true">
-              <img src={c.image} alt="" width="1440" height="960" loading="lazy" />
-            </a>
-            <div class="case-text">
-              <p class="case-meta">{c.meta}</p>
-              <h3>{c.name}</h3>
-              <p class="case-body">{c.body}</p>
-              <dl class="stats">
-                {c.stats.map((s) => (
-                  <div class="stat">
-                    <dt>{s.value}</dt>
-                    <dd>{s.label}</dd>
-                  </div>
-                ))}
-              </dl>
-              <a class="case-link" href={c.url}>{c.link} →</a>
+  <!-- ===================================================== 04 who -->
+  <section class="sec" id="who">
+    <div class="d-wrap">
+      <header class="sec-head">
+        <p class="sec-num">{about.eyebrow} / {total}</p>
+        <h2>{about.heading}</h2>
+      </header>
+      <div class="who">
+        <figure class="who-photo">
+          <span class="crop tl" aria-hidden="true"></span><span class="crop br" aria-hidden="true"></span>
+          <img src={about.portrait} alt={about.portraitAlt} width="480" height="600" loading="lazy" decoding="async" />
+        </figure>
+        <div>
+          <div class="who-body" set:html={md(about.body)} />
+          <ol class="revs">
+            {
+              about.timeline.map((t, i) => (
+                <li>
+                  <span class="rev-no">{String.fromCharCode(65 + i)}</span>
+                  <span class="rev-role">{t.role}</span>
+                  <span class="rev-place">{t.place}</span>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== 05 work -->
+  <section class="sec" id="work">
+    <div class="d-wrap">
+      <header class="sec-head">
+        <p class="sec-num">{proof.eyebrow} / {total}</p>
+        <h2>{proof.heading}</h2>
+      </header>
+      <div class="cases">
+        {
+          proof.items.map((c, i) => (
+            <article class="case">
+              <a class="case-shot" href={c.url} tabindex="-1" aria-hidden="true">
+                <span class="case-label">Detail {String.fromCharCode(65 + i)} · {c.name}</span>
+                <img src={c.image} alt="" width="1440" height="960" loading="lazy" decoding="async" />
+              </a>
+              <div class="case-text">
+                <p class="case-meta">{c.meta}</p>
+                <h3>{c.name}</h3>
+                <p class="case-body">{c.body}</p>
+                <dl class="case-stats">
+                  {c.stats.map((s) => (
+                    <div>
+                      <dt>{s.value}</dt>
+                      <dd>{s.label}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <a class="arrow-link" href={c.url}>{c.link} →</a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+      <a class="arrow-link more" href="/work/">{proof.more} →</a>
+    </div>
+  </section>
+
+  <!-- ===================================================== 06 pricing -->
+  <section class="sec" id="pricing">
+    <div class="d-wrap">
+      <header class="sec-head">
+        <p class="sec-num">{pricing.eyebrow} / {total}</p>
+        <h2>{pricing.heading}</h2>
+      </header>
+      <div class="spec prices" role="table">
+        <div class="spec-row spec-cols" role="row">
+          {pricing.columns.map((c) => <span role="columnheader">{c}</span>)}
+        </div>
+        {
+          pricing.rows.map((r) => (
+            <div class:list={['spec-row', { top: r.name.startsWith('Company') }]} role="row">
+              <p class="price-name" role="cell">{r.name}</p>
+              <p class="price-amt" role="cell">{r.price}</p>
+              <p class="price-body" role="cell">{r.body}</p>
             </div>
-          </article>
-        ))
-      }
+          ))
+        }
+      </div>
+      <p class="founding"><i aria-hidden="true"></i>{pricing.note}</p>
     </div>
-    <a class="more" href="/work/">{proof.more} →</a>
   </section>
 
-  <section class="block" id="pricing">
-    <header class="block-head">
-      <p class="eyebrow">{pricing.eyebrow}</p>
-      <h2>{pricing.heading}</h2>
-    </header>
-    <ul class="rows prices">
-      {
-        pricing.rows.map((r) => (
-          <li class="row price-row">
-            <p class="price-name">{r.name}</p>
-            <p class="price-amount">{r.price}</p>
-            <p class="price-body">{r.body}</p>
-          </li>
-        ))
-      }
-    </ul>
-    <p class="founding">{pricing.note}</p>
-  </section>
-
+  <!-- ===================================================== close -->
   <section class="start" id="start">
-    <h2>{contact.heading}</h2>
-    <p class="start-body">{contact.body}</p>
-    <a class="button big" href={mailto}>{contact.email}</a>
-    <p class="start-area">{contact.area}</p>
+    <div class="d-wrap start-in">
+      <h2>{contact.heading}</h2>
+      <div class="start-side">
+        <p class="start-body">{contact.body}</p>
+        <a class="btn btn-sig big" href={mailto}>{contact.email} <span aria-hidden="true">→</span></a>
+        <p class="start-area">{contact.area}</p>
+      </div>
+    </div>
   </section>
+
+  <footer class="foot">
+    <div class="d-wrap foot-in">
+      <p>© {year} {nav.name}</p>
+      <nav aria-label="More">{footer.links.map((l) => <a href={l.url}>{l.text}</a>)}</nav>
+    </div>
+  </footer>
 </Base>
 
 <style>
-  /* --- hero: the offer on the left, the week of jobs on the right --- */
-  .hero {
-    display: grid;
-    gap: 3rem;
-    align-items: center;
-    padding: 2.5rem 0 4.5rem;
+  /* ================================================================
+     The drawing set: the homepage's own visual system. White sheet,
+     engineering grid, black ink, one signal orange, blueprint blue for
+     annotation. Everything else on the site keeps Golden Hour.
+     ================================================================ */
+  :global(html.drawing) {
+    --bg: #f5f5f1;
+    --sheet: #ffffff;
+    --ink: #111111;
+    --ink-2: #33332f;
+    --soft: #64645e;
+    --hair: #d6d6cf;
+    --grid: #e7e7e1;
+    --sig: #ff4f00;
+    --sig-text: #c23800;
+    --blue: #1f4fd8;
+    --sans: 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    scroll-padding-top: 84px;
   }
-  @media (min-width: 900px) {
-    .hero {
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 4rem;
-      min-height: calc(100svh - 7rem);
-      padding-top: 1rem;
-    }
-  }
-  .hero h1 {
-    margin-top: 1rem;
-    font-size: clamp(3rem, 8vw, 6rem);
-    line-height: 0.98;
-    letter-spacing: -0.02em;
-  }
-  .hero-lede {
-    margin-top: 1.5rem;
-    max-width: 34rem;
-    font-size: 1.2rem;
-    color: var(--ink-soft);
-  }
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1rem 1.75rem;
-    margin-top: 2.25rem;
-  }
-
-  .button {
-    display: inline-block;
-    padding: 0.95rem 1.6rem;
-    border: 2px solid var(--ink);
-    border-radius: 999px;
-    background: var(--ink);
-    color: var(--paper);
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    background-image: none;
-    transition:
-      background-color 0.35s var(--ease-warm),
-      color 0.35s var(--ease-warm),
-      transform 0.35s var(--ease-warm);
-  }
-  .button:hover,
-  .button:focus-visible {
-    background: var(--sunflower);
+  :global(html.drawing body) {
+    background: var(--bg);
     color: var(--ink);
-    transform: translateY(-2px);
+    font-family: var(--sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
   }
-  .button.big {
-    padding: 1.15rem 2.1rem;
-    font-size: 1.15rem;
-  }
-  .quiet {
-    color: var(--ink);
-  }
-
-  /* the board: scraps of the old way, gathered into one line of work */
-  .board {
-    position: relative;
-    width: 100%;
-    max-width: 30rem;
-    justify-self: center;
-    aspect-ratio: 4 / 5;
-    border: 2px solid var(--ink);
-    border-radius: 6px;
-    background: var(--paper-deep);
-    box-shadow: 10px 10px 0 -2px var(--sunflower), 10px 10px 0 0 var(--ink);
-    overflow: hidden;
-  }
-  .board-mess {
-    position: absolute;
-    inset: 0;
+  :global(html.drawing body::after) {
     display: none;
   }
-  .board.is-live .board-mess {
-    display: block;
+  :global(html.drawing ::selection) {
+    background: var(--sig);
+    color: #fff;
   }
-  .chip {
-    position: absolute;
-    padding: 0.45rem 0.75rem;
-    border: 1.5px solid var(--ink);
-    border-radius: 4px;
-    background: var(--paper);
-    font-family: var(--mono);
-    font-size: 0.74rem;
-    white-space: nowrap;
-    color: var(--ink);
-    box-shadow: 0 6px 14px -8px rgb(51 41 28 / 0.45);
+  :global(html.drawing main) {
+    min-height: 0;
   }
-  .chip:nth-child(4),
-  .chip:nth-child(8) {
-    border-color: var(--rust);
-    color: var(--rust);
+  :global(html.drawing a) {
+    color: inherit;
+    font-weight: inherit;
+    background-image: none;
   }
-  .chip:nth-child(5) {
-    background: #F2D88A;
-    border-color: #C9A24A;
-    font-family: var(--display);
-    font-style: italic;
-    font-size: 0.95rem;
-  }
-  .strike {
-    position: absolute;
-    left: 6%;
-    right: 6%;
-    top: 50%;
-    height: 2px;
-    background: var(--rust);
-    transform: scaleX(0);
-    transform-origin: left center;
+  :global(html.drawing a:focus-visible) {
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
   }
 
-  .flow {
-    position: absolute;
-    inset: 2.25rem 2rem 5.5rem;
-    list-style: none;
-    padding: 0;
-    display: grid;
-    align-content: space-between;
+  .d-wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 48px);
   }
-  .flow-line {
-    position: absolute;
-    left: 6px;
-    top: 0.9rem;
-    bottom: 0.9rem;
-    width: 2px;
+  p {
+    max-width: none;
+  }
+  h2,
+  h3 {
+    font-family: var(--sans);
+    font-variation-settings: normal;
+    text-wrap: balance;
+  }
+
+  /* --- buttons and links --- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.95rem 1.35rem;
+    border: 1.5px solid var(--ink);
+    font-family: var(--sans);
+    font-weight: 650;
+    font-size: 0.98rem;
+    letter-spacing: 0.005em;
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      background-color 0.3s var(--ease),
+      border-color 0.3s var(--ease),
+      color 0.3s var(--ease),
+      transform 0.3s var(--ease),
+      box-shadow 0.3s var(--ease);
+  }
+  .btn span {
+    transition: transform 0.3s var(--ease);
+  }
+  .btn:hover span {
+    transform: translateX(4px);
+  }
+  .btn-sig {
+    background: var(--sig);
+    border-color: var(--sig);
+    color: var(--ink);
+  }
+  .btn-sig:hover {
+    box-shadow: 4px 4px 0 var(--ink);
+    transform: translate(-2px, -2px);
+  }
+  .btn-ink {
     background: var(--ink);
-    transform-origin: top center;
+    color: #fff;
   }
-  .flow-step {
-    position: relative;
+  .btn-ink:hover {
+    background: var(--sig);
+    border-color: var(--sig);
+  }
+  .btn-line {
+    background: var(--bg);
+  }
+  .btn-line:hover {
+    background: var(--ink);
+    color: #fff;
+  }
+  .btn.big {
+    padding: 1.2rem 1.6rem;
+    font-size: 1.1rem;
+  }
+  .arrow-link {
+    display: inline-block;
+    font-weight: 650;
+    border-bottom: 1.5px solid var(--sig);
+    padding-bottom: 2px;
+    transition: color 0.25s var(--ease);
+  }
+  .arrow-link:hover {
+    color: var(--sig-text);
+  }
+
+  /* --- top bar --- */
+  .bar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px) saturate(1.2);
+    -webkit-backdrop-filter: blur(10px) saturate(1.2);
+    border-bottom: 1px solid var(--ink);
+  }
+  .bar-in {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 68px;
+  }
+  .mark {
     display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: baseline;
-    gap: 1rem;
-    padding-left: 2rem;
+    line-height: 1;
+    gap: 4px;
   }
-  .flow-dot {
+  .mark-name {
+    font-weight: 800;
+    font-stretch: 72%;
+    font-size: 1.35rem;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+  .mark-name::after {
+    content: '.';
+    color: var(--sig);
+  }
+  .mark-role {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+  .bar-nav {
+    display: flex;
+    gap: 2rem;
+    margin-left: auto;
+  }
+  .bar-nav a {
+    font-size: 0.92rem;
+    font-weight: 550;
+    position: relative;
+  }
+  .bar-nav a::after {
+    content: '';
     position: absolute;
     left: 0;
-    top: 50%;
-    width: 14px;
-    height: 14px;
-    margin-top: -7px;
-    border: 2px solid var(--ink);
-    border-radius: 50%;
-    background: var(--paper);
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background: var(--sig);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s var(--ease);
   }
-  .flow-step:last-child .flow-dot {
-    background: var(--sunflower);
+  .bar-nav a:hover::after {
+    transform: scaleX(1);
   }
-  .flow-name {
-    font-family: var(--display);
-    font-variation-settings: 'opsz' 60, 'SOFT' 50, 'WONK' 1;
-    font-weight: 600;
-    font-size: clamp(1.4rem, 3vw, 1.85rem);
+  .bar-cta {
+    padding: 0.7rem 1rem;
+    font-size: 0.88rem;
   }
-  .flow-note {
+  @media (max-width: 900px) {
+    .bar-nav {
+      display: none;
+    }
+    .bar-cta {
+      margin-left: auto;
+    }
+  }
+
+  /* --- hero --- */
+  .hero {
+    position: relative;
+    border-bottom: 1px solid var(--ink);
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: -1px -1px;
+  }
+  .hero-in {
+    display: grid;
+    gap: 3rem;
+    padding-top: clamp(40px, 6vw, 72px);
+    padding-bottom: clamp(40px, 5vw, 64px);
+  }
+  @media (min-width: 1000px) {
+    .hero-in {
+      grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+      gap: 0;
+      min-height: calc(100svh - 69px);
+      align-items: stretch;
+    }
+    .hero-copy {
+      padding-right: clamp(32px, 4vw, 64px);
+      border-right: 1px solid var(--ink);
+    }
+    .drawing {
+      padding-left: clamp(24px, 3vw, 48px);
+    }
+  }
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .tag {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     font-family: var(--mono);
     font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    color: var(--olive);
-    text-align: right;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--soft);
   }
-  .stamp {
-    position: absolute;
-    right: 1.5rem;
-    bottom: 1.5rem;
-    padding: 0.5rem 0.9rem;
-    border: 2px solid var(--rust);
-    border-radius: 4px;
+  .tag i {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    background: var(--sig);
+  }
+  .hero-title {
+    margin-top: 1.5rem;
+    font-family: var(--sans);
+    font-variation-settings: normal;
+    font-weight: 820;
+    font-stretch: 68%;
+    font-size: clamp(3.6rem, 8vw, 7.2rem);
+    line-height: 0.86;
+    letter-spacing: -0.012em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .hero-title span {
+    color: var(--sig);
+  }
+  .dim {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.6rem;
     font-family: var(--mono);
-    font-size: 0.78rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+  .dim::before,
+  .dim::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--blue);
+  }
+  .dim::before {
+    max-width: 2.5rem;
+  }
+  .hero-lede {
+    margin-top: 1.6rem;
+    max-width: 33rem;
+    font-size: clamp(1.08rem, 1.5vw, 1.22rem);
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .hero-acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+  .tblock {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    border: 1px solid var(--ink);
+    background: var(--sheet);
+    font-family: var(--mono);
+  }
+  .tblock div {
+    padding: 0.55rem 0.7rem;
+    border-right: 1px solid var(--ink);
+    min-width: 0;
+  }
+  .tblock div:last-child {
+    border-right: 0;
+  }
+  .tblock dt {
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+  .tblock dd {
+    margin: 0.15rem 0 0;
+    font-size: 0.72rem;
     font-weight: 500;
-    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--rust);
-    transform: rotate(-4deg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .replay {
-    position: absolute;
-    left: 1.5rem;
-    bottom: 1.6rem;
-    padding: 0.2rem 0;
-    border: 0;
-    background: none;
+  @media (max-width: 560px) {
+    .tblock {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .tblock div:nth-child(2) {
+      border-right: 0;
+    }
+    .tblock div:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--ink);
+    }
+  }
+
+  /* --- the as-built drawing --- */
+  .drawing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .drawing svg {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    overflow: visible;
+  }
+  .fig {
     font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
+    font-size: 10px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--ink-soft);
-    cursor: pointer;
+    fill: var(--soft);
   }
-  .replay:hover,
-  .replay:focus-visible {
-    color: var(--rust);
+  .dimline path {
+    fill: none;
+    stroke: var(--blue);
+    stroke-width: 1;
+  }
+  .dimline text {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    fill: var(--blue);
+  }
+  .wires path {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+  .joints circle {
+    fill: var(--ink);
+  }
+  .pulses circle {
+    fill: var(--sig);
+    opacity: 0;
+  }
+  .node rect {
+    fill: var(--sheet);
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+  .node.hot > rect {
+    stroke: var(--sig);
+    stroke-width: 2;
+  }
+  .ntag rect {
+    fill: var(--ink);
+    stroke: none;
+  }
+  .node.hot .ntag rect {
+    fill: var(--sig);
+  }
+  .ntag text {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    fill: #fff;
+  }
+  .nname {
+    font-family: var(--sans);
+    font-size: 19px;
+    font-weight: 720;
+    font-stretch: 88%;
+    fill: var(--ink);
+  }
+  .nnote {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    fill: var(--soft);
+  }
+  @media (max-width: 640px) {
+    .nname {
+      font-size: 21px;
+    }
+    .nnote {
+      font-size: 12px;
+    }
+  }
+  .call path {
+    fill: none;
+    stroke: var(--blue);
+    stroke-width: 1;
+  }
+  .call rect {
+    fill: var(--bg);
+    stroke: var(--blue);
+    stroke-width: 1;
+  }
+  .call text {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    fill: var(--blue);
   }
 
   /* --- section frame --- */
-  .block {
-    padding-top: 6rem;
+  .sec {
+    padding: clamp(80px, 11vw, 140px) 0;
+    border-bottom: 1px solid var(--ink);
   }
-  .block-head h2 {
-    margin-top: 0.4rem;
-    font-size: clamp(2.1rem, 5vw, 3.4rem);
+  .sec-head {
+    display: grid;
+    gap: 1rem;
+    padding-bottom: clamp(28px, 4vw, 44px);
+  }
+  @media (min-width: 900px) {
+    .sec-head {
+      grid-template-columns: 200px 1fr;
+      align-items: end;
+    }
+  }
+  .sec-num {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    color: var(--sig-text);
+    padding-bottom: 0.6rem;
+  }
+  .sec-head h2 {
+    font-weight: 800;
+    font-stretch: 70%;
+    font-size: clamp(2.6rem, 6.2vw, 5.2rem);
+    line-height: 0.9;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
   }
 
-  /* problems and prices: editorial rows, never cards */
-  .rows {
-    list-style: none;
-    padding: 0;
-    margin-top: 2.5rem;
-    border-bottom: 2px solid var(--ink);
-  }
-  .row {
-    display: grid;
-    gap: 0.5rem 3rem;
-    padding: 1.6rem 0;
+  /* spec tables: problems and prices */
+  .spec {
     border-top: 2px solid var(--ink);
   }
-  @media (min-width: 760px) {
-    .row {
-      grid-template-columns: 1fr 1fr;
+  .spec-row {
+    display: grid;
+    gap: 0.4rem 2rem;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid var(--ink);
+    transition: background-color 0.3s var(--ease);
+  }
+  .spec-row:not(.spec-cols):hover {
+    background: var(--sheet);
+  }
+  .spec-cols {
+    padding: 0.7rem 0;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+  @media (min-width: 900px) {
+    #problems .spec-row {
+      grid-template-columns: 200px 1fr 1fr;
       align-items: baseline;
     }
   }
-  .row-problem {
-    font-family: var(--display);
-    font-variation-settings: 'opsz' 48, 'SOFT' 50, 'WONK' 0;
-    font-weight: 560;
-    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+  @media (max-width: 899px) {
+    #problems .spec-cols {
+      display: none;
+    }
+  }
+  .spec-no {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--sig-text);
+  }
+  .spec-problem {
+    font-weight: 650;
+    font-stretch: 90%;
+    font-size: clamp(1.25rem, 2.1vw, 1.6rem);
     line-height: 1.2;
+    letter-spacing: -0.005em;
   }
-  .row-fix {
+  .spec-fix {
     position: relative;
-    padding-left: 1.75rem;
-    color: var(--ink-soft);
+    padding-left: 1.6rem;
+    color: var(--ink-2);
   }
-  .row-fix::before {
+  .spec-fix::before {
     content: '→';
     position: absolute;
     left: 0;
-    color: var(--sienna);
-    font-weight: 600;
+    color: var(--sig);
+    font-weight: 700;
   }
 
-  /* datum: the top of the range, shown department by department */
-  .datum-intro {
-    display: grid;
-    gap: 1rem 3rem;
-    margin-top: 1.75rem;
-  }
-  @media (min-width: 860px) {
-    .datum-intro {
-      grid-template-columns: 1.1fr 1fr;
+  /* --- systems: what gets built, then the proof --- */
+  @media (min-width: 900px) {
+    .sys-intro,
+    .caps {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      column-gap: 2rem;
+    }
+    .sys-lede {
+      grid-column: 2;
     }
   }
-  .datum-lede {
-    font-family: var(--display);
-    font-variation-settings: 'opsz' 48, 'SOFT' 50, 'WONK' 0;
-    font-weight: 500;
-    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+  .sys-lede {
+    max-width: 52rem;
+    font-weight: 600;
+    font-stretch: 92%;
+    font-size: clamp(1.3rem, 2.2vw, 1.75rem);
     line-height: 1.3;
   }
-  .datum-body {
-    color: var(--ink-soft);
+  .caps {
+    margin-top: clamp(40px, 6vw, 72px);
   }
-  .deck {
-    margin-top: 2.75rem;
+  .caps-head {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--soft);
+    padding: 1.2rem 0 1rem;
+  }
+  .caps-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    border-top: 2px solid var(--ink);
+  }
+  .caps-list li {
+    padding: 1.4rem 1.4rem 1.6rem 0;
+    border-bottom: 1px solid var(--ink);
+  }
+  @media (min-width: 700px) {
+    .caps-list {
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .caps-list li {
+      grid-column: span 2;
+      padding-left: 1.4rem;
+      border-right: 1px solid var(--ink);
+    }
+    .caps-list li:nth-child(3n + 1) {
+      padding-left: 0;
+    }
+    .caps-list li:nth-child(3),
+    .caps-list li:last-child {
+      border-right: 0;
+    }
+    .caps-list li:nth-child(n + 4) {
+      grid-column: span 3;
+    }
+    .caps-list li:nth-child(4) {
+      padding-left: 0;
+    }
+  }
+  .cap-no {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--blue);
+  }
+  .caps-list h3 {
+    margin-top: 0.55rem;
+    font-weight: 720;
+    font-stretch: 85%;
+    font-size: 1.35rem;
+    line-height: 1.15;
+  }
+  .caps-list p {
+    margin-top: 0.55rem;
+    font-size: 0.98rem;
+    color: var(--ink-2);
+  }
+  .proof-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: clamp(56px, 8vw, 88px);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+  .proof-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--blue);
+  }
+  .dsheet {
+    position: relative;
+    margin-top: 1.6rem;
+    border: 1.5px solid var(--ink);
+    background: var(--sheet);
+  }
+  .crop {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-color: var(--ink);
+    border-style: solid;
+    pointer-events: none;
+  }
+  .crop.tl {
+    top: -10px;
+    left: -10px;
+    border-width: 1.5px 0 0 1.5px;
+  }
+  .crop.tr {
+    top: -10px;
+    right: -10px;
+    border-width: 1.5px 1.5px 0 0;
+  }
+  .crop.bl {
+    bottom: -10px;
+    left: -10px;
+    border-width: 0 0 1.5px 1.5px;
+  }
+  .crop.br {
+    bottom: -10px;
+    right: -10px;
+    border-width: 0 1.5px 1.5px 0;
   }
   .deck-tabs {
     display: flex;
-    gap: 0.25rem 1.75rem;
     overflow-x: auto;
     scrollbar-width: none;
-    border-bottom: 2px solid var(--ink);
+    border-bottom: 1.5px solid var(--ink);
   }
   .deck-tabs::-webkit-scrollbar {
     display: none;
   }
   .deck-tab {
     position: relative;
-    flex: none;
+    flex: 1 0 auto;
     display: inline-flex;
     align-items: baseline;
-    gap: 0.5rem;
-    padding: 0.85rem 0 0.95rem;
+    gap: 0.55rem;
+    padding: 0.95rem 1.1rem;
     border: 0;
+    border-right: 1px solid var(--hair);
     background: none;
-    font-family: var(--body);
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--ink-soft);
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--soft);
     cursor: pointer;
-    transition: color 0.35s var(--ease-warm);
+    transition:
+      color 0.3s var(--ease),
+      background-color 0.3s var(--ease);
   }
-  .deck-num {
+  .deck-tab:last-child {
+    border-right: 0;
+  }
+  .deck-ref {
     font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    color: var(--rust);
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--blue);
   }
-  .deck-tab[aria-selected='true'],
   .deck-tab:hover {
+    color: var(--ink);
+    background: var(--bg);
+  }
+  .deck-tab[aria-selected='true'] {
     color: var(--ink);
   }
   .deck-tab:focus-visible {
-    outline: 2px solid var(--sienna);
-    outline-offset: 2px;
+    outline: 2px solid var(--blue);
+    outline-offset: -2px;
   }
-  /* the selected tab carries a sunflower bar; while the deck runs on its own
-     the bar fills as the timer, so the visitor can see a change is coming */
   .deck-timer {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -2px;
-    height: 4px;
-    background: var(--sunflower);
+    bottom: -1.5px;
+    height: 3px;
+    background: var(--sig);
     transform: scaleX(0);
     transform-origin: left center;
   }
   .deck-tab[aria-selected='true'] .deck-timer {
     transform: scaleX(1);
   }
-  .deck.is-auto .deck-tab[aria-selected='true'] .deck-timer {
+  .dsheet.is-auto .deck-tab[aria-selected='true'] .deck-timer {
     animation: deck-timer var(--deck-ms, 4500ms) linear both;
   }
   @keyframes deck-timer {
@@ -572,52 +1122,70 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
       transform: scaleX(1);
     }
   }
-  .deck-frame {
-    margin-top: 1.75rem;
-    border: 2px solid var(--ink);
-    border-radius: 8px;
-    overflow: hidden;
-    background: #fff;
-    box-shadow: 12px 12px 0 -2px var(--sunflower), 12px 12px 0 0 var(--ink);
-  }
-  .deck-chrome {
-    display: flex;
-    gap: 6px;
-    padding: 0.6rem 0.8rem;
-    border-bottom: 2px solid var(--ink);
-    background: var(--paper-deep);
-  }
-  .deck-chrome span {
-    width: 9px;
-    height: 9px;
-    border: 1.5px solid var(--ink);
-    border-radius: 50%;
-  }
   .deck-panes {
     display: grid;
+    background: #fff;
   }
   .deck-pane {
     grid-area: 1 / 1;
     opacity: 0;
     visibility: hidden;
-    transform: scale(1.015);
+    transform: scale(1.012);
     transition:
-      opacity 0.7s var(--ease-warm),
-      transform 1.2s var(--ease-warm),
-      visibility 0s linear 0.7s;
+      opacity 0.6s var(--ease),
+      transform 1.1s var(--ease),
+      visibility 0s linear 0.6s;
   }
   .deck-pane.is-on {
     opacity: 1;
     visibility: visible;
     transform: none;
     transition:
-      opacity 0.7s var(--ease-warm),
-      transform 1.2s var(--ease-warm);
+      opacity 0.6s var(--ease),
+      transform 1.1s var(--ease);
   }
   .deck-pane img {
     display: block;
     width: 100%;
     height: auto;
+  }
+  .sheet-foot {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-top: 1.5px solid var(--ink);
+  }
+  @media (min-width: 900px) {
+    .sheet-foot {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .fig-cell {
+    padding: 1.2rem 1.25rem 1.3rem;
+    border-right: 1px solid var(--ink);
+  }
+  .fig-cell:last-child {
+    border-right: 0;
+  }
+  @media (max-width: 899px) {
+    .fig-cell:nth-child(2) {
+      border-right: 0;
+    }
+    .fig-cell:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--ink);
+    }
+  }
+  .fig-cell dt {
+    font-weight: 800;
+    font-stretch: 70%;
+    font-size: clamp(2.4rem, 4.4vw, 3.4rem);
+    line-height: 0.95;
+  }
+  .fig-cell dd {
+    margin: 0.45rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--soft);
   }
   @media (prefers-reduced-motion: reduce) {
     .deck-pane,
@@ -626,281 +1194,396 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
       transform: none;
     }
   }
-  .figures {
-    display: grid;
-    gap: 1.5rem 2.5rem;
-    margin-top: 3rem;
-  }
-  @media (min-width: 760px) {
-    .figures {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  .figure {
-    padding-top: 1rem;
-    border-top: 2px solid var(--ink);
-  }
-  .figure dt {
-    font-family: var(--display);
-    font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
-    font-weight: 600;
-    font-size: clamp(2.4rem, 5vw, 3.4rem);
-    line-height: 1;
-  }
-  .figure dd {
-    margin: 0.5rem 0 0;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    color: var(--ink-soft);
-  }
-  .datum-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 2.5rem;
-    align-items: baseline;
-    max-width: none;
-    margin-top: 2.25rem;
-  }
-  .datum-contractor {
-    color: var(--ink-soft);
-  }
 
-  /* process: four steps along one rule that fills as you read */
+  /* --- process --- */
   .steps {
-    position: relative;
     list-style: none;
-    padding: 2.25rem 0 0;
-    margin-top: 2.5rem;
+    padding: 0;
     display: grid;
-    gap: 2.25rem 2rem;
+    border-top: 2px solid var(--ink);
+    position: relative;
   }
-  @media (min-width: 760px) {
+  @media (min-width: 900px) {
     .steps {
       grid-template-columns: repeat(4, 1fr);
     }
   }
-  .steps::before,
   .steps::after {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
-    top: 0;
-    height: 2px;
-    background: var(--ink);
-  }
-  .steps::after {
+    top: -2px;
     height: 4px;
-    top: -1px;
-    background: var(--sunflower);
+    background: var(--sig);
     transform-origin: left center;
-    transform: scaleX(1);
   }
-  .step-num {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.18em;
-    color: var(--rust);
+  .step {
+    padding: 1.6rem 1.5rem 1.8rem 0;
+    border-bottom: 1px solid var(--ink);
+  }
+  @media (min-width: 900px) {
+    .step {
+      padding: 1.8rem 1.6rem 2rem;
+      border-bottom: 0;
+      border-right: 1px solid var(--ink);
+    }
+    .step:first-child {
+      padding-left: 0;
+    }
+    .step:last-child {
+      border-right: 0;
+    }
+  }
+  .step-no {
+    display: block;
+    font-weight: 800;
+    font-stretch: 70%;
+    font-size: 3.6rem;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--ink);
   }
   .step h3 {
-    margin-top: 0.5rem;
-    font-size: 1.6rem;
+    margin-top: 0.9rem;
+    font-weight: 750;
+    font-stretch: 85%;
+    font-size: 1.55rem;
+    line-height: 1.1;
+  }
+  .step-tag {
+    display: inline-block;
+    margin-top: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--blue);
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
   }
   .step p {
-    margin-top: 0.6rem;
-    color: var(--ink-soft);
+    margin-top: 0.9rem;
+    color: var(--ink-2);
     font-size: 1rem;
   }
 
-  /* who */
-  .who-grid {
+  /* --- who --- */
+  .who {
     display: grid;
-    gap: 2rem 3rem;
-    margin-top: 2.5rem;
+    gap: 2.5rem 4rem;
     align-items: start;
   }
-  @media (min-width: 760px) {
-    .who-grid {
-      grid-template-columns: 15rem 1fr;
+  @media (min-width: 900px) {
+    .who {
+      grid-template-columns: 200px 300px 1fr;
+    }
+    .who-photo {
+      grid-column: 2;
     }
   }
-  .who-portrait {
+  .who-photo {
+    position: relative;
+    max-width: 300px;
+    border: 1.5px solid var(--ink);
+    background: var(--sheet);
+    padding: 10px;
+  }
+  .who-photo img {
+    display: block;
     width: 100%;
-    max-width: 15rem;
     height: auto;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border: 2px solid var(--ink);
-    border-radius: 6px;
-    filter: sepia(0.12) saturate(0.95);
+    filter: grayscale(1) contrast(1.08);
   }
   .who-body {
-    font-size: 1.15rem;
+    font-size: clamp(1.1rem, 1.6vw, 1.28rem);
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .who-body :global(p + p) {
+    margin-top: 1rem;
+  }
+  .who-body :global(a) {
+    color: var(--ink);
+    font-weight: 650;
+    border-bottom: 1.5px solid var(--sig);
+  }
+  .revs {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+    border-top: 1.5px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+  .revs li {
+    display: grid;
+    grid-template-columns: 2.2rem 1fr auto;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--hair);
+  }
+  .rev-no {
+    color: var(--blue);
+  }
+  .rev-place {
+    color: var(--soft);
+    text-align: right;
+  }
+  .revs li:last-child .rev-role,
+  .revs li:last-child .rev-place {
+    color: var(--sig-text);
   }
 
-  /* proof */
+  /* --- work --- */
   .cases {
     display: grid;
-    gap: 4.5rem;
-    margin-top: 2.75rem;
+    gap: clamp(56px, 8vw, 96px);
   }
   .case {
     display: grid;
-    gap: 1.75rem 3rem;
+    gap: 2rem 4rem;
     align-items: center;
   }
-  @media (min-width: 860px) {
+  @media (min-width: 900px) {
     .case {
-      grid-template-columns: 1.1fr 1fr;
+      grid-template-columns: 1.15fr 1fr;
     }
     .case:nth-child(even) .case-shot {
       order: 2;
     }
   }
   .case-shot {
+    position: relative;
     display: block;
-    border: 2px solid var(--ink);
-    border-radius: 6px;
-    overflow: hidden;
-    background-image: none;
-    box-shadow: 10px 10px 0 -2px var(--paper-deep), 10px 10px 0 0 var(--ink);
+    border: 1.5px solid var(--ink);
+    background: var(--sheet);
+    padding: 10px;
+  }
+  .case-label {
+    position: absolute;
+    top: -0.75rem;
+    left: 14px;
+    z-index: 1;
+    padding: 0.15rem 0.45rem;
+    background: var(--ink);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
   .case-shot img {
     display: block;
     width: 100%;
     height: auto;
-    transition: transform 0.9s var(--ease-warm);
-  }
-  .case:hover .case-shot img {
-    transform: scale(1.025);
   }
   .case-meta {
     font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.16em;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--olive);
+    color: var(--soft);
   }
   .case h3 {
-    margin-top: 0.4rem;
-    font-size: clamp(1.7rem, 3.4vw, 2.3rem);
+    margin-top: 0.6rem;
+    font-weight: 800;
+    font-stretch: 72%;
+    font-size: clamp(2rem, 3.6vw, 2.9rem);
+    line-height: 0.95;
+    text-transform: uppercase;
   }
   .case-body {
-    margin-top: 0.9rem;
-    color: var(--ink-soft);
+    margin-top: 1rem;
+    color: var(--ink-2);
   }
-  .stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem 2.5rem;
-    margin-top: 1.5rem;
+  .case-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 1.6rem 0;
+    border-top: 1.5px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
   }
-  .stat dt {
-    font-family: var(--display);
-    font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
-    font-weight: 600;
-    font-size: clamp(1.8rem, 3.6vw, 2.4rem);
+  .case-stats div {
+    padding: 0.9rem 1rem 1rem 0;
+  }
+  .case-stats div + div {
+    padding-left: 1rem;
+    border-left: 1px solid var(--ink);
+  }
+  .case-stats dt {
+    font-weight: 800;
+    font-stretch: 70%;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
     line-height: 1;
-    color: var(--ink);
   }
-  .stat dd {
-    margin: 0.35rem 0 0;
-    max-width: 14rem;
+  .case-stats dd {
+    margin: 0.4rem 0 0;
     font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    color: var(--ink-soft);
-  }
-  .case-link {
-    display: inline-block;
-    margin-top: 1.5rem;
+    font-size: 0.68rem;
+    color: var(--soft);
   }
   .more {
-    display: inline-block;
-    margin-top: 3rem;
+    margin-top: clamp(48px, 6vw, 72px);
   }
 
-  /* prices */
-  @media (min-width: 760px) {
-    .price-row {
-      grid-template-columns: 1fr 10rem 1.4fr;
+  /* --- prices --- */
+  @media (min-width: 900px) {
+    .prices .spec-row {
+      grid-template-columns: 1fr 240px 1.4fr;
+      align-items: baseline;
+    }
+  }
+  @media (max-width: 899px) {
+    .prices .spec-cols {
+      display: none;
     }
   }
   .price-name {
-    font-family: var(--display);
-    font-variation-settings: 'opsz' 48, 'SOFT' 50, 'WONK' 0;
-    font-weight: 560;
+    font-weight: 700;
+    font-stretch: 88%;
     font-size: 1.35rem;
   }
-  .price-amount {
-    font-family: var(--display);
-    font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
-    font-weight: 600;
-    font-size: 1.35rem;
-    color: var(--rust);
+  .price-amt {
+    font-weight: 800;
+    font-stretch: 75%;
+    font-size: 1.55rem;
+    color: var(--sig-text);
   }
   .price-body {
-    color: var(--ink-soft);
+    color: var(--ink-2);
+  }
+  .spec-row.top {
+    position: relative;
+    background: var(--sheet);
+  }
+  .spec-row.top::before {
+    content: '';
+    position: absolute;
+    left: -14px;
+    top: -1px;
+    bottom: -1px;
+    width: 4px;
+    background: var(--sig);
   }
   .founding {
-    max-width: none;
-    margin-top: 1.25rem;
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-    color: var(--ink-soft);
-  }
-
-  /* the close: a full-width band of deeper paper */
-  .start {
-    width: 100vw;
-    margin: 7rem 0 -5rem calc(50% - 50vw);
-    padding: 6rem 1.5rem 6.5rem;
-    background: var(--paper-deep);
-    border-top: 2px solid var(--ink);
-    text-align: center;
-    display: grid;
-    justify-items: center;
-  }
-  .start h2 {
-    font-size: clamp(2.4rem, 6vw, 4.2rem);
-  }
-  .start-body {
-    margin: 1.1rem 0 2.25rem;
-    font-size: 1.2rem;
-    color: var(--ink-soft);
-  }
-  .start-area {
-    margin-top: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.4rem;
     font-family: var(--mono);
     font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+    color: var(--ink-2);
+  }
+  .founding i {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    background: var(--sig);
   }
 
-  /* scroll-driven entrances, the same grammar as the index rows.
-     longhands only: see the note in global.css */
+  /* --- the close and the footer: one black sheet --- */
+  .start {
+    background: var(--ink);
+    color: #fff;
+    padding: clamp(80px, 11vw, 140px) 0;
+  }
+  .start-in {
+    display: grid;
+    gap: 2.5rem;
+    align-items: end;
+  }
+  @media (min-width: 900px) {
+    .start-in {
+      grid-template-columns: 1.2fr 1fr;
+    }
+  }
+  .start h2 {
+    font-weight: 820;
+    font-stretch: 68%;
+    font-size: clamp(3.2rem, 8vw, 7rem);
+    line-height: 0.86;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .start-body {
+    font-size: 1.2rem;
+    color: #d8d8d2;
+    margin-bottom: 1.6rem;
+  }
+  .start .btn-sig:hover {
+    box-shadow: 4px 4px 0 #fff;
+  }
+  .start-area {
+    margin-top: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: #9a9a94;
+  }
+  .foot {
+    background: var(--ink);
+    color: #9a9a94;
+    border-top: 1px solid #2c2c2a;
+  }
+  .foot-in {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.4rem;
+    padding-bottom: 1.6rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .foot nav {
+    display: flex;
+    gap: 1.6rem;
+  }
+  .foot a:hover {
+    color: #fff;
+  }
+
+  /* --- entrances --- */
+  .rise {
+    animation: d-rise 0.9s var(--ease) both;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes d-rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  /* longhands only: see the note in global.css */
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
-      .row,
+      .spec-row:not(.spec-cols),
+      .caps-list li,
       .step,
       .case,
-      .who-grid,
-      .figure,
-      .deck {
-        animation-name: rise;
+      .who,
+      .dsheet,
+      .sec-head {
+        animation-name: d-rise;
         animation-timing-function: linear;
         animation-fill-mode: both;
         animation-timeline: view();
-        animation-range: entry 0% entry 55%;
+        animation-range: entry 0% entry 50%;
       }
       .steps::after {
         animation-name: fill-rule;
         animation-timing-function: linear;
         animation-fill-mode: both;
         animation-timeline: view();
-        animation-range: entry 60% cover 45%;
+        animation-range: entry 70% cover 45%;
       }
     }
   }
@@ -912,79 +1595,87 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
       transform: scaleX(1);
     }
   }
+  @media (prefers-reduced-motion: reduce) {
+    .rise {
+      animation: none;
+    }
+  }
 </style>
 
 <script>
   import { gsap } from 'gsap';
 
-  const board = document.getElementById('board');
-  const replay = document.getElementById('replay');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // without script, or with reduced motion, the board shows the finished line
-  // of work and never the scraps
-  if (board && replay && !reduced) {
-    board.classList.add('is-live');
-    const chips = Array.from(board.querySelectorAll<HTMLElement>('.chip'));
-    const strikes = board.querySelectorAll('.strike');
-    const line = board.querySelector('.flow-line');
-    const steps = board.querySelectorAll('.flow-step');
-    const stamp = board.querySelector('.stamp');
+  // the as-built drawing draws itself, then the signal starts running the
+  // handoffs. reduced motion, or no script, gets the finished drawing.
+  const drawing = document.getElementById('drawing');
+  if (drawing && !reduced) {
+    const svg = drawing.querySelector('svg')!;
+    const wires = drawing.querySelectorAll<SVGPathElement>('.wires path');
+    const dims = drawing.querySelectorAll('.dimline');
+    const nodes = drawing.querySelectorAll('.node');
+    const joints = drawing.querySelectorAll('.joints circle');
+    const calls = drawing.querySelectorAll('.call');
+    const fig = drawing.querySelector('.fig');
 
-    // each scrap's pull toward the middle of the board, read at play time so a
-    // resized board still gathers to its own centre
-    const pull = (axis: 'x' | 'y') => (_: number, el: HTMLElement) => {
-      const b = board.getBoundingClientRect();
-      const c = el.getBoundingClientRect();
-      return axis === 'x'
-        ? b.left + b.width / 2 - (c.left + c.width / 2)
-        : b.top + b.height * 0.55 - (c.top + c.height / 2);
+    gsap.set(wires, { strokeDasharray: 1, strokeDashoffset: 1 });
+    gsap.set([...nodes, ...calls, ...joints, ...dims, fig], { opacity: 0 });
+    gsap.set(nodes, { y: 8 });
+
+    const start = (): void => {
+      drawing.classList.add('is-running');
+      drawing.querySelectorAll<SVGAnimationElement>('animateMotion').forEach((m) => {
+        // each dot stays hidden until its own run starts, or it waits at the origin
+        window.setTimeout(() => {
+          m.beginElement();
+          (m.parentNode as SVGElement).style.opacity = '1';
+        }, Number(m.dataset.offset ?? 0) * 1000);
+      });
     };
 
-    const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
-    tl.set(chips, { x: 0, y: 0, opacity: 0, scale: 0.9, filter: 'blur(0px)', rotation: (_: number, el: HTMLElement) => Number(el.dataset.r) })
-      .set(strikes, { scaleX: 0 })
-      .set(line, { scaleY: 0 })
-      .set(steps, { opacity: 0, y: 12 })
-      .set(stamp, { opacity: 0, scale: 1.7, rotation: -16 })
-      .set(replay, { opacity: 0 })
-      .to(chips, { opacity: 1, scale: 1, duration: 0.6, stagger: { each: 0.1, from: 'random' } }, 0.3)
-      .to(strikes, { scaleX: 1, duration: 0.45, stagger: 0.14, ease: 'power2.inOut' }, '+=0.7')
-      .to(
-        chips,
-        { x: pull('x'), y: pull('y'), scale: 0.35, opacity: 0, filter: 'blur(3px)', duration: 0.85, stagger: 0.045, ease: 'power3.in' },
-        '+=0.5',
-      )
-      .to(line, { scaleY: 1, duration: 1, ease: 'power2.inOut' }, '-=0.3')
-      .to(steps, { opacity: 1, y: 0, duration: 0.6, stagger: 0.15 }, '<0.1')
-      .to(stamp, { opacity: 1, scale: 1, rotation: -4, duration: 0.55, ease: 'back.out(2.4)' }, '+=0.1')
-      .to(replay, { opacity: 1, duration: 0.4 }, '+=0.3');
+    const tl = gsap
+      .timeline({ paused: true, delay: 0.3, defaults: { ease: 'power3.out' } })
+      .to([fig, ...dims], { opacity: 1, duration: 0.6 })
+      .to(nodes[0], { opacity: 1, y: 0, duration: 0.5 }, '<0.1')
+      .to(wires[0], { strokeDashoffset: 0, duration: 0.55, ease: 'power2.inOut' })
+      .to(nodes[1], { opacity: 1, y: 0, duration: 0.5 }, '-=0.1')
+      .to(calls[0], { opacity: 1, duration: 0.4 }, '<')
+      .to([wires[1], wires[2]], { strokeDashoffset: 0, duration: 0.6, ease: 'power2.inOut' })
+      .to(joints[0], { opacity: 1, duration: 0.2 }, '<0.2')
+      .to([nodes[2], nodes[3]], { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 }, '-=0.15')
+      .to([wires[3], wires[4]], { strokeDashoffset: 0, duration: 0.6, ease: 'power2.inOut' })
+      .to(joints[1], { opacity: 1, duration: 0.2 }, '<0.3')
+      .to(nodes[4], { opacity: 1, y: 0, duration: 0.5 }, '-=0.1')
+      .to(calls[1], { opacity: 1, duration: 0.4 })
+      .add(start);
 
-    replay.hidden = false;
-    replay.addEventListener('click', () => tl.restart());
-
-    // play once the board is actually on screen; on a phone it sits below the fold
-    const io = new IntersectionObserver(
+    // draw once the drawing is actually in view; on a phone it sits below the copy
+    const seen = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          tl.play();
-          io.disconnect();
-        }
+        if (!entries.some((e) => e.isIntersecting)) return;
+        tl.play();
+        seen.disconnect();
       },
-      { threshold: 0.45 },
+      { threshold: 0.3 },
     );
-    // hold the board blank until it plays, so the finished line never flashes first
-    gsap.set(chips, { opacity: 0 });
-    gsap.set([...steps, stamp, replay], { opacity: 0 });
-    gsap.set(line, { scaleY: 0 });
-    io.observe(board);
+    seen.observe(drawing);
+
+    // the pulses are decoration; rest them while the drawing is off screen
+    new IntersectionObserver((entries) => {
+      if (!drawing.classList.contains('is-running')) return;
+      if (entries.some((e) => e.isIntersecting)) svg.unpauseAnimations();
+      else svg.pauseAnimations();
+    }).observe(drawing);
   }
-  // the datum deck: one department at a time. it runs on its own while it is on
-  // screen, and stops for good the moment the visitor picks a tab
+
+  // the proof sheet: one department at a time. it runs on its own while it is
+  // on screen, and stops for good the moment the visitor picks a tab
   const deck = document.getElementById('deck');
   if (deck) {
     const tabs = Array.from(deck.querySelectorAll<HTMLButtonElement>('.deck-tab'));
     const panes = Array.from(deck.querySelectorAll<HTMLElement>('.deck-pane'));
+    const strip = deck.querySelector<HTMLElement>('.deck-tabs')!;
     const MS = 4500;
     let at = 0;
     let timer = 0;
@@ -1006,7 +1697,9 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
         void bar.offsetWidth;
         bar.style.animation = '';
       }
-      tabs[at].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      // keep the selected tab in view inside the strip, without moving the page
+      const t = tabs[at];
+      strip.scrollTo({ left: t.offsetLeft - (strip.clientWidth - t.offsetWidth) / 2, behavior: 'smooth' });
     };
     const stop = (): void => {
       manual = true;
@@ -1026,12 +1719,11 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
         show(i);
       }),
     );
-    deck.querySelector('.deck-tabs')!.addEventListener('keydown', (e) => {
-      const k = (e as KeyboardEvent).key;
-      if (k !== 'ArrowRight' && k !== 'ArrowLeft') return;
+    strip.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
       e.preventDefault();
       stop();
-      show(at + (k === 'ArrowRight' ? 1 : -1), true);
+      show(at + (e.key === 'ArrowRight' ? 1 : -1), true);
     });
 
     new IntersectionObserver(
