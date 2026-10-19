@@ -486,6 +486,34 @@ collections:
           - name: body
             label: Body
             widget: string
+          - name: form
+            label: Form
+            widget: object
+            fields:
+              - name: name
+                label: Name label
+                widget: string
+              - name: email
+                label: Email label
+                widget: string
+              - name: message
+                label: Message label
+                widget: string
+              - name: send
+                label: Send button
+                widget: string
+              - name: sending
+                label: While sending
+                widget: string
+              - name: sent
+                label: After sending
+                widget: string
+              - name: error
+                label: If it fails
+                widget: string
+              - name: alt
+                label: Email instead line
+                widget: string
           - name: email
             label: Email
             widget: string

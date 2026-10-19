@@ -1,0 +1,31 @@
+# The contact form on the homepage. GitHub Pages cannot answer a POST, so the
+# form posts here and this Worker mails it to Brett through the Email Routing
+# already running on brettboggs.dev. No mail service, no key, no secret.
+#
+# Deploy from this folder: npx wrangler deploy
+# Personal Cloudflare account (the one with brettboggs-store), never a client's.
+name = "brettboggs-contact"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+# Pinned so a deploy can never land in a client account wrangler also sees
+account_id = "1f435e17138d9f15d0edb7d13103c245"
+
+[vars]
+FROM_EMAIL = "form@brettboggs.dev"
+TO_EMAIL = "brettmboggs@gmail.com"
+SITE = "https://brettboggs.dev"
+ALLOWED_ORIGINS = "https://brettboggs.dev,http://localhost:4321"
+
+# Email Routing only delivers to a verified destination, so the form can only
+# ever reach this inbox, whatever a stranger posts.
+[[send_email]]
+name = "MAIL"
+destination_address = "brettmboggs@gmail.com"  # must match TO_EMAIL
+
+# At most 3 sends a minute from one IP, so a script cannot flood the inbox.
+# The namespace_id is any number unique to this account.
+[[ratelimits]]
+name = "LIMITER"
+namespace_id = "2001"
+simple = { limit = 3, period = 60 }

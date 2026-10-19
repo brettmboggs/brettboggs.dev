@@ -13,6 +13,8 @@ const lead = hero.title.endsWith(accent) ? hero.title.slice(0, -accent.length).t
 
 const total = pad(6);
 const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}`;
+const contactApi = import.meta.env.PUBLIC_CONTACT_API ?? 'https://brettboggs-contact.brettmboggs.workers.dev';
+const f = contact.form;
 
 // the as-built drawing: every connector, in the order it draws
 const wires = [
@@ -374,7 +376,34 @@ const nodes = [
       <h2>{contact.heading}</h2>
       <div class="start-side">
         <p class="start-body">{contact.body}</p>
-        <a class="btn btn-sig big" href={mailto}>{contact.email} <span aria-hidden="true">→</span></a>
+        <form class="note" id="note" action={contactApi} method="post">
+          <div class="note-pair">
+            <label>
+              <span>{f.name}</span>
+              <input name="name" autocomplete="name" maxlength="200" required />
+            </label>
+            <label>
+              <span>{f.email}</span>
+              <input name="email" type="email" autocomplete="email" maxlength="320" required />
+            </label>
+          </div>
+          <label>
+            <span>{f.message}</span>
+            <textarea name="message" rows="4" maxlength="5000" required></textarea>
+          </label>
+          <label class="note-trap" aria-hidden="true">
+            Company <input name="company" tabindex="-1" autocomplete="off" />
+          </label>
+          <div class="note-go">
+            <button class="btn btn-sig big" type="submit" data-sending={f.sending}>
+              <b>{f.send}</b> <span aria-hidden="true">→</span>
+            </button>
+            <p class="note-status" role="status" aria-live="polite"></p>
+          </div>
+          <p class="note-error" hidden>{f.error} <a href={mailto}>{contact.email}</a></p>
+        </form>
+        <p class="note-sent" id="sent" tabindex="-1">{f.sent}</p>
+        <p class="start-alt">{f.alt} <a href={mailto}>{contact.email}</a></p>
         <p class="start-area">{contact.area}</p>
       </div>
     </div>
@@ -1636,8 +1665,111 @@ const nodes = [
   .start .btn-sig:hover {
     box-shadow: 4px 4px 0 #fff;
   }
-  .start-area {
+  /* --- the note: the quick way in --- */
+  .note {
+    display: grid;
+    gap: 1rem;
+  }
+  .note-pair {
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 560px) {
+    .note-pair {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .note label {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .note label > span {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9a9a94;
+  }
+  .note input,
+  .note textarea {
+    width: 100%;
+    padding: 0.8rem 0.9rem;
+    border: 1.5px solid #4a4a46;
+    border-radius: 0;
+    background: #1b1b1a;
+    color: #fff;
+    font: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s var(--ease);
+  }
+  .note textarea {
+    resize: vertical;
+    min-height: 7.5rem;
+  }
+  .note input:focus,
+  .note textarea:focus {
+    outline: none;
+    border-color: var(--sig);
+  }
+  .note-trap {
+    position: absolute;
+    left: -9999px;
+  }
+  .note-go {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.4rem;
+  }
+  .note button {
+    cursor: pointer;
+  }
+  .note button b {
+    font-weight: inherit;
+  }
+  .note button:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .note-status {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: #d8d8d2;
+  }
+  .note-error {
+    color: #ff8a57;
+  }
+  .note-error a,
+  .start-alt a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  /* shown after a send; without script the Worker redirects to /#sent */
+  .note-sent {
+    display: none;
+    font-size: 1.2rem;
+    color: #fff;
+    border-left: 3px solid var(--sig);
+    padding-left: 1rem;
+  }
+  .note-sent:focus {
+    outline: none;
+  }
+  .note-sent:target,
+  .start.is-sent .note-sent {
+    display: block;
+  }
+  .start-side:has(.note-sent:target) .note,
+  .start.is-sent .note {
+    display: none;
+  }
+  .start-alt {
     margin-top: 1.4rem;
+    color: #d8d8d2;
+  }
+  .start-area {
+    margin-top: 0.6rem;
     font-family: var(--mono);
     font-size: 0.72rem;
     letter-spacing: 0.06em;
@@ -1706,6 +1838,40 @@ const nodes = [
 
 <script>
   import { gsap } from 'gsap';
+
+  // the note posts in place; without script the form posts itself and the
+  // Worker sends the browser back to /#sent
+  const note = document.getElementById('note') as HTMLFormElement | null;
+  if (note) {
+    const button = note.querySelector('button')!;
+    const label = button.querySelector('b')!;
+    const status = note.querySelector('.note-status')!;
+    const error = note.querySelector<HTMLElement>('.note-error')!;
+    const idle = label.textContent;
+    note.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      button.disabled = true;
+      label.textContent = button.dataset.sending ?? idle;
+      status.textContent = '';
+      error.hidden = true;
+      try {
+        const res = await fetch(note.action, { method: 'POST', body: new FormData(note), headers: { Accept: 'application/json' } });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(res.status < 500 ? (out.error ?? '') : '');
+        note.closest('.start')!.classList.add('is-sent');
+        document.getElementById('sent')!.focus();
+      } catch (err) {
+        // the Worker's own words for a fixable problem; the email fallback for
+        // anything else, a dropped connection included
+        const msg = err instanceof TypeError ? '' : (err as Error).message;
+        if (msg) status.textContent = msg;
+        else error.hidden = false;
+      } finally {
+        button.disabled = false;
+        label.textContent = idle;
+      }
+    });
+  }
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

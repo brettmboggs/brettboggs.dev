@@ -367,6 +367,16 @@
   "contact": {
     "heading": "Start with a free look.",
     "body": "Tell me what's eating your time. I'll reply within a day.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "send": "Send",
+      "sending": "Sending",
+      "sent": "Sent. I'll reply within a day.",
+      "error": "That didn't go through. Email me instead.",
+      "alt": "Prefer your own email?"
+    },
     "email": "hello@brettboggs.dev",
     "subject": "A free look",
     "area": "Based in O'Fallon. In person across the St. Louis area, by phone anywhere.",

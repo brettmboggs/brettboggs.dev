@@ -14,6 +14,11 @@
   "reachHeading": "Reach me",
   "reach": [
     {
+      "label": "Message",
+      "text": "Send a note",
+      "url": "/#start"
+    },
+    {
       "label": "Email",
       "text": "hello@brettboggs.dev",
       "url": "mailto:hello@brettboggs.dev"
