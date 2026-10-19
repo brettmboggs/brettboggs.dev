@@ -1,13 +1,13 @@
 {
   "name": "Brett Boggs",
   "short_name": "Brett Boggs",
-  "description": "Brett Boggs. Work and experiments.",
+  "description": "Brett Boggs. Operations and systems for local businesses.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#F4EDDF",
-  "theme_color": "#F4EDDF",
+  "background_color": "#F5F5F1",
+  "theme_color": "#F5F5F1",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },

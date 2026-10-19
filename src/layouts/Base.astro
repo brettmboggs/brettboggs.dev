@@ -1,13 +1,13 @@
 ---
-import '@fontsource-variable/fraunces/full.css';
-import '@fontsource-variable/fraunces/full-italic.css';
-import '@fontsource-variable/instrument-sans';
-import '@fontsource-variable/instrument-sans/wght-italic.css';
-import '@fontsource/spline-sans-mono/400.css';
-import '@fontsource/spline-sans-mono/500.css';
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/archivo/wdth-italic.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
 import '../styles/global.css';
 import { ogFor } from '../data/og';
 import EditLink from '../components/EditLink.astro';
+import Bar from '../components/Bar.astro';
+import Foot from '../components/Foot.astro';
 
 interface Props {
   title: string;
@@ -19,6 +19,8 @@ interface Props {
   theme?: string;
   /** false: the page brings its own header and footer */
   chrome?: boolean;
+  /** main runs edge to edge instead of inside the wrap */
+  full?: boolean;
   /** page-specific social card, resolved against the site root */
   ogImage?: string;
   /** marks the page as an article and stamps its dates */
@@ -43,11 +45,12 @@ const {
   film = false,
   theme,
   chrome = true,
+  full = false,
   ogImage: ogGiven,
   article,
   noindex = false,
   scene,
-  puck = true,
+  puck = false,
   noServiceWorker = false,
   edit,
 } = Astro.props;
@@ -145,36 +148,10 @@ const schema = home
     <link rel="icon" href="/icon-192.png" sizes="192x192" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#F4EDDF" />
+    <meta name="theme-color" content="#F5F5F1" />
     <meta name="msvalidate.01" content="06865AF16856E94AD3EDEBC41AEE5FF5" />
     <meta name="google-site-verification" content="U3pdbIQTNC8OSjS7xZRCUAfmT1gX_4ryAZzrnL1hVLE" />
     <meta name="apple-mobile-web-app-title" content="Brett Boggs" />
-    {
-      !film && (
-        <script is:inline>
-          /* dusk, decided before first paint: after sunset the paper cools. sunset is
-             guessed from the clock and the month, never from location. ?dusk=1 or
-             ?dusk=0 in the address sets a choice that stays on this device. */
-          (function () {
-            try {
-              var q = new URLSearchParams(location.search).get('dusk');
-              if (q === '0' || q === '1') localStorage.setItem('bb.dusk', q);
-              var pick = localStorage.getItem('bb.dusk');
-              var d = new Date();
-              var h = d.getHours() + d.getMinutes() / 60;
-              var set = [17, 17.5, 18, 19, 19.5, 20, 20, 19.5, 18.5, 18, 17, 16.5][d.getMonth()];
-              var rise = [7.2, 6.9, 6.4, 5.7, 5.3, 5.1, 5.3, 5.7, 6.1, 6.5, 6.9, 7.2][d.getMonth()];
-              var dusk = pick ? pick === '1' : h >= set || h < rise;
-              if (dusk) {
-                document.documentElement.dataset.dusk = '1';
-                var m = document.querySelector('meta[name="theme-color"]');
-                if (m) m.setAttribute('content', '#E3D8C4');
-              }
-            } catch (e) {}
-          })();
-        </script>
-      )
-    }
 
     <meta property="og:type" content={article ? 'article' : 'website'} />
     <meta property="og:site_name" content="Brett Boggs" />
@@ -202,8 +179,8 @@ const schema = home
   </head>
   <body>
     {film && <div class="ridge-ghost" id="ridge-ghost" aria-hidden="true"></div>}
-    {scene && <div class="scene-ghost" id="scene-ghost" data-scene={scene} aria-hidden="true"></div>}
-    {chrome && (<header class:list={['site-header', 'wrap', { 'over-film': film }]}>
+    {chrome && !film && <Bar />}
+    {chrome && film && (<header class:list={['site-header', 'wrap', { 'over-film': film }]}>
       <a class="wordmark" href="/" aria-label="Brett Boggs, home">B<span class="wordmark-rest" aria-hidden="true">rett</span><span class="wordmark-b">B</span><span class="wordmark-rest" aria-hidden="true">oggs</span><span class="wordmark-dot">.</span></a>
       <nav>
         <a href="/work/">Work</a>
@@ -212,10 +189,11 @@ const schema = home
         <a href="/store/">Store</a>
       </nav>
     </header>)}
-    <main class:list={[{ wrap: chrome }]}>
+    <main class:list={[{ wrap: chrome && !full }]}>
       <slot />
     </main>
-    {chrome && (
+    {chrome && !film && <Foot />}
+    {chrome && film && (
     <footer class:list={['site-footer', 'wrap', { floating: film }]} id="site-footer">
       <p>&copy; {year} Brett Boggs</p>
       {!film && (
@@ -271,6 +249,24 @@ const schema = home
 
       // index rows that carry a still show it beside the cursor
       mountPeek();
+
+      // grid spotlight: feed the pointer position to each page head and any
+      // .spot band, relative to the band (its grid runs edge to edge)
+      if (
+        window.matchMedia('(pointer: fine)').matches &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        document.querySelectorAll<HTMLElement>('.page-head, .spot').forEach((el) => {
+          el.addEventListener('pointermove', (e) => {
+            const r = el.getBoundingClientRect();
+            const bleed = el.classList.contains('page-head') ? 0 : r.left;
+            el.style.setProperty('--mx', `${e.clientX - bleed}px`);
+            el.style.setProperty('--my', `${e.clientY - r.top}px`);
+            el.classList.add('is-lit');
+          });
+          el.addEventListener('pointerleave', () => el.classList.remove('is-lit'));
+        });
+      }
 
       // section pages: the zoomed crop stays under the page, ghost-faint
       const ghost = document.getElementById('scene-ghost');

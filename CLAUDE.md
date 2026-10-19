@@ -38,7 +38,23 @@ signed-in Edit button (never on store/checkout: strict CSP).
 Content frontmatter supports `draft: true` — drafts are filtered out of listings
 and never get pages built.
 
-## Design
+## Design (current: the drawing set, site-wide since 2026-10-19)
+
+The whole site now runs the "drawing set" system Brett approved for the
+homepage: white sheet #F5F5F1 on a 24px engineering grid, ink #111111, one
+signal orange #FF4F00 (#C23800 for orange text), blueprint blue #1F4FD8 for
+annotation. Archivo (variable, condensed via font-stretch ~70% for uppercase
+h1/h2) + IBM Plex Mono for labels. Tokens live in src/styles/global.css; the
+old Golden Hour names (--paper, --rust, --sunflower...) are kept as ALIASES
+to the new palette, so don't reintroduce warm colours through them. Shared
+chrome: src/components/Bar.astro (sticky bar, nav, CTA, a CAD-style X/Y
+pointer readout on wide screens) and Foot.astro (black footer). Flare kept
+deliberately small: grid spotlight on .page-head and .spot bands, sheet-swap
+view transition. Dusk mode, film grain and the puck compass were retired.
+Orange buttons take ink text (white fails contrast). Lab pieces may keep
+their own art (the film and Keepsake load Fraunces themselves).
+
+## Golden Hour (retired 2026-10-19, kept for history)
 
 Direction: **"Golden Hour"** (approved by Brett 2026-08-25) —
 70s California concert-poster warmth run through Apple/Swiss restraint. Brett's

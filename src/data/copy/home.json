@@ -92,7 +92,7 @@
   "systems": {
     "eyebrow": "02",
     "heading": "Every department. One system.",
-    "lede": "I build the platform a whole company runs on: estimating, the field, finance, safety, people and equipment working from one record, instead of five tools that don't talk to each other.",
+    "lede": "I build the system a whole company runs on: sales, scheduling, operations, billing, the books and your people working from one record, instead of five tools that don't talk to each other.",
     "capsHeading": "What I build and connect",
     "caps": [
       {
@@ -108,8 +108,8 @@
         "body": "Approvals, follow-ups, reminders and reports that people currently do from memory."
       },
       {
-        "title": "Office and field, one record",
-        "body": "Phone apps that capture photos, hours and sign-offs where the work happens, and show up in the office the same minute."
+        "title": "The office and the floor, one record",
+        "body": "Phone apps that capture photos, hours and sign-offs where the work happens, whether that's a service call, a shop floor or a customer's driveway, and show up in the office the same minute."
       },
       {
         "title": "See the business live",
@@ -170,7 +170,7 @@
         },
         {
           "name": "Field",
-          "note": "daily reports, hours and pours from the site"
+          "note": "daily reports, hours and photos from the site"
         },
         {
           "name": "Safety",
@@ -214,11 +214,11 @@
       },
       {
         "cap": "The field and the office share one record",
-        "detail": "Daily reports, hazards, timecards and concrete pours are captured on site, and the office sees them the same minute."
+        "detail": "Daily reports, timecards and photos are captured where the work happens, and the office sees them the same minute."
       },
       {
         "cap": "The paperwork reads itself in",
-        "detail": "Bid documents, plans and requests for information go into the system instead of being retyped by an estimator."
+        "detail": "Incoming documents and plans go into the system instead of being retyped by hand."
       },
       {
         "cap": "Procedures run on their own",
@@ -417,6 +417,14 @@
       {
         "text": "Resume",
         "url": "/resume/"
+      },
+      {
+        "text": "Colophon",
+        "url": "/colophon/"
+      },
+      {
+        "text": "Log",
+        "url": "/log/"
       }
     ]
   }

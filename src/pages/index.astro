@@ -1,12 +1,9 @@
 ---
-import '@fontsource-variable/archivo/wdth.css';
-import '@fontsource/ibm-plex-mono/400.css';
-import '@fontsource/ibm-plex-mono/500.css';
 import Base from '../layouts/Base.astro';
 import copy from '../data/copy/home.json';
 import { md } from '../data/copy';
 
-const { nav, hero, problems, systems, process, about, proof, pricing, contact, footer } = copy;
+const { hero, problems, systems, process, about, proof, pricing, contact } = copy;
 const dg = hero.diagram;
 const pad = (n: number): string => String(n).padStart(2, '0');
 
@@ -16,7 +13,6 @@ const lead = hero.title.endsWith(accent) ? hero.title.slice(0, -accent.length).t
 
 const total = pad(6);
 const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}`;
-const year = new Date().getFullYear();
 
 // the as-built drawing: every connector, in the order it draws
 const wires = [
@@ -40,22 +36,10 @@ const nodes = [
 ];
 ---
 
-<Base title={copy.title} description={copy.description} home theme="drawing" chrome={false} puck={false} edit="pages/home">
-  <header class="bar">
-    <div class="d-wrap bar-in">
-      <a class="mark" href="/">
-        <span class="mark-name">{nav.name}</span>
-        <span class="mark-role">{nav.role}</span>
-      </a>
-      <nav class="bar-nav" aria-label={nav.label}>
-        {nav.links.map((l) => <a href={l.url}>{l.text}</a>)}
-      </nav>
-      <a class="btn btn-ink bar-cta" href="#start">{nav.cta}</a>
-    </div>
-  </header>
+<Base title={copy.title} description={copy.description} home theme="drawing" full edit="pages/home">
 
   <!-- ===================================================== hero -->
-  <section class="hero">
+  <section class="hero spot">
     <div class="d-wrap hero-in">
       <div class="hero-copy">
         <p class="tag rise"><i aria-hidden="true"></i>{hero.eyebrow}</p>
@@ -396,12 +380,6 @@ const nodes = [
     </div>
   </section>
 
-  <footer class="foot">
-    <div class="d-wrap foot-in">
-      <p>© {year} {nav.name}</p>
-      <nav aria-label="More">{footer.links.map((l) => <a href={l.url}>{l.text}</a>)}</nav>
-    </div>
-  </footer>
 </Base>
 
 <style>
@@ -531,83 +509,6 @@ const nodes = [
   }
   .arrow-link:hover {
     color: var(--sig-text);
-  }
-
-  /* --- top bar --- */
-  .bar {
-    position: sticky;
-    top: 0;
-    z-index: 30;
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    backdrop-filter: blur(10px) saturate(1.2);
-    -webkit-backdrop-filter: blur(10px) saturate(1.2);
-    border-bottom: 1px solid var(--ink);
-  }
-  .bar-in {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    height: 68px;
-  }
-  .mark {
-    display: grid;
-    line-height: 1;
-    gap: 4px;
-  }
-  .mark-name {
-    font-weight: 800;
-    font-stretch: 72%;
-    font-size: 1.35rem;
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-  }
-  .mark-name::after {
-    content: '.';
-    color: var(--sig);
-  }
-  .mark-role {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--soft);
-  }
-  .bar-nav {
-    display: flex;
-    gap: 2rem;
-    margin-left: auto;
-  }
-  .bar-nav a {
-    font-size: 0.92rem;
-    font-weight: 550;
-    position: relative;
-  }
-  .bar-nav a::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -6px;
-    height: 2px;
-    background: var(--sig);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s var(--ease);
-  }
-  .bar-nav a:hover::after {
-    transform: scaleX(1);
-  }
-  .bar-cta {
-    padding: 0.7rem 1rem;
-    font-size: 0.88rem;
-  }
-  @media (max-width: 900px) {
-    .bar-nav {
-      display: none;
-    }
-    .bar-cta {
-      margin-left: auto;
-    }
   }
 
   /* --- hero --- */
@@ -1742,29 +1643,10 @@ const nodes = [
     letter-spacing: 0.06em;
     color: #9a9a94;
   }
-  .foot {
-    background: var(--ink);
-    color: #9a9a94;
+  /* the close runs straight into the shared black footer */
+  :global(html.drawing .foot) {
+    margin-top: 0;
     border-top: 1px solid #2c2c2a;
-  }
-  .foot-in {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-top: 1.4rem;
-    padding-bottom: 1.6rem;
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .foot nav {
-    display: flex;
-    gap: 1.6rem;
-  }
-  .foot a:hover {
-    color: #fff;
   }
 
   /* --- entrances --- */

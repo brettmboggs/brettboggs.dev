@@ -2,7 +2,7 @@
    stale; hashed assets are cached forever; everything else is
    stale-while-revalidate. Bump VERSION to drop every cache. */
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 const RUNTIME = `runtime-${VERSION}`;
 const OFFLINE_URL = '/offline/';
 
@@ -11,8 +11,8 @@ const OFFLINE_URL = '/offline/';
    to the HTTP cache instead of doubling them into cache storage */
 const SKIP = /^\/film\/(lg|sm|xl|portrait)\/|\.glb$|^\/draco\/|-full\.jpg$|\/world\.webp$/;
 
-/* every page worth reading in a basement with no signal, plus the posters
-   the homepage falls back to. the frame sequences stay online-only. */
+/* every page worth reading in a basement with no signal. the film lives in
+   the lab now, so its posters are no longer worth holding offline. */
 const CORE = [
   OFFLINE_URL,
   '/',
@@ -22,10 +22,7 @@ const CORE = [
   '/lab/',
   '/lab/keepsake/',
   '/lab/field/',
-  '/film/poster.webp',
-  '/film/poster-end.webp',
-  '/film/poster-portrait.webp',
-  '/film/poster-end-portrait.webp',
+  '/about/',
   '/site.webmanifest',
   '/favicon.svg',
 ];

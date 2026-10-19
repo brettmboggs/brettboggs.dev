@@ -1,0 +1,51 @@
+---
+// The black sheet every page ends on.
+import copy from '../data/copy/home.json';
+
+const { nav, footer } = copy;
+const year = new Date().getFullYear();
+---
+
+<footer class="foot">
+  <div class="foot-in">
+    <p>© {year} {nav.name}</p>
+    <nav aria-label="More">{footer.links.map((l) => <a href={l.url}>{l.text}</a>)}</nav>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    margin-top: clamp(80px, 10vw, 128px);
+    background: var(--ink);
+    color: #9a9a94;
+  }
+  .foot-in {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.4rem clamp(20px, 4vw, 48px) 1.6rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .foot p {
+    max-width: none;
+  }
+  .foot nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.6rem;
+  }
+  .foot a {
+    color: #9a9a94;
+    font-weight: 400;
+    background-image: none;
+  }
+  .foot a:hover {
+    color: #fff;
+  }
+</style>

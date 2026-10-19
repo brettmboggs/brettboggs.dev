@@ -53,27 +53,27 @@ const css = (c: Rgb, alpha = 1) =>
 
 const clamp = (v: number, lo: number, hi: number) => (v < lo ? lo : v > hi ? hi : v);
 
-/* Golden hour walking down to dusk. No sun disc, only the glow it leaves. */
+/* Daylight on the drawing sheet walking down to night: greys, ink, one orange rim. */
 const DAY = {
-  skyTop: hex('#F1E6D0'),
-  skyMid: hex('#F0D9A4'),
-  skyLow: hex('#E9B96A'),
-  far: hex('#BFC8CC'),
-  mid: hex('#9AA486'),
-  near: hex('#61684A'),
-  land: hex('#33291C'),
-  rim: hex('#D9971E'),
+  skyTop: hex('#F5F5F1'),
+  skyMid: hex('#EFEFE9'),
+  skyLow: hex('#E4E4DD'),
+  far: hex('#D3D3CC'),
+  mid: hex('#B4B4AC'),
+  near: hex('#84847C'),
+  land: hex('#111111'),
+  rim: hex('#FF4F00'),
 };
 
 const DUSK = {
-  skyTop: hex('#241D14'),
-  skyMid: hex('#4B3325'),
-  skyLow: hex('#8F3F22'),
-  far: hex('#3C3529'),
-  mid: hex('#2F2A1F'),
-  near: hex('#241E15'),
-  land: hex('#17120C'),
-  rim: hex('#B85C38'),
+  skyTop: hex('#1C1C1A'),
+  skyMid: hex('#2C2C29'),
+  skyLow: hex('#4A4741'),
+  far: hex('#34342F'),
+  mid: hex('#272724'),
+  near: hex('#1D1D1B'),
+  land: hex('#0B0B0A'),
+  rim: hex('#FF4F00'),
 };
 
 type Phase = 'attract' | 'playing' | 'over';

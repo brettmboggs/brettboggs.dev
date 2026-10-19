@@ -1,7 +1,7 @@
 // Social cards, one per page, rendered at build time by src/pages/og/[id].png.ts
 // in the site's own type. Base.astro picks the card whose path matches the page,
-// so a page needs no code of its own to get one. The homepage keeps og.png: the
-// film is its card. The eclipse page brings its own photograph.
+// so a page needs no code of its own to get one. The eclipse page brings its own
+// photograph. The homepage card leads with the offer.
 
 export type OgCard = {
   id: string;
@@ -12,6 +12,7 @@ export type OgCard = {
 };
 
 export const cards: OgCard[] = [
+  { id: 'home', path: '/', kicker: 'Operations & systems · St. Louis', title: 'Run a tighter operation.', note: "I look at how your business actually runs, then fix what's costing you customers or time." },
   { id: 'work', path: '/work/', kicker: '01 · Work', title: 'Work', note: 'Case studies. The problem, the build, and what came of it.' },
   { id: 'lab', path: '/lab/', kicker: '02 · Lab', title: 'Lab', note: 'Experiments and unfinished things, allowed to be rough.' },
   { id: 'about', path: '/about/', kicker: '03 · About', title: 'Operator turned builder.', note: 'A decade running physical operations, then the software those operations deserved. St. Louis.' },
@@ -24,7 +25,7 @@ export const cards: OgCard[] = [
   { id: 'field', path: '/lab/field/', kicker: 'Lab · Aug 2026', title: 'The Field', note: 'Every blade is a spring on your GPU, and the cursor is weather.' },
   { id: 'keepsake', path: '/lab/keepsake/', kicker: 'Lab · Aug 2026', title: 'Keepsake', note: 'A seeded drawing of a field, different for every visitor. Yours to keep.' },
   { id: 'sprout-siege', path: '/lab/sprout-siege/', kicker: 'Lab · Aug 2026', title: 'Sprout Siege', note: 'An idle farm game for iOS, built around a simulation core that never touches the screen.' },
-  { id: 'ridge', path: '/lab/ridge/', kicker: 'Lab · Aug 2026', title: 'The Ridge', note: 'A golden hour flyover, rendered in Blender and scrubbed by scroll. It runs the front page.' },
+  { id: 'ridge', path: '/lab/ridge/', kicker: 'Lab · Aug 2026', title: 'The Ridge', note: 'A golden hour flyover, rendered in Blender and scrubbed by scroll. It opened the front page until October 2026.' },
   { id: 'underground', path: '/lab/underground/', kicker: 'Lab · Aug 2026', title: 'The Underground', note: 'The same ground as the Ridge, cut open six metres to rock. Roots grow as you scroll.' },
   { id: 'bridge', path: '/lab/bridge/', kicker: 'Lab · Jul 2026', title: 'The Bridge', note: 'A cable-stayed crossing that surveys, drafts, and builds itself as you scroll.' },
   { id: 'drafting-film', path: '/lab/drafting-film/', kicker: 'Lab · Jul 2026', title: 'The Drafting Film', note: 'A highway underpass you draft by scrolling.' },

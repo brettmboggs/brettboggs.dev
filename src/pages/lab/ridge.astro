@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import copy from '../../data/copy/lab-ridge.json';
-import { md } from '../../data/copy';
+import { md, inline } from '../../data/copy';
 ---
 
 <Base
@@ -13,7 +13,7 @@ import { md } from '../../data/copy';
     <header class="page-head">
       <p class="eyebrow">{copy.eyebrow}</p>
       <h1>{copy.heading}</h1>
-      <p class="lede">{copy.lede}</p>
+      <p class="lede" set:html={inline(copy.lede)} />
     </header>
 
     <figure class="shot">

@@ -12,28 +12,29 @@ import { md } from '../data/copy';
   </header>
 
   <div class="opener">
-    <div class="prose opener-copy" set:html={md(copy.opener)} />
+    <div class="opener-main">
+      <div class="prose opener-copy" set:html={md(copy.opener)} />
+      <div class="prose" set:html={md(copy.body)} />
+
+      <section class="reach">
+        <p class="reach-head">{copy.reachHeading}</p>
+        <ul>
+          {copy.reach.map((r) => (
+            <li>
+              <span class="reach-label">{r.label}</span>
+              <a href={r.url} rel={r.url.startsWith('http') ? 'noopener' : undefined}>{r.text}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
     <figure class="portrait">
       <span class="portrait-plate">
-        <img src={copy.portrait.image} alt={copy.portrait.alt} width="880" height="1121" loading="eager" />
+        <img src={copy.portrait.image} alt={copy.portrait.alt} width="720" height="900" loading="eager" fetchpriority="high" />
       </span>
       <figcaption>{copy.portrait.caption}</figcaption>
     </figure>
   </div>
-
-  <div class="prose" set:html={md(copy.body)} />
-
-  <section class="reach">
-    <p class="reach-head">{copy.reachHeading}</p>
-    <ul>
-      {copy.reach.map((r) => (
-        <li>
-          <span class="reach-label">{r.label}</span>
-          <a href={r.url} rel={r.url.startsWith('http') ? 'noopener' : undefined}>{r.text}</a>
-        </li>
-      ))}
-    </ul>
-  </section>
 
   <a class="back-link" href="/">{copy.backLink}</a>
 </Base>
@@ -42,8 +43,8 @@ import { md } from '../data/copy';
   /* magazine-profile opener: copy left, printed plate right */
   .opener {
     display: grid;
-    grid-template-columns: minmax(18rem, 3fr) minmax(14rem, 2fr);
-    gap: 2.8rem;
+    grid-template-columns: minmax(0, 1fr) minmax(14rem, 22rem);
+    gap: clamp(2.8rem, 6vw, 6rem);
     align-items: start;
     margin-top: 2.5rem;
   }
@@ -51,17 +52,18 @@ import { md } from '../data/copy';
     margin-top: 0;
   }
 
-  /* the portrait in real color, mounted like a print: a warm mat cut from
-     the site's own paper, flat, no shadows, the same rule-and-mono language
-     as every figure on the site. */
+  /* the portrait in real color, mounted like a plate on the drawing set:
+     a white mat inside an ink frame, flat, no shadows. */
   .portrait {
-    margin: 0;
+    position: sticky;
+    top: 100px;
+    margin: 2.5rem 0 0;
   }
   .portrait-plate {
     display: block;
-    padding: 0.7rem;
-    background: var(--paper-deep);
-    border-top: 2px solid var(--ink);
+    padding: 10px;
+    background: var(--sheet);
+    border: 1.5px solid var(--ink);
   }
   .portrait img {
     display: block;
@@ -83,7 +85,9 @@ import { md } from '../data/copy';
       gap: 2rem;
     }
     .portrait {
+      position: static;
       max-width: 19rem;
+      margin-top: 0;
       order: -1;
     }
   }
