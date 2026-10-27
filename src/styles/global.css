@@ -254,6 +254,11 @@ a:focus-visible {
   height: auto;
 }
 
+.prose img[width] {
+  display: block;
+  margin-inline: auto;
+}
+
 .prose blockquote {
   padding-left: 1.1rem;
   border-left: 2px solid var(--sig);

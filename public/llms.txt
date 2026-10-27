@@ -41,6 +41,7 @@ Work: Knock Em' Down Detailing (https://brettboggs.dev/work/websites/ked-detaili
 
 - [What your software actually costs](https://brettboggs.dev/writing/what-your-software-costs/): eight ordinary subscriptions, $860 a month, $51,600 over five years.
 - [Find the bottleneck before you buy anything](https://brettboggs.dev/writing/find-the-bottleneck/): walk one job from first call to getting paid.
+- [Software has been rented since 1968](https://brettboggs.dev/writing/rented-since-1968/): a 1968 ad for leased software, and why the reason for renting went away.
 - [Your Google profile is the page people actually see](https://brettboggs.dev/writing/google-profile-checklist/): a checklist, including service-area businesses.
 
 ## Datum
