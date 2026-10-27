@@ -164,6 +164,12 @@ const f = contact.form;
               </a>
               <h3>{it.name}</h3>
               <p>{it.body}</p>
+              {it.quote && (
+                <figure class="said">
+                  <blockquote>{it.quote.text}</blockquote>
+                  <figcaption>{it.quote.by}</figcaption>
+                </figure>
+              )}
               <div class="stub">
                 {it.replaced.map((r) => <span><s>{r}</s></span>)}
                 {it.stats.map((s) => <span>{s.value} {s.label}</span>)}
@@ -1028,6 +1034,19 @@ const f = contact.form;
   .case p {
     max-width: 50ch;
     color: #c9ccd3;
+  }
+  .said {
+    max-width: 50ch;
+    padding-left: 1rem;
+    border-left: 2px solid var(--sig);
+  }
+  .said blockquote {
+    color: #e6e7ea;
+  }
+  .said figcaption {
+    margin-top: 0.6rem;
+    color: #9a9fa8;
+    font: 500 0.72rem var(--mono);
   }
   .stub {
     display: flex;

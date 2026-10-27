@@ -31,6 +31,10 @@ Site: [mattressconcepts.com](https://www.mattressconcepts.com). Work done late S
 6. **Tools for reviews.** A counter card with a QR code that opens the review form, a ready-to-send text asking for a review, and sample replies.
 7. **The owners control everything.** The domain stayed in their name. Nothing is locked to one person.
 
+> Brett moved us off Wix and had our new website up fast. He fixed our Google Business Profile, built a quote form where customers send their measurements and photos, and gave us an easy way to ask for reviews. He answers quickly, knows what he's doing, and made the whole thing easy. I'd recommend him to any business owner.
+>
+> Debbie Smith, Mattress Concepts
+
 ## The numbers
 
 | | Old Wix site | New site |

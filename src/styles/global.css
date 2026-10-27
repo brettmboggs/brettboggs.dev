@@ -254,6 +254,16 @@ a:focus-visible {
   height: auto;
 }
 
+.prose blockquote {
+  padding-left: 1.1rem;
+  border-left: 2px solid var(--sig);
+}
+
+.prose blockquote p:last-child:not(:first-child) {
+  font: 500 0.78rem var(--mono);
+  color: var(--ink-soft);
+}
+
 /* tables: editorial rows like the entry lists: rules, not boxes */
 .prose table {
   display: block;

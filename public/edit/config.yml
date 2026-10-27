@@ -390,6 +390,17 @@ collections:
               - name: replaced
                 label: Replaced
                 widget: list
+              - name: quote
+                label: Client quote
+                widget: object
+                required: false
+                fields:
+                  - name: text
+                    label: Quote
+                    widget: text
+                  - name: by
+                    label: Name, business
+                    widget: string
           - name: more
             label: More
             widget: string
