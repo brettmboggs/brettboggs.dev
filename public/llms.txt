@@ -42,6 +42,13 @@ Work: Knock Em' Down Detailing (https://brettboggs.dev/work/websites/ked-detaili
 
 ## Writing
 
+- [Seven questions to ask before you hire an AI consultant](https://brettboggs.dev/writing/hiring-an-ai-consultant/): what to ask on the first call, and Brett's own answers.
+- [Before you pay for another AI tool](https://brettboggs.dev/writing/ai-tools-monthly-cost/): six questions, and when plain software does the job with no monthly AI bill.
+- [Where ChatGPT helps a small business, and where it doesn't](https://brettboggs.dev/writing/chatgpt-for-small-business/): first drafts and messy input yes, exact numbers no.
+- [What a missed call costs](https://brettboggs.dev/writing/missed-calls/): the arithmetic, and missed-call text-back.
+- [The quote follow-up most businesses skip](https://brettboggs.dev/writing/quote-follow-up/): a three-message routine at day 2, 7 and 14.
+- [Who owns your website?](https://brettboggs.dev/writing/who-owns-your-website/): five ownership checks, from the domain to the Google profile.
+- [Signs you've outgrown the spreadsheet](https://brettboggs.dev/writing/outgrown-spreadsheets/): six signs, and what to move to.
 - [What your software actually costs](https://brettboggs.dev/writing/what-your-software-costs/): eight ordinary subscriptions, $860 a month, $51,600 over five years.
 - [Find the bottleneck before you buy anything](https://brettboggs.dev/writing/find-the-bottleneck/): walk one job from first call to getting paid.
 - [Software has been rented since 1968](https://brettboggs.dev/writing/rented-since-1968/): a 1968 ad for leased software, and why the reason for renting went away.

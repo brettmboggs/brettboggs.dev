@@ -141,7 +141,9 @@ Update (Brett, 2026-10-28): AI consulting is now the priority service and
 leads /help/, then AI automation; photos and video live at /help/media/. His
 angle: the guide for owners who may not even want AI, building mostly plain
 functions and integrations with no hidden AI running costs, with advanced AI
-only where it pays (Datum has both). Homepage hero rewrite is pending his pick.
+only where it pays (Datum has both). Hero changed 2026-10-28 to "Less noise. More business." (strike: noise): he
+wants lines in that register (experience, no hype), not AI-revolution pitches.
+Hidden links/text for SEO are out (Google spam policy); credits stay visible.
 
 Exception (Brett, 2026-10-19): AI as a service topic may appear, mainly on
 `/help/ai-for-small-business/` and in brief FAQ answers, so owners searching
