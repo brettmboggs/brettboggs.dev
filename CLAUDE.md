@@ -137,6 +137,12 @@ Zero references to Claude or AI-assisted authorship anywhere: site copy,
 commit messages, README, PR descriptions, repo metadata. Do NOT add
 Co-Authored-By trailers to commits in this repo.
 
+Update (Brett, 2026-10-28): AI consulting is now the priority service and
+leads /help/, then AI automation; photos and video live at /help/media/. His
+angle: the guide for owners who may not even want AI, building mostly plain
+functions and integrations with no hidden AI running costs, with advanced AI
+only where it pays (Datum has both). Homepage hero rewrite is pending his pick.
+
 Exception (Brett, 2026-10-19): AI as a service topic may appear, mainly on
 `/help/ai-for-small-business/` and in brief FAQ answers, so owners searching
 for AI help find him. Framing: the client and the bottleneck come first, AI is
