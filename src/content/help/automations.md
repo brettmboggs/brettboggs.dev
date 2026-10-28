@@ -1,17 +1,19 @@
 ---
-title: "Automating small business busywork · Brett Boggs"
-description: "Missed-call text-back, quote follow-ups, reminders, online orders straight into your books. One process automated end to end, at a fixed price. St. Louis and remote."
+title: "AI automation for small businesses in St. Louis · Brett Boggs"
+description: "AI and workflow automation for St. Louis and St. Charles County small businesses. Missed-call text-back, quote follow-ups, reminders, orders straight into your books. One process end to end, at a fixed price."
 kind: service
-heading: "Automating the busywork."
+heading: "Automation for the busywork."
 lede: "The jobs that eat an hour a day and need no judgment. Quote follow-ups, missed calls, reminders, re-typing orders into the books. Done once, then done for you."
 summary: "One process automated end to end. $1,500 to $3,000."
-order: 30
+order: 15
 price:
   amount: "$1,500 to $3,000"
   note: "A fixed quote for one process done right, from the first step to the last. Smaller fixes go into the monthly plan, one each quarter."
 related: [ai-for-small-business, operations-review, podium-alternative]
-updated: 2026-10-19
+updated: 2026-10-28
 faq:
+  - q: "Is this AI automation?"
+    a: "Some of it. AI reads the messy parts, like a photo of a receipt, a voicemail or a customer's email, and plain rules do the rest, because a reminder or an invoice should go out exactly the same way every time. You get whichever mix is cheapest to run and hardest to break."
   - q: "Will customers be able to tell it's automated?"
     a: "Not if it's done properly. Messages go out in your words, from your number or email, at sensible times. Anything that needs a real answer still comes to you."
   - q: "What if it breaks?"
@@ -29,6 +31,7 @@ The best place to save time is the work you do the same way every day. Not the h
 - **Appointment reminders.** Fewer no-shows, without anyone dialing.
 - **Online orders into the books.** No more typing the same sale twice.
 - **Review requests.** A finished job gets a text asking for a review, with the link.
+- **Paperwork read for you.** Receipts, invoices and voicemails turned into lines in your books or work orders. This is where AI earns its keep.
 - **The Friday report.** The numbers you build by hand every week, built for you.
 
 ## How it goes
