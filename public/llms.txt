@@ -12,7 +12,7 @@ Brett works alone, on purpose: there is no company in the middle, so what he bui
 
 Prices:
 - A first look is free (20 minutes).
-- An operations review is $350 for 90 minutes and a written plan, credited toward any project.
+- An operations review is $350 for 90 minutes and a written plan, credited toward any project. Larger companies (several departments or locations) get a fixed quote after the free look.
 - One process automated or rebuilt: $1,500 to $3,000, fixed quote.
 - A full system replacing a booking or field-service app and parts of accounting: $5,000 to $12,000, fixed quote.
 - Websites with Google profile setup: from $1,500, no hosting fee.

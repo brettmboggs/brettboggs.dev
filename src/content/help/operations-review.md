@@ -8,7 +8,7 @@ summary: "Ninety minutes and a written plan. Credited toward any project."
 order: 10
 price:
   amount: "$350"
-  note: "Ninety minutes on site, or on video if you're not near St. Louis, plus the written plan. Credited in full toward any project."
+  note: "Ninety minutes on site, or on video if you're not near St. Louis, plus the written plan. Credited in full toward any project. Larger companies get a fixed quote after the free look."
 related: [custom-software, automations, one-person]
 updated: 2026-10-28
 faq:
@@ -41,4 +41,4 @@ Some of the plan will be for me to build. Some will be a setting in a tool you a
 
 ## Who it's for
 
-Owners who know something is costing them time or money but can't say exactly what. Businesses with between one and fifty people. Service businesses, shops, makers, offices. You don't need to be good with computers. That's my job.
+Owners who know something is costing them time or money but can't say exactly what. The $350 review fits businesses up to about twenty people. Bigger companies, with several departments or locations, need more than one conversation, so I quote those after the free look. It's still credited toward the work. Service businesses, shops, makers, offices. You don't need to be good with computers. That's my job.
