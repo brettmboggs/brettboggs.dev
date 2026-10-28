@@ -24,6 +24,11 @@
       "url": "mailto:hello@brettboggs.dev"
     },
     {
+      "label": "Phone",
+      "text": "(636) 336-6474",
+      "url": "tel:+16363366474"
+    },
+    {
       "label": "LinkedIn",
       "text": "linkedin.com/in/brettmboggs",
       "url": "https://www.linkedin.com/in/brettmboggs/"

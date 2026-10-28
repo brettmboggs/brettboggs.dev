@@ -266,7 +266,10 @@ const f = contact.form;
           <p class="note-error" hidden>{f.error} <a href={mailto}>{contact.email}</a></p>
         </form>
         <p class="note-sent" id="sent" tabindex="-1">{f.sent}</p>
-        <p class="start-alt">{f.alt} <a href={mailto}>{contact.email}</a></p>
+        <p class="start-alt">
+          {f.alt} <a href={mailto}>{contact.email}</a>. {contact.phoneAlt}
+          <a href={`tel:+1${contact.phone.replace(/\D/g, '')}`}>{contact.phone}</a>.
+        </p>
         <p class="start-area">{contact.area}</p>
       </div>
     </div>

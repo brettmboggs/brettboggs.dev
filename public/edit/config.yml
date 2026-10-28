@@ -513,6 +513,12 @@ collections:
           - name: email
             label: Email
             widget: string
+          - name: phone
+            label: Phone
+            widget: string
+          - name: phoneAlt
+            label: Phone line lead-in
+            widget: string
           - name: subject
             label: Subject
             widget: string
@@ -598,6 +604,7 @@ collections:
           - { name: button, label: Button, widget: string }
           - { name: url, label: Button link, widget: string }
           - { name: email, label: Email, widget: string }
+          - { name: phone, label: Phone, widget: string }
           - { name: area, label: Area line, widget: string }
       - { name: backLink, label: Back link, widget: string }
     - name: writing

@@ -12,6 +12,7 @@ const { cta } = copy;
   <div class="ask-go">
     <a class="ask-btn" href={cta.url}>{cta.button} <span aria-hidden="true">→</span></a>
     <a class="ask-mail" href={`mailto:${cta.email}`}>{cta.email}</a>
+    <a class="ask-mail" href={`tel:+1${cta.phone.replace(/\D/g, '')}`}>{cta.phone}</a>
   </div>
   <p class="ask-area">{cta.area}</p>
 </section>
