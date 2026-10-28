@@ -21,7 +21,7 @@ const related = (await Promise.all(d.related.map((id) => getEntry('help', id))))
 );
 
 const graph = [
-  ...(d.kind === 'answer' ? [] : [service(url, d.heading.replace(/\.$/, ''), d.description, d.price)]),
+  ...(d.kind === 'answer' ? [] : [service(url, d.heading.replace(/\.$/, ''), d.description, d.price, d.updated)]),
   ...(d.faq.length ? [faqPage(url, d.faq)] : []),
   breadcrumb(url, [
     { name: 'Brett Boggs', url: `${SITE}/` },

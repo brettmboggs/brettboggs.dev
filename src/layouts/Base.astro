@@ -4,6 +4,8 @@ import '@fontsource-variable/hanken-grotesk/index.css';
 import '@fontsource-variable/martian-mono/index.css';
 import '../styles/global.css';
 import { ogFor } from '../data/og';
+import { areaServed } from '../data/schema';
+import homeCopy from '../data/copy/home.json';
 import EditLink from '../components/EditLink.astro';
 import Bar from '../components/Bar.astro';
 import Foot from '../components/Foot.astro';
@@ -82,6 +84,9 @@ const social = new URL(ogImage, Astro.site);
 // Only the homepage carries the identity graph. Repeating it on every page
 // hands crawlers duplicate entities to reconcile, which weakens rather than
 // reinforces the one they should be reading.
+// the first client quote on the homepage, marked up as a review
+const quote = homeCopy.proof.items.find((i) => 'quote' in i && i.quote)?.quote as { text: string; by: string } | undefined;
+
 const schema = home
   ? {
       '@context': 'https://schema.org',
@@ -127,16 +132,27 @@ const schema = home
             postalCode: '63368',
             addressCountry: 'US',
           },
-          areaServed: [
-            { '@type': 'AdministrativeArea', name: 'St. Charles County, Missouri' },
-            { '@type': 'AdministrativeArea', name: 'St. Louis County, Missouri' },
-            { '@type': 'City', name: 'St. Louis, Missouri' },
-          ],
+          geo: { '@type': 'GeoCoordinates', latitude: 38.8106, longitude: -90.6998 },
+          areaServed,
+          logo: 'https://brettboggs.dev/icon-512.png',
+          image: 'https://brettboggs.dev/og/home.png',
           priceRange: '$350 to $12,000',
           slogan: 'Systems your business owns.',
           knowsAbout: ['Small business operations', 'Custom business software', 'Workflow automation', 'Replacing subscription software', 'Websites', 'Google Business Profile', 'AI for small business'],
           hasOfferCatalog: { '@id': 'https://brettboggs.dev/help/#catalog' },
         },
+        // client words already on the homepage; the quote lives in home.json
+        ...(quote
+          ? [
+              {
+                '@type': 'Review',
+                '@id': 'https://brettboggs.dev/#review-mattress-concepts',
+                itemReviewed: { '@id': 'https://brettboggs.dev/#practice' },
+                author: { '@type': 'Person', name: quote.by.split(',')[0] },
+                reviewBody: quote.text,
+              },
+            ]
+          : []),
       ],
     }
   : null;
@@ -151,7 +167,7 @@ const schema = home
     <meta name="description" content={description} />
     <meta name="author" content="Brett Boggs" />
     {noindex && <meta name="robots" content="noindex" />}
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
 
     <!-- ico first for browsers that only read ico, svg for everything current -->
     <link rel="icon" href="/favicon.ico" sizes="32x32" />

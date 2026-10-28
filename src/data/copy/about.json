@@ -1,6 +1,6 @@
 {
   "title": "About · Brett Boggs",
-  "description": "Operator turned builder. St. Louis.",
+  "description": "Brett Boggs ran operations for ten years, a dealership service lane and a district of car washes, before building software. Now he builds small businesses around St. Louis systems they own.",
   "eyebrow": "03",
   "heading": "About",
   "lede": "Operator turned builder. St. Louis.",
@@ -10,7 +10,7 @@
     "alt": "Brett Boggs",
     "caption": "For once, the wrong side of the camera"
   },
-  "body": "Now I co-found and build [Datum](/work/datum/), one system for running a construction company. I am the full-stack engineer: design, frontend, backend, security, infrastructure, and the AI underneath, end to end. The [case study](/work/datum/) has the numbers, and the decision logs under it have the honest version: what was chosen, what it cost, what broke.\n\nThe same instinct runs through everything here. [Apparent Low](/work/apparent-low/) exists because extraction you can't measure is extraction you can't trust. The [photography](/work/photography/) is the same discipline pointed at light instead of systems. The [Lab](/lab/) is where things get tried before they earn a place.\n\nI work best on problems where the software has to survive contact with a real operation: a foreman's morning, a month-end close, a bid due at 10 a.m. If that is the kind of problem you have, I want to hear about it.",
+  "body": "Most of my work now is for small businesses around St. Louis and St. Charles County, from home in O'Fallon. I find where the work gets stuck, then fix it, often with one system the business owns in place of a stack of subscriptions. [How I help](/help/) has the details and the prices.\n\nI also co-founded and build [Datum](/work/datum/), one system for running a construction company. I am the full-stack engineer: design, frontend, backend, security, infrastructure and release, end to end. The [case study](/work/datum/) has the numbers, and the decision logs under it have the honest version: what was chosen, what it cost, what broke.\n\nThe same instinct runs through everything here. The [photography](/work/photography/) is the same discipline pointed at light instead of systems. The [Lab](/lab/) is where things get tried before they earn a place.\n\nI work best on problems where the software has to survive contact with a real operation: a foreman's morning, a month-end close, a bid due at 10 a.m. If that is the kind of problem you have, I want to hear about it.",
   "reachHeading": "Reach me",
   "reach": [
     {

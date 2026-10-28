@@ -5,13 +5,19 @@
 import { inline } from './copy';
 
 export const SITE = 'https://brettboggs.dev';
-export const PERSON = { '@id': `${SITE}/#brett` };
-export const PRACTICE = { '@id': `${SITE}/#practice` };
+// a name and url ride along with each @id, because crawlers don't follow an
+// @id across pages and would otherwise flag the author or provider as unnamed
+export const PERSON = { '@type': 'Person', '@id': `${SITE}/#brett`, name: 'Brett Boggs', url: SITE };
+export const PRACTICE = { '@type': 'ProfessionalService', '@id': `${SITE}/#practice`, name: 'Brett Boggs', url: SITE };
 
 export const areaServed = [
   { '@type': 'AdministrativeArea', name: 'St. Charles County, Missouri' },
   { '@type': 'AdministrativeArea', name: 'St. Louis County, Missouri' },
   { '@type': 'City', name: 'St. Louis, Missouri' },
+  { '@type': 'City', name: "O'Fallon, Missouri" },
+  { '@type': 'City', name: 'St. Charles, Missouri' },
+  { '@type': 'City', name: 'St. Peters, Missouri' },
+  { '@type': 'City', name: 'Wentzville, Missouri' },
 ];
 
 // answers are Markdown; structured data wants plain text, so drop the tags and
@@ -41,12 +47,19 @@ export const faqPage = (url: string, faq: { q: string; a: string }[]) => ({
   })),
 });
 
-export const service = (url: string, name: string, description: string, price?: { amount: string; note: string }) => ({
+export const service = (
+  url: string,
+  name: string,
+  description: string,
+  price?: { amount: string; note: string },
+  updated?: Date,
+) => ({
   '@type': 'Service',
   '@id': `${url}#service`,
   name,
   description,
   url,
+  ...(updated && { dateModified: updated.toISOString().slice(0, 10) }),
   provider: PRACTICE,
   areaServed,
   ...(price && {

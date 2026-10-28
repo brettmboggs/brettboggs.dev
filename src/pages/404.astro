@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import copy from '../data/copy/404.json';
 ---
 
-<Base title={copy.title} description={copy.description} puck={false} edit="pages/404">
+<Base title={copy.title} description={copy.description} puck={false} noindex edit="pages/404">
   <div class="glide" data-glide>
     <canvas
       class="glide-canvas"
