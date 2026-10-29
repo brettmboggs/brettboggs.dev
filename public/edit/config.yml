@@ -594,6 +594,7 @@ collections:
       - { name: priceLabel, label: Price label, widget: string }
       - { name: faqHeading, label: Questions heading, widget: string }
       - { name: relatedHeading, label: Related heading, widget: string }
+      - { name: readingHeading, label: Heading over the notes that link here, widget: string }
       - { name: updated, label: Updated label, widget: string }
       - name: cta
         label: The ask at the foot of every page

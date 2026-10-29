@@ -20,6 +20,10 @@ const related = (await Promise.all(d.related.map((id) => getEntry('help', id))))
   (e): e is NonNullable<typeof e> => !!e && !e.data.draft,
 );
 
+// posts that link here, so the link runs both ways without a list to keep in sync
+const reading = (await getCollection('writing', ({ data, body }) => !data.draft && !!body?.includes(`](/help/${entry.id}/`)))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
 const graph = [
   ...(d.kind === 'answer' ? [] : [service(url, d.heading.replace(/\.$/, ''), d.description, d.price, d.updated)]),
   ...(d.faq.length ? [faqPage(url, d.faq)] : []),
@@ -85,6 +89,26 @@ const fmt = (date: Date) => date.toLocaleDateString('en-US', { month: 'long', ye
                   <span>
                     <span class="entry-title">{r.data.heading}</span>
                     <span class="entry-desc">{r.data.summary}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+
+    {
+      reading.length > 0 && (
+        <nav class="related" aria-label={copy.readingHeading}>
+          <h2>{copy.readingHeading}</h2>
+          <ul class="entry-list">
+            {reading.map((r) => (
+              <li>
+                <a class="entry-row" href={`/writing/${r.id}/`}>
+                  <span>
+                    <span class="entry-title">{r.data.title}</span>
+                    <span class="entry-desc">{r.data.description}</span>
                   </span>
                 </a>
               </li>
