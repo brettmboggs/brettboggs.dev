@@ -1,6 +1,6 @@
 ---
 title: "Seven questions to ask before you hire an AI consultant"
-description: "Anyone can call themselves an AI consultant now. Seven questions that separate the people who'll save you money from the ones who'll sell you a subscription, from someone who does the work."
+description: "Anyone can call themselves an AI consultant now. Seven questions that separate the ones who'll save you money from the ones who'll sell you a subscription."
 date: 2026-10-28
 ---
 

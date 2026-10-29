@@ -1,6 +1,6 @@
 ---
 title: "Leaving Squarespace: a site you own · Brett Boggs"
-description: "Move off a Squarespace template to a fast site you own, built from your real photos and reviews, with no monthly fee. Online quotes and booking if you want them. St. Louis and remote."
+description: "Move off a Squarespace template to a fast site you own, built from your real photos and reviews, with no monthly fee. Quotes and booking if you want them."
 kind: switch
 heading: "Off Squarespace, onto a site you own."
 lede: "Your real photos and reviews, fast on a phone, no monthly fee. Quotes and booking built in, if your business runs on them."

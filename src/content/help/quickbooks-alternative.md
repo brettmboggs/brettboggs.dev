@@ -1,6 +1,6 @@
 ---
-title: "Do you need QuickBooks? A QuickBooks alternative you own · Brett Boggs"
-description: "If you pay for QuickBooks mostly to send invoices and track who paid, you may not need it. Invoicing and simple books built into a system you own, or a clean connection to your accountant's. St. Louis and remote."
+title: "Do you need QuickBooks? An alternative you own · Brett Boggs"
+description: "If you pay for QuickBooks mostly to send invoices and track who paid, you may not need it. Invoicing and simple books in a system you own."
 kind: switch
 heading: "Do you actually need QuickBooks?"
 lede: "Some businesses do. Many pay for it to send invoices and see who's paid. That part can live in a system you own, without the monthly bill."

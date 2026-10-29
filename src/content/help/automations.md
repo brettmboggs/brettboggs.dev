@@ -1,6 +1,6 @@
 ---
-title: "AI automation for small businesses in St. Louis · Brett Boggs"
-description: "AI and workflow automation for St. Louis and St. Charles County small businesses. Missed-call text-back, quote follow-ups, reminders, orders straight into your books. One process end to end, at a fixed price."
+title: "AI automation for small business, St. Louis · Brett Boggs"
+description: "AI and workflow automation for St. Louis small businesses. Missed-call text-back, quote follow-ups, reminders, orders into your books. At a fixed price."
 kind: service
 heading: "Automation for the busywork."
 lede: "The jobs that eat an hour a day and need no judgment. Quote follow-ups, missed calls, reminders, re-typing orders into the books. Done once, then done for you."

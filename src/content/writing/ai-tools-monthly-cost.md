@@ -1,6 +1,6 @@
 ---
 title: "Before you pay for another AI tool"
-description: "AI features are turning into another line on the card statement, often per seat and per use. Six questions to ask before you sign up, and when plain software does the job for nothing a month."
+description: "AI features are turning into another line on the card statement, often per seat. Six questions before you sign up, and when plain software does the job."
 date: 2026-10-28
 ---
 

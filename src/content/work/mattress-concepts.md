@@ -1,6 +1,6 @@
 ---
 title: 'Mattress Concepts'
-description: 'A family mattress store and workshop in High Ridge, off a slow Wix site and onto 32 pages, a quote form that draws the mattress to scale, and a Google profile with the right hours.'
+description: 'A High Ridge mattress store, off a slow Wix site and onto 32 pages, a quote form that draws the mattress to scale, and a Google profile with the right hours.'
 date: 2026-10-19
 tags: ['websites', 'google', 'astro']
 draft: false

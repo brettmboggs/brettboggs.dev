@@ -1,6 +1,6 @@
 ---
 title: "A Jobber alternative you own · Brett Boggs"
-description: "Replace Jobber with a system built for how your service business works: scheduling, quotes, invoicing, client history and a phone app. No per-user pricing. You own it. St. Louis and remote."
+description: "Replace Jobber with a system built for how your service business works: scheduling, quotes, invoicing and a phone app. No per-user pricing. You own it."
 kind: switch
 heading: "A Jobber alternative you own."
 lede: "Scheduling, quotes, invoices and client history, built for how your crew already works. One price once, not one every month."

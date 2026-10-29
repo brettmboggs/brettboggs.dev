@@ -1,6 +1,6 @@
 ---
 title: "Signs you've outgrown the spreadsheet"
-description: "A spreadsheet is the right tool for a long time, then quietly becomes the bottleneck. Six signs it's time to move on, and what to move to without signing up for five apps."
+description: "A spreadsheet is the right tool for a long time, then quietly becomes the bottleneck. Six signs it's time to move on, and what to move to."
 date: 2026-10-28
 ---
 

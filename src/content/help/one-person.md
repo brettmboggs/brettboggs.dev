@@ -1,6 +1,6 @@
 ---
 title: "Why it's one person, not an agency · Brett Boggs"
-description: "Brett Boggs works alone on purpose. No company in the middle means your software is yours, you talk to the person who built it, and nobody needs you to keep renting."
+description: "Brett Boggs works alone on purpose. No company in the middle means your software is yours, and you talk to the person who built it."
 kind: answer
 heading: "Why it's one person."
 lede: "There's no company here. Just me. That's not a stage I'm growing out of. It's why the software ends up being yours."

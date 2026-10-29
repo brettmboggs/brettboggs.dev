@@ -1,6 +1,6 @@
 ---
 title: "What your software actually costs"
-description: "Eight ordinary subscriptions add up to $860 a month. Over five years that's more than $50,000, before a single price increase. The arithmetic, and what to do with it."
+description: "Eight ordinary subscriptions add up to $860 a month. Over five years that's more than $50,000, before a single price increase. The arithmetic, and what to do."
 date: 2026-10-19
 ---
 

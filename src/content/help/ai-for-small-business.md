@@ -1,6 +1,6 @@
 ---
-title: "AI consultant in St. Louis for small businesses · Brett Boggs"
-description: "An AI consultant in St. Louis and St. Charles County who starts with your business, not the tool. Practical AI help for small business owners, set up only where it saves time or money. In person or remote."
+title: "AI consultant for small business, St. Louis · Brett Boggs"
+description: "An AI consultant in St. Louis and St. Charles County who starts with your business, not the tool. AI set up only where it saves time or money."
 kind: service
 heading: "AI consulting, where it actually helps."
 lede: "You've heard you should be using AI. Maybe you should, for a few things. I'll tell you which, set them up, and leave the rest alone."

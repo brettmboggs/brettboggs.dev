@@ -1,6 +1,6 @@
 ---
-title: "Small business operations consultant in St. Louis and St. Charles County · Brett Boggs"
-description: "Brett Boggs works from O'Fallon, Missouri, in person across St. Charles County and the St. Louis area, and by phone or video anywhere. Operations reviews, AI consulting and automation, systems the business owns, and websites."
+title: "St. Louis small business operations consultant · Brett Boggs"
+description: "Brett Boggs works from O'Fallon, Missouri, in person across St. Charles County and St. Louis. Operations reviews, AI and automation, owned systems, websites."
 kind: answer
 heading: "Where I work."
 lede: "From home in O'Fallon, Missouri. In person across St. Charles County and the St. Louis area. By phone or video anywhere else."

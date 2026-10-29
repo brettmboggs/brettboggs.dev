@@ -1,6 +1,6 @@
 ---
 title: "A Podium alternative for reviews and texting · Brett Boggs"
-description: "Review requests, customer texting and missed-call text-back, built into your own system for a fraction of what reviews-and-messaging platforms charge. St. Louis and remote."
+description: "Review requests, customer texting and missed-call text-back, built into your own system for a fraction of what Podium-style platforms charge."
 kind: switch
 heading: "Reviews and texting, without the Podium bill."
 lede: "Ask for reviews, text your customers, and catch missed calls. Plain jobs that shouldn't cost hundreds a month."

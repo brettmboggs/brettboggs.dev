@@ -1,6 +1,6 @@
 ---
 title: "Who owns your website? Check these five things"
-description: "Plenty of small businesses find out their domain, Google profile or website belongs to a former web designer or employee only when something breaks. Five checks to do this week."
+description: "Plenty of small businesses find out their domain or website belongs to a former web designer only when something breaks. Five checks to do this week."
 date: 2026-10-28
 ---
 

@@ -1,6 +1,6 @@
 ---
-title: "Photography and video for small businesses in St. Louis · Brett Boggs"
-description: "Product, shop and team photography and short videos for St. Louis and St. Charles County small businesses. A photo day is $750, a short video is $1,200. Cut for your website, Google profile and social."
+title: "Photo and video for small business, St. Louis · Brett Boggs"
+description: "Product, shop and team photos and short videos for St. Louis small businesses. A photo day is $750, a short video $1,200. Cut for web, Google and social."
 kind: service
 heading: "Photos and video."
 lede: "Real pictures of your work, your shop and your people. They sell better than stock, and your Google profile ranks better with them."

@@ -1,6 +1,6 @@
 ---
 title: "Making a business run without the owner · Brett Boggs"
-description: "If the quotes, the prices and the logins only live in your head, the business is hard to step away from and harder to sell. Getting them into something your staff can run. St. Louis and St. Charles County."
+description: "If the quotes, prices and logins live only in your head, the business is hard to step away from and harder to sell. Getting them into something staff can run."
 kind: service
 heading: "A business that runs without you."
 lede: "If the quotes, the prices and the logins only live in your head, the business is hard to step away from and harder to sell. I get them out of your head and into something your staff can run."

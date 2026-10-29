@@ -1,6 +1,6 @@
 ---
 title: "What a missed call costs"
-description: "Most callers who reach voicemail don't leave one. They call the next business. The arithmetic for a small service business, and the afternoon fix: a text back within a minute."
+description: "Most callers who reach voicemail don't leave one. They call the next business. The arithmetic, and the afternoon fix: a text back within a minute."
 date: 2026-10-28
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "A tech person on call for your small business · Brett Boggs"
-description: "A monthly plan that keeps your site and systems running: hosting, backups, fixes, small edits, Google posts, review replies and one improvement every quarter. From $400 a month."
+description: "A monthly plan that keeps your site and systems running: hosting, backups, fixes, edits, Google posts, review replies. From $400 a month."
 kind: service
 heading: "Keeping it running."
 lede: "The person you call when something needs changing. Your site and systems kept up, fixed, and a little better every quarter."

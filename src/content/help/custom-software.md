@@ -1,6 +1,6 @@
 ---
-title: "Custom software for small businesses, owned by you · Brett Boggs"
-description: "One system built around how your business works, in place of a stack of subscriptions. You own the code, the data and every login. Fixed quotes, St. Louis and remote."
+title: "Custom software your small business owns · Brett Boggs"
+description: "One system built around how your business works, in place of a stack of subscriptions. You own the code, the data and every login. Fixed quotes."
 kind: service
 heading: "Software your business owns."
 lede: "One system built around how you already work. You own the code, the data and every login, so you can cancel the apps it replaces."

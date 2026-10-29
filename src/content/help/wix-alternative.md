@@ -1,6 +1,6 @@
 ---
 title: "Leaving Wix: a faster website you own · Brett Boggs"
-description: "Move off Wix to a fast site you own, with no monthly hosting fee and without losing your Google ranking. Mattress Concepts went from a 74 to a 95 phone speed score. St. Louis and remote."
+description: "Move off Wix to a fast site you own, with no monthly hosting fee and without losing your Google ranking. Mattress Concepts went from 74 to 95 on phone speed."
 kind: switch
 heading: "Off Wix, onto a site you own."
 lede: "Faster on a phone, no monthly builder fee, and every old page still found by Google. Mattress Concepts did it this year."

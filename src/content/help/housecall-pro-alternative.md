@@ -1,6 +1,6 @@
 ---
 title: "A Housecall Pro alternative you own · Brett Boggs"
-description: "Replace Housecall Pro with one system built for your business: booking, quotes, invoices, follow-ups and a phone app, with no per-user fees. You own the code and the data. St. Louis and remote."
+description: "Replace Housecall Pro with one system built for your business: booking, quotes, invoices, follow-ups and a phone app. No per-user fees. You own it."
 kind: switch
 heading: "A Housecall Pro alternative you own."
 lede: "Booking, quotes, invoices, follow-ups and an app for the job, built around how you work. No per-user fees, no price hikes, and you keep it."

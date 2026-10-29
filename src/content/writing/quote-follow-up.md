@@ -1,6 +1,6 @@
 ---
 title: "The quote follow-up most businesses skip"
-description: "Most quotes that go quiet aren't lost, they're forgotten, on both sides. A simple three-message follow-up routine, what to say in each, and how to make it run without remembering."
+description: "Most quotes that go quiet aren't lost, they're forgotten. A simple three-message follow-up, what to say in each, and how to make it run without remembering."
 date: 2026-10-28
 ---
 

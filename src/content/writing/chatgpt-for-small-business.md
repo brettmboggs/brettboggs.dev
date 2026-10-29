@@ -1,6 +1,6 @@
 ---
 title: "Where ChatGPT helps a small business, and where it doesn't"
-description: "AI chat tools are good at first drafts and reading messy input, and bad at anything that has to be exactly right. A short list for owners who want the useful part without the hype."
+description: "AI chat tools are good at first drafts and reading messy input, and bad at anything that has to be exactly right. A short list for owners, without the hype."
 date: 2026-10-28
 ---
 

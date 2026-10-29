@@ -1,6 +1,6 @@
 ---
 title: "Operations review for small businesses · Brett Boggs"
-description: "Ninety minutes walking through how your business actually runs, then a written plan: what to fix first, what to ignore, and what it costs. $350, credited toward any project. St. Louis and remote."
+description: "Ninety minutes walking through how your business runs, then a written plan: what to fix first, what to ignore, what it costs. $350, credited to a project."
 kind: service
 heading: "Operations review."
 lede: "Ninety minutes on how your business actually runs. Then a written plan of what to fix first, what to ignore, and what each fix costs."

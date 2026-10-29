@@ -1,6 +1,6 @@
 ---
 title: "Your Google profile is the page people actually see"
-description: "For a local business, the Google Business Profile gets seen more than the website. A checklist for getting it right, including how to set one up without a storefront."
+description: "For a local business, the Google profile gets seen more than the website. A checklist for getting it right, including setting one up without a storefront."
 date: 2026-10-19
 ---
 
