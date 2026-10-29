@@ -2,9 +2,27 @@
 import Base from '../layouts/Base.astro';
 import copy from '../data/copy/about.json';
 import { md } from '../data/copy';
+import { SITE, PERSON, breadcrumb } from '../data/schema';
+
+const url = `${SITE}/about/`;
+// the page Google and the answer engines should treat as the profile of the
+// Person the homepage declares
+const graph = [
+  {
+    '@type': 'ProfilePage',
+    '@id': `${url}#page`,
+    url,
+    name: copy.title,
+    mainEntity: { ...PERSON, image: `${SITE}${copy.portrait.image}` },
+  },
+  breadcrumb(url, [
+    { name: 'Home', url: `${SITE}/` },
+    { name: 'About', url },
+  ]),
+];
 ---
 
-<Base title={copy.title} description={copy.description} scene="about" edit="pages/about">
+<Base title={copy.title} description={copy.description} scene="about" edit="pages/about" graph={graph}>
   <header class="page-head">
     <p class="eyebrow">{copy.eyebrow}</p>
     <h1>{copy.heading}</h1>

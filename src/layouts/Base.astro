@@ -43,7 +43,7 @@ interface Props {
 
 const {
   title,
-  description = 'Brett Boggs. Work and experiments.',
+  description = 'Brett Boggs, operations and AI consultant for small businesses in St. Louis and St. Charles County.',
   home = false,
   film = false,
   theme,
@@ -98,13 +98,17 @@ const schema = home
           url: 'https://brettboggs.dev',
           email: 'hello@brettboggs.dev',
           telephone: '+1-636-336-6474',
-          image: 'https://brettboggs.dev/og/home.png',
+          image: 'https://brettboggs.dev/about/brett-720.webp',
+          description:
+            'Operations and AI consultant for small businesses in St. Louis and St. Charles County, after ten years running operations. Co-founder of Datum.',
+          address: { '@type': 'PostalAddress', addressLocality: "O'Fallon", addressRegion: 'MO', addressCountry: 'US' },
+          worksFor: { '@id': 'https://brettboggs.dev/#practice' },
           affiliation: {
             '@type': 'Organization',
             name: 'Datum',
             url: 'https://datumci.com',
           },
-          jobTitle: 'Operations and systems consultant',
+          jobTitle: 'Operations and AI consultant',
           knowsAbout: ['Small business operations', 'AI consulting', 'AI automation', 'Custom business software', 'Workflow automation', 'Websites', 'Google Business Profile'],
           sameAs: ['https://github.com/brettmboggs', 'https://www.linkedin.com/in/brettmboggs/'],
         },
@@ -113,7 +117,7 @@ const schema = home
           '@id': 'https://brettboggs.dev/#site',
           url: 'https://brettboggs.dev',
           name: 'Brett Boggs',
-          description: 'Systems your business owns, in place of a stack of subscriptions. St. Charles County.',
+          description: 'Brett Boggs, operations and AI consultant for small businesses in St. Louis and St. Charles County.',
           publisher: { '@id': 'https://brettboggs.dev/#brett' },
           inLanguage: 'en',
         },
