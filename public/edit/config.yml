@@ -538,6 +538,9 @@ collections:
           - name: role
             label: Role
             widget: string
+          - name: menu
+            label: Menu button (phones)
+            widget: string
           - name: links
             label: Links
             widget: list

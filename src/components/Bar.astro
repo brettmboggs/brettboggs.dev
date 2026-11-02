@@ -18,6 +18,12 @@ const href = (url: string): string => (url.startsWith('#') && !onHome ? `/${url}
       {nav.links.map((l) => <a href={href(l.url)}>{l.text}</a>)}
     </nav>
     <a class="bar-cta" href={href('#start')}>{nav.cta}</a>
+    <details class="bar-menu">
+      <summary>{nav.menu}</summary>
+      <nav aria-label={nav.label}>
+        {nav.links.map((l) => <a href={href(l.url)}>{l.text}</a>)}
+      </nav>
+    </details>
   </div>
 </header>
 
@@ -70,6 +76,7 @@ const href = (url: string): string => (url.startsWith('#') && !onHome ? `/${url}
     font-weight: 400;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    white-space: nowrap;
     color: var(--soft);
   }
   .bar-nav {
@@ -106,13 +113,73 @@ const href = (url: string): string => (url.startsWith('#') && !onHome ? `/${url}
   .bar-cta:active {
     transform: translateY(1px) scale(0.98);
   }
+  .bar-menu {
+    display: none;
+  }
   @media (max-width: 900px) {
+    .bar-in {
+      gap: 0.75rem;
+    }
     .bar-nav {
       display: none;
     }
     .bar-cta {
       margin-left: auto;
       padding: 0.7rem 1rem;
+    }
+    .bar-menu {
+      display: block;
+    }
+    .bar-menu summary {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 1rem;
+      border: 1px solid var(--hair);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+      cursor: pointer;
+      list-style: none;
+    }
+    .bar-menu summary::-webkit-details-marker {
+      display: none;
+    }
+    .bar-menu[open] summary {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--sheet);
+    }
+    .bar-menu nav {
+      position: absolute;
+      top: 68px;
+      left: 0;
+      right: 0;
+      display: grid;
+      padding: 0.5rem clamp(20px, 4vw, 48px) 1rem;
+      background: var(--sheet);
+      border-bottom: 1px solid var(--hair);
+      box-shadow: 0 12px 24px -16px rgb(21 23 28 / 0.25);
+    }
+    .bar-menu nav a {
+      display: flex;
+      align-items: center;
+      min-height: 48px;
+      border-bottom: 1px solid var(--grid);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .bar-menu nav a:last-child {
+      border-bottom: 0;
+    }
+  }
+  @media (max-width: 460px) {
+    .mark-role {
+      display: none;
     }
   }
 </style>

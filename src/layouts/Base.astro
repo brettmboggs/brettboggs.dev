@@ -2,6 +2,10 @@
 import '@fontsource-variable/anybody/wdth.css';
 import '@fontsource-variable/hanken-grotesk/index.css';
 import '@fontsource-variable/martian-mono/index.css';
+// the display face and the mono set the first screen's line breaks; fetched
+// early so the page doesn't reflow when they land (mobile CLS)
+import anybodyFont from '@fontsource-variable/anybody/files/anybody-latin-wdth-normal.woff2?url';
+import martianFont from '@fontsource-variable/martian-mono/files/martian-mono-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import { ogFor } from '../data/og';
 import { areaServed } from '../data/schema';
@@ -169,6 +173,8 @@ const schema = home
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" href={anybodyFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={martianFont} as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content="Brett Boggs" />
@@ -284,6 +290,12 @@ const schema = home
 
       // index rows that carry a still show it beside the cursor
       mountPeek();
+
+      // the phone menu closes once a link is taken (in-page links don't reload)
+      const barMenu = document.querySelector<HTMLDetailsElement>('.bar-menu');
+      barMenu?.addEventListener('click', (e) => {
+        if ((e.target as Element).closest('a')) barMenu.open = false;
+      });
 
       // section pages: the zoomed crop stays under the page, ghost-faint
       const ghost = document.getElementById('scene-ghost');

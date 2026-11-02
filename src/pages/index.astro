@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import copy from '../data/copy/home.json';
-import { md } from '../data/copy';
+import { md, inline } from '../data/copy';
 
 const { hero, overhead, own, proof, about, process, pricing, contact } = copy;
 const st = hero.statement;
@@ -27,7 +27,7 @@ const f = contact.form;
         <h1 class="hero-title">
           {before}<span class="cut">{hero.strike}</span>{after}
         </h1>
-        <p class="lede">{hero.lede}</p>
+        <p class="lede" set:html={inline(hero.lede)} />
         <div class="acts">
           <a class="btn sig" href="#start">{hero.cta} <span class="arr" aria-hidden="true">→</span></a>
           <a class="btn ghost" href={hero.secondaryUrl}>{hero.secondary}</a>
@@ -270,7 +270,7 @@ const f = contact.form;
           {f.alt} <a href={mailto}>{contact.email}</a>. {contact.phoneAlt}
           <a href={`tel:+1${contact.phone.replace(/\D/g, '')}`}>{contact.phone}</a>.
         </p>
-        <p class="start-area">{contact.area}</p>
+        <p class="start-area" set:html={inline(contact.area)} />
       </div>
     </div>
   </section>
@@ -409,6 +409,11 @@ const f = contact.form;
     from {
       transform: scaleX(0);
     }
+  }
+  /* links inside the lede read at the lede's own weight: underline only */
+  .lede :global(a) {
+    font-weight: inherit;
+    color: inherit;
   }
   .lede {
     margin-top: 1.6rem;

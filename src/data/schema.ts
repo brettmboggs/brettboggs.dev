@@ -37,6 +37,29 @@ export const breadcrumb = (url: string, trail: { name: string; url: string }[]) 
   itemListElement: trail.map((t, i) => ({ '@type': 'ListItem', position: i + 1, name: t.name, item: t.url })),
 });
 
+/** a case study: the project credited to Brett, plus its breadcrumb trail */
+export const caseStudy = (
+  path: string,
+  name: string,
+  description: string,
+  date: Date,
+  trail: { name: string; url: string }[],
+) => {
+  const url = `${SITE}${path}`;
+  return [
+    {
+      '@type': 'CreativeWork',
+      '@id': `${url}#work`,
+      url,
+      name,
+      description,
+      dateCreated: date.toISOString().slice(0, 10),
+      creator: PERSON,
+    },
+    breadcrumb(url, [{ name: 'Home', url: `${SITE}/` }, { name: 'Work', url: `${SITE}/work/` }, ...trail, { name, url }]),
+  ];
+};
+
 export const faqPage = (url: string, faq: { q: string; a: string }[]) => ({
   '@type': 'FAQPage',
   '@id': `${url}#faq`,

@@ -1,6 +1,33 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { execFileSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+
+// <lastmod> for the sitemap: the last commit to a page's own files (its
+// template, its copy JSON, its Markdown entry). Shared layouts don't count, so
+// a site-wide style change doesn't claim every page was updated. Pages with no
+// dated source get no <lastmod>, which is better than a wrong one.
+function lastmod(url) {
+  const path = new URL(url).pathname.replace(/^\/|\/$/g, '');
+  const parts = path ? path.split('/') : [];
+  const files = [
+    `src/data/copy/${path ? parts.join('-') : 'home'}.json`,
+    `src/pages/${path || 'index'}.astro`,
+    `src/pages/${path}/index.astro`,
+  ];
+  if (parts.length === 2) {
+    files.push(`src/content/${parts[0]}/${parts[1]}.md`, `src/content/${parts[0]}/${parts[1]}.mdx`);
+  }
+  const found = files.filter((f) => existsSync(f));
+  if (!found.length) return undefined;
+  try {
+    const iso = execFileSync('git', ['log', '-1', '--format=%cI', '--', ...found], { encoding: 'utf8' }).trim();
+    return iso || undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 export default defineConfig({
   site: 'https://brettboggs.dev',
@@ -35,6 +62,11 @@ export default defineConfig({
         !page.includes('/slumbio/terms/') &&
         !page.includes('/ladle/privacy/') &&
         !page.includes('/nightjar/'),
+      serialize(item) {
+        const date = lastmod(item.url);
+        if (date) item.lastmod = date;
+        return item;
+      },
     }),
   ],
 });

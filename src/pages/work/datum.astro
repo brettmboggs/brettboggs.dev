@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { getEntry } from 'astro:content';
+import { caseStudy } from '../../data/schema';
 import DatumSystem from '../../components/DatumSystem.astro';
 import copy from '../../data/copy/work-datum.json';
 
@@ -7,9 +9,13 @@ import copy from '../../data/copy/work-datum.json';
 // Every <figure data-media-slot> is a swap point: replace the <img>/<video>
 // with a rendered 3D/4D asset later without touching the layout around it.
 const deptSlots = ['estimating', 'finance', 'safety', 'people', 'equipment', 'strategy'];
+
+// structured data: the project, credited to Brett, dated from its work entry
+const entry = (await getEntry('work', 'datum'))!;
+const graph = caseStudy('/work/datum/', entry.data.title, entry.data.description, entry.data.date, []);
 ---
 
-<Base title={copy.title} description={copy.description} edit="work-pages/work-datum">
+<Base title={copy.title} description={copy.description} edit="work-pages/work-datum" graph={graph}>
   <section class="band datum-hero full-bleed">
     <div class="band-inner wrap">
       <img class="datum-mark reveal" src="/datum/datum-mark.svg" alt="" width="76" height="76" style="--delay: 0s" />

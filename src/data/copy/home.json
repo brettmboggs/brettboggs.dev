@@ -4,7 +4,7 @@
   "hero": {
     "title": "Less noise. More business.",
     "strike": "noise",
-    "lede": "Ten years running operations taught me where the work gets stuck. I fix that, with one system you own in place of a stack of apps, and AI only where it pays for itself.",
+    "lede": "Ten years running operations taught me where the work gets stuck. I fix that, with one system you own in place of a stack of apps, and [AI only where it pays for itself](/help/ai-for-small-business/).",
     "cta": "Book a free look",
     "secondary": "Add up your bills",
     "secondaryUrl": "#overhead",
@@ -338,12 +338,13 @@
     "phone": "(636) 336-6474",
     "phoneAlt": "Or call or text",
     "subject": "A free look",
-    "area": "Based in O'Fallon. In person across the St. Louis area, by phone anywhere."
+    "area": "Based in O'Fallon. In person across [the St. Louis area](/help/st-louis-st-charles/), by phone anywhere."
   },
   "nav": {
     "label": "Sections",
     "name": "Brett Boggs",
     "role": "Systems you own",
+    "menu": "Menu",
     "links": [
       {
         "text": "Your overhead",

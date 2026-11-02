@@ -1,13 +1,20 @@
 ---
 import Base from '../../../layouts/Base.astro';
+import { getEntry } from 'astro:content';
+import { SITE, caseStudy } from '../../../data/schema';
 import copy from '../../../data/copy/work-websites-ked-detailing.json';
 import { md } from '../../../data/copy';
+
+// structured data: the project, credited to Brett, dated from its work entry
+const entry = (await getEntry('work', 'ked-detailing'))!;
+const graph = caseStudy('/work/websites/ked-detailing/', entry.data.title, entry.data.description, entry.data.date, [{ name: 'Websites', url: `${SITE}/work/websites/` }]);
 ---
 
 <Base
   title={copy.title}
   description={copy.description}
   edit="work-pages/work-websites-ked-detailing"
+  graph={graph}
 >
   <article>
     <header class="page-head">
