@@ -43,7 +43,7 @@ and never get pages built.
 ## Design (current: "the counter", site-wide since 2026-10-19)
 
 Cool counter-top grey #E4E7EB with paper #FCFCFA on it, ink #15171C, one
-signal orange #FF4F00 (#C23800 for orange text). Anybody (variable, set wide
+signal orange #FF4F00 (#B33300 for orange text; secondary grey #5C626C, both darkened 2026-11-02 to pass AA on the counter grey). Anybody (variable, set wide
 via font-stretch ~112-125%, weight 850+) for display, Hanken Grotesk for body,
 Martian Mono for numbers and labels, all self-hosted via Fontsource in
 Base.astro. Tokens live in src/styles/global.css; older token names (--paper,

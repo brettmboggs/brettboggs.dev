@@ -10,11 +10,11 @@
   --sheet: #FCFCFA;
   --ink: #15171C;
   --ink-2: #4A4F59;
-  --soft: #6B717C;
+  --soft: #5C626C;
   --hair: #C3C8D0;
   --grid: #D7DBE1;
   --sig: #FF4F00;
-  --sig-text: #C23800;
+  --sig-text: #B33300;
   --blue: var(--ink-2);
 
   --paper: var(--bg);
@@ -82,6 +82,7 @@ h3 {
 
 p {
   max-width: var(--measure);
+  text-wrap: pretty;
 }
 
 /* links: ink with a signal-orange rule that thickens on hover */
