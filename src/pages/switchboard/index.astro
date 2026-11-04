@@ -2,14 +2,50 @@
 import Base from '../../layouts/Base.astro';
 import copy from '../../data/copy/switchboard.json';
 import { md, inline } from '../../data/copy';
+import { SITE, PERSON, breadcrumb, faqPage } from '../../data/schema';
 
-// Switchboard's page. The download button always points at the newest release
+// Switchboard's page. The download buttons always point at the newest release
 // of the public repo: the script at the bottom asks GitHub for it when the
 // page opens, so nothing here changes when a new version ships. Without
-// JavaScript, or before the first release exists, the button goes to the
-// repo's releases page.
+// JavaScript, or before the first release exists, every download link goes to
+// the repo's releases page. The screenshots are made from sample data (a
+// made-up bakery), never from anyone's real accounts.
 const repo = 'brettmboggs/switchboard-app';
+const releases = `https://github.com/${repo}/releases/latest`;
 const dl = copy.download;
+const url = `${SITE}/switchboard/`;
+
+// one group per system in the download list, each with its own install note
+const systems = [
+  { os: 'windows', name: 'Windows', note: dl.windows },
+  { os: 'mac', name: 'Mac', note: dl.mac },
+  { os: 'linux', name: 'Linux', note: dl.linux },
+];
+
+const graph = [
+  {
+    '@type': 'SoftwareApplication',
+    '@id': `${url}#app`,
+    name: 'Switchboard',
+    description: copy.description,
+    url,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Windows, macOS, Linux',
+    downloadUrl: releases,
+    screenshot: `${SITE}${copy.hero.image}`,
+    license: `https://github.com/${repo}/blob/main/LICENSE`,
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    author: PERSON,
+  },
+  faqPage(url, copy.faq.items),
+  breadcrumb(url, [
+    { name: 'Home', url: `${SITE}/` },
+    { name: 'Switchboard', url },
+  ]),
+];
+
+const srcset = (big: string, small: string, w: number) => (small ? `${small} 800w, ${big} ${w}w` : undefined);
 ---
 
 <Base
@@ -17,75 +53,161 @@ const dl = copy.download;
   description={copy.description}
   puck={false}
   edit="switchboard/switchboard"
+  graph={graph}
 >
-  <header class="page-head">
-    <p class="eyebrow">{copy.eyebrow}</p>
-    <h1>{copy.heading}</h1>
-    <p class="lede">{copy.lede}</p>
-  </header>
-
-  <section class="body">
-    <div class="get" id="get" data-repo={repo}>
-      <a class="get-main" id="get-main" href={`https://github.com/${repo}/releases/latest`}>{dl.button}</a>
-      <p class="get-note" id="get-note">{dl.soon}</p>
-      <details class="get-all" id="get-all" hidden>
-        <summary>{dl.all}</summary>
-        <ul id="get-list"></ul>
-      </details>
+  <header class="sb-head">
+    <div class="sb-intro">
+      <p class="eyebrow">{copy.eyebrow}</p>
+      <h1>{copy.heading}</h1>
+      <p class="sb-lede">{copy.lede}</p>
+      <p class="sb-sub">{copy.sub}</p>
     </div>
 
-    <Fragment set:html={md(copy.intro)} />
+    <div class="get" data-repo={repo}>
+      <a class="get-main" data-get href={releases}>{dl.button}</a>
+      <p class="get-note" data-get-note>{dl.soon}</p>
+      <p class="get-os" data-get-os hidden></p>
+      <details class="get-all">
+        <summary>{dl.all}</summary>
+        {systems.map((s) => (
+          <div class="get-sys" data-os={s.os}>
+            <h2>{s.name}</h2>
+            <ul data-list={s.os}>
+              <li><a href={releases}>{s.name}</a></li>
+            </ul>
+            <p class="get-how" data-how={s.os} set:html={inline(s.note)} />
+          </div>
+        ))}
+      </details>
+    </div>
+  </header>
 
-    <figure class="shot">
-      <img src={copy.hero.image} width="1100" height="481" alt={copy.hero.alt} />
-    </figure>
+  <figure class="hero-shot">
+    <a href={copy.hero.image}><img
+      src={copy.hero.image}
+      srcset={srcset(copy.hero.image, copy.hero.small, 1440)}
+      sizes="(min-width: 1280px) 1184px, 92vw"
+      width="1440"
+      height="670"
+      alt={copy.hero.alt}
+      fetchpriority="high"
+    /></a>
+  </figure>
 
+  <section class="closes" aria-label={copy.closes.label}>
+    <p class="mono-label">{copy.closes.label}</p>
+    <ul>
+      {copy.closes.items.map((t) => <li><s>{t}</s></li>)}
+    </ul>
+    <p class="closes-note">{copy.closes.note}</p>
+  </section>
+
+  {copy.features.map((f, i) => (
+    <section class:list={['feature', { flip: i % 2 === 1 }]}>
+      <div class="feature-text">
+        <p class="mono-label">{f.kicker}</p>
+        <h2>{f.heading}</h2>
+        <div class="feature-body" set:html={md(f.body)} />
+      </div>
+      <figure class="shot">
+        <a href={f.image}><img
+          src={f.image}
+          srcset={srcset(f.image, f.small, f.width)}
+          sizes="(min-width: 1100px) 700px, 92vw"
+          width={f.width}
+          height={f.height}
+          alt={f.alt}
+          loading="lazy"
+          decoding="async"
+        /></a>
+      </figure>
+    </section>
+  ))}
+
+  <section class="rest">
+    <h2>{copy.more.heading}</h2>
+    <dl>
+      {copy.more.items.map((m) => (
+        <div>
+          <dt>{m.name}</dt>
+          <dd>{m.body}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <section class="how">
+    <h2>{copy.how.heading}</h2>
+    <ol>
+      {copy.how.steps.map((s) => (
+        <li>
+          <h3>{s.title}</h3>
+          <p>{s.body}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="notes">
     {copy.sections.map((s) => (
-      <>
+      <div>
         <h2>{s.heading}</h2>
-        <Fragment set:html={md(s.body)} />
-        {s.image && (
-          <figure class="shot">
-            <img src={s.image} width="1000" height="895" alt={s.alt} loading="lazy" />
-          </figure>
-        )}
-      </>
+        <div set:html={md(s.body)} />
+      </div>
     ))}
+  </section>
 
-    <p class="fine" set:html={inline(copy.fine)} />
+  <section class="faq">
+    <h2>{copy.faq.heading}</h2>
+    {copy.faq.items.map((f) => (
+      <details>
+        <summary>{f.q}</summary>
+        <div set:html={md(f.a)} />
+      </details>
+    ))}
+  </section>
 
+  <section class="again">
+    <a class="get-main" data-get href={releases}>{dl.button}</a>
     <ul class="links">
       {copy.links.map((l) => (
         <li><a href={l.url}>{l.text}</a></li>
       ))}
     </ul>
+    <p class="fine" set:html={inline(copy.fine)} />
   </section>
+
+  <aside class="practice">
+    <p>{copy.practice.text}</p>
+    <a href={copy.practice.url}>{copy.practice.link} <span aria-hidden="true">→</span></a>
+  </aside>
 
   <a class="back-link" href="/">{copy.backLink}</a>
 </Base>
 
 <script is:inline define:vars={{ updates: dl.updates }}>
   (() => {
-    const box = document.getElementById('get');
+    const box = document.querySelector('.get');
     if (!box) return;
     const repo = box.dataset.repo;
-    const main = document.getElementById('get-main');
-    const note = document.getElementById('get-note');
-    const all = document.getElementById('get-all');
-    const list = document.getElementById('get-list');
+    const mains = document.querySelectorAll('[data-get]');
+    const note = document.querySelector('[data-get-note]');
+    const osNote = document.querySelector('[data-get-os]');
 
     const ua = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || '';
-    const os = /win/i.test(ua) ? 'windows' : /mac|iphone|ipad/i.test(ua) ? 'mac' : /linux|x11|cros/i.test(ua) ? 'linux' : null;
+    // phones and tablets get no guess: the app is for computers, so they see the full list
+    const phone = /android|iphone|ipad|mobile/i.test(navigator.userAgent) || (navigator.userAgentData && navigator.userAgentData.mobile) || (/mac/i.test(ua) && navigator.maxTouchPoints > 1);
+    const os = phone ? null : /win/i.test(ua) ? 'windows' : /mac/i.test(ua) ? 'mac' : /linux|x11|cros/i.test(ua) ? 'linux' : null;
 
-    // What each installer is, from its file name. Tauri names them
-    // Switchboard_<version>_<arch>-setup.exe, ..._<arch>.dmg, ..._amd64.AppImage and so on.
+    // What each installer is, from its file name: Switchboard_windows_x64-setup.exe,
+    // Switchboard_darwin_aarch64.dmg, Switchboard_linux_amd64.AppImage and so on.
     const kind = (name) => {
       if (/\.(sig|json|txt|blockmap)$/i.test(name) || /\.app\.tar\.gz$/i.test(name) || /\.nsis\.zip$/i.test(name)) return null;
-      if (/\.(exe|msi)$/i.test(name)) return { os: 'windows', label: /\.msi$/i.test(name) ? 'Windows (installer .msi)' : 'Windows' };
+      if (/\.(exe|msi)$/i.test(name)) return { os: 'windows', label: /\.msi$/i.test(name) ? 'Windows, .msi' : 'Windows, installer' };
       if (/\.dmg$/i.test(name)) return { os: 'mac', label: /aarch64|arm64/i.test(name) ? 'Mac, Apple silicon' : 'Mac, Intel' };
-      if (/\.AppImage$/i.test(name)) return { os: 'linux', label: 'Linux (AppImage)' };
-      if (/\.deb$/i.test(name)) return { os: 'linux', label: 'Linux (.deb)' };
-      if (/\.rpm$/i.test(name)) return { os: 'linux', label: 'Linux (.rpm)' };
+      if (/\.AppImage$/i.test(name)) return { os: 'linux', label: 'Linux, AppImage' };
+      if (/\.deb$/i.test(name)) return { os: 'linux', label: 'Linux, .deb (Ubuntu, Mint, Debian)' };
+      if (/\.rpm$/i.test(name)) return { os: 'linux', label: 'Linux, .rpm' };
       return null;
     };
 
@@ -94,82 +216,436 @@ const dl = copy.download;
       .then((rel) => {
         const files = (rel.assets || []).map((a) => ({ a, k: kind(a.name) })).filter((x) => x.k);
         if (!files.length) return;
-        const mine = files.find((x) => x.k.os === os) || files[0];
+        // on Linux the .deb leads: it installs with one command on Ubuntu and Mint
+        const order = (x) => (/\.deb$/i.test(x.a.name) ? 0 : 1);
+        const mine = files.filter((x) => x.k.os === os).sort((a, b) => order(a) - order(b))[0];
         const when = rel.published_at ? new Date(rel.published_at).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
-        main.href = mine.a.browser_download_url;
-        main.textContent = `${main.textContent.replace(/ for .*$/, '')} for ${mine.k.label.split(' (')[0]}`;
-        const intel = mine.k.os === 'mac' && /apple silicon/i.test(mine.k.label) ? ' On an Intel Mac, pick Mac, Intel below.' : '';
-        note.textContent = `Version ${String(rel.tag_name || '').replace(/^v/, '')}${when ? ', ' + when : ''}. ${updates}${intel}`;
-        list.replaceChildren(...files.map((x) => {
-          const li = document.createElement('li');
-          const link = document.createElement('a');
-          link.href = x.a.browser_download_url;
-          link.textContent = x.k.label;
-          li.append(link);
-          return li;
-        }));
-        all.hidden = false;
+        const name = mine ? mine.k.label.split(',')[0] : '';
+        mains.forEach((m) => {
+          if (mine) {
+            m.href = mine.a.browser_download_url;
+            m.textContent = `${m.textContent.replace(/ for .*$/, '')} for ${name}`;
+          } else {
+            m.href = '#get-all';
+          }
+        });
+        note.textContent = `Version ${String(rel.tag_name || '').replace(/^v/, '')}${when ? ', ' + when : ''}. ${updates}`;
+        const how = mine && document.querySelector(`[data-how="${mine.k.os}"]`);
+        if (how) {
+          osNote.innerHTML = how.innerHTML;
+          osNote.hidden = false;
+        }
+        document.querySelectorAll('[data-list]').forEach((ul) => {
+          const here = files.filter((x) => x.k.os === ul.dataset.list).sort((a, b) => order(a) - order(b));
+          if (!here.length) return;
+          ul.replaceChildren(...here.map((x) => {
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = x.a.browser_download_url;
+            link.textContent = x.k.label;
+            li.append(link);
+            return li;
+          }));
+        });
+        const all = document.querySelector('.get-all');
+        all.id = 'get-all';
+        if (!mine) all.open = true;
       })
-      .catch(() => { /* no release yet, or GitHub is busy: the plain link and note stay */ });
+      .catch(() => { /* no release yet, or GitHub is busy: the plain links and note stay */ });
   })();
 </script>
 
 <style>
-  .body {
-    max-width: 38rem;
-    margin: 2rem 0 3rem;
+  /* --- head: the name and what it is, the download beside it --- */
+  .sb-head {
+    display: grid;
+    gap: 2rem;
+    padding: clamp(40px, 6vw, 80px) 0 clamp(28px, 4vw, 48px);
   }
-  .body p,
-  .body :global(p) {
-    margin: 0 0 1rem;
+  @media (min-width: 960px) {
+    .sb-head {
+      grid-template-columns: minmax(0, 1fr) 22rem;
+      gap: 3.5rem;
+      align-items: end;
+    }
   }
-  .body h2 {
-    margin: 2.25rem 0 0.75rem;
-    font-size: 1.05rem;
+  .sb-head h1 {
+    margin-top: 0.9rem;
+    /* sized to its own column: the wide face fills it at any width, never breaks */
+    font-size: clamp(2rem, 10.5cqi, 5.4rem);
+    font-stretch: 125%;
   }
+  .sb-intro {
+    container-type: inline-size;
+  }
+  .sb-lede {
+    margin-top: 1.2rem;
+    font-family: var(--display);
+    font-weight: 780;
+    font-stretch: 112%;
+    font-size: clamp(1.45rem, 2.6vw, 2.1rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+  .sb-sub {
+    margin-top: 1.1rem;
+    max-width: 40rem;
+    font-size: clamp(1.05rem, 1.4vw, 1.18rem);
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+
+  /* the download box */
   .get {
-    margin: 0 0 2.5rem;
-    padding: 1.4rem 1.5rem;
-    border: 2px solid var(--ink);
-    border-radius: 14px;
+    padding: 1.5rem;
+    border-radius: 18px;
+    background: var(--sheet);
+    border: 1px solid var(--hair);
   }
   .get-main {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
     padding: 0.9rem 1.4rem;
     border-radius: 999px;
     background: var(--sig);
     color: var(--ink);
-    font-weight: 600;
+    font-weight: 650;
+    line-height: 1.2;
     background-image: none;
+    transition: transform 0.35s var(--ease);
   }
-  .get-note {
+  .get-main:hover {
+    color: var(--ink);
+    transform: translateY(-2px);
+  }
+  .get-main:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+  }
+  .get-note,
+  .get-os {
     margin: 0.9rem 0 0;
-    font-size: 0.95rem;
-    color: var(--ink-soft);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--soft);
+  }
+  .get-os {
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--grid);
+    color: var(--ink-2);
   }
   .get-all {
-    margin-top: 0.75rem;
-    font-size: 0.95rem;
+    margin-top: 1rem;
+    font-size: 0.92rem;
   }
-  .get-all ul {
+  .get-all summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .get-sys {
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--grid);
+  }
+  .get-sys h2 {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    font-stretch: 100%;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--soft);
+  }
+  .get-sys ul {
     list-style: none;
-    margin: 0.5rem 0 0;
+    margin: 0.4rem 0 0;
     padding: 0;
     display: grid;
-    gap: 0.35rem;
+    gap: 0.25rem;
   }
+  .get-sys li a {
+    display: inline-block;
+    padding: 0.2rem 0;
+  }
+  .get-how {
+    margin-top: 0.45rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .get :global(code) {
+    font-family: var(--mono);
+    font-size: 0.78em;
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    background: var(--bg);
+  }
+
+  /* --- screenshots --- */
+  .hero-shot,
   .shot {
-    margin: 2rem 0;
+    margin: 0;
   }
+  .hero-shot a,
+  .shot a {
+    display: block;
+    background-image: none;
+  }
+  .hero-shot a:focus-visible,
+  .shot a:focus-visible {
+    outline: 3px solid var(--sig);
+    outline-offset: 4px;
+    border-radius: 14px;
+  }
+  .hero-shot img,
   .shot img {
+    display: block;
     width: 100%;
     height: auto;
-    border-radius: 12px;
-    border: 1px solid rgba(21, 23, 28, 0.18);
+    border-radius: 14px;
+    border: 1px solid var(--hair);
+    box-shadow: 0 30px 60px -40px rgb(21 23 28 / 0.45);
+    background: var(--bg);
   }
-  .fine {
-    margin-top: 2rem;
-    font-size: 0.95rem;
+
+  .mono-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sig-text);
+  }
+
+  /* --- what you can close --- */
+  .closes {
+    margin-top: clamp(48px, 7vw, 96px);
+    max-width: 60rem;
+  }
+  .closes ul {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .closes li {
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    background: var(--sheet);
+    border: 1px solid var(--hair);
+    font: 500 0.78rem var(--mono);
+    color: var(--soft);
+  }
+  .closes-note {
+    margin-top: 1.1rem;
+    font-family: var(--display);
+    font-weight: 760;
+    font-stretch: 112%;
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  /* --- features: text beside a screenshot, sides swapping --- */
+  .feature {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: clamp(64px, 9vw, 128px);
+    align-items: center;
+  }
+  @media (min-width: 960px) {
+    .feature {
+      grid-template-columns: 0.75fr 1.4fr;
+      gap: 3.5rem;
+    }
+    .feature.flip {
+      grid-template-columns: 1.4fr 0.75fr;
+    }
+    .feature.flip .feature-text {
+      order: 2;
+    }
+  }
+  .feature h2,
+  .rest h2,
+  .how h2,
+  .faq h2 {
+    margin-top: 0.7rem;
+    font-size: clamp(1.75rem, 2.8vw, 2.4rem);
+    line-height: 1;
+  }
+  .rest h2,
+  .how h2,
+  .faq h2 {
+    margin-top: 0;
+  }
+  .feature-body {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.1rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+  .feature-body :global(code) {
+    font-family: var(--mono);
+    font-size: 0.78em;
+    padding: 0.05em 0.3em;
+    border-radius: 4px;
+    background: var(--sheet);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* --- and the rest: an index, not a grid of cards --- */
+  .rest,
+  .how,
+  .faq {
+    margin-top: clamp(72px, 10vw, 140px);
+  }
+  .rest dl {
+    margin: 1.5rem 0 0;
+    border-top: 1px solid var(--ink);
+  }
+  .rest dl > div {
+    display: grid;
+    gap: 0.25rem 2rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--hair);
+  }
+  @media (min-width: 720px) {
+    .rest dl > div {
+      grid-template-columns: 14rem 1fr;
+    }
+  }
+  .rest dt {
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .rest dd {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  /* --- how it works: three steps along one rule --- */
+  .how ol {
+    list-style: none;
+    counter-reset: step;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+    border-top: 1px solid var(--ink);
+  }
+  @media (min-width: 860px) {
+    .how ol {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+  }
+  .how li {
+    counter-increment: step;
+    padding-top: 1.1rem;
+  }
+  .how li::before {
+    content: '0' counter(step);
+    display: block;
+    font: 500 0.78rem var(--mono);
+    color: var(--sig-text);
+  }
+  .how h3 {
+    margin-top: 0.6rem;
+    font-size: 1.35rem;
+    font-weight: 800;
+    font-stretch: 112%;
+    letter-spacing: -0.015em;
+  }
+  .how p {
+    margin-top: 0.5rem;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+
+  /* --- privacy, licence, early days --- */
+  .notes {
+    display: grid;
+    gap: 2rem;
+    margin-top: clamp(72px, 10vw, 140px);
+    padding: clamp(24px, 4vw, 44px);
+    border-radius: 18px;
+    background: var(--sheet);
+  }
+  @media (min-width: 960px) {
+    .notes {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+    }
+  }
+  .notes h2 {
+    font-size: 1.4rem;
+    font-stretch: 112%;
+  }
+  .notes :global(p) {
+    margin-top: 0.75rem;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+
+  /* --- questions --- */
+  .faq {
+    max-width: 52rem;
+  }
+  .faq h2 {
+    margin-bottom: 1.25rem;
+  }
+  .faq details {
+    border-top: 1px solid var(--hair);
+  }
+  .faq details:last-of-type {
+    border-bottom: 1px solid var(--hair);
+  }
+  .faq summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 56px;
+    padding: 0.6rem 0;
+    font-weight: 650;
+    font-size: 1.08rem;
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq summary::after {
+    content: '+';
+    font: 500 1.1rem var(--mono);
+    color: var(--sig-text);
+  }
+  .faq details[open] summary::after {
+    content: '−';
+  }
+  .faq details :global(p) {
+    padding: 0 0 1.1rem;
+    max-width: 44rem;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+
+  /* --- download again, links --- */
+  .again {
+    margin-top: clamp(64px, 8vw, 112px);
   }
   .links {
     list-style: none;
@@ -178,5 +654,46 @@ const dl = copy.download;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem 1.5rem;
+  }
+  .links a {
+    display: inline-block;
+    padding: 0.35rem 0;
+  }
+  .fine {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: var(--ink-2);
+  }
+
+  /* --- the practice, one line --- */
+  .practice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1.5rem;
+    margin-top: clamp(48px, 6vw, 80px);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ink);
+  }
+  .practice p {
+    max-width: 48rem;
+    font-size: 1.05rem;
+    color: var(--ink);
+  }
+  .practice a {
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    background-image: none;
+  }
+  .practice a:hover {
+    color: var(--sig-text);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .get-main {
+      transition: none;
+    }
   }
 </style>

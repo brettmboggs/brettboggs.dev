@@ -1,58 +1,131 @@
 {
-  "title": "Switchboard · One screen for everything that needs you",
-  "description": "A free app that puts your messages, work, money, reminders and AI coding sessions on one screen, on your own computer. For Mac, Windows and Linux.",
-  "eyebrow": "Mac · Windows · Linux",
+  "title": "Switchboard · Everything that needs you, on one screen",
+  "description": "A free app for Mac, Windows and Linux. Mail, texts, Teams, calendars, bills, reminders and AI coding sessions on one board, on your own computer.",
+  "eyebrow": "Free app · Mac · Windows · Linux",
   "heading": "Switchboard",
-  "lede": "One screen for everything that needs you. Messages, work, money, reminders and the AI sessions you have running, on your own computer.",
+  "lede": "Everything that needs you, on one screen.",
+  "sub": "Mail, texts, Teams, calendars, bills, reminders, builds and AI coding sessions, sorted into one board on your own computer. Answer, pay, snooze or approve without opening the other apps.",
   "download": {
     "button": "Download Switchboard",
-    "soon": "The first installers are being built. Until they are posted, the code and release notes are on GitHub.",
+    "soon": "The first installers are being posted. Until then, the code and release notes are on GitHub.",
     "all": "All downloads",
-    "updates": "It updates itself after you install it."
+    "updates": "It asks before it updates itself.",
+    "mac": "Macs with Apple silicon only for now. The first time, macOS refuses to open it: go to System Settings, Privacy & Security, and choose Open Anyway.",
+    "windows": "The installer is not signed yet, so Windows says it protected your PC. Choose More info, then Run anyway.",
+    "linux": "On Ubuntu or Mint, the .deb is easiest: `sudo apt install ./Switchboard_linux_amd64.deb` in the folder you saved it to. An AppImage downloads without permission to run: right-click it, open Properties, allow it to run as a program, or `chmod +x` it."
   },
-  "intro": "I built Switchboard because I run a lot of things and kept losing track of which one was waiting on me. It reads your mail, Teams chats, calendars, bills and builds, and shows one card for each thing that needs you, sorted into the right project. Reply, archive or snooze without opening five apps.\n\nIt runs on your computer, not on a server of mine. Your mail passwords live in your computer's keychain, and nothing is sent anywhere you did not connect.",
   "hero": {
-    "image": "/switchboard/shot-now.webp",
-    "alt": "Switchboard's Now page: a to-do due this morning and two invoices waiting on payment, each on its own card, with the project list down the left and a count of what needs you at the top right."
+    "image": "/switchboard/shot-board.webp",
+    "small": "/switchboard/shot-board-800.webp",
+    "alt": "Switchboard's Now page for a made-up bakery: an AI session waiting for permission to deploy, a failed website build, a to-do due at 9, two builds working and two invoices out, sorted into the bakery and its catering work, with today's weather at the top."
+  },
+  "closes": {
+    "label": "What you can close",
+    "items": ["the dozen browser tabs", "the mail app", "Teams", "the calendar", "GitHub's Actions page", "the banking app", "a terminal per agent"],
+    "note": "What needs you from each of them still shows up here, as one card, in the right project."
+  },
+  "features": [
+    {
+      "kicker": "Inbox",
+      "heading": "Answer without opening the other app.",
+      "body": "Email from Gmail or any IMAP account, Google Voice texts and voicemail, Teams chats and Outlook, in one list. Pick a conversation and it opens large, with your reply box at the bottom. Reply, archive, snooze, or hand a message to an agent. Nothing is sent until you press Send.",
+      "image": "/switchboard/shot-inbox.webp",
+      "small": "/switchboard/shot-inbox-800.webp",
+      "width": 1440,
+      "height": 890,
+      "alt": "The Inbox: a customer's email thread about a wedding cake open on the right, with a reply box at the bottom, and a text from the flour delivery driver and a catering request in the list on the left."
+    },
+    {
+      "kicker": "Sessions",
+      "heading": "Your AI agents, as a chat.",
+      "body": "Run Claude Code, Codex, Gemini CLI, Aider or any command inside Switchboard. A Claude session reads as a clean conversation: each tool call folded to one line, and its permission questions turned into buttons. Messages wait in a queue and go in when the agent is free. Sessions on your other computers show up too, and an agent that gets stuck puts a card on your board.",
+      "image": "/switchboard/shot-session.webp",
+      "small": "/switchboard/shot-session-800.webp",
+      "width": 1440,
+      "height": 880,
+      "alt": "A Claude Code session shown as a chat: the steps it took folded into single lines, then its question, whether to run npm run deploy, with Yes and No as buttons."
+    },
+    {
+      "kicker": "Ctrl K",
+      "heading": "Type it once.",
+      "body": "Press Ctrl K and type `remind fri 9am call the bank`, `bill rent 1200 on the 1st`, `todo send the proposal by thu`, or anything else as a note. Chores that come back on their own, like feeding the animals at 6 every day, work the same way. They show up as cards when they are due.",
+      "image": "/switchboard/shot-ctrlk.webp",
+      "small": "",
+      "width": 840,
+      "height": 350,
+      "alt": "The Ctrl K box with a reminder typed in, above a short list of what else it understands: remind, todo, invoice, paid, bill, and anything else as a note."
+    },
+    {
+      "kicker": "Money",
+      "heading": "Money, without the banking app.",
+      "body": "Invoices you sent and are still waiting on, bills and when they are due, and card charges and receipts read from the alert emails your bank already sends. It never needs your bank login.",
+      "image": "/switchboard/shot-money.webp",
+      "small": "/switchboard/shot-money-800.webp",
+      "width": 1440,
+      "height": 640,
+      "alt": "The Money page: $1,820 owed, bills due in the next two weeks, two invoices out, the rent and an oven lease coming up, and two card charges read from email."
+    },
+    {
+      "kicker": "System",
+      "heading": "See what your computer is doing.",
+      "body": "The System monitor shows the processor, memory, graphics, network, storage, temperatures and the apps using the most, with one sentence at the top saying what is slowing things down. It only reads while it is open, keeps no history and never asks for admin rights.",
+      "image": "/switchboard/shot-monitor.webp",
+      "small": "",
+      "width": 1000,
+      "height": 895,
+      "alt": "The System monitor: live charts for processor, memory, graphics and network, space left on the disk, temperatures, and a line at the top that reads Everything is calm."
+    }
+  ],
+  "more": {
+    "heading": "And the rest",
+    "items": [
+      { "name": "Builds", "body": "GitHub Actions, live. Re-run a failed job or cancel one from the board." },
+      { "name": "Calendar and weather", "body": "Today's events from any calendar's private link, and the forecast for your town." },
+      { "name": "Notes", "body": "Pages per project, checklists, #tags, and a line that adds itself up when you end it with =." },
+      { "name": "Packages", "body": "Deliveries read from the shipping emails already in your mail." },
+      { "name": "Browser checks", "body": "Load a page every hour and get a card when the words you expect are gone." },
+      { "name": "Webhooks", "body": "A private link that Zapier, IFTTT, Home Assistant or a script can post cards to." },
+      { "name": "Every computer", "body": "An optional encrypted account links your computers. Notes and settings follow you." }
+    ]
+  },
+  "how": {
+    "heading": "How it works",
+    "steps": [
+      { "title": "Install it", "body": "Download the installer and open it. The app brings everything it needs and starts with your computer." },
+      { "title": "Connect what you use", "body": "Mail with an app password, Microsoft with a sign-in, calendars with their private links. Each connection runs from your computer straight to the service." },
+      { "title": "Work from one screen", "body": "Switchboard checks each source on its own schedule and puts a card on the board when something needs you. Clear it and it stays gone until something new arrives." }
+    ]
   },
   "sections": [
     {
-      "heading": "Type it once",
-      "body": "Press Ctrl K and type `remind fri 9am call the bank`, `bill rent 1200 on the 1st`, `todo send the proposal by thu`, or anything else as a note. Chores that come back on their own, like feeding the animals at 6 every day, work the same way. They show up as cards when they are due.",
-      "image": "",
-      "alt": ""
-    },
-    {
-      "heading": "If you work with AI agents",
-      "body": "Switchboard runs Claude Code, Codex, Gemini CLI or any command inside it, shows each session as a chat, and turns the agent's permission questions into buttons. When an agent gets stuck it puts a card on your board. Messages queue up and go in when the agent is free, and sessions on your other computers show up too.",
-      "image": "",
-      "alt": ""
-    },
-    {
-      "heading": "See what your computer is doing",
-      "body": "The System monitor shows the processor, memory, graphics, network, storage, temperatures and the apps using the most, with one sentence at the top saying what is slowing things down. It only reads while it is open, keeps no history and never asks for admin rights.",
-      "image": "/switchboard/shot-monitor.webp",
-      "alt": "The System monitor: live charts for processor, memory, graphics and network, space left on the disk, temperatures, and a line at the top that reads Everything is calm."
-    },
-    {
       "heading": "Private by design",
-      "body": "Switchboard listens only on your own computer, and a web page open in your browser cannot drive it. There are no ads and no tracking. What leaves is what you connect: your mail provider, weather for the town you enter, GitHub for updates, and, only if you make an account, encrypted sync that I cannot read. [Read the privacy notes](https://github.com/brettmboggs/switchboard-app/blob/main/PRIVACY.md).",
-      "image": "",
-      "alt": ""
+      "body": "Switchboard runs on your computer, not on a server of mine. Your mail passwords are locked with a key kept in your computer's keychain. It listens only on your own computer, and a web page open in your browser cannot drive it. There are no ads and no tracking. What leaves is what you connect: your mail provider, weather for the town you enter, GitHub for updates, and, only if you make an account, encrypted sync that I cannot read. [Read the privacy notes](https://github.com/brettmboggs/switchboard-app/blob/main/PRIVACY.md)."
     },
     {
       "heading": "Free, and Fair Source",
-      "body": "You can download it, use it and read every line of it for free. The licence stops anyone from turning it into a competing product, and each release becomes plain MIT two years after it ships. [Read the licence](https://github.com/brettmboggs/switchboard-app/blob/main/LICENSE).",
-      "image": "",
-      "alt": ""
+      "body": "You can download it, use it and read every line of it for free, at home or at work. The licence stops anyone from turning it into a competing product, and each release becomes plain MIT two years after it ships. [Read the licence](https://github.com/brettmboggs/switchboard-app/blob/main/LICENSE)."
     },
     {
       "heading": "Early days",
-      "body": "This is version 0.1. I use it every day on Linux. The Mac and Windows apps are new, so expect rough edges, and tell me what you run into.",
-      "image": "",
-      "alt": ""
+      "body": "This is version 0.1. I built it for my own day and use it every day on Linux. The Mac and Windows apps are new and lightly tested, so expect rough edges, and tell me what you run into."
     }
   ],
+  "faq": {
+    "heading": "Questions",
+    "items": [
+      { "q": "Is it really free?", "a": "Yes. No price, no trial and no ads. An account is optional and only links your computers." },
+      { "q": "Where does my data go?", "a": "It stays on your computer, in one file only your user can read. Each service you connect talks to your computer directly. Nothing passes through a server of mine, except encrypted sync if you turn it on, and I cannot read that." },
+      { "q": "Which computers does it run on?", "a": "64-bit Windows, Macs with Apple silicon, and 64-bit Linux (.deb or AppImage). An Intel Mac can run it from the source code until it gets its own installer." },
+      { "q": "Do I have to use AI?", "a": "No. Mail, chats, calendars, bills, reminders and notes work on their own. The agent sessions are there if you use them, and Switchboard never runs AI over your mail or messages." },
+      { "q": "What does version 0.1 mean?", "a": "It works, I use it every day, and it will change quickly. The Mac and Windows apps are new. Updates come from GitHub, and it asks before it installs one." },
+      { "q": "Can my business use it?", "a": "Yes. Anyone can use it, at work too. The only thing the licence rules out is building a competing product from it." }
+    ]
+  },
+  "practice": {
+    "text": "Switchboard is free. For a business, I build the same kind of thing to order: one system the owner runs and owns, in place of a stack of subscriptions.",
+    "link": "How I help",
+    "url": "/help/"
+  },
   "fine": "Something wrong, or an idea? Write to [support@brettboggs.dev](mailto:support@brettboggs.dev). I read all of it.",
   "links": [
     { "text": "Source on GitHub", "url": "https://github.com/brettmboggs/switchboard-app" },

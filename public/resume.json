@@ -91,6 +91,11 @@
   ],
   "projects": [
     {
+      "name": "Switchboard",
+      "description": "A free desktop app for Mac, Windows and Linux that puts mail, texts, calendars, bills, reminders and AI coding sessions on one screen, on your own computer. Fair Source licensed.",
+      "url": "https://brettboggs.dev/switchboard/"
+    },
+    {
       "name": "Slumbio",
       "description": "An iPhone sleep app, on the App Store. Thirty-three of its thirty-five sounds are built as they play, so there is no loop to hear. Breathing sessions, a sunrise alarm, a sleep timer, and no network code in the app at all.",
       "url": "https://apps.apple.com/app/id6808987732"

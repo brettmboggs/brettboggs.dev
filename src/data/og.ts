@@ -31,6 +31,7 @@ export const cards: OgCard[] = [
   { id: 'underground', path: '/lab/underground/', kicker: 'Lab · Aug 2026', title: 'The Underground', note: 'The same ground as the Ridge, cut open six metres to rock. Roots grow as you scroll.' },
   { id: 'bridge', path: '/lab/bridge/', kicker: 'Lab · Jul 2026', title: 'The Bridge', note: 'A cable-stayed crossing that surveys, drafts, and builds itself as you scroll.' },
   { id: 'drafting-film', path: '/lab/drafting-film/', kicker: 'Lab · Jul 2026', title: 'The Drafting Film', note: 'A highway underpass you draft by scrolling.' },
+  { id: 'switchboard', path: '/switchboard/', kicker: 'Free app · Mac, Windows, Linux', title: 'Switchboard', note: 'Everything that needs you, on one screen, on your own computer.' },
   { id: 'colophon', path: '/colophon/', kicker: 'Colophon', title: 'How this site is made.', note: 'The tools, the pipeline, and the weight of every page.' },
   { id: 'log', path: '/log/', kicker: 'Log', title: 'The build log.', note: 'Every commit to this site, one line each, read out of git at build time.' },
   { id: 'resume', path: '/resume/', kicker: 'Resume', title: 'Brett Boggs', note: 'Co-founder of Datum. Builds the product end to end as full-stack engineer.' },

@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import copy from '../data/copy/home.json';
 import { md, inline } from '../data/copy';
 
-const { hero, overhead, own, proof, about, process, pricing, contact } = copy;
+const { hero, overhead, own, proof, tool, about, process, pricing, contact } = copy;
 const st = hero.statement;
 
 // the headline strikes one word through in signal orange
@@ -181,6 +181,21 @@ const f = contact.form;
       </div>
       <a class="all" href="/work/">{proof.more} <span aria-hidden="true">→</span></a>
     </div>
+  </section>
+
+  <!-- ===================================================== switchboard: the app I give away -->
+  <section class="sb-band">
+    <div class="c-wrap"><div class="sb-in">
+      <div>
+        <p class="sb-kicker">{tool.kicker}</p>
+        <h2 class="h2">{tool.heading}</h2>
+        <p class="sb-body">{tool.body}</p>
+        <a class="more" href={tool.url}>{tool.link} <span aria-hidden="true">→</span></a>
+      </div>
+      <figure class="sb-shot">
+        <img src={tool.image} alt={tool.imageAlt} loading="lazy" decoding="async" width="800" height="372" />
+      </figure>
+    </div></div>
   </section>
 
   <!-- ===================================================== about -->
@@ -1086,6 +1101,63 @@ const f = contact.form;
   .all {
     display: inline-block;
     margin-top: 3rem;
+  }
+
+  /* --- switchboard: one quiet band, the app, then back to the practice --- */
+  .sb-band {
+    padding-bottom: 0;
+  }
+  .sb-in {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    padding: clamp(28px, 4vw, 48px);
+    border-radius: 20px;
+    background: var(--sheet);
+  }
+  @media (min-width: 900px) {
+    .sb-in {
+      grid-template-columns: 1fr 1.25fr;
+      gap: 3.5rem;
+    }
+  }
+  .sb-kicker {
+    font: 500 0.72rem var(--mono);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sig-text);
+    margin-bottom: 0.9rem;
+  }
+  .sb-body {
+    max-width: 46ch;
+    margin-top: 1.1rem;
+    font-size: 1.05rem;
+    color: var(--ink-2);
+  }
+  .sb-band .more {
+    display: inline-block;
+    margin-top: 1.3rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .sb-band .more:hover {
+    color: var(--sig-text);
+  }
+  .sb-shot {
+    display: block;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid var(--hair);
+    background-image: none;
+  }
+  .sb-shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 1.2s var(--ease);
   }
 
   /* --- about --- */

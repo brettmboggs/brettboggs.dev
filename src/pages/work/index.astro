@@ -35,7 +35,7 @@ interface Row {
 const rows: Row[] = all
   .filter((e) => !e.data.group && !e.data.unlisted)
   .map((e) => ({
-    href: `/work/${e.id}/`,
+    href: e.data.href ?? `/work/${e.id}/`,
     title: e.data.title,
     desc: e.data.description,
     when: when(e.data.date, e.data.dateEnd),

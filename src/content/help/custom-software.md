@@ -54,3 +54,5 @@ There's no company in the middle that needs you to keep renting. I learn your bu
 ## Proof
 
 [Knock Em' Down Detailing](/work/websites/ked-detailing/) runs on one system I built in place of Housecall Pro and QuickBooks: booking, quotes, invoices, the books, follow-ups, and an iPhone app for the driveway.
+
+[Switchboard](/switchboard/) is a free app I built and run my own day on: mail, texts, calendars, bills and reminders on one screen, on your own computer. You can download it and read every line of it.

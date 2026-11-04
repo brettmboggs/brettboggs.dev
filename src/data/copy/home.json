@@ -259,6 +259,15 @@
     ],
     "more": "All work"
   },
+  "tool": {
+    "kicker": "Free app · Mac, Windows, Linux",
+    "heading": "Switchboard.",
+    "body": "The app I run my own day on. Mail, texts, calendars, bills and reminders on one screen, kept on your own computer. Free to use, and every line of it is open to read.",
+    "image": "/switchboard/shot-board-800.webp",
+    "imageAlt": "Switchboard's board for a made-up bakery: what needs the owner today, each on its own card, sorted by project.",
+    "link": "See Switchboard",
+    "url": "/switchboard/"
+  },
   "about": {
     "heading": "Who you'd be working with.",
     "body": "I spent ten years running operations before I wrote software. A service lane at a Honda dealership. General manager of a car wash, then a group of them, then a district. Schedules, payroll, and equipment that breaks on the coldest day of the year.\n\nNow I'm the lead engineer on a company-wide platform for a construction company, built end to end. This is the same work, for businesses of any size closer to home.\n\nThere's no company here. Just me. Nobody in the middle needs you to keep renting, so what I build is yours, and when it needs changing you call the person who built it.",
@@ -390,6 +399,10 @@
       {
         "text": "About",
         "url": "/about/"
+      },
+      {
+        "text": "Switchboard",
+        "url": "/switchboard/"
       },
       {
         "text": "Lab",

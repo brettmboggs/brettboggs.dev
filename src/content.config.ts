@@ -23,6 +23,9 @@ const work = defineCollection({
     // unlisted entries render at /work/<id>/ but stay off the /work index;
     // they are reached only from pages that link them (e.g. Datum's decision logs)
     unlisted: z.boolean().default(false),
+    // an entry whose page lives elsewhere on the site (an app with its own
+    // page): the /work index links there and no /work/<id>/ page is built
+    href: z.string().optional(),
   }),
 });
 
