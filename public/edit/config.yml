@@ -2969,6 +2969,95 @@ collections:
       - name: backLink
         label: Back link text
         widget: string
+  - name: switchboard
+    label: Switchboard
+    description: The Switchboard app page. The download button finds the newest release by itself.
+    files:
+    - name: switchboard
+      label: Switchboard (app page)
+      file: src/data/copy/switchboard.json
+      preview_path: /switchboard/
+      fields:
+      - name: title
+        label: Browser tab title
+        widget: string
+      - name: description
+        label: Search description
+        widget: text
+      - name: eyebrow
+        label: Eyebrow
+        widget: string
+      - name: heading
+        label: Heading
+        widget: string
+      - name: lede
+        label: Lede
+        widget: text
+      - name: download
+        label: Download box
+        widget: object
+        fields:
+        - name: button
+          label: Button text
+          widget: string
+        - name: soon
+          label: Note before the first release is posted
+          widget: text
+        - name: all
+          label: Label above the other installers
+          widget: string
+        - name: updates
+          label: Note after the version
+          widget: string
+      - name: intro
+        label: Intro paragraphs
+        widget: markdown
+      - name: hero
+        label: Main screenshot
+        widget: object
+        fields:
+        - name: image
+          label: Screenshot
+          widget: image
+        - name: alt
+          label: Alt text
+          widget: text
+      - name: sections
+        label: Sections
+        widget: list
+        summary: '{{heading}}'
+        fields:
+        - name: heading
+          label: Section heading
+          widget: string
+        - name: body
+          label: Section text
+          widget: markdown
+        - name: image
+          label: Screenshot (optional)
+          widget: image
+          required: false
+        - name: alt
+          label: Alt text for the screenshot
+          widget: text
+          required: false
+      - name: fine
+        label: Support note
+        widget: markdown
+      - name: links
+        label: Links at the bottom
+        widget: list
+        summary: '{{text}}'
+        fields:
+        - name: text
+          label: Text
+          widget: string
+        - name: url
+          label: Link
+          widget: string
+      - name: backLink
+        label: Back link
+        widget: string
   - name: slumbio
     label: Slumbio
     description: The app page, privacy policy and terms. The App Store links to these, so keep them live.

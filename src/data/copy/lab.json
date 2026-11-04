@@ -13,6 +13,13 @@
       "peek": "/peek/ladle.webp"
     },
     {
+      "title": "Switchboard",
+      "desc": "One screen for everything that needs you: mail, chats, bills, reminders and AI coding sessions, on your own computer. Mac, Windows and Linux.",
+      "meta": "Nov 2026",
+      "href": "/switchboard/",
+      "peek": "/peek/switchboard.webp"
+    },
+    {
       "title": "Slumbio",
       "desc": "A sleep app for iOS. Thirty-three of its thirty-five sounds are built as they play, so there is no loop to hear.",
       "meta": "Sep 2026",

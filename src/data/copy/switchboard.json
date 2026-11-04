@@ -1,0 +1,64 @@
+{
+  "title": "Switchboard · One screen for everything that needs you",
+  "description": "A free app that puts your messages, work, money, reminders and AI coding sessions on one screen, on your own computer. For Mac, Windows and Linux.",
+  "eyebrow": "Mac · Windows · Linux",
+  "heading": "Switchboard",
+  "lede": "One screen for everything that needs you. Messages, work, money, reminders and the AI sessions you have running, on your own computer.",
+  "download": {
+    "button": "Download Switchboard",
+    "soon": "The first installers are being built. Until they are posted, the code and release notes are on GitHub.",
+    "all": "All downloads",
+    "updates": "It updates itself after you install it."
+  },
+  "intro": "I built Switchboard because I run a lot of things and kept losing track of which one was waiting on me. It reads your mail, Teams chats, calendars, bills and builds, and shows one card for each thing that needs you, sorted into the right project. Reply, archive or snooze without opening five apps.\n\nIt runs on your computer, not on a server of mine. Your mail passwords live in your computer's keychain, and nothing is sent anywhere you did not connect.",
+  "hero": {
+    "image": "/switchboard/shot-now.webp",
+    "alt": "Switchboard's Now page: a to-do due this morning and two invoices waiting on payment, each on its own card, with the project list down the left and a count of what needs you at the top right."
+  },
+  "sections": [
+    {
+      "heading": "Type it once",
+      "body": "Press Ctrl K and type `remind fri 9am call the bank`, `bill rent 1200 on the 1st`, `todo send the proposal by thu`, or anything else as a note. Chores that come back on their own, like feeding the animals at 6 every day, work the same way. They show up as cards when they are due.",
+      "image": "",
+      "alt": ""
+    },
+    {
+      "heading": "If you work with AI agents",
+      "body": "Switchboard runs Claude Code, Codex, Gemini CLI or any command inside it, shows each session as a chat, and turns the agent's permission questions into buttons. When an agent gets stuck it puts a card on your board. Messages queue up and go in when the agent is free, and sessions on your other computers show up too.",
+      "image": "",
+      "alt": ""
+    },
+    {
+      "heading": "See what your computer is doing",
+      "body": "The System monitor shows the processor, memory, graphics, network, storage, temperatures and the apps using the most, with one sentence at the top saying what is slowing things down. It only reads while it is open, keeps no history and never asks for admin rights.",
+      "image": "/switchboard/shot-monitor.webp",
+      "alt": "The System monitor: live charts for processor, memory, graphics and network, space left on the disk, temperatures, and a line at the top that reads Everything is calm."
+    },
+    {
+      "heading": "Private by design",
+      "body": "Switchboard listens only on your own computer, and a web page open in your browser cannot drive it. There are no ads and no tracking. What leaves is what you connect: your mail provider, weather for the town you enter, GitHub for updates, and, only if you make an account, encrypted sync that I cannot read. [Read the privacy notes](https://github.com/brettmboggs/switchboard-app/blob/main/PRIVACY.md).",
+      "image": "",
+      "alt": ""
+    },
+    {
+      "heading": "Free, and Fair Source",
+      "body": "You can download it, use it and read every line of it for free. The licence stops anyone from turning it into a competing product, and each release becomes plain MIT two years after it ships. [Read the licence](https://github.com/brettmboggs/switchboard-app/blob/main/LICENSE).",
+      "image": "",
+      "alt": ""
+    },
+    {
+      "heading": "Early days",
+      "body": "This is version 0.1. I use it every day on Linux. The Mac and Windows apps are new, so expect rough edges, and tell me what you run into.",
+      "image": "",
+      "alt": ""
+    }
+  ],
+  "fine": "Something wrong, or an idea? Write to [support@brettboggs.dev](mailto:support@brettboggs.dev). I read all of it.",
+  "links": [
+    { "text": "Source on GitHub", "url": "https://github.com/brettmboggs/switchboard-app" },
+    { "text": "Release notes", "url": "https://github.com/brettmboggs/switchboard-app/blob/main/CHANGELOG.md" },
+    { "text": "Privacy", "url": "https://github.com/brettmboggs/switchboard-app/blob/main/PRIVACY.md" },
+    { "text": "Licence", "url": "https://github.com/brettmboggs/switchboard-app/blob/main/LICENSE" }
+  ],
+  "backLink": "← Home"
+}

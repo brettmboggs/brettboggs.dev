@@ -1,0 +1,182 @@
+---
+import Base from '../../layouts/Base.astro';
+import copy from '../../data/copy/switchboard.json';
+import { md, inline } from '../../data/copy';
+
+// Switchboard's page. The download button always points at the newest release
+// of the public repo: the script at the bottom asks GitHub for it when the
+// page opens, so nothing here changes when a new version ships. Without
+// JavaScript, or before the first release exists, the button goes to the
+// repo's releases page.
+const repo = 'brettmboggs/switchboard-app';
+const dl = copy.download;
+---
+
+<Base
+  title={copy.title}
+  description={copy.description}
+  puck={false}
+  edit="switchboard/switchboard"
+>
+  <header class="page-head">
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.heading}</h1>
+    <p class="lede">{copy.lede}</p>
+  </header>
+
+  <section class="body">
+    <div class="get" id="get" data-repo={repo}>
+      <a class="get-main" id="get-main" href={`https://github.com/${repo}/releases/latest`}>{dl.button}</a>
+      <p class="get-note" id="get-note">{dl.soon}</p>
+      <details class="get-all" id="get-all" hidden>
+        <summary>{dl.all}</summary>
+        <ul id="get-list"></ul>
+      </details>
+    </div>
+
+    <Fragment set:html={md(copy.intro)} />
+
+    <figure class="shot">
+      <img src={copy.hero.image} width="1100" height="481" alt={copy.hero.alt} />
+    </figure>
+
+    {copy.sections.map((s) => (
+      <>
+        <h2>{s.heading}</h2>
+        <Fragment set:html={md(s.body)} />
+        {s.image && (
+          <figure class="shot">
+            <img src={s.image} width="1000" height="895" alt={s.alt} loading="lazy" />
+          </figure>
+        )}
+      </>
+    ))}
+
+    <p class="fine" set:html={inline(copy.fine)} />
+
+    <ul class="links">
+      {copy.links.map((l) => (
+        <li><a href={l.url}>{l.text}</a></li>
+      ))}
+    </ul>
+  </section>
+
+  <a class="back-link" href="/">{copy.backLink}</a>
+</Base>
+
+<script is:inline define:vars={{ updates: dl.updates }}>
+  (() => {
+    const box = document.getElementById('get');
+    if (!box) return;
+    const repo = box.dataset.repo;
+    const main = document.getElementById('get-main');
+    const note = document.getElementById('get-note');
+    const all = document.getElementById('get-all');
+    const list = document.getElementById('get-list');
+
+    const ua = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || '';
+    const os = /win/i.test(ua) ? 'windows' : /mac|iphone|ipad/i.test(ua) ? 'mac' : /linux|x11|cros/i.test(ua) ? 'linux' : null;
+
+    // What each installer is, from its file name. Tauri names them
+    // Switchboard_<version>_<arch>-setup.exe, ..._<arch>.dmg, ..._amd64.AppImage and so on.
+    const kind = (name) => {
+      if (/\.(sig|json|txt|blockmap)$/i.test(name) || /\.app\.tar\.gz$/i.test(name) || /\.nsis\.zip$/i.test(name)) return null;
+      if (/\.(exe|msi)$/i.test(name)) return { os: 'windows', label: /\.msi$/i.test(name) ? 'Windows (installer .msi)' : 'Windows' };
+      if (/\.dmg$/i.test(name)) return { os: 'mac', label: /aarch64|arm64/i.test(name) ? 'Mac, Apple silicon' : 'Mac, Intel' };
+      if (/\.AppImage$/i.test(name)) return { os: 'linux', label: 'Linux (AppImage)' };
+      if (/\.deb$/i.test(name)) return { os: 'linux', label: 'Linux (.deb)' };
+      if (/\.rpm$/i.test(name)) return { os: 'linux', label: 'Linux (.rpm)' };
+      return null;
+    };
+
+    fetch(`https://api.github.com/repos/${repo}/releases/latest`, { headers: { Accept: 'application/vnd.github+json' } })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((rel) => {
+        const files = (rel.assets || []).map((a) => ({ a, k: kind(a.name) })).filter((x) => x.k);
+        if (!files.length) return;
+        const mine = files.find((x) => x.k.os === os) || files[0];
+        const when = rel.published_at ? new Date(rel.published_at).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+        main.href = mine.a.browser_download_url;
+        main.textContent = `${main.textContent.replace(/ for .*$/, '')} for ${mine.k.label.split(' (')[0]}`;
+        const intel = mine.k.os === 'mac' && /apple silicon/i.test(mine.k.label) ? ' On an Intel Mac, pick Mac, Intel below.' : '';
+        note.textContent = `Version ${String(rel.tag_name || '').replace(/^v/, '')}${when ? ', ' + when : ''}. ${updates}${intel}`;
+        list.replaceChildren(...files.map((x) => {
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = x.a.browser_download_url;
+          link.textContent = x.k.label;
+          li.append(link);
+          return li;
+        }));
+        all.hidden = false;
+      })
+      .catch(() => { /* no release yet, or GitHub is busy: the plain link and note stay */ });
+  })();
+</script>
+
+<style>
+  .body {
+    max-width: 38rem;
+    margin: 2rem 0 3rem;
+  }
+  .body p,
+  .body :global(p) {
+    margin: 0 0 1rem;
+  }
+  .body h2 {
+    margin: 2.25rem 0 0.75rem;
+    font-size: 1.05rem;
+  }
+  .get {
+    margin: 0 0 2.5rem;
+    padding: 1.4rem 1.5rem;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+  }
+  .get-main {
+    display: inline-block;
+    padding: 0.9rem 1.4rem;
+    border-radius: 999px;
+    background: var(--sig);
+    color: var(--ink);
+    font-weight: 600;
+    background-image: none;
+  }
+  .get-note {
+    margin: 0.9rem 0 0;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+  .get-all {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+  }
+  .get-all ul {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+  .shot {
+    margin: 2rem 0;
+  }
+  .shot img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(21, 23, 28, 0.18);
+  }
+  .fine {
+    margin-top: 2rem;
+    font-size: 0.95rem;
+  }
+  .links {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+  }
+</style>

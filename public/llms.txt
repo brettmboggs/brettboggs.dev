@@ -83,6 +83,7 @@ Shipped, as counted on https://brettboggs.dev/work/datum/:
 
 ## Apps
 
+- [Switchboard](https://brettboggs.dev/switchboard/): A free desktop app for Mac, Windows and Linux that puts mail, chats, bills, reminders and AI coding sessions on one screen, on your own computer. Fair Source licensed, with a live system monitor. Downloads and source at https://github.com/brettmboggs/switchboard-app
 - [Slumbio](https://brettboggs.dev/slumbio/): An iPhone sleep app, released September 2026. Thirty-three of its thirty-five sounds are built as they play, so there is no loop to hear. Breathing sessions, a sunrise alarm, a sleep timer, and no network code in the app at all. On the App Store at https://apps.apple.com/app/id6808987732
 - [Ladle](https://brettboggs.dev/ladle/): An iPhone app for recipes, wherever they come from: scanned off a card with the camera, shared from Safari, or typed in. Cook mode takes voice commands, a pantry tracks what is in the kitchen, and nothing leaves the phone.
 
