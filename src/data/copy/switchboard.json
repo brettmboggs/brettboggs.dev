@@ -88,6 +88,12 @@
       { "name": "Every computer", "body": "An optional encrypted account links your computers. Notes and settings follow you." }
     ]
   },
+  "film": {
+    "heading": "Ninety seconds",
+    "video": "/switchboard/launch.mp4",
+    "poster": "/switchboard/launch-poster.webp",
+    "alt": "A launch film for Switchboard: a scatter of terminals, mail, chat, calendar and builds pulled into one screen."
+  },
   "how": {
     "heading": "How it works",
     "steps": [

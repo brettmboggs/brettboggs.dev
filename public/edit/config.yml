@@ -3121,6 +3121,22 @@ collections:
           - name: body
             label: Line
             widget: text
+      - name: film
+        label: Film
+        widget: object
+        fields:
+        - name: heading
+          label: Heading
+          widget: string
+        - name: video
+          label: Video file (mp4)
+          widget: file
+        - name: poster
+          label: Still shown before it plays
+          widget: image
+        - name: alt
+          label: Description of the film
+          widget: text
       - name: how
         label: How it works
         widget: object
