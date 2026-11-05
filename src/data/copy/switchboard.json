@@ -89,7 +89,6 @@
     ]
   },
   "film": {
-    "heading": "Ninety seconds",
     "video": "/switchboard/launch.mp4",
     "poster": "/switchboard/launch-poster.webp",
     "alt": "A launch film for Switchboard: a scatter of terminals, mail, chat, calendar and builds pulled into one screen."

@@ -3125,9 +3125,6 @@ collections:
         label: Film
         widget: object
         fields:
-        - name: heading
-          label: Heading
-          widget: string
         - name: video
           label: Video file (mp4)
           widget: file

@@ -137,7 +137,6 @@ const srcset = (big: string, small: string, w: number) => (small ? `${small} 800
   </section>
 
   <section class="film">
-    <h2>{copy.film.heading}</h2>
     <video
       src={copy.film.video}
       poster={copy.film.poster}
@@ -498,7 +497,6 @@ const srcset = (big: string, small: string, w: number) => (small ? `${small} 800
     line-height: 1;
   }
   .rest h2,
-  .film h2,
   .how h2,
   .faq h2 {
     margin-top: 0;
@@ -508,7 +506,6 @@ const srcset = (big: string, small: string, w: number) => (small ? `${small} 800
     width: 100%;
     height: auto;
     aspect-ratio: 16 / 9;
-    margin-top: 1.5rem;
     border-radius: 14px;
     border: 1px solid var(--hair);
     box-shadow: 0 30px 60px -40px rgb(21 23 28 / 0.45);
