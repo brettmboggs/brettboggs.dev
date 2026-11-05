@@ -356,10 +356,6 @@
     "menu": "Menu",
     "links": [
       {
-        "text": "Your overhead",
-        "url": "#overhead"
-      },
-      {
         "text": "How I help",
         "url": "/help/"
       },
@@ -376,6 +372,10 @@
         "url": "/about/"
       }
     ],
+    "switchboard": {
+      "text": "Switchboard",
+      "url": "/switchboard/#get"
+    },
     "cta": "Book a free look"
   },
   "footer": {

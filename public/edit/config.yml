@@ -578,6 +578,16 @@ collections:
               - name: url
                 label: Url
                 widget: string
+          - name: switchboard
+            label: Switchboard link (orange, points at the download)
+            widget: object
+            fields:
+              - name: text
+                label: Text
+                widget: string
+              - name: url
+                label: Url
+                widget: string
           - name: cta
             label: Cta
             widget: string

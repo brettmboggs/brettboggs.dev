@@ -16,12 +16,14 @@ const href = (url: string): string => (url.startsWith('#') && !onHome ? `/${url}
     </a>
     <nav class="bar-nav" aria-label={nav.label}>
       {nav.links.map((l) => <a href={href(l.url)}>{l.text}</a>)}
+      <a class="bar-sb" href={nav.switchboard.url}>{nav.switchboard.text}</a>
     </nav>
     <a class="bar-cta" href={href('#start')}>{nav.cta}</a>
     <details class="bar-menu">
       <summary>{nav.menu}</summary>
       <nav aria-label={nav.label}>
         {nav.links.map((l) => <a href={href(l.url)}>{l.text}</a>)}
+        <a class="bar-sb" href={nav.switchboard.url}>{nav.switchboard.text}</a>
       </nav>
     </details>
   </div>
@@ -91,6 +93,15 @@ const href = (url: string): string => (url.startsWith('#') && !onHome ? `/${url}
     transition: color 0.2s;
   }
   .bar-nav a:hover {
+    color: var(--ink);
+  }
+  .bar-nav a.bar-sb,
+  .bar-menu nav a.bar-sb {
+    color: var(--sig-text);
+    font-weight: 600;
+  }
+  .bar-nav a.bar-sb:hover,
+  .bar-menu nav a.bar-sb:hover {
     color: var(--ink);
   }
   .bar-cta {

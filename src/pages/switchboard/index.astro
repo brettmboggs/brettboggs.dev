@@ -63,7 +63,7 @@ const srcset = (big: string, small: string, w: number) => (small ? `${small} 800
       <p class="sb-sub">{copy.sub}</p>
     </div>
 
-    <div class="get" data-repo={repo}>
+    <div class="get" id="get" data-repo={repo}>
       <a class="get-main" data-get href={releases}>{dl.button}</a>
       <p class="get-note" data-get-note>{dl.soon}</p>
       <p class="get-os" data-get-os hidden></p>
